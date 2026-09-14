@@ -139,9 +139,12 @@ Stock Candidates.
 - [Strong-Leader Pullback Listed-Consideration Residual Terminal Evidence V1](data-contracts/strong-leader-pullback-listed-consideration-residual-terminal-evidence-v1.md):
   adds three gross daily reference values without rewriting the original
   nine-value evidence report.
+- [Strong-Leader Pullback Terminal Boundary Census V1](data-contracts/strong-leader-pullback-terminal-boundary-census-v1.md):
+  separates Instrument Master observation dates from canonical EOD presence
+  before terminal-gap counts can be used for research planning.
 - [Strong-Leader Pullback Terminal Gap Census V1](data-contracts/strong-leader-pullback-terminal-gap-census-v1.md):
-  measures reference-value and unresolved terminal states across the complete
-  first-strategy lifecycle-crossing population without opening outcomes.
+  preserves the original identity-boundary result; ADR 0253 requires a
+  versioned EOD-boundary successor before its counts are used again.
 - [Strong-Leader Pullback SEC Case Coverage Census V1](data-contracts/strong-leader-pullback-sec-case-coverage-census-v1.md):
   measures stable-ID candidate coverage while leaving all field results
   unadjudicated.

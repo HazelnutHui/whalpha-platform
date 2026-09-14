@@ -13,7 +13,13 @@ from tip_api.persistence.eod_read import EodDatasetUnavailableError
 from tip_api.persistence.parquet.eod_bars import _table_to_fingerprint_rows
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
 from tip_api.persistence.parquet.manifest import table_rows_fingerprint
-from tests.support.eod_read_dataset import SESSION_DATE, eod_manifest_path, publish_completed_eod_dataset
+from tests.support.eod_read_dataset import (
+    SESSION_DATE,
+    TESTA_ID,
+    TESTB_ID,
+    eod_manifest_path,
+    publish_completed_eod_dataset,
+)
 
 
 def test_history_read_validates_integrity_and_does_not_call_resolver(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -32,6 +38,40 @@ def test_history_read_validates_integrity_and_does_not_call_resolver(tmp_path: P
     assert testa.split_adjustment_factor == Decimal("0.5000000000")
     assert testa.dividend_adjustment_factor == Decimal("1.0000000000")
     assert testa.total_return_adjustment_factor == Decimal("0.5000000000")
+
+
+def test_presence_read_validates_session_without_identity_or_resolver_join(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    fixture = publish_completed_eod_dataset(tmp_path)
+    repository = CanonicalEodReadRepository(tmp_path)
+    monkeypatch.setattr(
+        CanonicalEodReadRepository,
+        "_read_instruments",
+        lambda *args, **kwargs: pytest.fail("instrument join called"),
+    )
+    monkeypatch.setattr(
+        CanonicalEodReadRepository,
+        "_read_resolver",
+        lambda *args, **kwargs: pytest.fail("resolver called"),
+    )
+
+    result = repository.read_instrument_presence_sessions(
+        (SESSION_DATE,), frozenset({TESTA_ID, TESTB_ID})
+    )
+
+    assert len(result) == 1
+    assert result[0].instrument_ids == frozenset({TESTA_ID, TESTB_ID})
+    assert result[0].integrity.content_fingerprint == fixture.eod_content_sha256
+    assert result[0].available_at is not None
+
+
+def test_presence_read_rejects_empty_identity_scope(tmp_path: Path) -> None:
+    publish_completed_eod_dataset(tmp_path)
+    with pytest.raises(EodDatasetUnavailableError, match="presence request is empty"):
+        CanonicalEodReadRepository(tmp_path).read_instrument_presence_sessions(
+            (SESSION_DATE,), frozenset()
+        )
 
 
 def test_duplicate_requested_session_is_rejected(tmp_path: Path) -> None:

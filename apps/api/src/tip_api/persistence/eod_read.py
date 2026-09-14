@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Protocol
+from uuid import UUID
 
 from tip_api.contracts.market_data.v1 import EodSessionIntegrityV1
 from tip_api.read_models.eod import EodMarketBarReadModel, EodSessionDescriptor
@@ -31,6 +32,15 @@ class EodHistorySessionRead:
     available_at: datetime | None = None
 
 
+@dataclass(frozen=True, slots=True)
+class EodInstrumentPresenceSessionRead:
+    """Validated session integrity plus a bounded stable-ID presence projection."""
+
+    integrity: EodSessionIntegrityV1
+    instrument_ids: frozenset[UUID]
+    available_at: datetime | None = None
+
+
 class EodReadRepository(Protocol):
     def list_sessions(self) -> tuple[EodSessionDescriptor, ...]:
         """Return validated completed sessions."""
@@ -46,4 +56,12 @@ class EodReadRepository(Protocol):
 
     def read_history_sessions(self, session_dates: tuple[date, ...]) -> tuple[EodHistorySessionRead, ...]:
         """Read only the requested sessions, joined by persisted stable instrument IDs."""
+        ...
+
+    def read_instrument_presence_sessions(
+        self,
+        session_dates: tuple[date, ...],
+        instrument_ids: frozenset[UUID],
+    ) -> tuple[EodInstrumentPresenceSessionRead, ...]:
+        """Validate sessions and return presence only for requested stable IDs."""
         ...

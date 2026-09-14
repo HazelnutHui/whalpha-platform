@@ -11,9 +11,13 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0253](0253-separate-identity-observation-from-eod-terminal-boundaries.md):
+  preserves the original source-priority census but requires terminal-gap
+  paths to be recalculated from canonical stable-ID EOD presence rather than
+  Instrument Master observation dates.
 - [ADR 0252](0252-measure-terminal-evidence-gaps-before-versioning-research-admission.md):
-  binds all 64 lifecycle-crossing securities to their current reference-value
-  or unresolved state before any new coverage or admission contract.
+  preserves the first 64-security identity-boundary gap result; ADR 0253
+  supersedes its population and path counts for future terminal work.
 - [ADR 0251](0251-extend-listed-consideration-reference-values-without-rewriting-prior-evidence.md):
   adds the three residual daily reference values while preserving the original
   nine-value report and its evidence vintage.

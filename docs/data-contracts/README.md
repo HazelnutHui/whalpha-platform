@@ -99,6 +99,7 @@ adjustment evidence remains explicit.
 - [Strong-Leader Pullback Listed-Consideration Residual Source V1](strong-leader-pullback-listed-consideration-residual-source-v1.md)
 - [Strong-Leader Pullback Listed-Consideration Residual Adjudication V1](strong-leader-pullback-listed-consideration-residual-adjudication-v1.md)
 - [Strong-Leader Pullback Listed-Consideration Residual Terminal Evidence V1](strong-leader-pullback-listed-consideration-residual-terminal-evidence-v1.md)
+- [Strong-Leader Pullback Terminal Boundary Census V1](strong-leader-pullback-terminal-boundary-census-v1.md)
 - [Strong-Leader Pullback Research Input V1](strong-leader-pullback-research-input-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)

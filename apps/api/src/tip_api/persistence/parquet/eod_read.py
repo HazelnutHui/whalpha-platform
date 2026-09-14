@@ -21,6 +21,7 @@ from tip_api.contracts.market_data.v1 import (
     QualityStatus,
 )
 from tip_api.persistence.eod_read import EodDatasetUnavailableError, EodHistorySessionRead, EodSessionNotFoundError
+from tip_api.persistence.eod_read import EodInstrumentPresenceSessionRead
 from tip_api.persistence.parquet.eod_bars import EOD_PRICE_BAR_ARROW_SCHEMA, SCHEMA_VERSION, SCHEMA_VERSION_PARTITION
 from tip_api.persistence.parquet.eod_bars import _table_to_fingerprint_rows as eod_table_to_rows
 from tip_api.persistence.parquet.instrument_master_snapshot import (
@@ -221,6 +222,44 @@ class CanonicalEodReadRepository:
                     self._integrity(root, session_date, manifest, table),
                     bars,
                     _parse_utc_datetime(manifest.get("created_at"), "manifest created_at"),
+                )
+            )
+        return tuple(result)
+
+    def read_instrument_presence_sessions(
+        self,
+        session_dates: tuple[date, ...],
+        instrument_ids: frozenset[UUID],
+    ) -> tuple[EodInstrumentPresenceSessionRead, ...]:
+        """Formally validate sessions while materializing only requested stable IDs."""
+
+        if len(session_dates) != len(set(session_dates)):
+            raise EodDatasetUnavailableError("duplicate requested history session")
+        if not instrument_ids:
+            raise EodDatasetUnavailableError("instrument presence request is empty")
+        root = self._validated_root()
+        requested = {str(value) for value in instrument_ids}
+        result: list[EodInstrumentPresenceSessionRead] = []
+        for session_date in sorted(session_dates):
+            manifest, table = self._read_valid_eod_partition(
+                root, session_date=session_date
+            )
+            present = frozenset(
+                UUID(value)
+                for value in table.column("instrument_id").to_pylist()
+                if value in requested
+            )
+            if not present.issubset(instrument_ids):
+                raise EodDatasetUnavailableError(
+                    "instrument presence projection differs"
+                )
+            result.append(
+                EodInstrumentPresenceSessionRead(
+                    integrity=self._integrity(root, session_date, manifest, table),
+                    instrument_ids=present,
+                    available_at=_parse_utc_datetime(
+                        manifest.get("created_at"), "manifest created_at"
+                    ),
                 )
             )
         return tuple(result)
