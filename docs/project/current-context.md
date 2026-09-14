@@ -4,7 +4,7 @@ Operational state verified at: 2026-09-13T22:16:53Z
 
 Deployment state verified at: 2026-09-11T21:23:56Z
 
-Repository context updated at: 2026-09-13 UTC
+Repository context updated at: 2026-09-14 UTC
 
 This is the compact recovery source for a new task or device. It records the
 latest verified identities, capabilities, and hard boundaries. Actual-state
@@ -223,7 +223,17 @@ Important private Dell evidence includes:
   SHA-256 is
   `a44dff5ace2ef6dc9b7cb8487b2bc529732522f215caa482299f0b8c4cd2176a`
   and logical fingerprint is
-  `08791989e04803e57d4a7881bb0495c2224ef24812c79767d365a93210906de2`.
+  `08791989e04803e57d4a7881bb0495c2224ef24812c79767d365a93210906de2`;
+  and
+- the trading-cessation comparison: 45 before-open, eight after-close, and
+  eight unsupported source-timing profiles produce 52 SEC/EOD matches, one
+  retained conflict, and 53 observed-last-EOD evidence cases across 114
+  formally reread sessions. First tradability, legal delisting effectiveness,
+  both complete sampled date fields, and canonical lifecycle facts remain
+  zero. Report SHA-256 is
+  `694e8b01274fdcad9bef2e0178e805df994f2526c190598b665e965541c2fae9`
+  and logical fingerprint is
+  `40b9ab103837a01e77131355c41c72a15317354f3e7c4f19807a3ea4f8747301`.
 
 Exact package identities and counts are retained in:
 
@@ -245,6 +255,7 @@ Exact package identities and counts are retained in:
 - [First-strategy SEC termination-reason adjudication audit](../audits/strong-leader-pullback-sec-termination-reason-adjudication-2026-09-13.md)
 - [First-strategy SEC consideration adjudication audit](../audits/strong-leader-pullback-sec-consideration-adjudication-2026-09-13.md)
 - [First-strategy SEC party-relation adjudication audit](../audits/strong-leader-pullback-sec-party-relation-adjudication-2026-09-14.md)
+- [First-strategy trading-cessation adjudication audit](../audits/strong-leader-pullback-trading-cessation-adjudication-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -287,12 +298,14 @@ now complete for all 61, including nine retained cover-date differences. The
 termination reason is also now matched for all 61 through bounded Item 3.01
 evidence. Primary common-share consideration and source-party topology are now
 matched for all 61 while fractional-share cash, elections, CVRs, and unlisted
-units remain distinct. Global party IDs remain unassigned. The next internal
-gate is exchange market-status and last-tradability adjudication, followed by
-only the successor/consideration-issuer identity required for terminal payoff.
-LNW, REVG, and SAND remain quarantined. A commercial sample remains limited to
-the frozen residual after that review. Massive Starter is not the sole
-lifecycle authority.
+units remain distinct. Global party IDs remain unassigned. Source-stated stop
+timing now agrees with formal EOD presence in 52 cases, conflicts in one, and
+is unsupported in eight; this does not complete either sampled tradability
+field. The next internal gate is terminal-payoff normalization, with successor
+or consideration-issuer identity resolved only where required. LNW, REVG,
+SAND, and unsupported timing remain quarantined. A commercial sample remains
+limited to a measured residual after that work. Massive Starter is not the
+sole lifecycle authority.
 
 Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
 semantics, exact Historical Coverage, costs, and sealed evaluation custody are

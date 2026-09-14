@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-09-14 — Compare SEC trading cessation with formal EOD presence
+
+- Accepted ADR 0241 and retained 45 before-open, eight after-close, and eight
+  unsupported source-timing profiles for the fixed 61-case population.
+- Formally reread 114 deduplicated canonical EOD/Identity sessions by stable
+  ID. Fifty-two explicit stop boundaries match; TMHC remains one provider-bar
+  conflict; 53 cases retain observed-last-EOD evidence.
+- First tradability, legal delisting effectiveness, both complete sampled date
+  fields, terminal outcomes, and canonical lifecycle authority remain zero.
+  The sampled matrix stays 244 / 512 rather than counting partial evidence as
+  a completed field.
+- The report has SHA-256
+  `694e8b01274fdcad9bef2e0178e805df994f2526c190598b665e965541c2fae9`
+  and logical fingerprint
+  `40b9ab103837a01e77131355c41c72a15317354f3e7c4f19807a3ea4f8747301`.
+  Exact network-disabled replay returned `already_present` with owner-only
+  modes and zero residue.
+- Four new focused tests, 13 linked tests, and the complete 2,694-test API
+  suite passed with two unchanged warnings. `/data`, Historical Coverage,
+  research, Candidate, publication, deployment, and scheduler state were not
+  modified.
+
 ## 2026-09-14 — Adjudicate source-party and legal-survivor relations
 
 - Accepted ADR 0240 and bound one agreement-party clause plus one merger-
