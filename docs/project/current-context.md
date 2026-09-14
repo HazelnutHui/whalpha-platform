@@ -130,7 +130,12 @@ Its derived Lab record is `quant-research-lab-model-record/1.2`, remains
 method-only and Candidate-ineligible, and carries no real result. It now binds
 the replayed reconstructed method-engineering disclosure and code revision
 `9879f2e890840487c90a89078eb31f0cbff273c0`; record fingerprint:
-`ec6f8473d1824526bcdecffbc8044e82201e325e4f2036253378773f13443831`.
+`4622fb2fe86cc28249f53c89003f450a9e9d19c5696cd4eb865f413140b982c8`.
+The repository Lab now presents the verified five-year research foundation,
+its limitations, and the frozen evaluation controls beside the model record;
+it calculates no aggregate readiness score. This V1.2 method/readiness surface
+and foundation snapshot remain repository-only and are not part of the active
+OCI release recorded above.
 The pure mechanics contract is `candidate-strategy-research-execution/1.2`;
 each mechanics batch binds the same method and experiment fingerprints and is
 fixed to zero forward outcomes and zero performance authority.

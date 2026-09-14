@@ -567,8 +567,8 @@ def strong_leader_pullback_lab_model_record_v1() -> QuantResearchLabModelRecordV
         "applicability_reason": "No real validation or prospective evidence exists.",
         "last_validation_date": None,
         "next_required_decision": (
-            "Complete and review the outcome-blind signal implementation; open "
-            "real outcomes only after a separate formal data admission."
+            "Define and review a performance-grade admitted cohort; keep real "
+            "outcomes sealed until the separate data-admission gate passes."
         ),
         "out_of_sample_scope": "none_no_real_evaluation",
         "out_of_sample_observation_count": 0,

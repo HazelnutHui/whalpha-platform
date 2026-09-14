@@ -69,6 +69,10 @@ def test_checked_in_web_record_is_the_canonical_method_projection() -> None:
     assert parsed.candidate_eligible is False
     assert parsed.out_of_sample_observation_count == 0
     assert parsed.result_publication_id is None
+    assert parsed.next_required_decision == (
+        "Define and review a performance-grade admitted cohort; keep real "
+        "outcomes sealed until the separate data-admission gate passes."
+    )
     engineering = parsed.method_engineering_evidence
     assert engineering is not None
     assert engineering.status == "replayed_reconstructed_proxy"

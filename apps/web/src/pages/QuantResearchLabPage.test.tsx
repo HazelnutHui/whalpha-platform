@@ -22,6 +22,10 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('Method specification').parentElement).toHaveTextContent('FROZEN');
     expect(screen.getByText('Deterministic implementation').parentElement).toHaveTextContent('REPLAYED');
     expect(screen.getByText('Performance-grade admission').parentElement).toHaveTextContent('BLOCKED');
+    expect(screen.getByRole('heading', { name: 'Research foundation snapshot' })).toBeInTheDocument();
+    expect(screen.getByText('Five-year market base').parentElement).toHaveTextContent('1,255');
+    expect(screen.getByText('Historical membership').parentElement).toHaveTextContent('RECONSTRUCTED');
+    expect(screen.getByText(/not blended into one readiness percentage/i)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Method-engineering evidence' })).toBeInTheDocument();
     expect(screen.getAllByText('95.38%')).toHaveLength(2);
     expect(screen.getByText('Declared paths').parentElement).toHaveTextContent('437,402');
@@ -35,7 +39,7 @@ describe('Quant Research Lab', () => {
 
     await user.click(screen.getByText(/Inspect complete logic/));
     expect(screen.getByText(/max\(close\[t-20:t-1\]\)/)).toBeInTheDocument();
-    expect(screen.getByText('ec6f8473d1824526bcdecffbc8044e82201e325e4f2036253378773f13443831')).toBeInTheDocument();
+    expect(screen.getByText('4622fb2fe86cc28249f53c89003f450a9e9d19c5696cd4eb865f413140b982c8')).toBeInTheDocument();
     expect(screen.getByText('ed3e83b1a3827d1faddea6cb0eedc0471c5e9db854d5577b7faa12e0084186ba')).toBeInTheDocument();
     expect(screen.getByText('c082566f283516b9a93d5658832450fb85071a3b59892cb8d922c1f37af34bd8')).toBeInTheDocument();
   });
@@ -50,6 +54,9 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('方法规范').parentElement).toHaveTextContent('已冻结');
     expect(screen.getByText('确定性实现').parentElement).toHaveTextContent('已重放');
     expect(screen.getByText('绩效级数据准入').parentElement).toHaveTextContent('仍阻塞');
+    expect(screen.getByRole('heading', { name: '研究基础快照' })).toBeInTheDocument();
+    expect(screen.getByText('公司行动').parentElement).toHaveTextContent('4,623 / 4,643');
+    expect(screen.getByText(/不会把不同证据强行合成为一个“总完成度”/)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '方法工程证据' })).toBeInTheDocument();
     expect(screen.getByText(/不是胜率、预测准确率或收益率/)).toBeInTheDocument();
     expect(screen.getByText('强势股回撤')).toBeInTheDocument();
@@ -66,6 +73,9 @@ describe('Quant Research Lab', () => {
     expect(screen.getByRole('heading', { name: 'Escalera de evidencia' })).toBeInTheDocument();
     expect(screen.getByText('Especificación del método').parentElement).toHaveTextContent('CONGELADA');
     expect(screen.getByText('Admisión para medir rendimiento').parentElement).toHaveTextContent('BLOQUEADA');
+    expect(screen.getByRole('heading', { name: 'Resumen de la base de investigación' })).toBeInTheDocument();
+    expect(screen.getByText('Ciclo de vida y terminal').parentElement).toHaveTextContent('47 / 65');
+    expect(screen.getByText(/no se combinan en un único porcentaje de avance/)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Evidencia de ingeniería del método' })).toBeInTheDocument();
     expect(screen.getByText(/no es tasa de acierto, precisión predictiva ni rentabilidad/)).toBeInTheDocument();
     expect(screen.getByText('No apto para Candidatos')).toBeInTheDocument();

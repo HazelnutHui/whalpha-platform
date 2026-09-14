@@ -17,7 +17,7 @@
   "applicability_state": "not_assessed",
   "applicability_reason": "No real validation or prospective evidence exists.",
   "last_validation_date": null,
-  "next_required_decision": "Complete and review the outcome-blind signal implementation; open real outcomes only after a separate formal data admission.",
+  "next_required_decision": "Define and review a performance-grade admitted cohort; keep real outcomes sealed until the separate data-admission gate passes.",
   "out_of_sample_scope": "none_no_real_evaluation",
   "out_of_sample_observation_count": 0,
   "decision_use": "Prioritize review of prior leaders after an orderly reset.",
@@ -352,5 +352,5 @@
   "implementation_revision": "9879f2e890840487c90a89078eb31f0cbff273c0",
   "implementation_revision_reason": "The canonical method and reconstructed outcome-blind diagnostics are implemented and replayed; no real outcome or result publication exists.",
   "result_publication_id": null,
-  "logical_fingerprint": "ec6f8473d1824526bcdecffbc8044e82201e325e4f2036253378773f13443831"
+  "logical_fingerprint": "4622fb2fe86cc28249f53c89003f450a9e9d19c5696cd4eb865f413140b982c8"
 }

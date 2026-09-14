@@ -35,6 +35,13 @@ presentation layers. Guest and credential Sessions intentionally receive the
 same data and capability. Snapshot/API failure closes without synthetic
 Production data.
 
+The repository Lab now includes a dated research-foundation snapshot that
+presents five-year source depth, reconstructed evidence, unresolved mandatory
+families, and already frozen evaluation controls together without inventing a
+single completion percentage. The enhanced method/readiness view remains
+repository-only until a separate deployment; the active OCI release is
+unchanged.
+
 The current Candidate score, Entry Geometry, and technical Strategy Channels
 remain visible, transparent, unvalidated **Baseline V1**. They are not expected-
 return models and will not be tuned in place. Current display counts are 870

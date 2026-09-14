@@ -6,6 +6,23 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-14 — Present the verified research foundation in the Lab
+
+- Added a trilingual, dated research-foundation snapshot that presents
+  five-year price/Identity depth, qualified Membership, corporate-action,
+  lifecycle, and point-in-time fundamental evidence with each limitation next
+  to its count.
+- Presented the already frozen 24-specification budget, chronological split,
+  purge/embargo, cost scenarios, and single-use holdout without combining
+  heterogeneous evidence into a false completion score.
+- Replaced the model record's stale next step with the actual performance-data
+  admission decision and regenerated its deterministic record and catalog
+  fingerprints. No method, result, Candidate, Snapshot, deployment, or
+  Production authority changed.
+- Passed all 2,825 backend tests, all 126 frontend tests, and a clean bounded
+  production build; only the two existing dependency deprecation warnings
+  remained.
+
 ## 2026-09-14 — Exercise the first method over reconstructed Dell evidence
 
 - Added an offline private reader, shared feature calculator, explicit proxy

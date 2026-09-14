@@ -92,9 +92,9 @@ The checked-in browser record is the canonical method projection for:
 - lifecycle: `preregistered_data_blocked`;
 - evidence: `method_only`;
 - model-record fingerprint:
-  `ec6f8473d1824526bcdecffbc8044e82201e325e4f2036253378773f13443831`;
+  `4622fb2fe86cc28249f53c89003f450a9e9d19c5696cd4eb865f413140b982c8`;
 - catalog fingerprint:
-  `10e22b6dac375df7bea2f3b48130604060fa9aa512654e8838480f08d620adb8`;
+  `7670f7320af13abd98e3a6974a96b8bece96992336f7dddaede0225b0b9a1e76`;
 - method-engineering evidence: independently replayed reconstructed proxy,
   417,209 of 437,402 declared paths computable across 287 sessions;
 - real result publication: none; and

@@ -61,6 +61,11 @@ exclusions, proxy limits, formal blockers, lifecycle, and reproduction
 identity. Performance admission and Candidate authority remain visibly
 separate and locked.
 
+The page also gives the completed five-year source and governance work a
+compact public surface. It presents every qualified or incomplete family with
+its limitation and shows the frozen evaluation controls without manufacturing
+an aggregate readiness score.
+
 If diagnostics motivate a formula or parameter-grid change, register V2 before
 any outcome is opened. Engineering observations cannot become independent
 validation or holdout evidence.

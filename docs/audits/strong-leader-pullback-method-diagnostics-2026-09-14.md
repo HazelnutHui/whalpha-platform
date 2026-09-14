@@ -98,3 +98,11 @@ non-pollution regression was added. Sixty direct regression checks and the
 complete 2,825-test backend suite then passed with only the two unchanged
 dependency deprecation warnings. This completes the outcome-blind method-and-
 surface phase without a Snapshot, bundle, deployment, or Production mutation.
+
+A later same-day presentation alignment changed only the record's stale
+`next_required_decision` after the method-and-diagnostics phase had completed.
+The historical record fingerprint above remains the exact identity audited in
+this section. The current checked-in record fingerprint is
+`4622fb2fe86cc28249f53c89003f450a9e9d19c5696cd4eb865f413140b982c8`;
+method, diagnostic, feature, evaluation, lifecycle, result, and Candidate
+authority remained unchanged.

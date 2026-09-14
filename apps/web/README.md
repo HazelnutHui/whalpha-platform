@@ -21,11 +21,14 @@ any performance claim. The first viewport keeps account/password sign-in as
 the primary entry, places equal-capability guest access immediately below it,
 and uses a persistent continuation cue to expose the research narrative below.
 
-Inside the Lab, an evidence ladder now separates the frozen method,
-deterministic implementation, replayed reconstructed-population diagnostics,
-formal performance-data admission, and result/Candidate authority. The
-displayed 95.38% is explicitly method-computability coverage, not a hit rate,
-prediction accuracy, or return.
+Inside the Lab, a trilingual research-foundation snapshot shows the verified
+five-year price/identity depth, reconstructed Membership, action assignments,
+lifecycle references, and point-in-time fundamental pilot without combining
+them into a misleading readiness score. An evidence ladder then separates the
+frozen method, deterministic implementation, replayed reconstructed-population
+diagnostics, formal performance-data admission, and result/Candidate
+authority. The displayed 95.38% is explicitly method-computability coverage,
+not a hit rate, prediction accuracy, or return.
 
 The active Dashboard uses Activation V2 Primary/Secondary Universes. Provider
 security form remains provisional and does not establish issuer structure or
@@ -95,7 +98,8 @@ guide.
 - Language-neutral, risk-mode-specific Stock Candidate ranking, entry-location
   review, strategy channels, cross-channel decision desk, price-path/level
   context, contribution ledgers, and evidence drawer
-- Bilingual Quant Research Lab readiness and preregistered-method workspace;
+- Trilingual Quant Research Lab foundation, readiness, and preregistered-method
+  workspace;
   price depth has passed the length floor while the page keeps point-in-time
   membership, lifecycle, actions/adjustment, costs, and evaluation gates
   separately blocked and all real result areas locked

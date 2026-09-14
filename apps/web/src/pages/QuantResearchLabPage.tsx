@@ -17,6 +17,16 @@ const COPY = {
       ['Performance-grade admission', 'BLOCKED', 'Membership, lifecycle, adjustments, terminal outcomes, costs, and sealed evaluation are not fully admitted.', 'blocked'],
       ['Results & Candidate authority', 'LOCKED', 'No return metrics, selected parameters, validated rank, or Candidate activation exists.', 'locked'],
     ],
+    foundation: 'Research foundation snapshot', foundationNote: 'Verified, versioned evidence already built on Dell. Each item states both its useful scope and its limit.', foundationBadge: 'EVIDENCE REVIEWED · 14 SEP 2026',
+    foundationItems: [
+      ['Five-year market base', 'DEPTH COMPLETE', 'Contiguous EOD price and stable-identity depth are complete.', 'verified'],
+      ['Historical membership', 'RECONSTRUCTED', '1,250 sessions are reconstructed and three are prospective; reconstructed history is not as operated.', 'qualified'],
+      ['Corporate actions', 'PARTIAL EVIDENCE', '4,623 of 4,643 first-strategy exposures have exact event-date assignments; absence neutrality is not proven.', 'qualified'],
+      ['Lifecycle & terminal', 'INCOMPLETE', 'Reference evidence covers 47 of 65 securities and 214 of 302 five-session paths; references are not outcomes.', 'blocked'],
+      ['Point-in-time fundamentals', 'ENGINEERING PILOT', 'Four registered SEC query paths and four strict as-operated projection sessions exist; this is engineering evidence only.', 'qualified'],
+    ],
+    foundationControls: 'Evaluation controls already frozen', controlLabels: ['Registered specifications', 'Chronological split', 'Purge + embargo', 'Cost scenarios per side', 'Sealed holdout use'],
+    foundationBoundary: 'These facts are not blended into one readiness percentage. A weak mandatory evidence family keeps performance research locked.',
     engineering: 'Method-engineering evidence', engineeringNote: 'The same registered method was run twice over the reconstructed Dell population with identical fingerprints. These facts answer whether the method can be computed—not whether it works.', engineeringBadge: 'REPLAYED · OUTCOME BLIND',
     engineeringStages: ['Method frozen', 'Implementation tested', 'Population replayed', 'Performance admission'], verified: 'Verified', blockedState: 'Blocked',
     declaredSessions: 'Declared sessions', completeSessions: 'Feature-complete sessions', declaredPaths: 'Declared paths', computablePaths: 'Computable paths', excludedPaths: 'Explicit exclusions',
@@ -59,6 +69,16 @@ const COPY = {
       ['绩效级数据准入', '仍阻塞', '成员资格、生命周期、复权、终端收益、成本与封存评估尚未全部准入。', 'blocked'],
       ['结果与候选权限', '锁定', '目前没有收益指标、优选参数、已验证排名或个股候选激活。', 'locked'],
     ],
+    foundation: '研究基础快照', foundationNote: '以下是已经在戴尔完成核验并版本化的工程证据；每一项同时标明可用范围与证据边界。', foundationBadge: '证据核对 · 2026-09-14',
+    foundationItems: [
+      ['五年行情基础', '深度已完成', '连续日线行情与稳定证券身份的五年深度已经完成。', 'verified'],
+      ['历史成员资格', '事后重建', '其中1,250个交易日为事后重建、3个为前瞻记录；重建历史不等于当时实录。', 'qualified'],
+      ['公司行动', '部分证据', '第一策略4,643条暴露中4,623条已有精确事件日匹配；尚未证明其余空白均为中性。', 'qualified'],
+      ['生命周期与终端', '尚未完整', '65只终端证券中47只、302条五日路径中214条有参考证据；参考证据不等于终端收益。', 'blocked'],
+      ['点时基本面', '工程试点', '已登记4条SEC查询路径，并取得4个严格按当时可用信息投影的交易日；目前仅属工程证据。', 'qualified'],
+    ],
+    foundationControls: '已经冻结的评估约束', controlLabels: ['已登记规格', '时间顺序切分', '清洗期 + 隔离期', '单边成本情景', '封存样本外使用次数'],
+    foundationBoundary: '不会把不同证据强行合成为一个“总完成度”。任何必需证据族不合格，绩效研究仍保持锁定。',
     engineering: '方法工程证据', engineeringNote: '同一已登记方法已在戴尔重建样本上完整运行两次，结果指纹完全一致。以下事实只回答“方法能否计算”，不回答“策略是否有效”。', engineeringBadge: '已重放 · 不含结果',
     engineeringStages: ['方法已冻结', '实现测试通过', '总体重放完成', '绩效数据准入'], verified: '已核验', blockedState: '仍阻塞',
     declaredSessions: '声明交易日', completeSessions: '特征完整交易日', declaredPaths: '声明路径', computablePaths: '可计算路径', excludedPaths: '明确排除',
@@ -101,6 +121,16 @@ const COPY = {
       ['Admisión para medir rendimiento', 'BLOQUEADA', 'Composición, ciclo de vida, ajustes, resultados terminales, costes y evaluación sellada aún no están plenamente admitidos.', 'blocked'],
       ['Resultados y autoridad en Candidatos', 'BLOQUEADOS', 'No hay métricas de rentabilidad, parámetros elegidos, clasificación validada ni activación en Candidatos.', 'locked'],
     ],
+    foundation: 'Resumen de la base de investigación', foundationNote: 'Evidencia verificada y versionada que ya existe en Dell. Cada punto indica tanto su utilidad como su límite.', foundationBadge: 'EVIDENCIA REVISADA · 14 SEP 2026',
+    foundationItems: [
+      ['Base de mercado a cinco años', 'PROFUNDIDAD COMPLETA', 'La profundidad continua de precios diarios e identidad estable está completa.', 'verified'],
+      ['Composición histórica', 'RECONSTRUIDA', '1.250 sesiones son reconstruidas y tres son prospectivas; la reconstrucción no equivale a un registro operativo de la fecha.', 'qualified'],
+      ['Acciones corporativas', 'EVIDENCIA PARCIAL', '4.623 de 4.643 exposiciones del primer estudio tienen fecha de evento exacta; no se ha demostrado la neutralidad de las ausencias.', 'qualified'],
+      ['Ciclo de vida y terminal', 'INCOMPLETO', 'Hay referencias para 47 de 65 valores y 214 de 302 trayectorias a cinco sesiones; una referencia no es un resultado terminal.', 'blocked'],
+      ['Fundamentales a fecha de conocimiento', 'PILOTO DE INGENIERÍA', 'Existen cuatro consultas SEC registradas y cuatro sesiones con proyección estricta según la información disponible entonces; sigue siendo evidencia de ingeniería.', 'qualified'],
+    ],
+    foundationControls: 'Controles de evaluación ya congelados', controlLabels: ['Especificaciones registradas', 'División cronológica', 'Purga + embargo', 'Escenarios de costes por lado', 'Uso del holdout sellado'],
+    foundationBoundary: 'Estos hechos no se combinan en un único porcentaje de avance. Una familia de evidencia obligatoria insuficiente mantiene bloqueada la investigación de rendimiento.',
     engineering: 'Evidencia de ingeniería del método', engineeringNote: 'El mismo método registrado se ejecutó dos veces sobre la población reconstruida en Dell y produjo huellas idénticas. Estos datos indican si puede calcularse, no si funciona.', engineeringBadge: 'REPRODUCIDO · SIN RESULTADOS',
     engineeringStages: ['Método congelado', 'Implementación probada', 'Población reproducida', 'Admisión de rendimiento'], verified: 'Verificado', blockedState: 'Bloqueada',
     declaredSessions: 'Sesiones declaradas', completeSessions: 'Sesiones con características completas', declaredPaths: 'Trayectorias declaradas', computablePaths: 'Trayectorias computables', excludedPaths: 'Exclusiones explícitas',
@@ -145,6 +175,20 @@ export function QuantResearchLabPage(): JSX.Element {
   const evaluation = modelRecord.evaluation_design;
   const engineering = modelRecord.method_engineering_evidence;
   const numberFormat = new Intl.NumberFormat(locale === 'zh' ? 'zh-CN' : locale === 'es' ? 'es-ES' : 'en-US');
+  const foundationValues = [
+    numberFormat.format(1_255),
+    `${numberFormat.format(1_253)} / ${numberFormat.format(1_255)}`,
+    `${numberFormat.format(4_623)} / ${numberFormat.format(4_643)}`,
+    '47 / 65',
+    '4',
+  ];
+  const evaluationControls = [
+    [numberFormat.format(evaluation.search_budget), c.controlLabels[0]],
+    ['50 / 25 / 25', c.controlLabels[1]],
+    [`${evaluation.purge_sessions} + ${evaluation.embargo_sessions}`, c.controlLabels[2]],
+    [`${evaluation.cost_scenarios_bps_per_side.join(' / ')} bps`, c.controlLabels[3]],
+    ['1×', c.controlLabels[4]],
+  ];
 
   return <main className="research-page">
     <section className="research-hero">
@@ -155,8 +199,17 @@ export function QuantResearchLabPage(): JSX.Element {
 
     <section className="research-readiness" aria-labelledby="research-readiness-title"><header><span>00</span><h2 id="research-readiness-title">{c.readiness}</h2></header><div>{c.readinessItems.map(([name, state, body, tone]) => <article className={`research-readiness-${tone}`} key={name}><span>{state}</span><strong>{name}</strong><p>{body}</p></article>)}</div></section>
 
+    <section className="research-card research-foundation" aria-labelledby="research-foundation-title">
+      <header><span>01</span><div><h2 id="research-foundation-title">{c.foundation}</h2><p>{c.foundationNote}</p></div><b>{c.foundationBadge}</b></header>
+      <div className="research-foundation-grid">
+        {c.foundationItems.map(([name, state, body, tone], index) => <article className={`research-foundation-${tone}`} key={name}><div><strong>{foundationValues[index]}</strong><b>{state}</b></div><h3>{name}</h3><p>{body}</p></article>)}
+      </div>
+      <div className="research-foundation-controls"><strong>{c.foundationControls}</strong><div>{evaluationControls.map(([value, label]) => <span key={label}><b>{value}</b><small>{label}</small></span>)}</div></div>
+      <p className="research-foundation-boundary">{c.foundationBoundary}</p>
+    </section>
+
     <section className="research-card research-engineering-evidence" aria-labelledby="research-engineering-title">
-      <header><span>01</span><div><h2 id="research-engineering-title">{c.engineering}</h2><p>{c.engineeringNote}</p></div><b>{c.engineeringBadge}</b></header>
+      <header><span>02</span><div><h2 id="research-engineering-title">{c.engineering}</h2><p>{c.engineeringNote}</p></div><b>{c.engineeringBadge}</b></header>
       <ol className="research-engineering-rail">{c.engineeringStages.map((stage, index) => <li className={index < 3 ? 'done' : 'blocked'} key={stage}><i>{index < 3 ? '✓' : '!'}</i><strong>{stage}</strong><small>{index < 3 ? c.verified : c.blockedState}</small></li>)}</ol>
       <div className="research-engineering-stats">
         {[[c.declaredSessions, engineering.session_count], [c.completeSessions, engineering.complete_feature_session_count], [c.declaredPaths, engineering.expected_path_count], [c.computablePaths, engineering.complete_observation_count], [c.excludedPaths, engineering.excluded_path_count]].map(([label, value]) => <article key={label}><span>{label}</span><strong>{numberFormat.format(Number(value))}</strong></article>)}
@@ -168,7 +221,7 @@ export function QuantResearchLabPage(): JSX.Element {
     <section className="research-boundary-grid"><article><span>{c.owner}</span><strong>{c.ownerValue}</strong></article><article><span>{c.boundary}</span><p>{c.boundaryBody}</p></article></section>
 
     <section className="research-card research-model-registry" aria-labelledby="research-model-title">
-      <header><span>02</span><div><h2 id="research-model-title">{c.registry}</h2><p>{c.featured}</p></div></header>
+      <header><span>03</span><div><h2 id="research-model-title">{c.registry}</h2><p>{c.featured}</p></div></header>
       <article className="research-model-summary">
         <div className="research-model-heading"><div><span>{modelRecord.model_id}</span><h3>{modelName}</h3><p>{modelRecord.hypothesis}</p></div><div className="research-model-badges"><b>{c.methodOnly}</b><b>{c.noCandidate}</b><b>{c.notAssessed}</b></div></div>
         <dl className="research-model-facts">
@@ -213,9 +266,9 @@ export function QuantResearchLabPage(): JSX.Element {
       </details>
     </section>
 
-    <section className="research-card research-lifecycle"><header><span>03</span><h2>{c.lifecycle}</h2></header><ol>{c.stages.map((stage, index) => <li className={index === 0 ? 'done' : index === 1 ? 'active' : 'locked'} key={stage}><i>{index + 1}</i><strong>{stage}</strong><small>{index === 0 ? c.current : index === 1 ? c.blocked : c.locked}</small></li>)}</ol></section>
+    <section className="research-card research-lifecycle"><header><span>04</span><h2>{c.lifecycle}</h2></header><ol>{c.stages.map((stage, index) => <li className={index === 0 ? 'done' : index === 1 ? 'active' : 'locked'} key={stage}><i>{index + 1}</i><strong>{stage}</strong><small>{index === 0 ? c.current : index === 1 ? c.blocked : c.locked}</small></li>)}</ol></section>
 
-    <section className="research-card research-results"><header><span>04</span><div><h2>{c.results}</h2><p>{c.resultsNote}</p></div></header><div className="research-result-grid">{c.resultCards.map(([name, state]) => <article key={name}><b aria-hidden="true">—</b><strong>{name}</strong><span>{state}</span></article>)}</div></section>
+    <section className="research-card research-results"><header><span>05</span><div><h2>{c.results}</h2><p>{c.resultsNote}</p></div></header><div className="research-result-grid">{c.resultCards.map(([name, state]) => <article key={name}><b aria-hidden="true">—</b><strong>{name}</strong><span>{state}</span></article>)}</div></section>
 
     <section className="research-boundary-grid research-footer-notes"><article><span>{c.interpret}</span><p>{c.interpretBody}</p></article><article><span>{c.optionBoundary}</span><p>{c.optionBoundaryBody}</p></article></section>
   </main>;

@@ -69,6 +69,21 @@ parameters, lifecycle state, Candidate authority, or access policy. Exact
 formulae, identifiers, reason codes, and canonical source-record values remain
 source-faithful rather than being rewritten as localized model evidence.
 
+## Public research-foundation snapshot
+
+Before the first model record, the Lab may present a compact, dated summary of
+verified research infrastructure already built on Dell. The current summary
+shows five-year price and stable-Identity depth, reconstructed versus
+prospective Membership, first-strategy corporate-action assignments,
+lifecycle-reference coverage, and the point-in-time fundamental engineering
+pilot. Every item must state its limitation next to its count.
+
+The snapshot also shows already frozen evaluation controls such as the finite
+specification budget, chronological split, purge/embargo, declared cost
+scenarios, and single-use holdout. It must not combine heterogeneous evidence
+families into one completion score, imply performance readiness, expose
+private source material, or replace the authoritative dated status documents.
+
 ## Model lifecycle
 
 | State | Meaning | Candidate authority |
