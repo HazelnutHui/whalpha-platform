@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-09-14 — Normalize terminal-payoff source terms
+
+- Accepted ADR 0242 and retained 81 exact numeric source terms for all 61
+  typed common-share consideration cases without using binary floats.
+- Preserved 37 fixed-cash structures, 16 listed-equity ratio cases, seven CVR
+  cases, four holder elections, one unlisted-unit case, and eight separate
+  fractional-share cash adjustments.
+- Combined term and cessation state identifies 30 fixed-cash/timing-ready
+  candidates. The remaining partition is nine timing-conflicted/unsupported,
+  12 listed-security identity/value, six CVR, three election/proration, and one
+  unlisted-unit case.
+- The report has SHA-256
+  `f0b2e805a46e9f2b3e88432d1c5aa6a8782d095ffdda5790cb8894639d2be1a9`
+  and logical fingerprint
+  `00d0651df3da6bcc114a1dbcd270a4a78f41006d741e6fefb1ff2eebabd951fb`.
+  Exact network-disabled replay returned `already_present` with owner-only
+  modes and zero residue.
+- Four focused tests, 21 linked tests, and the complete 2,698-test API suite
+  passed with two unchanged warnings. Stable consideration-issuer IDs,
+  terminal outcomes, `/data`, Historical Coverage, research, Candidate,
+  publication, deployment, and scheduler state remain unchanged.
+
 ## 2026-09-14 — Compare SEC trading cessation with formal EOD presence
 
 - Accepted ADR 0241 and retained 45 before-open, eight after-close, and eight

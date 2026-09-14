@@ -116,12 +116,16 @@ not five-year performance admission.
    conflict, and eight unsupported timing cases across 114 formal sessions.
    Do not count observed-last-EOD evidence as a complete first/last-tradability
    or legal-delisting field.
-16. Normalize terminal payoff from the typed consideration evidence. Map
-   successor and consideration-issuer identities only where stock or mixed
-   payoff semantics require them, without building a global entity master.
-17. Test a commercial source only against the frozen residual field gap that
+16. Preserve the 81 normalized source payoff terms: 37 fixed-cash structures,
+   16 listed-equity ratio cases, seven CVRs, four elections, one unlisted-unit
+   case, and eight separate fractional-share adjustments. No complex value or
+   terminal outcome is implied.
+17. Construct terminal cash evidence for the 30 fixed-cash cases with matched
+   cessation timing. Then map consideration-issuer identities only for the 12
+   matched-timing listed-equity cases, without building a global entity master.
+18. Test a commercial source only against the frozen residual field gap that
    remains after typed SEC review; do not repeat a global vendor scan.
-18. Resolve missing-event neutrality and terminal outcomes without turning a
+19. Resolve missing-event neutrality and remaining terminal outcomes without turning a
    ticker match or unique historical candidate into an assignment.
 
 Massive Starter remains the primary price/reference source but is not the sole

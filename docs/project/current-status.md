@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, all 219 transition documents in private custody, complete form-aware candidates, a 64-case coverage census, point-in-time cover identity, typed transaction events, termination reasons, common-share consideration, source-party topology, and bounded SEC/EOD cessation comparison | 52 stop-boundary matches, one conflict, and eight unsupported timing cases add last-EOD evidence but complete neither sampled date field; the matrix remains 244 / 512, no global counterparty identity or effective listing-terminal fact is proven, and the canonical family is absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete 219-document custody and form-aware candidates, a 64-case coverage census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, and 81 normalized payoff source terms | 30 fixed-cash cases have matched timing for later terminal evidence; 12 matched-timing cases need listed-security identity/value, six need CVR treatment, four need election/unlisted treatment, and nine have timing conflict/insufficiency. The matrix remains 244 / 512; terminal outcomes and the canonical family are absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -137,6 +137,11 @@ Current admission remains rejected:
   tradability, legal delisting effectiveness, both complete sampled date
   fields, terminal outcomes, and the 244 / 512 coverage count remain unchanged;
   and
+- all 61 consideration structures now retain 81 normalized source terms: 37
+  fixed cash, 16 listed-equity ratio cases, seven CVRs, four elections, one
+  unlisted-unit case, and eight separate fractional-share adjustments. Thirty
+  fixed-cash cases also have matched cessation timing, but no terminal outcome
+  has been calculated and complex components remain unvalued; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -171,9 +176,11 @@ project.
 2. Preserve the 61 completed point-in-time security links, transaction dates,
    termination reasons, common-share consideration decisions, and source-party
    topologies plus the 52 matched, one conflicting, and eight unsupported
-   trading-cessation decisions. Normalize terminal payoff next; map successor
-   or consideration-issuer identities only where payoff semantics require
-   them. Keep unresolved timing and LNW/REVG/SAND quarantined.
+   trading-cessation decisions and 81 source-bound payoff terms. Construct
+   terminal cash evidence for only the 30 fixed-cash/matched-timing cases;
+   resolve listed consideration identities only where remaining payoff
+   semantics require them. Keep complex consideration, unresolved timing, and
+   LNW/REVG/SAND quarantined.
 3. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
    boundary; do not infer the two absent sources. Complete only the
    lifecycle/terminal, action/adjustment, cost, and Historical Coverage
