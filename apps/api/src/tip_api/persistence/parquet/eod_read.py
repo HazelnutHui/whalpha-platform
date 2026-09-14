@@ -16,6 +16,7 @@ import pyarrow.parquet as pq
 from tip_api.contracts.market_data.v1 import (
     EodPriceBarV1,
     EodSessionIntegrityV1,
+    InstrumentMasterV1,
     InstrumentType,
     QualityStatus,
 )
@@ -178,6 +179,29 @@ class CanonicalEodReadRepository:
                     item.revision,
                 ),
             )
+        )
+
+    def read_instruments_for_session(
+        self, session_date: date
+    ) -> tuple[InstrumentMasterV1, ...]:
+        """Formally reread the point-in-time Instrument Master bound to a session."""
+
+        root = self._validated_root()
+        manifest, _ = self._read_valid_eod_partition(
+            root, session_date=session_date
+        )
+        identity_as_of_date, _ = self._identity_reference(manifest)
+        rows = self._read_instruments(root, as_of_date=identity_as_of_date)
+        try:
+            instruments = tuple(
+                InstrumentMasterV1.model_validate(row) for row in rows.values()
+            )
+        except Exception as exc:
+            raise EodDatasetUnavailableError(
+                "instrument snapshot did not satisfy its logical contract"
+            ) from exc
+        return tuple(
+            sorted(instruments, key=lambda item: str(item.instrument_id))
         )
 
     def read_history_sessions(self, session_dates: tuple[date, ...]) -> tuple[EodHistorySessionRead, ...]:

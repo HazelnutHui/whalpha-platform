@@ -38,6 +38,10 @@ def test_lists_completed_sessions_and_reads_joined_bars(tmp_path: Path) -> None:
     assert all(item.session_date == SESSION_DATE for item in canonical)
     assert canonical[0].schema_version == "1.0"
 
+    instruments = repository.read_instruments_for_session(SESSION_DATE)
+    assert [item.ticker for item in instruments] == ["TESTA", "TESTB", "TESTC"]
+    assert all(item.as_of_date == SESSION_DATE for item in instruments)
+
 
 def test_unknown_session_raises_not_found(tmp_path: Path) -> None:
     publish_completed_eod_dataset(tmp_path)

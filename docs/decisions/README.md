@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0244](0244-require-transaction-registration-evidence-before-mapping-listed-consideration.md):
+  freezes 12 transaction-registration documents before any listed-payoff
+  security identity can be assigned from party names or ticker candidates.
 - [ADR 0243](0243-retain-fixed-cash-terminal-evidence-without-creating-strategy-returns.md):
   binds deterministic cash-only terms to matched daily cessation boundaries
   without inventing intraday timing, strategy labels, or returns.
