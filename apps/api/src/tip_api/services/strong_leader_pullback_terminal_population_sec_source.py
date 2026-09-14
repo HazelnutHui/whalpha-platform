@@ -217,6 +217,12 @@ def acquire_strong_leader_pullback_terminal_population_sec_source(
         raise StrongLeaderPullbackTerminalPopulationSecSourceError(
             "terminal-population SEC source configuration exceeds the plan"
         )
+    now = clock or (lambda: datetime.now(UTC))
+    operation_started_at = normalize_utc_datetime(now())
+    if operation_started_at < plan.report.planned_at:
+        raise StrongLeaderPullbackTerminalPopulationSecSourceError(
+            "terminal-population SEC source precedes its plan"
+        )
     target = _validated_output_target(output_root, output_custody_root)
     staging = target.parent / f".{target.name}.partial"
     if target.exists() or target.is_symlink():
@@ -243,7 +249,6 @@ def acquire_strong_leader_pullback_terminal_population_sec_source(
     staging.mkdir(mode=0o700)
     limiter = SecRateLimiter(max_requests_per_second=config.max_requests_per_second)
     factory = transport_factory or _default_transport_factory(config)
-    now = clock or (lambda: datetime.now(UTC))
     artifacts: list[TerminalPopulationSecDocumentArtifactV1] = []
     network_count = 0
     try:
@@ -336,6 +341,7 @@ def read_strong_leader_pullback_terminal_population_sec_source(
         or manifest.plan_sha256 != plan.report_sha256
         or manifest.plan_logical_fingerprint != plan.report.logical_fingerprint
         or manifest.planned_request_count != plan.report.planned_request_count
+        or manifest.first_observed_at < plan.report.planned_at
     ):
         raise StrongLeaderPullbackTerminalPopulationSecSourceError(
             "terminal-population SEC source plan binding differs"

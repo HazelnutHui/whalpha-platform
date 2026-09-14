@@ -74,6 +74,7 @@ def _plan_result() -> SimpleNamespace:
             )
         )
     report = SimpleNamespace(
+        planned_at=datetime(2026, 9, 14, 10, tzinfo=UTC),
         maximum_requests_per_second=2,
         maximum_retries_per_request=2,
         planned_request_count=3,
@@ -246,3 +247,31 @@ def test_tampered_document_fails_formal_read(
             output_root=target,
             output_custody_root=custody,
         )
+
+
+def test_acquisition_rejects_a_plan_from_the_future(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    plan = _plan_result()
+    plan.report.planned_at = datetime(2026, 9, 14, 12, tzinfo=UTC)
+    monkeypatch.setattr(
+        service.plan_source,
+        "read_strong_leader_pullback_terminal_population_sec_source_plan",
+        lambda **_: plan,
+    )
+    custody, target = _roots(tmp_path)
+    with pytest.raises(
+        service.StrongLeaderPullbackTerminalPopulationSecSourceError,
+        match="precedes its plan",
+    ):
+        service.acquire_strong_leader_pullback_terminal_population_sec_source(
+            plan_root=Path("/unused/plan"),
+            plan_custody_root=Path("/unused"),
+            output_root=target,
+            output_custody_root=custody,
+            config=_config(),
+            implementation_revision="a" * 40,
+            transport_factory=lambda _: _FakeTransport([]),
+            clock=_clock(),
+        )
+    assert not target.exists()

@@ -10,7 +10,7 @@ import stat
 import zipfile
 from collections import Counter
 from dataclasses import dataclass
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Literal
 from uuid import UUID
@@ -250,7 +250,8 @@ class StrongLeaderPullbackTerminalPopulationSecSourcePlanV1(_FrozenModel):
         )
         relations = Counter(item.relation_to_eod_boundary for item in self.items)
         if (
-            self.range_end < self.range_start
+            self.planned_at < self.source_available_at
+            or self.range_end < self.range_start
             or len(self.cases) != self.newly_in_scope_case_count
             or ids != tuple(sorted(set(ids), key=str))
             or len(self.items) != self.planned_request_count
@@ -324,6 +325,11 @@ def build_strong_leader_pullback_terminal_population_sec_source_plan(
     """Build one immutable, zero-request source plan for new V2 cases."""
 
     with _network_prohibited():
+        planned_at = normalize_utc_datetime(planned_at)
+        if planned_at > datetime.now(UTC):
+            raise StrongLeaderPullbackTerminalPopulationSecSourcePlanError(
+                "terminal-population SEC source-plan time is in the future"
+            )
         if (
             not lifecycle_anchor_dates
             or lifecycle_anchor_dates != tuple(sorted(set(lifecycle_anchor_dates)))

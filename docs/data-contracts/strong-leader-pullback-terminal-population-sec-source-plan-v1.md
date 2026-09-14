@@ -28,7 +28,8 @@ and reads no User-Agent configuration.
 
 The canonical JSON is created exclusively and atomically beneath an owner-only
 `plan=*` directory, then formally reread. Exact replay is idempotent and a
-different replay fails closed.
+different replay fails closed. `planned_at` cannot precede the retained source
+snapshot availability or lie in the future at construction time.
 
 ## Non-authority
 

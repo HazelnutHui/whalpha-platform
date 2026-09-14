@@ -29,7 +29,8 @@ without duplicating the large batch-resume state machine.
    publish atomically only after all three artifacts and the manifest exist.
 5. Formally reread every document and binding after publication. Exact replay
    returns the existing package without a network request; changed or unsafe
-   content fails closed.
+   content fails closed. The first source observation must not precede the
+   frozen plan time.
 6. Do not parse content or create lifecycle facts, terminal outcomes, strategy
    labels, returns, canonical `/data`, Historical Coverage, research admission,
    Candidate, publication, deployment, or scheduler state.

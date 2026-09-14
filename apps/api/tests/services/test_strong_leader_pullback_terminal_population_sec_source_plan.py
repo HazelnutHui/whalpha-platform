@@ -200,7 +200,7 @@ def test_builds_three_item_plan_and_formally_rereads(
         output_root=output / "plan=test",
         output_custody_root=output,
         implementation_revision="a" * 40,
-        planned_at=datetime(2026, 9, 14, 8, tzinfo=UTC),
+        planned_at=datetime(2026, 9, 14, 5, tzinfo=UTC),
     )
 
     assert result.status == "published"
@@ -242,7 +242,7 @@ def test_ambiguous_lifecycle_cik_stops(
             output_root=output / "plan=test",
             output_custody_root=output,
             implementation_revision="a" * 40,
-            planned_at=datetime(2026, 9, 14, 8, tzinfo=UTC),
+            planned_at=datetime(2026, 9, 14, 5, tzinfo=UTC),
         )
 
 
@@ -267,7 +267,7 @@ def test_model_rejects_fingerprint_tampering(
         output_root=output / "plan=test",
         output_custody_root=output,
         implementation_revision="a" * 40,
-        planned_at=datetime(2026, 9, 14, 8, tzinfo=UTC),
+        planned_at=datetime(2026, 9, 14, 5, tzinfo=UTC),
     )
     values = result.report.model_dump(mode="json")
     values["logical_fingerprint"] = "0" * 64

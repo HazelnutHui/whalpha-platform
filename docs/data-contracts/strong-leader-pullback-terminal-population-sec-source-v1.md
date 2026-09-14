@@ -31,7 +31,9 @@ retries and 64 MiB. The protected User-Agent is never persisted or printed.
 The complete small package is built under one exact owner-only staging path.
 Any ordinary failure removes only that staging path. Publication is one atomic
 rename after all planned documents are complete. Exact replay performs formal
-readback with zero network requests; a conflict fails closed.
+readback with zero network requests; a conflict fails closed. Acquisition and
+formal reread both require the first source observation to be on or after the
+bound plan time.
 
 ## Non-authority
 
