@@ -35,7 +35,7 @@ governed data -> registered research -> validation and holdout
 - Stop when a phase reaches its exit criterion; completed execution detail does
   not remain in this roadmap.
 
-## Current phase — Strong-Leader Pullback method and Lab surface
+## Completed phase — Strong-Leader Pullback method and Lab surface
 
 ADR 0266 permits outcome-blind engineering without treating the incomplete
 performance foundation as research-ready. The immutable launch report binds
@@ -50,35 +50,24 @@ The pure signal/eligibility implementation is also complete: existing
 chronology and cohort mechanics now derive executable thresholds from that
 method and stamp its immutable identity on zero-outcome batches.
 
-The outcome-blind diagnostic contract and pure aggregator are complete. They
-bind explicit missing paths and summarize feature geometry, concentration,
-and all 24 trigger/control counts without outcomes. The private reconstructed
-population reader and first real diagnostic report remain to be built.
+The outcome-blind diagnostic reader and report are complete. The fixed
+reconstructed population was independently replayed to identical fingerprints;
+explicit missingness, feature geometry, concentration, and all 24
+trigger/control counts remain outcome-free and parameter-selection-ineligible.
 
-Continue in this order:
-
-1. **Outcome-blind diagnostic population:** read the fixed reconstructed
-   method population, preserve explicit missing paths, and materialize the
-   deterministic report at the
-   `reconstructed_latest_vintage_method_engineering_only` tier.
-2. **Adversarial verification:** test chronology, warm-up, next-open boundary,
-   rank ties, missing paths, split discontinuities, stable-ID collisions,
-   deterministic replay, and zero-label isolation.
-3. **Lab presentation:** show model ownership, hypothesis, mechanism, complete
-   formulas, fixed 24-combination budget, intended evaluation, readiness,
-   blockers, limitations, lifecycle, and reproduction identity. Display no
-   empty or invented performance metric.
-4. **Independent completion review:** prove the method and Lab projection bind
-   the same versioned inputs, every real outcome/selection count is zero, and
-   the formal performance gate remains rejected.
+The Lab record and trilingual page now bind the registered method,
+implementation revision, diagnostic report, computability coverage, explicit
+exclusions, proxy limits, formal blockers, lifecycle, and reproduction
+identity. Performance admission and Candidate authority remain visibly
+separate and locked.
 
 If diagnostics motivate a formula or parameter-grid change, register V2 before
 any outcome is opened. Engineering observations cannot become independent
 validation or holdout evidence.
 
-Exit criterion: the registered method is deterministic and explainable, the
-Lab record can be reproduced from the same source, all zero-label guarantees
-pass, and no Production or Candidate authority changed.
+The exit criterion passed: the registered method is deterministic and
+explainable, the Lab record reproduces the same source identities, all
+zero-label guarantees pass, and no Production or Candidate authority changed.
 
 ## Gated phase — Performance-data admission
 

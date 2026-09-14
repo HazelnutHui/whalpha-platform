@@ -10,13 +10,18 @@ const COPY = {
     statusNote: 'The method is registered and inspectable. No real evaluation, performance claim, or Candidate authority exists.',
     coverage: 'Evidence state', coverageNote: 'Method completeness and model effectiveness are separate questions.',
     coverageBoundary: 'A published method is not a validated strategy, current-market recommendation, or option-return forecast.',
-    readiness: 'Research input gates', readinessItems: [
-      ['Price history length', 'LENGTH MET', 'At least 252 contiguous completed sessions are present. A complete research-return basis is not yet released.', 'met'],
-      ['Point-in-time membership', 'INCOMPLETE', 'The full interval is not published as daily signal-eligible historical membership.', 'blocked'],
-      ['Actions & adjustment', 'PARTIAL', 'Split-only facts and sparse affected-path evidence exist; availability, neutral rows, revisions, and total-return semantics remain incomplete.', 'blocked'],
-      ['Security lifecycle', 'INCOMPLETE', 'Cross-venue inactive, terminal, and successor evidence remains incomplete.', 'blocked'],
-      ['Costs & sealed evaluation', 'LOCKED', 'Observed costs and one-use real holdout evaluation remain unavailable until the mandatory inputs pass.', 'locked'],
+    readiness: 'Evidence ladder', readinessItems: [
+      ['Method specification', 'FROZEN', 'The hypothesis, formulas, 24-combination budget, chronology, costs, and gates are versioned.', 'met'],
+      ['Deterministic implementation', 'REPLAYED', 'One shared feature calculator and fail-closed cohort logic passed full regression and exact replay.', 'met'],
+      ['Reconstructed method coverage', '95.38%', '417,209 of 437,402 declared paths are computable for method diagnostics only.', 'met'],
+      ['Performance-grade admission', 'BLOCKED', 'Membership, lifecycle, adjustments, terminal outcomes, costs, and sealed evaluation are not fully admitted.', 'blocked'],
+      ['Results & Candidate authority', 'LOCKED', 'No return metrics, selected parameters, validated rank, or Candidate activation exists.', 'locked'],
     ],
+    engineering: 'Method-engineering evidence', engineeringNote: 'The same registered method was run twice over the reconstructed Dell population with identical fingerprints. These facts answer whether the method can be computed—not whether it works.', engineeringBadge: 'REPLAYED · OUTCOME BLIND',
+    engineeringStages: ['Method frozen', 'Implementation tested', 'Population replayed', 'Performance admission'], verified: 'Verified', blockedState: 'Blocked',
+    declaredSessions: 'Declared sessions', completeSessions: 'Feature-complete sessions', declaredPaths: 'Declared paths', computablePaths: 'Computable paths', excludedPaths: 'Explicit exclusions',
+    coverageMeaning: '95.38% is method-computability coverage—not win rate, prediction accuracy, or return.',
+    proxyBoundary: 'What remains provisional', proxyBody: 'Membership is reconstructed rather than as operated; split adjustment has unproven neutral rows; Regime is recomputed; and no Stress-state path appears in this interval.',
     owner: 'Research ownership', ownerValue: 'WH Alpha personal quantitative research',
     boundary: 'Authority boundary', boundaryBody: 'The Lab owns research evidence. Stock Candidates may later consume only one to three separately validated and explicitly activated models.',
     registry: 'Registered model', featured: 'Featured research record',
@@ -47,13 +52,18 @@ const COPY = {
     statusNote: '方法已登记并可完整审阅；目前没有真实评估、绩效主张或候选排名权限。',
     coverage: '证据状态', coverageNote: '方法是否完整与模型是否有效，是两个不同问题。',
     coverageBoundary: '公开方法不代表策略已验证，不代表适合当前市场，也不预测期权收益。',
-    readiness: '研究输入门槛', readinessItems: [
-      ['价格历史长度', '长度已满足', '已有至少252个连续完成交易日；完整的研究收益口径尚未发布。', 'met'],
-      ['逐日时点成员资格', '不完整', '完整区间尚未发布为逐日、可用于信号的历史成员资格。', 'blocked'],
-      ['公司行动与复权', '部分完成', '已有拆股事实与稀疏受影响路径证据；可用性、空白行、修订和总回报语义仍不完整。', 'blocked'],
-      ['证券生命周期', '不完整', '跨交易所失活、终止与继承关系证据仍不完整。', 'blocked'],
-      ['成本与封存评估', '锁定', '在强制输入通过前，不启用实测成本和单次真实样本外评估。', 'locked'],
+    readiness: '证据阶梯', readinessItems: [
+      ['方法规范', '已冻结', '假设、公式、24组参数预算、时间切分、成本与门槛均已版本化。', 'met'],
+      ['确定性实现', '已重放', '共享特征计算器与保守拒绝的分组逻辑已通过完整回归和精确重放。', 'met'],
+      ['重建样本方法覆盖', '95.38%', '437,402条声明路径中有417,209条可用于方法诊断，仅限方法工程。', 'met'],
+      ['绩效级数据准入', '仍阻塞', '成员资格、生命周期、复权、终端收益、成本与封存评估尚未全部准入。', 'blocked'],
+      ['结果与候选权限', '锁定', '目前没有收益指标、优选参数、已验证排名或个股候选激活。', 'locked'],
     ],
+    engineering: '方法工程证据', engineeringNote: '同一已登记方法已在戴尔重建样本上完整运行两次，结果指纹完全一致。以下事实只回答“方法能否计算”，不回答“策略是否有效”。', engineeringBadge: '已重放 · 不含结果',
+    engineeringStages: ['方法已冻结', '实现测试通过', '总体重放完成', '绩效数据准入'], verified: '已核验', blockedState: '仍阻塞',
+    declaredSessions: '声明交易日', completeSessions: '特征完整交易日', declaredPaths: '声明路径', computablePaths: '可计算路径', excludedPaths: '明确排除',
+    coverageMeaning: '95.38% 是方法可计算路径覆盖率，不是胜率、预测准确率或收益率。',
+    proxyBoundary: '仍属临时证据的部分', proxyBody: '成员资格是事后重建而非当时实录；拆股复权仍有未证明的中性空白；Regime 为重新计算；该区间没有 Stress 状态路径。',
     owner: '研究归属', ownerValue: 'WH Alpha 个人量化研究',
     boundary: '权限边界', boundaryBody: '实验室负责研究证据；个股候选未来只能消费一至三个分别通过验证并明确激活的模型。',
     registry: '已登记模型', featured: '当前重点研究档案',
@@ -84,13 +94,18 @@ const COPY = {
     statusNote: 'El método está registrado y puede examinarse. No existe una evaluación real, una afirmación de rendimiento ni autoridad sobre Candidatos.',
     coverage: 'Estado de la evidencia', coverageNote: 'La integridad del método y la eficacia del modelo son cuestiones distintas.',
     coverageBoundary: 'Publicar un método no convierte la estrategia en validada, adecuada para el mercado actual ni predictiva de rentabilidades de opciones.',
-    readiness: 'Criterios de admisión de datos', readinessItems: [
-      ['Extensión del historial de precios', 'EXTENSIÓN CUMPLIDA', 'Hay al menos 252 sesiones completadas y consecutivas. Aún no se ha publicado una base completa de rentabilidades para investigación.', 'met'],
-      ['Composición point-in-time', 'INCOMPLETA', 'El intervalo completo aún no está publicado como composición histórica diaria apta para señales.', 'blocked'],
-      ['Acciones corporativas y ajustes', 'PARCIAL', 'Existen hechos de splits y evidencia dispersa de trayectorias afectadas; siguen incompletas la disponibilidad, las filas neutrales, las revisiones y la semántica de rentabilidad total.', 'blocked'],
-      ['Ciclo de vida del valor', 'INCOMPLETO', 'La evidencia de inactividad, terminación y sucesión entre centros de negociación sigue incompleta.', 'blocked'],
-      ['Costes y evaluación sellada', 'BLOQUEADOS', 'Los costes observados y la evaluación real de holdout de un solo uso no estarán disponibles hasta que se cumplan los datos obligatorios.', 'locked'],
+    readiness: 'Escalera de evidencia', readinessItems: [
+      ['Especificación del método', 'CONGELADA', 'La hipótesis, las fórmulas, el presupuesto de 24 combinaciones, la cronología, los costes y los criterios están versionados.', 'met'],
+      ['Implementación determinista', 'REPRODUCIDA', 'El cálculo común de características y la lógica de cohortes conservadora superaron la regresión y la reproducción exacta.', 'met'],
+      ['Cobertura metodológica reconstruida', '95,38 %', 'Son computables 417.209 de 437.402 trayectorias declaradas, exclusivamente para diagnóstico del método.', 'met'],
+      ['Admisión para medir rendimiento', 'BLOQUEADA', 'Composición, ciclo de vida, ajustes, resultados terminales, costes y evaluación sellada aún no están plenamente admitidos.', 'blocked'],
+      ['Resultados y autoridad en Candidatos', 'BLOQUEADOS', 'No hay métricas de rentabilidad, parámetros elegidos, clasificación validada ni activación en Candidatos.', 'locked'],
     ],
+    engineering: 'Evidencia de ingeniería del método', engineeringNote: 'El mismo método registrado se ejecutó dos veces sobre la población reconstruida en Dell y produjo huellas idénticas. Estos datos indican si puede calcularse, no si funciona.', engineeringBadge: 'REPRODUCIDO · SIN RESULTADOS',
+    engineeringStages: ['Método congelado', 'Implementación probada', 'Población reproducida', 'Admisión de rendimiento'], verified: 'Verificado', blockedState: 'Bloqueada',
+    declaredSessions: 'Sesiones declaradas', completeSessions: 'Sesiones con características completas', declaredPaths: 'Trayectorias declaradas', computablePaths: 'Trayectorias computables', excludedPaths: 'Exclusiones explícitas',
+    coverageMeaning: 'El 95,38 % mide cobertura de cálculo del método; no es tasa de acierto, precisión predictiva ni rentabilidad.',
+    proxyBoundary: 'Qué sigue siendo provisional', proxyBody: 'La composición está reconstruida y no registrada tal como se operó; hay filas neutrales de ajustes sin demostrar; el régimen se recalculó; y el intervalo no contiene trayectorias en estado Stress.',
     owner: 'Titularidad de la investigación', ownerValue: 'Investigación cuantitativa propia de WH Alpha',
     boundary: 'Límite de autoridad', boundaryBody: 'El Laboratorio custodia la evidencia de investigación. Candidatos solo podrá consumir en el futuro entre uno y tres modelos validados por separado y activados explícitamente.',
     registry: 'Modelo registrado', featured: 'Registro de investigación destacado',
@@ -128,6 +143,8 @@ export function QuantResearchLabPage(): JSX.Element {
   const c = COPY[locale];
   const modelName = locale === 'zh' ? modelRecord.display_name_zh : modelRecord.display_name;
   const evaluation = modelRecord.evaluation_design;
+  const engineering = modelRecord.method_engineering_evidence;
+  const numberFormat = new Intl.NumberFormat(locale === 'zh' ? 'zh-CN' : locale === 'es' ? 'es-ES' : 'en-US');
 
   return <main className="research-page">
     <section className="research-hero">
@@ -138,10 +155,20 @@ export function QuantResearchLabPage(): JSX.Element {
 
     <section className="research-readiness" aria-labelledby="research-readiness-title"><header><span>00</span><h2 id="research-readiness-title">{c.readiness}</h2></header><div>{c.readinessItems.map(([name, state, body, tone]) => <article className={`research-readiness-${tone}`} key={name}><span>{state}</span><strong>{name}</strong><p>{body}</p></article>)}</div></section>
 
+    <section className="research-card research-engineering-evidence" aria-labelledby="research-engineering-title">
+      <header><span>01</span><div><h2 id="research-engineering-title">{c.engineering}</h2><p>{c.engineeringNote}</p></div><b>{c.engineeringBadge}</b></header>
+      <ol className="research-engineering-rail">{c.engineeringStages.map((stage, index) => <li className={index < 3 ? 'done' : 'blocked'} key={stage}><i>{index < 3 ? '✓' : '!'}</i><strong>{stage}</strong><small>{index < 3 ? c.verified : c.blockedState}</small></li>)}</ol>
+      <div className="research-engineering-stats">
+        {[[c.declaredSessions, engineering.session_count], [c.completeSessions, engineering.complete_feature_session_count], [c.declaredPaths, engineering.expected_path_count], [c.computablePaths, engineering.complete_observation_count], [c.excludedPaths, engineering.excluded_path_count]].map(([label, value]) => <article key={label}><span>{label}</span><strong>{numberFormat.format(Number(value))}</strong></article>)}
+      </div>
+      <p className="research-engineering-meaning"><strong>{locale === 'es' ? '95,38 %' : '95.38%'}</strong>{c.coverageMeaning}</p>
+      <div className="research-engineering-boundary"><strong>{c.proxyBoundary}</strong><p>{c.proxyBody}</p></div>
+    </section>
+
     <section className="research-boundary-grid"><article><span>{c.owner}</span><strong>{c.ownerValue}</strong></article><article><span>{c.boundary}</span><p>{c.boundaryBody}</p></article></section>
 
     <section className="research-card research-model-registry" aria-labelledby="research-model-title">
-      <header><span>01</span><div><h2 id="research-model-title">{c.registry}</h2><p>{c.featured}</p></div></header>
+      <header><span>02</span><div><h2 id="research-model-title">{c.registry}</h2><p>{c.featured}</p></div></header>
       <article className="research-model-summary">
         <div className="research-model-heading"><div><span>{modelRecord.model_id}</span><h3>{modelName}</h3><p>{modelRecord.hypothesis}</p></div><div className="research-model-badges"><b>{c.methodOnly}</b><b>{c.noCandidate}</b><b>{c.notAssessed}</b></div></div>
         <dl className="research-model-facts">
@@ -181,14 +208,14 @@ export function QuantResearchLabPage(): JSX.Element {
         <div className="research-record-section"><h3>{c.gates}</h3><RecordList items={modelRecord.decision_gates} /></div>
         <div className="research-record-section research-record-risk"><h3>{c.failure}</h3><div><article><strong>{c.counter}</strong><RecordList items={modelRecord.counterevidence_requirements} /></article><article><strong>{c.invalidation}</strong><RecordList items={modelRecord.invalidation_conditions} /></article><article><strong>{c.blockers}</strong><RecordList items={modelRecord.blocker_codes} /></article><article><strong>{c.risks}</strong><RecordList items={modelRecord.risk_disclosure_codes} /></article></div></div>
         <div className="research-record-section"><h3>{c.reproduction}</h3><dl className="research-fingerprint-ledger">
-          <div><dt>contract</dt><dd><code>{modelRecord.contract_version}</code></dd></div><div><dt>record</dt><dd><code>{modelRecord.logical_fingerprint}</code></dd></div><div><dt>method contract</dt><dd><code>{modelRecord.source_method_contract_version}</code></dd></div><div><dt>method</dt><dd><code>{modelRecord.source_method_fingerprint}</code></dd></div><div><dt>experiment ID</dt><dd><code>{modelRecord.source_experiment_id}</code></dd></div><div><dt>experiment</dt><dd><code>{modelRecord.source_experiment_fingerprint}</code></dd></div><div><dt>features</dt><dd><code>{modelRecord.input_feature_fingerprint}</code></dd></div><div><dt>evaluation</dt><dd><code>{modelRecord.evaluation_policy_fingerprint}</code></dd></div><div><dt>implementation revision</dt><dd>{modelRecord.implementation_revision ?? modelRecord.implementation_revision_reason}</dd></div><div><dt>result publication</dt><dd>{modelRecord.result_publication_id ?? c.none}</dd></div>
+          <div><dt>contract</dt><dd><code>{modelRecord.contract_version}</code></dd></div><div><dt>record</dt><dd><code>{modelRecord.logical_fingerprint}</code></dd></div><div><dt>method contract</dt><dd><code>{modelRecord.source_method_contract_version}</code></dd></div><div><dt>method</dt><dd><code>{modelRecord.source_method_fingerprint}</code></dd></div><div><dt>diagnostic contract</dt><dd><code>{engineering.report_contract_version}</code></dd></div><div><dt>diagnostic report</dt><dd><code>{engineering.report_logical_fingerprint}</code></dd></div><div><dt>experiment ID</dt><dd><code>{modelRecord.source_experiment_id}</code></dd></div><div><dt>experiment</dt><dd><code>{modelRecord.source_experiment_fingerprint}</code></dd></div><div><dt>features</dt><dd><code>{modelRecord.input_feature_fingerprint}</code></dd></div><div><dt>evaluation</dt><dd><code>{modelRecord.evaluation_policy_fingerprint}</code></dd></div><div><dt>implementation revision</dt><dd>{modelRecord.implementation_revision ?? modelRecord.implementation_revision_reason}</dd></div><div><dt>result publication</dt><dd>{modelRecord.result_publication_id ?? c.none}</dd></div>
         </dl></div>
       </details>
     </section>
 
-    <section className="research-card research-lifecycle"><header><span>02</span><h2>{c.lifecycle}</h2></header><ol>{c.stages.map((stage, index) => <li className={index === 0 ? 'done' : index === 1 ? 'active' : 'locked'} key={stage}><i>{index + 1}</i><strong>{stage}</strong><small>{index === 0 ? c.current : index === 1 ? c.blocked : c.locked}</small></li>)}</ol></section>
+    <section className="research-card research-lifecycle"><header><span>03</span><h2>{c.lifecycle}</h2></header><ol>{c.stages.map((stage, index) => <li className={index === 0 ? 'done' : index === 1 ? 'active' : 'locked'} key={stage}><i>{index + 1}</i><strong>{stage}</strong><small>{index === 0 ? c.current : index === 1 ? c.blocked : c.locked}</small></li>)}</ol></section>
 
-    <section className="research-card research-results"><header><span>03</span><div><h2>{c.results}</h2><p>{c.resultsNote}</p></div></header><div className="research-result-grid">{c.resultCards.map(([name, state]) => <article key={name}><b aria-hidden="true">—</b><strong>{name}</strong><span>{state}</span></article>)}</div></section>
+    <section className="research-card research-results"><header><span>04</span><div><h2>{c.results}</h2><p>{c.resultsNote}</p></div></header><div className="research-result-grid">{c.resultCards.map(([name, state]) => <article key={name}><b aria-hidden="true">—</b><strong>{name}</strong><span>{state}</span></article>)}</div></section>
 
     <section className="research-boundary-grid research-footer-notes"><article><span>{c.interpret}</span><p>{c.interpretBody}</p></article><article><span>{c.optionBoundary}</span><p>{c.optionBoundaryBody}</p></article></section>
   </main>;

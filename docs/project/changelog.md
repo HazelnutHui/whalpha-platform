@@ -18,6 +18,12 @@ and dated [audits](../audits/). Current capability and next work belong in
   finite non-signals remain visible instead of being mislabeled as missing.
 - Independently replayed the full population to the identical report and
   passed all 2,823 backend tests before opening the Lab presentation step.
+- Upgraded the Lab model record to V1.2 and added a trilingual evidence ladder
+  that shows the frozen method, tested implementation, 95.38% reconstructed
+  method-computability coverage, blocked performance admission, and locked
+  result/Candidate authority as separate states.
+- Isolated Lab ratio validation from the process Decimal context after full
+  regression detected flag leakage; the final 2,825-test backend suite passed.
 - Preserved zero outcomes, zero performance metrics, zero parameter-selection
   authority, and zero canonical or Production writes. The formal performance
   gate remains `rejected_data_blocked`.

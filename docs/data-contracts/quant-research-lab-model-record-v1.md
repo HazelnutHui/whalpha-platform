@@ -8,7 +8,7 @@ audited without implying that it works or that Stock Candidates may use it.
 
 The three contract versions are:
 
-- `quant-research-lab-model-record/1.1`;
+- `quant-research-lab-model-record/1.2`;
 - `quant-research-lab-result/1.0`; and
 - `quant-research-lab-catalog/1.0`.
 
@@ -31,6 +31,9 @@ A model record binds:
 - chronology, warm-up, purge, embargo, labels, benchmark, control, inference,
   multiplicity, cost scenarios, holdout custody, and whether a portfolio has
   been defined;
+- optional outcome-blind method-engineering evidence with its report/code
+  bindings, interval, declared and computable paths, explicit exclusions,
+  proxy bases, observed/unobserved Regimes, and limitations;
 - advancement gates, strength, weakness, required counterevidence,
   invalidation, blockers, and risk disclosures; and
 - canonical method, experiment, feature, evaluation, implementation, result,
@@ -44,6 +47,11 @@ portfolio result; fixture evidence cannot advance them.
 `preregistered_data_blocked` requires explicit blockers. A method-only record
 cannot claim a validation date, out-of-sample observations, or a result
 publication.
+
+Method-engineering evidence does not change that rule. Its path coverage is a
+computability measure, never a hit rate, return, performance metric, or reason
+to select a parameter. The disclosure fixes forward outcomes, performance
+metrics, parameter selection, and Candidate authority to false.
 
 ## Result publication
 
@@ -84,9 +92,11 @@ The checked-in browser record is the canonical method projection for:
 - lifecycle: `preregistered_data_blocked`;
 - evidence: `method_only`;
 - model-record fingerprint:
-  `14ff0a8242fda2a7ebe4e0540d114fd4c0b1c821a06c18cf30f9b90070ce31e9`;
+  `ec6f8473d1824526bcdecffbc8044e82201e325e4f2036253378773f13443831`;
 - catalog fingerprint:
-  `74884e9d55d0ee0ac1f3b8c9f47c2978afd640438a5155d60ea4a92e6bf00f09`;
+  `10e22b6dac375df7bea2f3b48130604060fa9aa512654e8838480f08d620adb8`;
+- method-engineering evidence: independently replayed reconstructed proxy,
+  417,209 of 437,402 declared paths computable across 287 sessions;
 - real result publication: none; and
 - active Candidate models: none.
 

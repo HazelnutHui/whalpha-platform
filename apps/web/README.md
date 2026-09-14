@@ -21,6 +21,12 @@ any performance claim. The first viewport keeps account/password sign-in as
 the primary entry, places equal-capability guest access immediately below it,
 and uses a persistent continuation cue to expose the research narrative below.
 
+Inside the Lab, an evidence ladder now separates the frozen method,
+deterministic implementation, replayed reconstructed-population diagnostics,
+formal performance-data admission, and result/Candidate authority. The
+displayed 95.38% is explicitly method-computability coverage, not a hit rate,
+prediction accuracy, or return.
+
 The active Dashboard uses Activation V2 Primary/Secondary Universes. Provider
 security form remains provisional and does not establish issuer structure or
 domicile.

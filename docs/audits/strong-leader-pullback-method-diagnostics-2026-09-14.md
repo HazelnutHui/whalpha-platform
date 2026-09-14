@@ -80,3 +80,21 @@ of the registered logic, exact parameters, method-computability coverage,
 explicit exclusions, and blockers in Quant Research Lab. It does not authorize
 real labels, return metrics, parameter choice, validation, sealed holdout,
 Candidate use, publication of a research result, or deployment.
+
+The Lab model record was then upgraded to
+`quant-research-lab-model-record/1.2`. An independent comparison between the
+checked-in browser record and the owner-only report verified the same method,
+input-feature, report, implementation, interval, and path-count identities.
+The resulting Lab record fingerprint is
+`ec6f8473d1824526bcdecffbc8044e82201e325e4f2036253378773f13443831`.
+It contains zero outcomes, zero performance metrics, zero parameter-selection
+authority, and zero Candidate authority.
+
+The trilingual Lab evidence ladder passed all 126 frontend tests and a clean
+production build. The first full regression exposed that the new coverage-
+ratio validator leaked Decimal status flags into later fingerprint tests. The
+calculation was moved into an isolated Decimal context and a dedicated
+non-pollution regression was added. Sixty direct regression checks and the
+complete 2,825-test backend suite then passed with only the two unchanged
+dependency deprecation warnings. This completes the outcome-blind method-and-
+surface phase without a Snapshot, bundle, deployment, or Production mutation.

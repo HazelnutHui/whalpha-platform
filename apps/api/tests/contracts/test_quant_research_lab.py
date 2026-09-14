@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from copy import deepcopy
+from decimal import Inexact, Rounded, localcontext
 from pathlib import Path
 
 import pytest
@@ -68,6 +69,16 @@ def test_checked_in_web_record_is_the_canonical_method_projection() -> None:
     assert parsed.candidate_eligible is False
     assert parsed.out_of_sample_observation_count == 0
     assert parsed.result_publication_id is None
+    engineering = parsed.method_engineering_evidence
+    assert engineering is not None
+    assert engineering.status == "replayed_reconstructed_proxy"
+    assert engineering.expected_path_count == 437_402
+    assert engineering.complete_observation_count == 417_209
+    assert engineering.complete_observation_rate == "0.9538"
+    assert engineering.unobserved_regime_states == ("Stress",)
+    assert engineering.contains_forward_outcomes is False
+    assert engineering.contains_performance_metrics is False
+    assert engineering.parameter_selection_authorized is False
     method = strong_leader_pullback_method_v1()
     assert parsed.source_method_contract_version == method.contract_version
     assert parsed.source_method_fingerprint == method.logical_fingerprint
@@ -88,6 +99,29 @@ def test_model_record_rejects_formula_drift_without_new_fingerprint() -> None:
 
     with pytest.raises(ValidationError, match="model record fingerprint mismatch"):
         QuantResearchLabModelRecordV1.model_validate(payload)
+
+
+def test_model_record_rejects_method_engineering_evidence_drift() -> None:
+    payload = _record_payload()
+    evidence = deepcopy(payload["method_engineering_evidence"])
+    evidence["complete_observation_count"] = 417_208
+    payload["method_engineering_evidence"] = evidence
+
+    with pytest.raises(
+        ValidationError,
+        match="method-engineering evidence differs",
+    ):
+        QuantResearchLabModelRecordV1.model_validate(payload)
+
+
+def test_method_engineering_ratio_does_not_pollute_decimal_context() -> None:
+    with localcontext() as context:
+        context.clear_flags()
+
+        strong_leader_pullback_lab_model_record_v1()
+
+        assert context.flags[Inexact] is False
+        assert context.flags[Rounded] is False
 
 
 def test_non_active_model_cannot_claim_candidate_eligibility() -> None:

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "contract_version": "quant-research-lab-model-record/1.1",
+  "contract_version": "quant-research-lab-model-record/1.2",
   "model_id": "whalpha.strong-leader-pullback",
   "model_version": "strong-leader-pullback-method/1.0.0",
   "display_name": "Strong-Leader Pullback",
@@ -267,6 +267,45 @@
     "holdout_rule": "single_use_after_validation_gates_pass",
     "portfolio_construction_defined": false
   },
+  "method_engineering_evidence": {
+    "status": "replayed_reconstructed_proxy",
+    "report_contract_version": "strong-leader-pullback-method-diagnostics/1.1",
+    "report_sha256": "8bcd602c64c7a1ab403a9c97bea21c8edb1758b60d46f879cf23b4bf7c015b36",
+    "report_logical_fingerprint": "c082566f283516b9a93d5658832450fb85071a3b59892cb8d922c1f37af34bd8",
+    "implementation_revision": "9879f2e890840487c90a89078eb31f0cbff273c0",
+    "method_fingerprint": "ed3e83b1a3827d1faddea6cb0eedc0471c5e9db854d5577b7faa12e0084186ba",
+    "input_feature_fingerprint": "407d9e1b77b4b60976583f1254fca8a46e94718d84c9d430b094e5a7a025e76d",
+    "first_session": "2025-06-23",
+    "last_session": "2026-08-12",
+    "session_count": 287,
+    "complete_feature_session_count": 254,
+    "expected_path_count": 437402,
+    "complete_observation_count": 417209,
+    "excluded_path_count": 20193,
+    "complete_observation_rate": "0.9538",
+    "known_split_adjustment_applied_path_count": 700,
+    "price_feature_basis": "sparse_known_split_adjustment_proxy_with_unproven_neutral_rows",
+    "market_regime_basis": "recomputed_reconstructed_same_session_proxy",
+    "observed_regime_states": [
+      "Balanced",
+      "Defensive",
+      "Risk-on"
+    ],
+    "unobserved_regime_states": [
+      "Stress"
+    ],
+    "limitation_codes": [
+      "point_in_time_sector_concentration_unavailable",
+      "recomputed_regime_not_as_operated",
+      "reconstructed_membership_not_as_operated",
+      "sparse_adjustment_proxy_not_formal_adjustment_evidence"
+    ],
+    "as_operated": false,
+    "contains_forward_outcomes": false,
+    "contains_performance_metrics": false,
+    "parameter_selection_authorized": false,
+    "candidate_activation_authorized": false
+  },
   "decision_gates": [
     "All 24 registered combinations have complete validation coverage.",
     "Holm-adjusted one-sided family-wise p-value is at most 0.10.",
@@ -310,8 +349,8 @@
   "source_experiment_fingerprint": "1b8752d67615d997f5bfa070c3222a7b036840063c2ccc46411a768265197d6f",
   "input_feature_fingerprint": "407d9e1b77b4b60976583f1254fca8a46e94718d84c9d430b094e5a7a025e76d",
   "evaluation_policy_fingerprint": "982929516dac7f963b1113c871ee63c78f440d39922561c8654cc4165865563a",
-  "implementation_revision": null,
-  "implementation_revision_reason": "The canonical outcome-blind method exists; no real dataset execution or result publication exists.",
+  "implementation_revision": "9879f2e890840487c90a89078eb31f0cbff273c0",
+  "implementation_revision_reason": "The canonical method and reconstructed outcome-blind diagnostics are implemented and replayed; no real outcome or result publication exists.",
   "result_publication_id": null,
-  "logical_fingerprint": "14ff0a8242fda2a7ebe4e0540d114fd4c0b1c821a06c18cf30f9b90070ce31e9"
+  "logical_fingerprint": "ec6f8473d1824526bcdecffbc8044e82201e325e4f2036253378773f13443831"
 }

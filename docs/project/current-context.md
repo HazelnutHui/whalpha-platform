@@ -126,8 +126,11 @@ logical fingerprint:
 The canonical outcome-blind method contract is
 `strong-leader-pullback-method/1.0`; method fingerprint:
 `ed3e83b1a3827d1faddea6cb0eedc0471c5e9db854d5577b7faa12e0084186ba`.
-Its derived Lab record is `quant-research-lab-model-record/1.1`, remains
-method-only and Candidate-ineligible, and carries no real result.
+Its derived Lab record is `quant-research-lab-model-record/1.2`, remains
+method-only and Candidate-ineligible, and carries no real result. It now binds
+the replayed reconstructed method-engineering disclosure and code revision
+`9879f2e890840487c90a89078eb31f0cbff273c0`; record fingerprint:
+`ec6f8473d1824526bcdecffbc8044e82201e325e4f2036253378773f13443831`.
 The pure mechanics contract is `candidate-strategy-research-execution/1.2`;
 each mechanics batch binds the same method and experiment fingerprints and is
 fixed to zero forward outcomes and zero performance authority.

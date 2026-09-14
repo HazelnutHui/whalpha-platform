@@ -18,10 +18,15 @@ describe('Quant Research Lab', () => {
     expect(screen.getByRole('heading', { name: 'Quant Research Lab' })).toBeInTheDocument();
     expect(screen.getByText('DATA BLOCKED')).toBeInTheDocument();
     expect(screen.getByText('METHOD ONLY')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Research input gates' })).toBeInTheDocument();
-    expect(screen.getByText('Price history length').parentElement).toHaveTextContent('LENGTH MET');
-    expect(screen.getByText('Point-in-time membership').parentElement).toHaveTextContent('INCOMPLETE');
-    expect(screen.getByText('Actions & adjustment').parentElement).toHaveTextContent('PARTIAL');
+    expect(screen.getByRole('heading', { name: 'Evidence ladder' })).toBeInTheDocument();
+    expect(screen.getByText('Method specification').parentElement).toHaveTextContent('FROZEN');
+    expect(screen.getByText('Deterministic implementation').parentElement).toHaveTextContent('REPLAYED');
+    expect(screen.getByText('Performance-grade admission').parentElement).toHaveTextContent('BLOCKED');
+    expect(screen.getByRole('heading', { name: 'Method-engineering evidence' })).toBeInTheDocument();
+    expect(screen.getAllByText('95.38%')).toHaveLength(2);
+    expect(screen.getByText('Declared paths').parentElement).toHaveTextContent('437,402');
+    expect(screen.getByText('Computable paths').parentElement).toHaveTextContent('417,209');
+    expect(screen.getByText(/not win rate, prediction accuracy, or return/i)).toBeInTheDocument();
     expect(screen.getByText('Strong-Leader Pullback')).toBeInTheDocument();
     expect(screen.getByText('Not Candidate-eligible')).toBeInTheDocument();
     expect(screen.getByText('No real event study')).toBeInTheDocument();
@@ -30,8 +35,9 @@ describe('Quant Research Lab', () => {
 
     await user.click(screen.getByText(/Inspect complete logic/));
     expect(screen.getByText(/max\(close\[t-20:t-1\]\)/)).toBeInTheDocument();
-    expect(screen.getByText('14ff0a8242fda2a7ebe4e0540d114fd4c0b1c821a06c18cf30f9b90070ce31e9')).toBeInTheDocument();
+    expect(screen.getByText('ec6f8473d1824526bcdecffbc8044e82201e325e4f2036253378773f13443831')).toBeInTheDocument();
     expect(screen.getByText('ed3e83b1a3827d1faddea6cb0eedc0471c5e9db854d5577b7faa12e0084186ba')).toBeInTheDocument();
+    expect(screen.getByText('c082566f283516b9a93d5658832450fb85071a3b59892cb8d922c1f37af34bd8')).toBeInTheDocument();
   });
 
   it('renders the complete research boundary in Chinese', () => {
@@ -40,9 +46,12 @@ describe('Quant Research Lab', () => {
     expect(screen.getByRole('heading', { name: '量化研究实验室' })).toBeInTheDocument();
     expect(screen.getByText('数据尚未达标')).toBeInTheDocument();
     expect(screen.getByText('仅有方法档案')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: '研究输入门槛' })).toBeInTheDocument();
-    expect(screen.getByText('价格历史长度').parentElement).toHaveTextContent('长度已满足');
-    expect(screen.getByText('逐日时点成员资格').parentElement).toHaveTextContent('不完整');
+    expect(screen.getByRole('heading', { name: '证据阶梯' })).toBeInTheDocument();
+    expect(screen.getByText('方法规范').parentElement).toHaveTextContent('已冻结');
+    expect(screen.getByText('确定性实现').parentElement).toHaveTextContent('已重放');
+    expect(screen.getByText('绩效级数据准入').parentElement).toHaveTextContent('仍阻塞');
+    expect(screen.getByRole('heading', { name: '方法工程证据' })).toBeInTheDocument();
+    expect(screen.getByText(/不是胜率、预测准确率或收益率/)).toBeInTheDocument();
     expect(screen.getByText('强势股回撤')).toBeInTheDocument();
     expect(screen.getByText('不可进入个股候选')).toBeInTheDocument();
     expect(screen.getByText(/股票证据不等于期权表现/)).toBeInTheDocument();
@@ -54,8 +63,11 @@ describe('Quant Research Lab', () => {
     expect(screen.getByRole('heading', { name: 'Laboratorio de investigación cuantitativa' })).toBeInTheDocument();
     expect(screen.getByText('DATOS INSUFICIENTES')).toBeInTheDocument();
     expect(screen.getByText('SOLO MÉTODO')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Criterios de admisión de datos' })).toBeInTheDocument();
-    expect(screen.getByText('Composición point-in-time').parentElement).toHaveTextContent('INCOMPLETA');
+    expect(screen.getByRole('heading', { name: 'Escalera de evidencia' })).toBeInTheDocument();
+    expect(screen.getByText('Especificación del método').parentElement).toHaveTextContent('CONGELADA');
+    expect(screen.getByText('Admisión para medir rendimiento').parentElement).toHaveTextContent('BLOQUEADA');
+    expect(screen.getByRole('heading', { name: 'Evidencia de ingeniería del método' })).toBeInTheDocument();
+    expect(screen.getByText(/no es tasa de acierto, precisión predictiva ni rentabilidad/)).toBeInTheDocument();
     expect(screen.getByText('No apto para Candidatos')).toBeInTheDocument();
     expect(screen.getByText(/La evidencia de una acción no es rendimiento de opciones/)).toBeInTheDocument();
   });

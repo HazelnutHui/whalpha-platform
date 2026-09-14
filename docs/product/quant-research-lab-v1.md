@@ -29,8 +29,10 @@ ADR 0192, the Strong-Leader Pullback Method V1 contract, and the Quant Research
 Lab Model Record V1 contract now implement this separation in the repository.
 The method contract is the single source for formulae, data lineage,
 parameters, and evaluation design. The first browser record is its derived,
-method-only, data-blocked, Candidate-ineligible projection. No real result
-publication or active Candidate model exists.
+method-only, data-blocked, Candidate-ineligible projection. It includes the
+independently replayed method-computability disclosure while keeping
+performance admission visibly separate. No real result publication or active
+Candidate model exists.
 
 ## Non-black-box contract
 

@@ -92,8 +92,10 @@ Historical Coverage, costs, and source-time evidence remain visible.
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
 gates, and research-authority flags. The outcome-free input contract and
-checked-in Lab record bind that same method; the former input-feature
-fingerprint is unchanged.
+checked-in Lab record 1.2 bind that same method; the former input-feature
+fingerprint is unchanged. The Lab projection now separates method
+computability from performance admission and binds the replayed diagnostic
+report plus implementation revision without publishing any return metric.
 
 The separate `strong-leader-pullback-method-diagnostics/1.1` contract and pure
 service now reconcile explicit missing paths, feature distributions and ties,
@@ -120,12 +122,13 @@ measured budget breach.
 
 ## Immediate boundary
 
-1. Complete the Lab method/data-readiness presentation and independent
-   zero-authority review.
+1. Treat Strong-Leader Pullback method engineering and its Lab/data-readiness
+   surface as complete; do not reopen it without a named defect or a new
+   preregistered version.
 2. Preserve Baseline V1, reconstructed Membership, and all unresolved evidence
    states without silent inference.
 3. Reconsider lifecycle/action providers only against the frozen acceptance
-   sample; do not wait for one to begin method engineering.
+   sample or define a separately reviewed narrower research cohort.
 4. Execute the real chronological study only after formal performance
    admission, then preserve either validation or failure without retuning V1.
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from datetime import date
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal, InvalidOperation, localcontext
 from enum import StrEnum
 from typing import Literal
 
@@ -21,7 +21,7 @@ from .strong_leader_pullback_method import (
 )
 
 
-LAB_MODEL_RECORD_CONTRACT_VERSION = "quant-research-lab-model-record/1.1"
+LAB_MODEL_RECORD_CONTRACT_VERSION = "quant-research-lab-model-record/1.2"
 LAB_RESULT_PUBLICATION_CONTRACT_VERSION = "quant-research-lab-result/1.0"
 LAB_MODEL_CATALOG_CONTRACT_VERSION = "quant-research-lab-catalog/1.0"
 STRONG_LEADER_PULLBACK_MODEL_ID = STRONG_LEADER_PULLBACK_METHOD_ID
@@ -183,6 +183,71 @@ class LabEvaluationDesignV1(FrozenModel):
         return self
 
 
+class LabMethodEngineeringEvidenceV1(FrozenModel):
+    status: Literal["replayed_reconstructed_proxy"] = (
+        "replayed_reconstructed_proxy"
+    )
+    report_contract_version: Literal[
+        "strong-leader-pullback-method-diagnostics/1.1"
+    ] = "strong-leader-pullback-method-diagnostics/1.1"
+    report_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")
+    report_logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    implementation_revision: str = Field(pattern=r"^[0-9a-f]{40}$")
+    method_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    input_feature_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    first_session: date
+    last_session: date
+    session_count: int = Field(ge=1)
+    complete_feature_session_count: int = Field(ge=0)
+    expected_path_count: int = Field(ge=1)
+    complete_observation_count: int = Field(ge=0)
+    excluded_path_count: int = Field(ge=0)
+    complete_observation_rate: str
+    known_split_adjustment_applied_path_count: int = Field(ge=0)
+    price_feature_basis: Literal[
+        "sparse_known_split_adjustment_proxy_with_unproven_neutral_rows"
+    ]
+    market_regime_basis: Literal[
+        "recomputed_reconstructed_same_session_proxy"
+    ]
+    observed_regime_states: tuple[str, ...]
+    unobserved_regime_states: tuple[str, ...]
+    limitation_codes: tuple[str, ...] = Field(min_length=1)
+    as_operated: Literal[False] = False
+    contains_forward_outcomes: Literal[False] = False
+    contains_performance_metrics: Literal[False] = False
+    parameter_selection_authorized: Literal[False] = False
+    candidate_activation_authorized: Literal[False] = False
+
+    @model_validator(mode="after")
+    def evidence_reconciles(self) -> "LabMethodEngineeringEvidenceV1":
+        with localcontext() as context:
+            context.prec = 50
+            expected_rate = (
+                Decimal(self.complete_observation_count)
+                / Decimal(self.expected_path_count)
+            ).quantize(Decimal("0.0001"))
+        if (
+            self.first_session > self.last_session
+            or self.complete_feature_session_count > self.session_count
+            or self.expected_path_count
+            != self.complete_observation_count + self.excluded_path_count
+            or self.known_split_adjustment_applied_path_count
+            > self.complete_observation_count
+            or self.complete_observation_rate != format(expected_rate, "f")
+            or self.observed_regime_states
+            != tuple(sorted(set(self.observed_regime_states)))
+            or self.unobserved_regime_states
+            != tuple(sorted(set(self.unobserved_regime_states)))
+            or set(self.observed_regime_states) & set(self.unobserved_regime_states)
+            or set(self.observed_regime_states) | set(self.unobserved_regime_states)
+            != {"Balanced", "Defensive", "Risk-on", "Stress"}
+            or self.limitation_codes != tuple(sorted(set(self.limitation_codes)))
+        ):
+            raise ValueError("Lab method-engineering evidence differs")
+        return self
+
+
 class QuantResearchLabModelRecordV1(FrozenModel):
     schema_version: Literal["1.0"] = "1.0"
     contract_version: Literal[LAB_MODEL_RECORD_CONTRACT_VERSION] = (
@@ -224,6 +289,7 @@ class QuantResearchLabModelRecordV1(FrozenModel):
     feature_disclosures: tuple[LabFeatureDisclosureV1, ...] = Field(min_length=1)
     parameter_disclosures: tuple[LabParameterDisclosureV1, ...] = Field(min_length=1)
     evaluation_design: LabEvaluationDesignV1
+    method_engineering_evidence: LabMethodEngineeringEvidenceV1 | None = None
     decision_gates: tuple[str, ...] = Field(min_length=1)
     primary_strength: str
     primary_weakness: str
@@ -286,6 +352,16 @@ class QuantResearchLabModelRecordV1(FrozenModel):
             or self.out_of_sample_observation_count == 0
         ):
             raise ValueError("evaluated Lab model requires a bound result publication")
+        if self.method_engineering_evidence is not None and (
+            self.method_engineering_evidence.method_fingerprint
+            != self.source_method_fingerprint
+            or self.method_engineering_evidence.input_feature_fingerprint
+            != self.input_feature_fingerprint
+            or self.implementation_revision is None
+            or self.method_engineering_evidence.implementation_revision
+            != self.implementation_revision
+        ):
+            raise ValueError("Lab method-engineering evidence binding differs")
         if lab_fingerprint(self) != self.logical_fingerprint:
             raise ValueError("Lab model record fingerprint mismatch")
         return self
@@ -510,6 +586,55 @@ def strong_leader_pullback_lab_model_record_v1() -> QuantResearchLabModelRecordV
         "feature_disclosures": feature_disclosures,
         "parameter_disclosures": parameter_disclosures,
         "evaluation_design": method.evaluation.model_dump(mode="json"),
+        "method_engineering_evidence": {
+            "status": "replayed_reconstructed_proxy",
+            "report_contract_version": (
+                "strong-leader-pullback-method-diagnostics/1.1"
+            ),
+            "report_sha256": (
+                "8bcd602c64c7a1ab403a9c97bea21c8edb1758b60d46f879cf23b4bf7c015b36"
+            ),
+            "report_logical_fingerprint": (
+                "c082566f283516b9a93d5658832450fb85071a3b59892cb8d922c1f37af34bd8"
+            ),
+            "implementation_revision": (
+                "9879f2e890840487c90a89078eb31f0cbff273c0"
+            ),
+            "method_fingerprint": method.logical_fingerprint,
+            "input_feature_fingerprint": method.input_feature_fingerprint,
+            "first_session": date(2025, 6, 23),
+            "last_session": date(2026, 8, 12),
+            "session_count": 287,
+            "complete_feature_session_count": 254,
+            "expected_path_count": 437_402,
+            "complete_observation_count": 417_209,
+            "excluded_path_count": 20_193,
+            "complete_observation_rate": "0.9538",
+            "known_split_adjustment_applied_path_count": 700,
+            "price_feature_basis": (
+                "sparse_known_split_adjustment_proxy_with_unproven_neutral_rows"
+            ),
+            "market_regime_basis": (
+                "recomputed_reconstructed_same_session_proxy"
+            ),
+            "observed_regime_states": (
+                "Balanced",
+                "Defensive",
+                "Risk-on",
+            ),
+            "unobserved_regime_states": ("Stress",),
+            "limitation_codes": (
+                "point_in_time_sector_concentration_unavailable",
+                "recomputed_regime_not_as_operated",
+                "reconstructed_membership_not_as_operated",
+                "sparse_adjustment_proxy_not_formal_adjustment_evidence",
+            ),
+            "as_operated": False,
+            "contains_forward_outcomes": False,
+            "contains_performance_metrics": False,
+            "parameter_selection_authorized": False,
+            "candidate_activation_authorized": False,
+        },
         "decision_gates": method.decision_gate_disclosures,
         "primary_strength": method.primary_strength,
         "primary_weakness": method.primary_weakness,
@@ -537,10 +662,13 @@ def strong_leader_pullback_lab_model_record_v1() -> QuantResearchLabModelRecordV
         "source_experiment_fingerprint": method.source_experiment_fingerprint,
         "input_feature_fingerprint": method.input_feature_fingerprint,
         "evaluation_policy_fingerprint": method.evaluation_policy_fingerprint,
-        "implementation_revision": None,
+        "implementation_revision": (
+            "9879f2e890840487c90a89078eb31f0cbff273c0"
+        ),
         "implementation_revision_reason": (
-            "The canonical outcome-blind method exists; no real dataset execution "
-            "or result publication exists."
+            "The canonical method and reconstructed outcome-blind diagnostics "
+            "are implemented and replayed; no real outcome or result publication "
+            "exists."
         ),
         "result_publication_id": None,
     }
