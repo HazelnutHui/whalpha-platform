@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0249](0249-reuse-hardened-sec-custody-for-the-single-residual-document.md):
+  reuses the bounded SEC artifact and restart-safety mechanics for the one
+  exact document authorized by the residual plan.
 - [ADR 0248](0248-reuse-complementary-sec-evidence-before-requesting-one-residual-registration-document.md):
   reuses complementary retained SEC evidence for two residual identities and
   limits new acquisition to one exact Fifth Third registration document.

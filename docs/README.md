@@ -130,6 +130,9 @@ Stock Candidates.
 - [Strong-Leader Pullback Listed-Consideration Residual Source Plan V1](data-contracts/strong-leader-pullback-listed-consideration-residual-source-plan-v1.md):
   reuses two complementary local SEC evidence pairs and plans only one new
   registration document for the three residual identities.
+- [Strong-Leader Pullback Listed-Consideration Residual Source V1](data-contracts/strong-leader-pullback-listed-consideration-residual-source-v1.md):
+  retains that one exact registration document through the established
+  bounded, restart-safe SEC custody mechanics.
 - [Strong-Leader Pullback SEC Case Coverage Census V1](data-contracts/strong-leader-pullback-sec-case-coverage-census-v1.md):
   measures stable-ID candidate coverage while leaving all field results
   unadjudicated.
@@ -241,6 +244,7 @@ separately approved bounded serving artifacts.
 - [Strong-Leader Pullback Listed-Consideration Adjudication](operations/strong-leader-pullback-listed-consideration-adjudication.md)
 - [Strong-Leader Pullback Listed-Consideration Terminal Evidence](operations/strong-leader-pullback-listed-consideration-terminal-evidence.md)
 - [Strong-Leader Pullback Listed-Consideration Residual Source Plan](operations/strong-leader-pullback-listed-consideration-residual-source-plan.md)
+- [Strong-Leader Pullback Listed-Consideration Residual Source Custody](operations/strong-leader-pullback-listed-consideration-residual-source.md)
 - [Bounded Identity Extension Family Evidence](operations/bounded-identity-extension-family-evidence.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)
