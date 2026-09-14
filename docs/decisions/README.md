@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0257](0257-census-corrected-terminal-sec-content-before-adjudication.md):
+  reuses the original deterministic SEC parser and lexical registry for the
+  corrected-population source package without promoting a marker to a fact.
 - [ADR 0256](0256-retain-corrected-terminal-sec-documents-as-an-atomic-source-package.md):
   retains the three corrected-population SEC documents through a small atomic
   package with exact plan, hash, permission, and replay guarantees.
