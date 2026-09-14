@@ -274,46 +274,31 @@ Important private Dell evidence includes:
   and logical fingerprint is
   `0ff421cbc2a219ff9195e23ee7ff24d9b364646abdc154241d59d34e01334ca3`;
   and
-- the listed-consideration identity adjudication: nine cases match the same
-  transaction, target common security, consideration class, exact exchange
-  ratio, and CIK-to-stable-security chain. IonQ/SkyWater and Boeing/Spirit
-  retain variable formulas without the final exact ratio; the selected Fifth
-  Third 424B3 is a senior-notes offering, not a merger registration source.
-  Those three remain unassigned. This identity layer itself assigns no
-  terminal values. Report SHA-256 is
+- the listed-consideration identity chain: nine cases pass the strict single-
+  registration-document gate and three pass the frozen residual composite
+  gate. The latter combines existing registration and completion disclosures
+  for two cases and uses the exact replacement Fifth Third merger 424B3 for
+  the third. The final result is 12 / 12 without ticker-only assignment. The
+  initial and residual report SHA-256 values are
   `b23dd9fa6e308cf12f2adfead289f0fd967cc73fed93702c264e6bfdf530ed60`
-  and logical fingerprint is
-  `b2f44efe02269331b890300f86389e84c471b578d581b9045a959af3b4d4bb09`;
   and
-- the listed-consideration terminal reference layer: the nine strictly
-  assigned consideration securities have one gross value each using
-  `cash + registered ratio × canonical unadjusted close` on the target's first
-  absent exchange session. All nine price rows are valid revision 1 and retain
-  `adjustment_factors_unverified`; the other three cases remain excluded. No
-  execution price, canonical outcome, strategy label, return, or research
-  admission is claimed. Report SHA-256 is
+  `49976645be6e247f0b1fa92f4b57b734836b99f158dedc8f730d00a57dd22bba`
+  respectively; the final residual logical fingerprint is
+  `36e512b29f2636aaa74b892d0e26815c2009a62261c58f39ca9f99709ba35533`;
+  and
+- the listed-consideration terminal reference layer: all 12 assigned
+  securities have valid revision-1 gross daily values under
+  `cash + ratio × canonical unadjusted close` on the target's first absent
+  session. All retain
+  `adjustment_factors_unverified`; cumulative listed-stock reference coverage
+  is 12 / 12, while execution prices, strategy returns, canonical terminal
+  outcomes, and research admission remain absent. The initial nine-value and
+  residual three-value report SHA-256 values are
   `18e47df490acca529aa3eaebdfaba70c989669ecb83e52a377d6885200913f2c`
-  and logical fingerprint is
-  `a7bb1a87258e08ddb71b9add9ab7936dd2005522640bae124eebf665a1fbf9ef`;
   and
-- the listed-consideration residual source plan: sequences 158 and 184 need no
-  new file because the retained issuer registration and target completion
-  disclosures form complementary evidence candidates. Sequence 174 has one
-  exact replacement Fifth Third 424B3 row frozen from the retained Submissions
-  archive. The plan makes zero requests and grants no identity or terminal-
-  value authority. Report SHA-256 is
-  `77cdb7cd64ec5ff1156dce6ecdf07a9e989a4e4a7780d7631ab1a0c958aefa37`
-  and logical fingerprint is
-  `f6798760bf690f38a9e6e301d5a6ed0516a46ee02cf6a59c48dbab6b89008839`;
-  and
-- the listed-consideration residual source package: the exact Fifth Third
-  merger 424B3 is retained in formally reread owner-only custody with
-  2,440,152 bytes, one request, and zero retries. It contains the `1.8663`
-  ratio and both common-security terms but grants no identity or terminal-
-  value authority. Manifest SHA-256 is
-  `64f07040099f576bbdc71b962de06ccd49ffcec3425088f4da3a908c2d1145b3`
-  and logical fingerprint is
-  `6f399bd4b7af78c53a8179c195298906b5a6ecb6ff7a3d4cfa1fbd3f50a1cfe5`.
+  `7ee02be39f2ad89a8a9e84edf030bc69b04101c6676f09d8b6ca46b174ae6e21`
+  respectively; the final residual logical fingerprint is
+  `88d4a22d607b45a6c0fbc23a0b318ae568dc35c5cd56393a6a796f113ea54168`.
 
 Exact package identities and counts are retained in:
 
@@ -344,6 +329,8 @@ Exact package identities and counts are retained in:
 - [First-strategy listed-consideration terminal evidence audit](../audits/strong-leader-pullback-listed-consideration-terminal-evidence-2026-09-14.md)
 - [First-strategy listed-consideration residual source-plan audit](../audits/strong-leader-pullback-listed-consideration-residual-source-plan-2026-09-14.md)
 - [First-strategy listed-consideration residual source audit](../audits/strong-leader-pullback-listed-consideration-residual-source-2026-09-14.md)
+- [First-strategy listed-consideration residual adjudication audit](../audits/strong-leader-pullback-listed-consideration-residual-adjudication-2026-09-14.md)
+- [First-strategy listed-consideration residual terminal evidence audit](../audits/strong-leader-pullback-listed-consideration-residual-terminal-evidence-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -393,12 +380,11 @@ field. Eighty-one source payoff terms are now normalized without valuing a
 complex component. Thirty fixed-cash cases now retain nominal terminal-value
 evidence after their last observed EOD, but this is not a strategy label or
 return. Twelve exact 424B3 files are retained for the non-election listed-stock
-payoffs and nine candidate consideration identities now pass the strict
-four-element evidence gate. Two formula-only and one wrong-scope cases remain
-unassigned. The nine matched identities now have gross daily reference values,
-and the three residuals have a frozen minimal source plan. The one required
-Fifth Third 424B3 is now retained, so adjudicating the three residual identity
-chains is the next internal gate. LNW, REVG, SAND, CVRs, elections, unlisted
+payoffs. All 12 consideration identities now pass their applicable frozen
+evidence gates and have gross daily reference values; the three former
+residuals were resolved without ticker-only assignment. Rerunning the first-
+strategy research-admission gate is the next internal checkpoint. LNW, REVG,
+SAND, CVRs, elections, unlisted
 units, and
 unsupported timing remain quarantined. A commercial sample remains limited to
 a measured residual after that work. Massive Starter is not the sole lifecycle

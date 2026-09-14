@@ -121,20 +121,15 @@ not five-year performance admission.
    case, and eight separate fractional-share adjustments. No complex value or
    terminal outcome is implied.
 17. Preserve terminal cash evidence for the 30 fixed-cash cases with matched
-   cessation timing. Keep the 12 matched-timing listed-equity cases separate
-   until consideration-security identity is independently proven.
-18. Preserve the completed 12-document 424B3 source package, its nine strict
-   identity assignments, and their nine gross daily reference values. These
-   are not execution prices, strategy labels, returns, or canonical outcomes.
-19. Preserve the completed three-case residual plan: reuse the complementary
-   retained registration and completion disclosures for two cases, and request
-   only one exact earlier Fifth Third 424B3 for the third.
-20. Preserve that one exact Fifth Third file in private, formally reread
-   custody; adjudicate all three residual identity chains next and keep every
-   non-match quarantined.
-21. Test a commercial source only against the frozen residual field gap that
-   remains after typed SEC review; do not repeat a global vendor scan.
-22. Resolve missing-event neutrality and remaining terminal outcomes without
+   cessation timing.
+18. Preserve the completed listed-consideration chain: 12 / 12 timing-ready
+   non-election identities and gross daily reference values now pass their
+   frozen evidence gates. All values retain unverified-adjustment flags and
+   remain non-outcomes.
+19. Rerun first-strategy research admission. Test a commercial source only
+   against the mandatory field gap that remains after this typed SEC review;
+   do not repeat a global vendor scan.
+20. Resolve missing-event neutrality and remaining terminal outcomes without
    turning a ticker match or unique historical candidate into an assignment.
 
 Massive Starter remains the primary price/reference source but is not the sole

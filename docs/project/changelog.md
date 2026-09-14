@@ -1,5 +1,33 @@
 # Changelog
 
+## 2026-09-14 — Complete listed-consideration residual identities and references
+
+- Accepted ADRs 0250 and 0251. All three former residual consideration-
+  security identities passed their frozen composite evidence gates, bringing
+  the listed-consideration identity result to 12 / 12 without ticker-only
+  assignment.
+- IonQ/SkyWater and Boeing/Spirit combine their existing issuer registrations
+  with target completion disclosures that state the final ratios. Fifth Third/
+  Comerica uses the exact replacement merger 424B3 plus its completion
+  disclosure.
+- The residual identity report has SHA-256
+  `49976645be6e247f0b1fa92f4b57b734836b99f158dedc8f730d00a57dd22bba`
+  and logical fingerprint
+  `36e512b29f2636aaa74b892d0e26815c2009a62261c58f39ca9f99709ba35533`.
+- Three valid revision-1 gross daily reference values were then added under the
+  same cash-plus-ratio-times-first-absent-session-close formula. Cumulative
+  listed-consideration reference coverage is 12 / 12, and every value retains
+  `adjustment_factors_unverified`.
+- The residual terminal report has SHA-256
+  `7ee02be39f2ad89a8a9e84edf030bc69b04101c6676f09d8b6ca46b174ae6e21`
+  and logical fingerprint
+  `88d4a22d607b45a6c0fbc23a0b318ae568dc35c5cd56393a6a796f113ea54168`.
+- The complete API suite passed 2,734 tests with two unchanged dependency
+  warnings. Owner-only modes and zero residue were verified. No execution
+  price, canonical
+  terminal outcome, return, research admission, `/data`, Candidate,
+  publication, deployment, or scheduler state changed.
+
 ## 2026-09-14 — Retain the one residual registration source
 
 - Accepted ADR 0249 and reused the hardened SEC custody mechanics for the one
