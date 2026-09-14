@@ -151,6 +151,9 @@ Stock Candidates.
 - [Strong-Leader Pullback Terminal Gap Census V4](data-contracts/strong-leader-pullback-terminal-gap-census-v4.md):
   adds four locally provable daily references while retaining every unresolved
   terminal limitation and keeping research closed.
+- [Strong-Leader Pullback Pre-Research Admission Review V1](data-contracts/strong-leader-pullback-pre-research-admission-review-v1.md):
+  binds daily Universe, action, adjustment, lifecycle, terminal, and coverage
+  evidence into the final outcome-blind gate before first-strategy research.
 - [Strong-Leader Pullback Terminal-Population SEC Source Plan V1](data-contracts/strong-leader-pullback-terminal-population-sec-source-plan-v1.md):
   freezes exact SEC locators for newly in-scope stable-ID cases before any
   external request or fact adjudication.

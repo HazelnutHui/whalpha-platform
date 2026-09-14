@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0265](0265-stop-first-strategy-at-a-transitive-data-admission-gate.md):
+  binds all first-strategy data evidence into one outcome-blind gate and stops
+  case-by-case work when missing source capabilities still block admission.
 - [ADR 0264](0264-extend-terminal-gap-census-with-local-daily-reference-evidence.md):
   closes four locally provable daily-reference gaps while preserving
   unresolved identity, contingent-value, source, and timing cases.

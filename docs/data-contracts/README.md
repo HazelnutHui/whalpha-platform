@@ -33,6 +33,7 @@ panels, and product publications remain separate.
 - [Dashboard Universe Activation V2](dashboard-universe-activation-v2.md)
 - [Historical Research Foundation V1](historical-research-foundation-v1.md)
 - [Strong-Leader Pullback Terminal Gap Census V4](strong-leader-pullback-terminal-gap-census-v4.md)
+- [Strong-Leader Pullback Pre-Research Admission Review V1](strong-leader-pullback-pre-research-admission-review-v1.md)
 - [Five-Year Research Foundation Census V1](five-year-research-foundation-census-v1.md)
 - [Massive Day Aggregates Flat File Package V1](massive-day-aggregates-flat-file-package-v1.md)
 - [FINRA OTC Daily List Source Package V1](finra-otc-daily-list-source-package-v1.md)
