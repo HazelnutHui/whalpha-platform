@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0264](0264-extend-terminal-gap-census-with-local-daily-reference-evidence.md):
+  closes five locally provable daily-reference gaps while preserving
+  unresolved identity, contingent-value, source, and timing cases.
 - [ADR 0263](0263-extend-terminal-gap-census-with-corrected-listed-reference.md):
   preserves V2 and replaces only the SCS gap decision after strict HNI
   reference evidence, then recomputes the complete corrected worklist.
