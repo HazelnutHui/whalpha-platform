@@ -142,6 +142,9 @@ Stock Candidates.
 - [Strong-Leader Pullback Terminal Boundary Census V1](data-contracts/strong-leader-pullback-terminal-boundary-census-v1.md):
   separates Instrument Master observation dates from canonical EOD presence
   before terminal-gap counts can be used for research planning.
+- [Strong-Leader Pullback Terminal Gap Census V2](data-contracts/strong-leader-pullback-terminal-gap-census-v2.md):
+  preserves prior evidence states while rebuilding the terminal worklist on
+  corrected EOD-boundary counts and stable-ID source lineage.
 - [Strong-Leader Pullback Terminal Gap Census V1](data-contracts/strong-leader-pullback-terminal-gap-census-v1.md):
   preserves the original identity-boundary result; ADR 0253 requires a
   versioned EOD-boundary successor before its counts are used again.

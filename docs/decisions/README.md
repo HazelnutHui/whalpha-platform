@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0254](0254-rebuild-terminal-gaps-on-the-corrected-eod-population.md):
+  preserves all prior evidence decisions while rebuilding terminal impact on
+  the corrected EOD population and explicitly admitting newly found cases to
+  source review.
 - [ADR 0253](0253-separate-identity-observation-from-eod-terminal-boundaries.md):
   preserves the original source-priority census but requires terminal-gap
   paths to be recalculated from canonical stable-ID EOD presence rather than
