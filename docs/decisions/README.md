@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0250](0250-require-a-complete-composite-chain-for-residual-listed-consideration-identity.md):
+  assigns a residual listed consideration security only when the frozen
+  registration, completion, and stable-identity chain all agree.
 - [ADR 0249](0249-reuse-hardened-sec-custody-for-the-single-residual-document.md):
   reuses the bounded SEC artifact and restart-safety mechanics for the one
   exact document authorized by the residual plan.
