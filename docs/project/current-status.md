@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete 219-document custody and form-aware candidates, a 64-case coverage census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash terminal observations, and 12 / 12 source-bound listed-consideration identities with gross daily reference values | Six cases need CVR treatment, four need election/unlisted treatment, and nine have timing conflict/insufficiency. All 12 listed-stock values retain unverified-adjustment flags and are not execution prices or returns. The matrix remains 244 / 512; strategy outcome labels, canonical terminal outcomes, and the canonical family are absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete 219-document custody and form-aware candidates, a 64-case coverage census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash and 12 listed-consideration daily reference values, plus a complete 64-security terminal-gap census | 42 securities have reference evidence; 22 remain: nine timing, six CVR, three election/proration, one unlisted-unit/election, and three exceptional primary-source cases. The 42 references cover 162 / 252 five-session crossing paths but are not outcomes. The matrix remains 244 / 512; canonical lifecycle, strategy labels, terminal outcomes, and Historical Coverage are absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -161,6 +161,11 @@ Current admission remains rejected:
   values on the targets' first absent sessions. All retain
   `adjustment_factors_unverified`; none is an execution price, strategy return,
   or canonical terminal outcome; and
+- the terminal-gap census accounts for all 64 five-session lifecycle-crossing
+  securities and all 252 crossing paths. Forty-two securities / 162 paths have
+  reference evidence; 22 securities / 90 paths remain unresolved. The next
+  evidence order is nine cessation-timing cases, three exceptional source
+  cases, then CVRs, elections/proration, and the unlisted unit; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -200,13 +205,17 @@ project.
    listed-consideration identity assignments and gross daily reference values.
    Keep any non-match, complex
    consideration, unresolved timing, and LNW/REVG/SAND quarantined.
-3. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
+3. Use the terminal-gap census as the bounded lifecycle worklist: adjudicate
+   the nine timing cases and three exceptional primary-source cases before
+   complex payoff valuation. Do not interpret a reference value as an outcome.
+4. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
    boundary; do not infer the two absent sources. Complete only the
    lifecycle/terminal, action/adjustment, cost, and Historical Coverage
    evidence required by the first strategy.
-4. Rerun research admission only after a mandatory family changes. If the gate
+5. Rerun research admission only after a versioned coverage census can consume
+   admissible mandatory families. If the gate
    still fails, retain rejection without opening outcomes.
-5. Run the registered chronological study only after admission; then preserve
+6. Run the registered chronological study only after admission; then preserve
    either the validated result or the failure.
 
 Do not tune Baseline V1, project current Membership or taxonomy backward,

@@ -298,7 +298,16 @@ Important private Dell evidence includes:
   and
   `7ee02be39f2ad89a8a9e84edf030bc69b04101c6676f09d8b6ca46b174ae6e21`
   respectively; the final residual logical fingerprint is
-  `88d4a22d607b45a6c0fbc23a0b318ae568dc35c5cd56393a6a796f113ea54168`.
+  `88d4a22d607b45a6c0fbc23a0b318ae568dc35c5cd56393a6a796f113ea54168`;
+  and
+- the first-strategy terminal-gap census: all 64 five-session lifecycle-
+  crossing securities are retained. Forty-two have gross daily reference-
+  value evidence and 22 remain unresolved; the corresponding five-session
+  path split is 162 documented versus 90 unresolved out of 252. This is not
+  terminal-outcome or admission authority. Report SHA-256 is
+  `004598ae1d3ee5f93500e2372770ffb82c0c7138230642e37306552e776ad06f`
+  and logical fingerprint is
+  `148d8822d5b304b2aab9a481642a70fd905bcb16af17f67ec051a3d447d65ace`.
 
 Exact package identities and counts are retained in:
 
@@ -331,6 +340,7 @@ Exact package identities and counts are retained in:
 - [First-strategy listed-consideration residual source audit](../audits/strong-leader-pullback-listed-consideration-residual-source-2026-09-14.md)
 - [First-strategy listed-consideration residual adjudication audit](../audits/strong-leader-pullback-listed-consideration-residual-adjudication-2026-09-14.md)
 - [First-strategy listed-consideration residual terminal evidence audit](../audits/strong-leader-pullback-listed-consideration-residual-terminal-evidence-2026-09-14.md)
+- [First-strategy terminal-gap census audit](../audits/strong-leader-pullback-terminal-gap-census-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -382,9 +392,10 @@ evidence after their last observed EOD, but this is not a strategy label or
 return. Twelve exact 424B3 files are retained for the non-election listed-stock
 payoffs. All 12 consideration identities now pass their applicable frozen
 evidence gates and have gross daily reference values; the three former
-residuals were resolved without ticker-only assignment. Rerunning the first-
-strategy research-admission gate is the next internal checkpoint. LNW, REVG,
-SAND, CVRs, elections, unlisted
+residuals were resolved without ticker-only assignment. The terminal-gap
+census now measures 42 reference-documented and 22 unresolved lifecycle-
+crossing securities. The next bounded work is the nine timing cases and three
+exceptional primary-source cases. LNW, REVG, SAND, CVRs, elections, unlisted
 units, and
 unsupported timing remain quarantined. A commercial sample remains limited to
 a measured residual after that work. Massive Starter is not the sole lifecycle

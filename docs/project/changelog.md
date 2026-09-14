@@ -1,5 +1,29 @@
 # Changelog
 
+## 2026-09-14 — Measure the remaining first-strategy terminal gaps
+
+- Accepted ADR 0252 and added a network-disabled, outcome-blind terminal-gap
+  census that cross-reads the complete 64-security lifecycle population and
+  every current terminal reference layer.
+- Forty-two securities now have daily gross reference-value evidence and 22
+  remain unresolved. At the 1 / 3 / 5-session horizons, documented reference
+  paths total 4 / 86 / 162 and remaining gaps total 6 / 49 / 90.
+- The remaining work is nine cessation-timing cases, three exceptional primary-
+  source cases, six CVRs, three holder-election/proration cases, and one
+  unlisted-unit/election case. This order is evidence dependency, not a
+  strategy ranking.
+- The 45,386-byte report has SHA-256
+  `004598ae1d3ee5f93500e2372770ffb82c0c7138230642e37306552e776ad06f`
+  and logical fingerprint
+  `148d8822d5b304b2aab9a481642a70fd905bcb16af17f67ec051a3d447d65ace`.
+  Exact replay returned `already_present` with owner-only modes, zero network
+  requests, and no residue.
+- Six focused tests, a combined 29-test linked suite, and the complete 2,740-
+  test API suite passed with two unchanged dependency warnings. No lifecycle
+  fact, terminal outcome, strategy result,
+  `/data`, Historical Coverage, research admission, Candidate, publication,
+  deployment, or scheduler state changed.
+
 ## 2026-09-14 — Complete listed-consideration residual identities and references
 
 - Accepted ADRs 0250 and 0251. All three former residual consideration-
