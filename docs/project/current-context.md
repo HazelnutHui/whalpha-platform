@@ -363,7 +363,16 @@ Important private Dell evidence includes:
   and logical fingerprint
   `773ba35192f1d722412c1e1bea2fc98c8988722335f664eb2b5dcf9656054698`.
   Cessation, effective delisting, election/proration, terminal value, outcome,
-  and research authority remain absent.
+  and research authority remain absent; and
+- the corrected-population SCS trading-cessation adjudication: the 8-K states
+  that trading halted before the 2025-12-10 open, while stable-ID canonical EOD
+  presence ends on 2025-12-09 and is absent on the next exchange session. The
+  matched report has SHA-256
+  `8a94a697249735e05d0a861b4e8ad62dac50f1a7218d5fb75f841c339a263048`
+  and logical fingerprint
+  `342bbafdcf797efd3ef13eae0ab4b96b2d7c25a5d6d4c98ac1c518098ba299eb`.
+  This is last-EOD-observation evidence, not legal delisting or terminal-value
+  authority.
 
 Exact package identities and counts are retained in:
 
@@ -403,6 +412,7 @@ Exact package identities and counts are retained in:
 - [First-strategy terminal-population SEC content-census audit](../audits/strong-leader-pullback-terminal-population-sec-content-census-2026-09-14.md)
 - [First-strategy terminal-population SEC field-candidate audit](../audits/strong-leader-pullback-terminal-population-sec-field-candidates-2026-09-14.md)
 - [First-strategy terminal-population SEC core-adjudication audit](../audits/strong-leader-pullback-terminal-population-sec-core-adjudication-2026-09-14.md)
+- [First-strategy terminal-population trading-cessation audit](../audits/strong-leader-pullback-terminal-population-trading-cessation-adjudication-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)

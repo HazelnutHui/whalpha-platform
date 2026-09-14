@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-14 — Match corrected-population trading cessation
+
+- Accepted ADR 0260 and independently selected the realized SCS Item 3.01
+  statement that trading halted before the 2025-12-10 open.
+- Formal stable-ID reads found SCS present on 2025-12-08 and 2025-12-09 and
+  absent on 2025-12-10, matching 2025-12-09 as the last retained EOD
+  observation.
+- The report has SHA-256
+  `8a94a697249735e05d0a861b4e8ad62dac50f1a7218d5fb75f841c339a263048`
+  and logical fingerprint
+  `342bbafdcf797efd3ef13eae0ab4b96b2d7c25a5d6d4c98ac1c518098ba299eb`.
+  Exact replay returned `already_present`; modes are `0700/0400` and no
+  symlink, partial, or staging residue exists.
+- Five focused tests, eleven linked tests, and the complete 2,770-test API
+  suite passed with two unchanged dependency warnings. Legal delisting,
+  holder-election/proration, terminal value, outcome, research admission,
+  `/data`, Candidate, publication, deployment, and scheduler state remain
+  unchanged.
+
 ## 2026-09-14 — Adjudicate corrected-population SEC core evidence
 
 - Accepted ADR 0259 and independently applied the established point-in-time

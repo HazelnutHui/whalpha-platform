@@ -134,10 +134,11 @@ not five-year performance admission.
    chronology; the earlier V1 clock is superseded and grants no authority.
 21. Preserve complete SCS source custody: all three planned SEC primary
    documents formally reread with owner-only modes and zero residual staging.
-22. Preserve the completed SCS content census, form-aware candidates, and core
-   identity/event/reason/consideration adjudication. Next resolve cessation and
-   the holder-election/proration terminal policy without borrowing authority
-   from the historical 64-case sample.
+22. Preserve the completed SCS content census, form-aware candidates, core
+   identity/event/reason/consideration adjudication, and independently matched
+   daily cessation boundary. Next resolve the holder-election/proration
+   terminal policy without borrowing authority from the historical 64-case
+   sample or silently choosing an election.
 23. Adjudicate the nine cessation-timing cases and three legacy exceptional
    primary-source cases before complex valuation. Test a commercial source
    only against a measured remaining field; do not repeat a global vendor scan.
