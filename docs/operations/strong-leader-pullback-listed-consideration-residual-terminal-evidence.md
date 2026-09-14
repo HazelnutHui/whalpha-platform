@@ -18,7 +18,7 @@ scripts/admin/build-strong-leader-pullback-listed-consideration-residual-termina
   --cessation-custody-root /absolute/cessation \
   --payoff-terms /absolute/payoff/adjudication=... \
   --payoff-terms-custody-root /absolute/payoff \
-  --canonical-eod-root /data/market-data \
+  --canonical-eod-root /data/trading-intelligence-platform \
   --output-root /absolute/output/adjudication=... \
   --output-custody-root /absolute/output \
   --evaluated-at 2026-09-14T07:00:00Z \
