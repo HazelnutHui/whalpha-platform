@@ -51,12 +51,13 @@ price-acquisition gap.
 | EOD price | 1,255 contiguous XNYS sessions | depth complete; whole target not finally admitted |
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
-| Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete original 219-document custody and form-aware candidates, a 64-case source census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash and 13 listed-consideration daily reference cases, a formal identity/EOD boundary correction, and terminal-gap census V3 | corrected EOD scope is 65 securities / 302 five-session paths. Forty-three securities / 197 paths have reference evidence; 22 / 105 remain. SCS now has a strict HNI stable-ID assignment and three default-plus-sensitivity values. References are not outcomes. The historical matrix remains 244 / 512; canonical lifecycle, strategy labels, terminal outcomes, and Historical Coverage are absent |
+| Corporate actions | 4,643 first-strategy exposures; 4,623 exact event-date assignments and 20 unassigned | one unassigned split-like exposure plus 387 unexplained severe price breaks keep absence neutrality unproven |
+| Adjustment | 101,321 sparse split-only rows; 98,291 clear and 3,030 quarantined | affected rows only; neutral omitted rows and total-return coverage are unauthorized |
+| Lifecycle/terminal outcomes | typed SEC event chain, 81 payoff terms, SCS/HNI evidence, and terminal-gap census V4 | 47 of 65 securities / 214 of 302 five-session paths have references; 18 / 88 remain. References are not outcomes; canonical lifecycle and true labels are absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
-| Historical Coverage | several family-evidence manifests | final transitive admission absent |
+| Historical Coverage | immutable transitive pre-research review V2 | `rejected_data_blocked`; no research-ready manifest published |
 | Evaluation/holdout | fixture-tested mechanics | no real chronological dataset or sealed real holdout |
 
 The corrected 1,234-session EOD edition and matching Identity evidence are
@@ -164,11 +165,11 @@ Current admission remains rejected:
 - the terminal boundary census separates Instrument Master observation from
   stable-ID EOD presence. It changes at least one impact count for 55 of 89
   lifecycle rows and establishes 65 securities / 302 five-session paths as
-  the corrected scope. Terminal-gap census V3 preserves V2 and changes only
-  SCS: 43 securities / 197 paths have reference evidence, while 22 / 105
-  remain unresolved. The next evidence order is nine cessation-timing cases,
-  three legacy exceptional cases, then CVRs, elections/proration, and the
-  unlisted unit; and
+  the corrected scope. Terminal-gap census V4 preserves all earlier vintages,
+  adds four locally proven references, and records 47 securities / 214 paths
+  as documented while 18 / 88 remain quarantined. The final transitive review
+  rejects research admission; further manual case work is stopped until a
+  targeted source changes a mandatory input; and
 - the new SCS case now has a stable-ID-bound V2 source plan and complete raw
   custody for exactly three primary documents: one Form 25-NSE, one structured
   8-K, and one Form 15-12G. All three files formally reread with a valid plan-
@@ -234,26 +235,17 @@ project.
 1. Keep the completed SEC projection census as a measured data rejection; do
    not build security features unless newly admitted historical knowledge-time
    evidence or a registered strategy need changes that gate.
-2. Preserve the 61 completed point-in-time security links, transaction dates,
-   termination reasons, common-share consideration decisions, and source-party
-   topologies plus the 52 matched, one conflicting, and eight unsupported
-   trading-cessation decisions, 81 source-bound payoff terms, and 30 nominal
-   fixed-cash terminal observations and all 12 timing-ready non-election
-   listed-consideration identity assignments and gross daily reference values.
-   Keep any non-match, complex
-   consideration, unresolved timing, and LNW/REVG/SAND quarantined.
-3. Bind all future terminal work to terminal-gap census V3. Preserve the
-   completed SCS source, core, cessation, payoff policy, strict HNI assignment,
-   and three gross references without interpreting any reference as an
-   outcome. Next process the nine cessation-timing and three legacy exception
-   cases before complex CVR, election/proration, and unlisted-unit policies.
+2. Preserve terminal-gap census V4 at 47 / 65 documented securities and keep
+   the 18 unresolved identity, timing, source, CVR, election/proration, and
+   unlisted-unit cases quarantined. A reference is not an outcome.
+3. Preserve the final pre-research gate V2 as `rejected_data_blocked`; do not
+   repeat manual case work or reopen outcomes against unchanged evidence.
 4. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
-   boundary; do not infer the two absent sources. Complete only the
-   lifecycle/terminal, action/adjustment, cost, and Historical Coverage
-   evidence required by the first strategy.
-5. Rerun research admission only after a versioned coverage census can consume
-   admissible mandatory families. If the gate
-   still fails, retain rejection without opening outcomes.
+   boundary; do not infer the two absent sources. Preserve its reconstructed,
+   development-only status until independently stronger source evidence exists.
+5. Evaluate a targeted source only for the measured point-in-time lifecycle,
+   complete corporate-action/adjustment, and terminal-consideration fields.
+   Rerun the versioned gate only after a mandatory input materially changes.
 6. Run the registered chronological study only after admission; then preserve
    either the validated result or the failure.
 

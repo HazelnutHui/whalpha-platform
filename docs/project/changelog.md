@@ -1,5 +1,26 @@
 # Changelog
 
+## 2026-09-14 — Stop the first strategy at the formal data gate
+
+- Added four strictly local terminal references for RNAM, TERN, PLYM, and FL.
+  Terminal-gap census V4 now documents 47 of 65 securities and 214 of 302
+  five-session paths; 18 securities and 88 paths remain quarantined. THR was
+  explicitly retained because its default mixed election is prorated.
+- Built the final outcome-blind pre-research admission review across all 287
+  fixed strategy sessions, 437,402 paths, daily reconstructed Membership,
+  4,643 action exposures, the canonical sparse adjustment ledger, the fresh
+  387-discontinuity diagnostic, 89 lifecycle exposures, and terminal V4.
+- The formal decision is `rejected_data_blocked`: zero complete Primary
+  cross-sections, no Historical Coverage publication, true return label,
+  strategy run, Candidate change, `/data` write, network request, deployment,
+  or scheduler change.
+- The final review report SHA-256 is
+  `0c433cd4d8f97c5e6b9df0af5cfaf4533f83160ab07d88ed7c5774dbd74d5bb1`;
+  its logical fingerprint is
+  `b58a3671451ba89332b0fe437ecdea48389156ffac59bd1cc26266700c81a149`.
+  Twenty-one related tests passed. Repetitive manual case work now stops until
+  a targeted point-in-time lifecycle/action source changes a mandatory input.
+
 ## 2026-09-14 — Bind SCS/HNI reference and extend terminal gaps
 
 - Strictly bound HNI common stock through SCS source language, official SEC

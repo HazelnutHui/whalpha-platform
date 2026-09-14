@@ -126,10 +126,10 @@ not five-year performance admission.
    non-election identities and gross daily reference values now pass their
    frozen evidence gates. All values retain unverified-adjustment flags and
    remain non-outcomes.
-19. Preserve the corrected EOD-boundary worklist and its SCS extension:
-   terminal-gap census V3 has 65 securities / 302 five-session paths.
-   Forty-three securities / 197 paths have daily reference evidence and 22 /
-   105 remain unresolved. References are not outcomes.
+19. Preserve the corrected EOD-boundary worklist and its local-evidence
+   extension: terminal-gap census V4 has 65 securities / 302 five-session
+   paths. Forty-seven securities / 214 paths have daily reference evidence and
+   18 / 88 remain unresolved. References are not outcomes.
 20. Preserve the authoritative SCS plan V2 and its valid plan-before-source
    chronology; the earlier V1 clock is superseded and grants no authority.
 21. Preserve complete SCS source custody: all three planned SEC primary
@@ -138,15 +138,13 @@ not five-year performance admission.
    identity/event/reason/consideration adjudication, independently matched
    daily cessation boundary, default-plus-sensitivity election policy, strict
    HNI stable-security assignment, and all three gross daily references.
-23. Adjudicate the nine cessation-timing cases and three legacy exceptional
-   primary-source cases before complex valuation. Test a commercial source
-   only against a measured remaining field; do not repeat a global vendor scan.
-24. Then address six CVR, three holder-election/proration, and one unlisted-
-   unit/election case under separate payoff policies.
-25. Resolve missing-event neutrality and remaining terminal outcomes without
-   turning a ticker match or unique historical candidate into an assignment.
-26. Version and rerun the outcome-blind coverage census before any new research
-   admission decision; do not repeat the unchanged 2026-09-10 rejection.
+23. Preserve the four additional exact local references for RNAM, TERN, PLYM,
+   and FL. Keep prorated THR and unresolved SNV quarantined.
+24. Stop repetitive manual case adjudication against unchanged source
+   capability. Evaluate a targeted lifecycle/action source against the exact
+   18-case terminal and missing-neutrality fields.
+25. Version and rerun the outcome-blind admission gate only after a mandatory
+   evidence input materially changes.
 
 Massive Starter remains the primary price/reference source but is not the sole
 lifecycle authority. SEC is an official document locator and issuer-event
@@ -169,8 +167,9 @@ governed evidence or explicit quarantine with measured admission impact.
    is selected.
 3. Calibrate costs from observed evidence when available; until then keep
    scenario mechanics visibly provisional.
-4. Publish final Historical Coverage only when every mandatory family for the
-   declared cohort passes formal reread.
+4. Preserve the completed V2 transitive admission review and its current
+   `rejected_data_blocked` result. Do not publish a Historical Coverage
+   manifest while any mandatory family is unready.
 5. Rerun the complete-session admission decision only after a mandatory input
    changes.
 

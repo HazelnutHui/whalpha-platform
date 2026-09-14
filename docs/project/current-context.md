@@ -70,12 +70,12 @@ deeper.
 | Identity | all 1,255 EOD sessions plus one Identity-only 2021-09-10 partition; latest 10,000 instruments / 13,176 provider identities |
 | Identity source | 1,253 target sessions; 2026-08-13 and 2026-08-19 remain explicitly unbound |
 | Membership | three signal-eligible sessions / 59,892 decisions; 1,250 physically separate latest-vintage research-only sessions / 21,263,558 decisions; combined 1,253 / 1,255 sessions |
-| Corporate actions | recent canonical observation 70,099 rows; canonical action is bounded split-only; complete five-year split/dividend packages and resolution work remain private evidence, not canonical completion |
-| Adjustment | sparse split-only outcome reconciliation; neutral omitted rows and total-return coverage are not proven |
-| Lifecycle | canonical five-year lifecycle and terminal outcomes absent |
+| Corporate actions | 4,643 first-strategy exposures: 4,623 exact event-date assignments and 20 unassigned; the sole unassigned split-like exposure and 387 unexplained severe price breaks keep absence neutrality unproven |
+| Adjustment | 101,321 sparse split-only rows: 98,291 clear and 3,030 quarantined; neutral omitted rows and total-return coverage are not proven |
+| Lifecycle | 89 scoped instruments; 47 of 65 terminal cases have daily reference evidence, but 18 remain and canonical terminal outcomes are absent |
 | Classification | historical point-in-time research classification absent |
 | Fundamentals | cutoff-aware SEC issuer selection and aggregate security-projection census complete for four registered queries; only four sessions have strict as-operated next-open projection evidence, while reconstructed history remains development-only |
-| Historical Coverage | partial family evidence exists; final transitive publication absent |
+| Historical Coverage | final pre-research gate V2 is `rejected_data_blocked`; no research-ready manifest was published |
 
 The canonical inventory is 21,025 files / 7,397,444,417 bytes with zero
 symlinks and zero publication residue. Its last full inventory fingerprint is
@@ -397,7 +397,20 @@ Important private Dell evidence includes:
   with logical fingerprint
   `d94b5f22397df2b1fe49ac2c2c12e5f04d8617b076c8b95fb2e8127c886aa57e`.
   Actual election, terminal outcome, strategy label, and research authority
-  remain absent.
+  remain absent; and
+- terminal-gap census V4 and the final pre-research admission review: four
+  additional locally provable references raise coverage to 47 of 65
+  securities and 214 of 302 five-session paths. Eighteen securities and 88
+  paths remain quarantined. The formal review binds all 287 strategy
+  Membership sessions, 4,643 action exposures, the canonical sparse adjustment
+  publication, a fresh 387-discontinuity diagnostic, 89 lifecycle exposures,
+  and V4. Its decision is `rejected_data_blocked`; no Historical Coverage
+  manifest or return label was opened. The V4 report SHA-256 is
+  `997c490156ebab6dde08f751f3382fb6a54feed2edb6d6540e3dba59c9ab4cbb`.
+  The final review SHA-256 is
+  `0c433cd4d8f97c5e6b9df0af5cfaf4533f83160ab07d88ed7c5774dbd74d5bb1`
+  with logical fingerprint
+  `b58a3671451ba89332b0fe437ecdea48389156ffac59bd1cc26266700c81a149`.
 
 Exact package identities and counts are retained in:
 
@@ -440,6 +453,7 @@ Exact package identities and counts are retained in:
 - [First-strategy terminal-population trading-cessation audit](../audits/strong-leader-pullback-terminal-population-trading-cessation-adjudication-2026-09-14.md)
 - [First-strategy terminal-population payoff-policy audit](../audits/strong-leader-pullback-terminal-population-payoff-policy-2026-09-14.md)
 - [First-strategy corrected listed-reference and gap-V3 audit](../audits/strong-leader-pullback-terminal-population-listed-reference-and-gap-v3-2026-09-14.md)
+- [First-strategy pre-research admission review](../audits/strong-leader-pullback-pre-research-admission-review-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -491,14 +505,14 @@ evidence after their last observed EOD, but this is not a strategy label or
 return. Twelve exact 424B3 files are retained for the non-election listed-stock
 payoffs. All 12 consideration identities now pass their applicable frozen
 evidence gates and have gross daily reference values; the three former
-residuals were resolved without ticker-only assignment. The terminal-gap
-census now measures 42 reference-documented and 22 unresolved lifecycle-
-crossing securities. The next bounded work is the nine timing cases and three
-exceptional primary-source cases. LNW, REVG, SAND, CVRs, elections, unlisted
-units, and
-unsupported timing remain quarantined. A commercial sample remains limited to
-a measured residual after that work. Massive Starter is not the sole lifecycle
-authority.
+residuals were resolved without ticker-only assignment. Terminal-gap census
+V4 now measures 47 reference-documented and 18 unresolved lifecycle-crossing
+securities. LNW, REVG, SAND, CVRs, elections/proration, unlisted units,
+successor identity, and unsupported/conflicting timing remain quarantined. The
+final transitive gate is `rejected_data_blocked`. Repetitive manual case work
+stops here; the next data action is a targeted evaluation of point-in-time
+lifecycle, complete corporate-action/adjustment, and terminal-consideration
+source capability. Massive Starter is not the sole lifecycle authority.
 
 Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
 semantics, exact Historical Coverage, costs, and sealed evaluation custody are
