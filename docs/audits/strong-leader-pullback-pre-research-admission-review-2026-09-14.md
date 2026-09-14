@@ -48,7 +48,7 @@ unlisted-unit, exceptional-source, and cessation/EOD conflicts remain explicit.
   logical fingerprint:
   `b58a3671451ba89332b0fe437ecdea48389156ffac59bd1cc26266700c81a149`.
 - Final review implementation revision:
-  `25d8c9fd9304ae84265c4b9d70317e5b8df38e07`.
+  `25d8c9f52f4da59931583eedfe3e39a339caac19`.
 - Private output:
   `historical-evidence/strong-leader-pullback-pre-research-admission-review/review=20260914-v2`.
 
