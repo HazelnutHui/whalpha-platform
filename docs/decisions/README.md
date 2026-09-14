@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0256](0256-retain-corrected-terminal-sec-documents-as-an-atomic-source-package.md):
+  retains the three corrected-population SEC documents through a small atomic
+  package with exact plan, hash, permission, and replay guarantees.
 - [ADR 0255](0255-freeze-new-terminal-population-sec-sources-before-acquisition.md):
   binds EOD-corrected new cases to stable-ID lifecycle lineage and freezes a
   finite SEC document plan before any network request.
