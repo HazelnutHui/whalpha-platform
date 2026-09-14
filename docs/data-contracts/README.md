@@ -105,6 +105,7 @@ adjustment evidence remains explicit.
 - [Strong-Leader Pullback Terminal-Population SEC Source V1](strong-leader-pullback-terminal-population-sec-source-v1.md)
 - [Strong-Leader Pullback Terminal-Population SEC Content Census V1](strong-leader-pullback-terminal-population-sec-content-census-v1.md)
 - [Strong-Leader Pullback Terminal-Population SEC Field Candidates V1](strong-leader-pullback-terminal-population-sec-field-candidates-v1.md)
+- [Strong-Leader Pullback Terminal-Population SEC Core Adjudication V1](strong-leader-pullback-terminal-population-sec-core-adjudication-v1.md)
 - [Strong-Leader Pullback Research Input V1](strong-leader-pullback-research-input-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)

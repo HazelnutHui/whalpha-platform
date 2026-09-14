@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0259](0259-adjudicate-corrected-terminal-core-evidence-before-terminal-policy.md):
+  applies the established identity, event, reason, and consideration rules to
+  SCS while leaving cessation, payoff, and terminal authority unresolved.
 - [ADR 0258](0258-extract-corrected-terminal-sec-forms-before-adjudication.md):
   applies the established form-aware extractors to the corrected-population
   package while keeping every lifecycle conclusion unsupported.
