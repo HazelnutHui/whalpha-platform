@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-14 — Census corrected-population SEC content
+
+- Accepted ADR 0257 and reused the original deterministic decoder, markup
+  parser, text normalization, eight-field lexical registry, and bounded
+  contexts for the three authoritative SCS primary documents.
+- All three files parsed: one HTML, one SEC-SGML HTML, and one inline-XBRL
+  XHTML profile. The 73,520 source bytes produced 20,343 normalized text
+  characters. Every lexical marker remains an unresolved candidate rather
+  than a lifecycle fact.
+- The report has SHA-256
+  `0431de1dd61646ebc67c69f53a50db48ba91fbd8c741c9c99514e1345f3cbf87`
+  and logical fingerprint
+  `972ef6dd9aa83a7e8d04edfca24bbebff3d9fc70ff209976e1a7369561b39a2d`.
+  Exact replay returned `already_present`; modes are `0700/0400` and no
+  symlink, partial, or staging residue exists.
+- Ten focused/linked tests and the complete 2,761-test API suite passed with
+  two unchanged dependency warnings. No network request, credential read,
+  `/data`, lifecycle fact, outcome, research admission, Candidate,
+  publication, deployment, or scheduler state changed.
+
 ## 2026-09-14 — Enforce plan chronology and retain SCS SEC source V2
 
 - Rejected the first corrected-population plan/source pair from current

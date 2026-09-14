@@ -336,7 +336,16 @@ Important private Dell evidence includes:
   `f0f2ab15129bd3acf4d8ef7d88ca04edf6df84cf625964aa8ab401d23fe96188`
   and logical fingerprint is
   `62e4d1d01cf9cd8215267e980fb8694820f51880cdcd2f176d5336e32f4b81b1`.
-  Content remains uninterpreted and grants no lifecycle or outcome fact.
+  Source custody alone grants no lifecycle or outcome fact; and
+- the corrected-population SEC content census: all three documents parse under
+  the original eight-field lexical ruleset, with one HTML, one SEC-SGML HTML,
+  and one inline-XBRL profile. The 73,520 physical bytes normalize to 20,343
+  text characters. Report SHA-256 is
+  `0431de1dd61646ebc67c69f53a50db48ba91fbd8c741c9c99514e1345f3cbf87`
+  and logical fingerprint is
+  `972ef6dd9aa83a7e8d04edfca24bbebff3d9fc70ff209976e1a7369561b39a2d`.
+  Marker contexts remain unresolved candidates; lifecycle and outcome fact
+  counts are zero.
 
 Exact package identities and counts are retained in:
 
@@ -373,6 +382,7 @@ Exact package identities and counts are retained in:
 - [First-strategy terminal-boundary correction audit](../audits/strong-leader-pullback-terminal-boundary-correction-2026-09-14.md)
 - [First-strategy terminal-population SEC source-plan audit](../audits/strong-leader-pullback-terminal-population-sec-source-plan-2026-09-14.md)
 - [First-strategy terminal-population SEC source-custody audit](../audits/strong-leader-pullback-terminal-population-sec-source-custody-2026-09-14.md)
+- [First-strategy terminal-population SEC content-census audit](../audits/strong-leader-pullback-terminal-population-sec-content-census-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
