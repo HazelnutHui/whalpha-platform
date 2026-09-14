@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-09-14 — Adjudicate source-party and legal-survivor relations
+
+- Accepted ADR 0240 and bound one agreement-party clause plus one merger-
+  direction/legal-survivor clause for each of the 61 typed SEC cases.
+- Classified 49 target legal entities as surviving owned subsidiaries, 11 as
+  absorbed into other surviving entities, and one as entering a new holding-
+  company combination. Sixteen listed-equity consideration cases are flagged
+  for later issuer-security mapping.
+- Filing-local roles remain evidence rather than global counterparty,
+  successor, or consideration-issuer stable IDs. The sampled eight-field
+  matrix is now 244 / 512 matched; the other 268 cells remain unsupported.
+- The report has SHA-256
+  `a44dff5ace2ef6dc9b7cb8487b2bc529732522f215caa482299f0b8c4cd2176a`
+  and logical fingerprint
+  `08791989e04803e57d4a7881bb0495c2224ef24812c79767d365a93210906de2`.
+  Exact network-disabled reread passed with owner-only modes and zero residue.
+- Four focused tests, a real-case read-only build, and the complete 2,690-test
+  API suite passed with two unchanged warnings. Market-status dates,
+  tradability, lifecycle facts, terminal outcomes, `/data`, Historical
+  Coverage, research, Candidate, publication, deployment, and scheduler state
+  were unchanged.
+
 ## 2026-09-13 — Adjudicate primary common-share consideration
 
 - Accepted ADR 0239 and retained one bounded primary ordinary/common-share

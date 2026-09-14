@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-09-13
+Status date: 2026-09-14
 
 This is the concise actual-capability summary. Exact volatile identities belong
 in [current context](current-context.md), proposed sequencing in the
@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, all 219 transition documents in private custody, complete form-aware candidates, a 64-case coverage census, point-in-time cover identity, typed transaction events, termination reasons, and common-share consideration | 61 stable-security/listing, 61 termination-reason, and 61 consideration fields are matched; 329 case/field cells remain unsupported, no effective listing-terminal fact is proven, and the canonical family is absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, all 219 transition documents in private custody, complete form-aware candidates, a 64-case coverage census, point-in-time cover identity, typed transaction events, termination reasons, common-share consideration, and source-party topology | 61 stable-security/listing, 61 termination-reason, 61 consideration, and 61 source-party-relation fields are matched; 268 case/field cells remain unsupported, no global counterparty identity or effective listing-terminal fact is proven, and the canonical family is absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -124,8 +124,13 @@ Current admission remains rejected:
   only, 10 stock-only, three fixed cash-and-stock, seven cash-plus-CVR, three
   cash-or-stock elections, and one cash-or-unlisted-unit election. Fractional-
   share cash and numeric payoff normalization remain separate. Across 512
-  required case/field cells, 183 are now matched and 329 remain unsupported;
-  and
+  required case/field cells, 183 are matched at this stage; and
+- all 61 agreement-party and legal-survivor relations are now source-bound:
+  49 target legal entities survive as owned subsidiaries, 11 are absorbed into
+  other surviving entities, and one target and peer enter a new holding
+  company. Sixteen listed-equity consideration cases still require later
+  issuer-security identity mapping. Across 512 required case/field cells, 244
+  are now matched and 268 remain unsupported; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -158,10 +163,10 @@ project.
    not build security features unless newly admitted historical knowledge-time
    evidence or a registered strategy need changes that gate.
 2. Preserve the 61 completed point-in-time security links, transaction dates,
-   termination reasons, and common-share consideration decisions. Adjudicate
-   party relations on those exact cases. Keep last tradability, terminal
-   outcome, and the three unsupported LNW/REVG/SAND cases separate; preserve
-   all result states explicitly.
+   termination reasons, common-share consideration decisions, and source-party
+   topologies. Adjudicate exchange market status and last tradability next;
+   map successor or consideration-issuer identities only where terminal payoff
+   semantics require them. Keep terminal outcome and LNW/REVG/SAND separate.
 3. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
    boundary; do not infer the two absent sources. Complete only the
    lifecycle/terminal, action/adjustment, cost, and Historical Coverage

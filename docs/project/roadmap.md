@@ -109,11 +109,15 @@ not five-year performance admission.
 13. Preserve the completed primary common-share consideration adjudication:
    61 / 61 clauses are typed while fractional-share cash, numeric payoff
    normalization, and terminal return remain separate.
-14. Adjudicate predecessor, target, acquirer, and successor relations for the
-   61 typed events without forcing absent role labels.
-15. Test a commercial source only against the frozen residual field gap that
+14. Preserve the completed source-party topology adjudication: 49 target legal
+   entities survive, 11 are absorbed, and one enters a new holding-company
+   combination; source roles do not assign global party IDs.
+15. Adjudicate exchange market-status timing and first/last tradability. Map
+   successor and consideration-issuer identities only where terminal payoff
+   semantics require them, without building an unrelated global entity master.
+16. Test a commercial source only against the frozen residual field gap that
    remains after typed SEC review; do not repeat a global vendor scan.
-16. Resolve missing-event neutrality and terminal outcomes without turning a
+17. Resolve missing-event neutrality and terminal outcomes without turning a
    ticker match or unique historical candidate into an assignment.
 
 Massive Starter remains the primary price/reference source but is not the sole
