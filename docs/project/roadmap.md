@@ -121,13 +121,15 @@ not five-year performance admission.
    case, and eight separate fractional-share adjustments. No complex value or
    terminal outcome is implied.
 17. Preserve terminal cash evidence for the 30 fixed-cash cases with matched
-   cessation timing. Next map consideration-issuer identities only for the 12
-   matched-timing listed-equity cases, without building a global entity master
-   or treating a source-local company name as identity proof.
-18. Test a commercial source only against the frozen residual field gap that
+   cessation timing. Keep the 12 matched-timing listed-equity cases separate
+   until consideration-security identity is independently proven.
+18. Preserve the exact 12-document 424B3 source plan. Acquire only those
+   documents, then require transaction, target common security, consideration
+   class, and exchange-ratio agreement before assigning a candidate stable ID.
+19. Test a commercial source only against the frozen residual field gap that
    remains after typed SEC review; do not repeat a global vendor scan.
-19. Resolve missing-event neutrality and remaining terminal outcomes without turning a
-   ticker match or unique historical candidate into an assignment.
+20. Resolve missing-event neutrality and remaining terminal outcomes without
+   turning a ticker match or unique historical candidate into an assignment.
 
 Massive Starter remains the primary price/reference source but is not the sole
 lifecycle authority. SEC is an official document locator and issuer-event

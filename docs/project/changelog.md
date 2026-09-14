@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-14 — Freeze listed-consideration identity sources
+
+- Accepted ADR 0244 and froze one exact 424B3 source file for each of the 12
+  non-election listed-stock payoff cases with matched timing.
+- Formally reconciled 12 unique common-stock stable-ID candidates, 12 SEC
+  Submissions issuer profiles and filing rows, and 11 event-session EOD/Identity
+  snapshots. Vivmark preserves the `EQR` to `VMRK` locator transition under one
+  candidate stable ID and CIK.
+- The report has SHA-256
+  `9b58e80e2e1da7010f19bc9a227ab6fb1b6745d1b1285b2fcd5d9cb09752351d`
+  and logical fingerprint
+  `0e677da4c7dcce4553994196db9c79cc5280c07dbee249402d1a0cf67cd37f52`.
+  Exact network-disabled replay returned `already_present` with owner-only
+  modes and zero residue.
+- Four focused tests, 32 linked tests, and the complete 2,706-test API suite
+  passed with two unchanged warnings. Document custody, identity assignment,
+  terminal value, `/data`, Historical Coverage, research, Candidate,
+  publication, deployment, and scheduler state remain unchanged.
+
 ## 2026-09-14 — Retain bounded fixed-cash terminal evidence
 
 - Accepted ADR 0243 and retained gross nominal terminal-cash evidence for all

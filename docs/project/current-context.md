@@ -255,7 +255,17 @@ Important private Dell evidence includes:
   research admission remain zero. Report SHA-256 is
   `e500a6419efee4bb150d5b0cdec85819c9c9aa8749860c4cf0d3b95ce922d429`
   and logical fingerprint is
-  `000526478feff78e94244fede566ad03441f5870479bcb25c2942a3f38bd45cc`.
+  `000526478feff78e94244fede566ad03441f5870479bcb25c2942a3f38bd45cc`;
+  and
+- the listed-consideration source plan: 12 exact 424B3 filings are frozen for
+  12 unique point-in-time common-stock candidates across 11 EOD/Identity
+  sessions. Eleven event tickers equal the SEC Submissions current ticker;
+  Vivmark retains event locator `EQR` and current locator `VMRK` under one
+  proposed stable ID and CIK. No source document has been acquired and no
+  identity has been assigned. Report SHA-256 is
+  `9b58e80e2e1da7010f19bc9a227ab6fb1b6745d1b1285b2fcd5d9cb09752351d`
+  and logical fingerprint is
+  `0e677da4c7dcce4553994196db9c79cc5280c07dbee249402d1a0cf67cd37f52`.
 
 Exact package identities and counts are retained in:
 
@@ -280,6 +290,7 @@ Exact package identities and counts are retained in:
 - [First-strategy trading-cessation adjudication audit](../audits/strong-leader-pullback-trading-cessation-adjudication-2026-09-14.md)
 - [First-strategy terminal-payoff term audit](../audits/strong-leader-pullback-terminal-payoff-terms-2026-09-14.md)
 - [First-strategy fixed-cash terminal evidence audit](../audits/strong-leader-pullback-fixed-cash-terminal-evidence-2026-09-14.md)
+- [First-strategy listed-consideration source-plan audit](../audits/strong-leader-pullback-listed-consideration-source-plan-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -328,8 +339,9 @@ is unsupported in eight; this does not complete either sampled tradability
 field. Eighty-one source payoff terms are now normalized without valuing a
 complex component. Thirty fixed-cash cases now retain nominal terminal-value
 evidence after their last observed EOD, but this is not a strategy label or
-return. The next internal gate is only the listed-security identity required
-for 12 matched-timing remaining payoffs. LNW, REVG, SAND, CVRs, elections,
+return. Twelve exact 424B3 files are now planned for the remaining non-election
+listed-stock payoffs; source custody and content adjudication are the next
+internal gate. LNW, REVG, SAND, CVRs, elections,
 unlisted units, and unsupported timing remain quarantined. A commercial sample
 remains limited to a measured residual after that work. Massive Starter is not
 the sole lifecycle authority.
