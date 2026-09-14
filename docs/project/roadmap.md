@@ -130,21 +130,21 @@ not five-year performance admission.
    65 securities / 302 five-session paths. Forty-two securities / 196 paths
    have daily reference evidence and 23 / 106 remain unresolved. References
    are not outcomes.
-20. Preserve the completed SCS source plan: three exact SEC primary documents
-   are stable-ID-bound through lifecycle lineage, but no content or fact has
-   yet been retained.
-21. Acquire those three documents through a separately governed, rate-limited,
-   restart-safe source package; then adjudicate the SCS event, cessation,
-   consideration, and terminal-policy fields without borrowing authority from
-   the historical 64-case sample.
-22. Adjudicate the nine cessation-timing cases and three legacy exceptional
+20. Preserve the authoritative SCS plan V2 and its valid plan-before-source
+   chronology; the earlier V1 clock is superseded and grants no authority.
+21. Preserve complete SCS source custody: all three planned SEC primary
+   documents formally reread with owner-only modes and zero residual staging.
+22. Run a bounded content census, then adjudicate SCS identity, event,
+   cessation, consideration, and terminal-policy fields without borrowing
+   authority from the historical 64-case sample.
+23. Adjudicate the nine cessation-timing cases and three legacy exceptional
    primary-source cases before complex valuation. Test a commercial source
    only against a measured remaining field; do not repeat a global vendor scan.
-23. Then address six CVR, three holder-election/proration, and one unlisted-
+24. Then address six CVR, three holder-election/proration, and one unlisted-
    unit/election case under separate payoff policies.
-24. Resolve missing-event neutrality and remaining terminal outcomes without
+25. Resolve missing-event neutrality and remaining terminal outcomes without
    turning a ticker match or unique historical candidate into an assignment.
-25. Version and rerun the outcome-blind coverage census before any new research
+26. Version and rerun the outcome-blind coverage census before any new research
    admission decision; do not repeat the unchanged 2026-09-10 rejection.
 
 Massive Starter remains the primary price/reference source but is not the sole

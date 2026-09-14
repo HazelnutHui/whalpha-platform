@@ -1,5 +1,10 @@
 # Strong-Leader Pullback Terminal-Population SEC Source Plan Audit — 2026-09-14
 
+> Superseded execution notice: this audit records the first plan, whose
+> `planned_at=10:30Z` was later found to follow its 06:36Z source acquisition.
+> Preserve it only as rejected lineage. The authoritative V2 evidence is in
+> the [source-custody audit](strong-leader-pullback-terminal-population-sec-source-custody-2026-09-14.md).
+
 ## Scope
 
 ADR 0255 requires every case added by the corrected EOD terminal boundary to

@@ -320,14 +320,23 @@ Important private Dell evidence includes:
   and logical fingerprint is
   `1cb6984652842e8898cebbb484f0796bfdd7b6e4e7bee167d88bf47734e06d5f`;
   and
-- the corrected-population SEC source plan: the one newly in-scope stable ID
+- the corrected-population SEC source plan V2: the one newly in-scope stable ID
   is linked through retained lifecycle evidence to CIK `0001050825` and three
   exact SEC primary-document requests: Form 25-NSE dated 2025-12-10, Form 8-K
-  dated 2025-12-11, and Form 15-12G dated 2025-12-22. No document content has
-  been requested or retained by this plan. Report SHA-256 is
-  `4e43d29c25cf0b6418ac865adf0e323d9c021b99d8fe917e8813edfdd9399968`
+  dated 2025-12-11, and Form 15-12G dated 2025-12-22. The superseded V1 plan
+  had an invalid future `planned_at` and has no authority. V2 report SHA-256 is
+  `6986c5e1f2b5c9eb863f1db6284c65a47d25edb977dddee2633b8b34547a27f5`
   and logical fingerprint is
-  `539d42ead648bda44bf63818dffa5c4587de65edb59195a787945a9e8ea39b4c`.
+  `3acbd745b320301c3aeb52db89e06ac58b07e64511ed13f348f5f1f0e61ab84a`;
+  and
+- the corrected-population SEC source custody V2: all three planned files are
+  retained as 73,520 owner-only bytes with zero retry. Plan time
+  `2026-09-14T06:43:39Z` precedes the first observation at
+  `2026-09-14T06:44:26.624111Z`. Manifest SHA-256 is
+  `f0f2ab15129bd3acf4d8ef7d88ca04edf6df84cf625964aa8ab401d23fe96188`
+  and logical fingerprint is
+  `62e4d1d01cf9cd8215267e980fb8694820f51880cdcd2f176d5336e32f4b81b1`.
+  Content remains uninterpreted and grants no lifecycle or outcome fact.
 
 Exact package identities and counts are retained in:
 
@@ -363,6 +372,7 @@ Exact package identities and counts are retained in:
 - [First-strategy terminal-gap census audit](../audits/strong-leader-pullback-terminal-gap-census-2026-09-14.md)
 - [First-strategy terminal-boundary correction audit](../audits/strong-leader-pullback-terminal-boundary-correction-2026-09-14.md)
 - [First-strategy terminal-population SEC source-plan audit](../audits/strong-leader-pullback-terminal-population-sec-source-plan-2026-09-14.md)
+- [First-strategy terminal-population SEC source-custody audit](../audits/strong-leader-pullback-terminal-population-sec-source-custody-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)

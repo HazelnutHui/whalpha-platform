@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-09-14 — Enforce plan chronology and retain SCS SEC source V2
+
+- Rejected the first corrected-population plan/source pair from current
+  authority after detecting that its manually supplied `planned_at=10:30Z`
+  followed the actual 06:36Z acquisition. The three response payloads were not
+  corrupted, but the provenance clock was invalid.
+- Added construction and formal-read gates that reject a future plan time or a
+  source observation before its bound plan. All eight chronology-linked tests
+  and the complete 2,758-test API suite passed with two unchanged warnings.
+- Built authoritative plan V2 at `2026-09-14T06:43:39Z`, then acquired all
+  three exact SEC documents beginning at `06:44:26.624111Z`. The source used
+  three requests, zero retries, and retained 73,520 bytes. V1 and V2 response
+  bytes are identical for all three requests.
+- Plan V2 has SHA-256
+  `6986c5e1f2b5c9eb863f1db6284c65a47d25edb977dddee2633b8b34547a27f5`
+  and logical fingerprint
+  `3acbd745b320301c3aeb52db89e06ac58b07e64511ed13f348f5f1f0e61ab84a`.
+  Source V2 has manifest SHA-256
+  `f0f2ab15129bd3acf4d8ef7d88ca04edf6df84cf625964aa8ab401d23fe96188`
+  and logical fingerprint
+  `62e4d1d01cf9cd8215267e980fb8694820f51880cdcd2f176d5336e32f4b81b1`.
+- Exact source replay returned `already_present` with zero network requests.
+  Directories are `0700`, files are `0400`, and no symlink, partial, or staging
+  residue exists. Credential material was neither printed nor retained. No
+  `/data`, lifecycle fact, outcome, research admission, Candidate, publication,
+  deployment, or scheduler state changed.
+
 ## 2026-09-14 — Freeze SEC sources for the corrected terminal addition
 
 - Accepted ADR 0255 and added a zero-network plan that joins terminal-gap V2,

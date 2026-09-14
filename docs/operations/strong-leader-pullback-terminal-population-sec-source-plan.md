@@ -24,9 +24,9 @@ scripts/admin/plan-strong-leader-pullback-terminal-population-sec-source.sh \
   --source-snapshot-date 2026-09-10 \
   --range-start 2021-08-11 \
   --range-end 2026-09-09 \
-  --output-root /home/hui/.local/state/trading-intelligence-platform/historical-source/strong-leader-pullback-terminal-population-sec-source-plan/plan=20260914-v1 \
+  --output-root /home/hui/.local/state/trading-intelligence-platform/historical-source/strong-leader-pullback-terminal-population-sec-source-plan/plan=20260914-v2 \
   --output-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-source/strong-leader-pullback-terminal-population-sec-source-plan \
-  --planned-at YYYY-MM-DDTHH:MM:SSZ \
+  --planned-at 2026-09-14T06:43:39Z \
   --execute
 ```
 
