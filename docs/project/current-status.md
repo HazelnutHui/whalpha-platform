@@ -14,8 +14,9 @@ ADRs, and audits.
 - **Five-year source depth:** EOD price and stable Identity complete.
 - **Professional performance foundation:** incomplete; formal state
   `data_blocked`.
-- **First strategy:** Strong-Leader Pullback is ready for outcome-blind method
-  and Lab engineering, with no real result or Candidate authority.
+- **First strategy:** its canonical outcome-blind method and derived Lab record
+  are implemented; signal execution and diagnostics are next. No real result
+  or Candidate authority exists.
 - **External source:** none selected; the owner-reported LSEG inquiry is
   optional for the next engineering phase.
 - **Automation:** guarded manual daily operation works; unattended write-
@@ -87,6 +88,12 @@ Production use. The formal gate still has zero complete Primary session cross-
 sections. Unresolved action neutrality, adjustments, terminal outcomes,
 Historical Coverage, costs, and source-time evidence remain visible.
 
+The versioned `strong-leader-pullback-method/1.0` contract is now the single
+source for exact features, raw-data lineage, parameters, evaluation design,
+gates, and research-authority flags. The outcome-free input contract and
+checked-in Lab record bind that same method; the former input-feature
+fingerprint is unchanged.
+
 ## Operations
 
 The installed wake timer is read-only. SMTP is unconfigured and no unattended
@@ -98,11 +105,10 @@ measured budget breach.
 
 ## Immediate boundary
 
-1. Implement the registered Strong-Leader Pullback method without opening
-   forward outcomes.
+1. Implement the pure Strong-Leader Pullback signal/eligibility engine without
+   opening forward outcomes.
 2. Build its private outcome-blind diagnostics and adversarial test suite.
-3. Present the complete method, fixed parameter budget, data readiness, and
-   limitations in Quant Research Lab without placeholder performance.
+3. Complete the Lab method presentation and independent zero-authority review.
 4. Preserve Baseline V1, reconstructed Membership, and all unresolved evidence
    states without silent inference.
 5. Reconsider lifecycle/action providers only against the frozen acceptance

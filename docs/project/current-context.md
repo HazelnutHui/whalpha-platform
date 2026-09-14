@@ -123,6 +123,12 @@ Report SHA-256:
 logical fingerprint:
 `1abb4ed53d4a4cb5bb6482432db254a0019168aae2712983a9d00aaa4cffef8c`.
 
+The canonical outcome-blind method contract is
+`strong-leader-pullback-method/1.0`; method fingerprint:
+`ed3e83b1a3827d1faddea6cb0eedc0471c5e9db854d5577b7faa12e0084186ba`.
+Its derived Lab record is `quant-research-lab-model-record/1.1`, remains
+method-only and Candidate-ineligible, and carries no real result.
+
 The final performance-admission report remains
 `rejected_data_blocked`. Report SHA-256:
 `0c433cd4d8f97c5e6b9df0af5cfaf4533f83160ab07d88ed7c5774dbd74d5bb1`;

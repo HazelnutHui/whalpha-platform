@@ -6,6 +6,17 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-14 — Establish the first canonical strategy method
+
+- Added one versioned, outcome-blind Strong-Leader Pullback method contract as
+  the source of truth for feature semantics, raw-data lineage, the frozen
+  24-combination parameter grid, evaluation design, gates, and authority flags.
+- Reconciled the outcome-free input feature identity and derived Quant Research
+  Lab record with that source; the former input fingerprint remains unchanged.
+- Upgraded the Lab model record to V1.1 so the browser exposes both method
+  identity and actual raw-source lineage while retaining zero real results,
+  zero Candidate authority, and the formal `rejected_data_blocked` state.
+
 ## 2026-09-14 — Slim the default recovery path before strategy work
 
 - Reconciled the credential-free Dell context report with Product, research,

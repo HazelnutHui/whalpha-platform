@@ -12,6 +12,7 @@ from tip_api.contracts.analytics.v1 import (
     QuantResearchLabModelRecordV1,
     QuantResearchLabResultPublicationV1,
     lab_fingerprint,
+    strong_leader_pullback_method_v1,
     strong_leader_pullback_lab_catalog_v1,
     strong_leader_pullback_lab_model_record_v1,
 )
@@ -67,6 +68,16 @@ def test_checked_in_web_record_is_the_canonical_method_projection() -> None:
     assert parsed.candidate_eligible is False
     assert parsed.out_of_sample_observation_count == 0
     assert parsed.result_publication_id is None
+    method = strong_leader_pullback_method_v1()
+    assert parsed.source_method_contract_version == method.contract_version
+    assert parsed.source_method_fingerprint == method.logical_fingerprint
+    assert parsed.input_feature_fingerprint == method.input_feature_fingerprint
+    assert tuple(item.exact_formula for item in parsed.feature_disclosures) == tuple(
+        item.exact_formula for item in method.features
+    )
+    assert tuple(item.candidate_values for item in parsed.parameter_disclosures) == tuple(
+        item.display_candidate_values for item in method.parameters
+    )
 
 
 def test_model_record_rejects_formula_drift_without_new_fingerprint() -> None:

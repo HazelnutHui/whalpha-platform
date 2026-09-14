@@ -20,13 +20,14 @@ from .candidate_strategy_research import (
 from .candidate_strategy_research_execution import (
     StrongLeaderPullbackObservationV1,
 )
+from .strong_leader_pullback_method import (
+    STRONG_LEADER_PULLBACK_INPUT_CALCULATION_VERSION,
+    STRONG_LEADER_PULLBACK_INPUT_FEATURE_FINGERPRINT,
+)
 
 
 STRONG_LEADER_PULLBACK_INPUT_CONTRACT_VERSION = (
     "strong-leader-pullback-research-input/1.0"
-)
-STRONG_LEADER_PULLBACK_INPUT_CALCULATION_VERSION = (
-    "strong-leader-pullback-input-features/1.0.0"
 )
 STRONG_LEADER_PULLBACK_REQUIRED_DATASET_FAMILIES = (
     "adjustment_ledger",
@@ -48,30 +49,6 @@ def _fingerprint(value: object) -> str:
             default=str,
         ).encode("utf-8")
     ).hexdigest()
-
-
-STRONG_LEADER_PULLBACK_INPUT_FEATURE_FINGERPRINT = _fingerprint(
-    {
-        "calculation_version": STRONG_LEADER_PULLBACK_INPUT_CALCULATION_VERSION,
-        "price_basis": "split_adjusted_to_signal_session",
-        "relative_strength": (
-            "average_rank_inclusive_percentile_of_stock_20_session_return_"
-            "minus_spy_20_session_return_within_complete_point_in_time_primary"
-        ),
-        "trend_quality": (
-            "35pct_close_above_sma10_plus_35pct_sma10_to_sma20_"
-            "ratio_normalized_minus_3pct_to_plus_3pct_plus_30pct_"
-            "reverse_5_session_max_drawdown_normalized_2pct_to_12pct"
-        ),
-        "atr": "simple_atr14_true_range",
-        "pullback_depth": "prior_20_session_close_high_minus_close_divided_by_atr14",
-        "recovery": "close_above_immediately_prior_close_or_high",
-        "volume": "signal_session_volume_divided_by_prior_20_session_median_volume",
-        "membership": "same_session_signal_eligible_point_in_time_primary",
-        "regime": "same_session_primary_confirmed_non_stale_state",
-        "future_fields": False,
-    }
-)
 
 
 class FrozenModel(BaseModel):

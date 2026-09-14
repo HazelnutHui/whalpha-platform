@@ -42,27 +42,27 @@ performance foundation as research-ready. The immutable launch report binds
 the unchanged V1 experiment, 287 sessions, 437,402 paths, and all unresolved
 formal blockers.
 
-Execute in this order:
+Completed on 2026-09-14: the versioned method contract now owns the registered
+features, exact data lineage, formulas, parameter budget, evaluation design,
+and authority flags. The input calculator and Lab projection bind that source.
 
-1. **Method contract:** expose the registered leadership, trend, ATR pullback,
-   recovery, volume, Regime, Universe, cutoff, and missingness rules through one
-   versioned method projection. Do not duplicate formulas between API, report,
-   and frontend.
-2. **Pure implementation:** complete the signal/eligibility calculation using
+Continue in this order:
+
+1. **Pure implementation:** complete the signal/eligibility calculation using
    stable-ID joins and explicit session clocks. No forward outcome may be read
    or emitted.
-3. **Outcome-blind diagnostics:** measure feature coverage, distributions,
+2. **Outcome-blind diagnostics:** measure feature coverage, distributions,
    ties, missingness, concentration, and discontinuity sensitivity from the
    fixed reconstructed method population. Preserve its
    `reconstructed_latest_vintage_method_engineering_only` tier.
-4. **Adversarial verification:** test chronology, warm-up, next-open boundary,
+3. **Adversarial verification:** test chronology, warm-up, next-open boundary,
    rank ties, missing paths, split discontinuities, stable-ID collisions,
    deterministic replay, and zero-label isolation.
-5. **Lab presentation:** show model ownership, hypothesis, mechanism, complete
+4. **Lab presentation:** show model ownership, hypothesis, mechanism, complete
    formulas, fixed 24-combination budget, intended evaluation, readiness,
    blockers, limitations, lifecycle, and reproduction identity. Display no
    empty or invented performance metric.
-6. **Independent completion review:** prove the method and Lab projection bind
+5. **Independent completion review:** prove the method and Lab projection bind
    the same versioned inputs, every real outcome/selection count is zero, and
    the formal performance gate remains rejected.
 

@@ -30,7 +30,8 @@ describe('Quant Research Lab', () => {
 
     await user.click(screen.getByText(/Inspect complete logic/));
     expect(screen.getByText(/max\(close\[t-20:t-1\]\)/)).toBeInTheDocument();
-    expect(screen.getByText('ed7fb37c35c8b97ba5a25114d407212dbeddb7fc7f876786b672668214b620d7')).toBeInTheDocument();
+    expect(screen.getByText('14ff0a8242fda2a7ebe4e0540d114fd4c0b1c821a06c18cf30f9b90070ce31e9')).toBeInTheDocument();
+    expect(screen.getByText('ed3e83b1a3827d1faddea6cb0eedc0471c5e9db854d5577b7faa12e0084186ba')).toBeInTheDocument();
   });
 
   it('renders the complete research boundary in Chinese', () => {

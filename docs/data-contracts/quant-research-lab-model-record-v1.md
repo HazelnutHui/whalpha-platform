@@ -8,7 +8,7 @@ audited without implying that it works or that Stock Candidates may use it.
 
 The three contract versions are:
 
-- `quant-research-lab-model-record/1.0`;
+- `quant-research-lab-model-record/1.1`;
 - `quant-research-lab-result/1.0`; and
 - `quant-research-lab-catalog/1.0`.
 
@@ -23,8 +23,9 @@ A model record binds:
   lifecycle, evidence scope, and current-market applicability;
 - decision use, hypothesis, economic rationale, Universe, signal cutoff,
   modeled entry, horizon, signal logic, and ranking boundary;
-- every feature's source family and fields, availability cutoff, lookback,
-  exact formula, transform, unit, expected direction, and missingness rule;
+- every feature's frozen requirement family, actual raw-source families and
+  fields, availability cutoff, lookback, exact formula, transform, unit,
+  expected direction, and missingness rule;
 - all parameter candidates, selection scope, rationale, and registered search
   budget;
 - chronology, warm-up, purge, embargo, labels, benchmark, control, inference,
@@ -32,8 +33,8 @@ A model record binds:
   been defined;
 - advancement gates, strength, weakness, required counterevidence,
   invalidation, blockers, and risk disclosures; and
-- experiment, feature, evaluation, implementation, result, and record
-  reproduction bindings.
+- canonical method, experiment, feature, evaluation, implementation, result,
+  and record reproduction bindings.
 
 An `active` model requires a separate 64-character Candidate activation
 fingerprint. Every other lifecycle state must remain Candidate-ineligible.
@@ -77,13 +78,15 @@ The initial catalog names no active Candidate model.
 The checked-in browser record is the canonical method projection for:
 
 - model: `whalpha.strong-leader-pullback`;
-- research version: `strong-stock-pullback-research/1.0`;
+- method version: `strong-leader-pullback-method/1.0.0`;
+- method fingerprint:
+  `ed3e83b1a3827d1faddea6cb0eedc0471c5e9db854d5577b7faa12e0084186ba`;
 - lifecycle: `preregistered_data_blocked`;
 - evidence: `method_only`;
 - model-record fingerprint:
-  `ed7fb37c35c8b97ba5a25114d407212dbeddb7fc7f876786b672668214b620d7`;
+  `14ff0a8242fda2a7ebe4e0540d114fd4c0b1c821a06c18cf30f9b90070ce31e9`;
 - catalog fingerprint:
-  `0737ba4cefe58bcfbe00004e79bb956454cea3db426fe0040037fc06b9a63826`;
+  `74884e9d55d0ee0ac1f3b8c9f47c2978afd640438a5155d60ea4a92e6bf00f09`;
 - real result publication: none; and
 - active Candidate models: none.
 

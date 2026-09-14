@@ -45,6 +45,7 @@ Read this bounded set before Strong-Leader Pullback or Lab work:
 - [Professional Quantitative Research Action Framework](research/professional-quantitative-research-action-framework-v1.md)
 - [Quant Research Lab product contract](product/quant-research-lab-v1.md)
 - [First experiment preregistration](data-contracts/candidate-strategy-research-experiment-v1.md)
+- [Canonical Strong-Leader Pullback method](data-contracts/strong-leader-pullback-method-v1.md)
 - [Outcome-free research input](data-contracts/strong-leader-pullback-research-input-v1.md)
 - [Method-engineering launch review](data-contracts/strong-leader-pullback-method-engineering-launch-review-v1.md)
 - [Current launch audit](audits/strong-leader-pullback-method-engineering-launch-review-2026-09-14.md)
