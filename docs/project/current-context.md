@@ -272,7 +272,18 @@ Important private Dell evidence includes:
   identity assignments and terminal values remain zero. Manifest SHA-256 is
   `826eacc85cf2b610e330465266a9629ac2c11f23ccd5d442f8eb14d7d3f963f6`
   and logical fingerprint is
-  `0ff421cbc2a219ff9195e23ee7ff24d9b364646abdc154241d59d34e01334ca3`.
+  `0ff421cbc2a219ff9195e23ee7ff24d9b364646abdc154241d59d34e01334ca3`;
+  and
+- the listed-consideration identity adjudication: nine cases match the same
+  transaction, target common security, consideration class, exact exchange
+  ratio, and CIK-to-stable-security chain. IonQ/SkyWater and Boeing/Spirit
+  retain variable formulas without the final exact ratio; the selected Fifth
+  Third 424B3 is a senior-notes offering, not a merger registration source.
+  Those three remain unassigned and all 12 retain zero terminal values. Report
+  SHA-256 is
+  `b23dd9fa6e308cf12f2adfead289f0fd967cc73fed93702c264e6bfdf530ed60`
+  and logical fingerprint is
+  `b2f44efe02269331b890300f86389e84c471b578d581b9045a959af3b4d4bb09`.
 
 Exact package identities and counts are retained in:
 
@@ -299,6 +310,7 @@ Exact package identities and counts are retained in:
 - [First-strategy fixed-cash terminal evidence audit](../audits/strong-leader-pullback-fixed-cash-terminal-evidence-2026-09-14.md)
 - [First-strategy listed-consideration source-plan audit](../audits/strong-leader-pullback-listed-consideration-source-plan-2026-09-14.md)
 - [First-strategy listed-consideration source audit](../audits/strong-leader-pullback-listed-consideration-source-2026-09-14.md)
+- [First-strategy listed-consideration adjudication audit](../audits/strong-leader-pullback-listed-consideration-adjudication-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -347,9 +359,12 @@ is unsupported in eight; this does not complete either sampled tradability
 field. Eighty-one source payoff terms are now normalized without valuing a
 complex component. Thirty fixed-cash cases now retain nominal terminal-value
 evidence after their last observed EOD, but this is not a strategy label or
-return. Twelve exact 424B3 files are now retained for the remaining non-election
-listed-stock payoffs; content adjudication is the next internal gate. LNW,
-REVG, SAND, CVRs, elections,
+return. Twelve exact 424B3 files are retained for the non-election listed-stock
+payoffs and nine candidate consideration identities now pass the strict
+four-element evidence gate. Two formula-only and one wrong-scope cases remain
+unassigned. Reference terminal value for the nine matched identities and a
+three-case residual source plan are the next internal gates. LNW, REVG, SAND,
+CVRs, elections,
 unlisted units, and unsupported timing remain quarantined. A commercial sample
 remains limited to a measured residual after that work. Massive Starter is not
 the sole lifecycle authority.

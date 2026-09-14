@@ -123,9 +123,10 @@ not five-year performance admission.
 17. Preserve terminal cash evidence for the 30 fixed-cash cases with matched
    cessation timing. Keep the 12 matched-timing listed-equity cases separate
    until consideration-security identity is independently proven.
-18. Preserve the completed exact 12-document 424B3 source package. Require
-   transaction, target common security, consideration class, and exchange-ratio
-   agreement before assigning a candidate stable ID.
+18. Preserve the completed 12-document 424B3 source package and its nine strict
+   identity assignments. Value only those nine against a governed canonical
+   terminal session; keep the two formula-only and one wrong-scope cases
+   unassigned while planning their exact residual sources.
 19. Test a commercial source only against the frozen residual field gap that
    remains after typed SEC review; do not repeat a global vendor scan.
 20. Resolve missing-event neutrality and remaining terminal outcomes without

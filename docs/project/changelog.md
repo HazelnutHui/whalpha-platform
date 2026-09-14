@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-09-14 — Adjudicate listed-consideration identities
+
+- Accepted ADR 0246 and applied a four-element evidence gate to all 12 retained
+  424B3 files: same transaction and target common security, consideration
+  share class, exact registered ratio, and CIK-to-canonical-security identity.
+- Nine cases matched and received the exact candidate stable ID frozen by the
+  plan. Names and tickers remained locators and granted no identity.
+- IonQ/SkyWater and Boeing/Spirit retain variable ratio formulas but not the
+  later exact ratio. The selected Fifth Third file is a senior-notes offering,
+  not merger share registration. All three remain unassigned.
+- The report has SHA-256
+  `b23dd9fa6e308cf12f2adfead289f0fd967cc73fed93702c264e6bfdf530ed60`
+  and logical fingerprint
+  `b2f44efe02269331b890300f86389e84c471b578d581b9045a959af3b4d4bb09`.
+  Exact replay returned `already_present` with zero network requests and no
+  custody residue.
+- Four focused tests, 29 linked tests, and the complete 2,714-test API suite
+  passed with two unchanged dependency deprecation warnings.
+- Terminal values, strategy outcomes, the 244 / 512 lifecycle matrix, `/data`,
+  Historical Coverage, research, Candidate, publication, deployment, and
+  scheduler state remain unchanged.
+
 ## 2026-09-14 — Retain listed-consideration registration sources
 
 - Accepted ADR 0245 and retained all 12 exact 424B3 documents frozen by the
