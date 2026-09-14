@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0262](0262-bind-corrected-terminal-listed-reference-through-stable-security-evidence.md):
+  binds HNI through source, SEC, and point-in-time canonical identity evidence
+  before calculating the three SCS gross daily reference alternatives.
 - [ADR 0261](0261-model-corrected-terminal-election-as-default-plus-sensitivity.md):
   uses the SCS contractual no-election default as a future daily research path
   while retaining all alternatives and unknown actual holder behavior.

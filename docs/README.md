@@ -166,6 +166,9 @@ Stock Candidates.
 - [Strong-Leader Pullback Terminal-Population Payoff Policy V1](data-contracts/strong-leader-pullback-terminal-population-payoff-policy-v1.md):
   normalizes the three SCS election alternatives and contractual default while
   preserving actual holder behavior and valuation as unresolved.
+- [Strong-Leader Pullback Terminal-Population Listed Reference V1](data-contracts/strong-leader-pullback-terminal-population-listed-reference-v1.md):
+  binds HNI through a strict stable-security chain and values all three SCS
+  daily reference alternatives without creating an outcome.
 - [Strong-Leader Pullback Terminal Gap Census V1](data-contracts/strong-leader-pullback-terminal-gap-census-v1.md):
   preserves the original identity-boundary result; ADR 0253 requires a
   versioned EOD-boundary successor before its counts are used again.
