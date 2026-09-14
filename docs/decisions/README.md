@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0246](0246-require-four-element-registration-evidence-before-listed-consideration-identity.md):
+  requires transaction, target class, consideration class and exact ratio plus
+  a CIK-to-stable-security identifier chain before assigning listed payoff
+  identity.
 - [ADR 0245](0245-retain-listed-consideration-registration-documents-in-resumable-private-custody.md):
   retains the 12 frozen 424B3 documents in restart-safe private custody without
   assigning security identity or terminal value.
