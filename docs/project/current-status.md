@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete 219-document custody and form-aware candidates, a 64-case coverage census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash terminal observations, complete custody of 12 listed-consideration documents, nine strict consideration-security identity assignments, and nine gross listed-stock reference values | two formula-only and one wrong-scope listed-stock cases remain unassigned. Six cases need CVR treatment, four need election/unlisted treatment, and nine have timing conflict/insufficiency. The nine stock values retain unverified-adjustment flags and are not execution prices or returns. The matrix remains 244 / 512; strategy outcome labels, canonical terminal outcomes, and the canonical family are absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete 219-document custody and form-aware candidates, a 64-case coverage census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash terminal observations, complete custody of 12 listed-consideration documents plus the one planned replacement, nine strict consideration-security identity assignments, and nine gross listed-stock reference values | three residual listed-stock identities still await composite adjudication. Six cases need CVR treatment, four need election/unlisted treatment, and nine have timing conflict/insufficiency. The nine stock values retain unverified-adjustment flags and are not execution prices or returns. The matrix remains 244 / 512; strategy outcome labels, canonical terminal outcomes, and the canonical family are absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -170,6 +170,9 @@ Current admission remains rejected:
   and Boeing/Spirit reuse complementary retained registration and completion
   disclosures, while Fifth Third/Comerica requires one exact earlier 424B3.
   The plan made no network request and assigned no identity; and
+- that exact Fifth Third/Comerica merger 424B3 is now retained with 2,440,152
+  bytes, one request, zero retries, formal reread, and owner-only custody. It
+  creates no identity or terminal-value authority; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -208,7 +211,7 @@ project.
    fixed-cash terminal observations, 12 retained 424B3 source documents, nine
    strict listed-consideration identity assignments, and nine gross daily
    listed-stock reference values, and the completed three-case residual source
-   plan. Acquire only its one exact Fifth Third 424B3, then adjudicate all three
+   plan and its one exact Fifth Third 424B3. Adjudicate only the three
    residuals from their frozen evidence. Keep any non-match, complex
    consideration, unresolved timing, and LNW/REVG/SAND quarantined.
 3. Stop reconstructed Membership expansion at the verified 1,253 / 1,255

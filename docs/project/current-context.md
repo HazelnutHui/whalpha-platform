@@ -304,7 +304,16 @@ Important private Dell evidence includes:
   value authority. Report SHA-256 is
   `77cdb7cd64ec5ff1156dce6ecdf07a9e989a4e4a7780d7631ab1a0c958aefa37`
   and logical fingerprint is
-  `f6798760bf690f38a9e6e301d5a6ed0516a46ee02cf6a59c48dbab6b89008839`.
+  `f6798760bf690f38a9e6e301d5a6ed0516a46ee02cf6a59c48dbab6b89008839`;
+  and
+- the listed-consideration residual source package: the exact Fifth Third
+  merger 424B3 is retained in formally reread owner-only custody with
+  2,440,152 bytes, one request, and zero retries. It contains the `1.8663`
+  ratio and both common-security terms but grants no identity or terminal-
+  value authority. Manifest SHA-256 is
+  `64f07040099f576bbdc71b962de06ccd49ffcec3425088f4da3a908c2d1145b3`
+  and logical fingerprint is
+  `6f399bd4b7af78c53a8179c195298906b5a6ecb6ff7a3d4cfa1fbd3f50a1cfe5`.
 
 Exact package identities and counts are retained in:
 
@@ -334,6 +343,7 @@ Exact package identities and counts are retained in:
 - [First-strategy listed-consideration adjudication audit](../audits/strong-leader-pullback-listed-consideration-adjudication-2026-09-14.md)
 - [First-strategy listed-consideration terminal evidence audit](../audits/strong-leader-pullback-listed-consideration-terminal-evidence-2026-09-14.md)
 - [First-strategy listed-consideration residual source-plan audit](../audits/strong-leader-pullback-listed-consideration-residual-source-plan-2026-09-14.md)
+- [First-strategy listed-consideration residual source audit](../audits/strong-leader-pullback-listed-consideration-residual-source-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -386,10 +396,10 @@ return. Twelve exact 424B3 files are retained for the non-election listed-stock
 payoffs and nine candidate consideration identities now pass the strict
 four-element evidence gate. Two formula-only and one wrong-scope cases remain
 unassigned. The nine matched identities now have gross daily reference values,
-and the three residuals have a frozen minimal source plan: two reuse retained
-complementary evidence and one needs an exact Fifth Third 424B3. Acquiring that
-one file and adjudicating the three residual identity chains are the next
-internal gates. LNW, REVG, SAND, CVRs, elections, unlisted units, and
+and the three residuals have a frozen minimal source plan. The one required
+Fifth Third 424B3 is now retained, so adjudicating the three residual identity
+chains is the next internal gate. LNW, REVG, SAND, CVRs, elections, unlisted
+units, and
 unsupported timing remain quarantined. A commercial sample remains limited to
 a measured residual after that work. Massive Starter is not the sole lifecycle
 authority.

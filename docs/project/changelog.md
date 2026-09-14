@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-14 — Retain the one residual registration source
+
+- Accepted ADR 0249 and reused the hardened SEC custody mechanics for the one
+  exact Fifth Third 424B3 authorized by the residual plan.
+- Accession `0001193125-25-297171` was retained in one request with zero
+  retries and 2,440,152 source bytes. The file is the Fifth Third/Comerica
+  merger registration source and contains the stated `1.8663` ratio and both
+  common-security terms.
+- The manifest has SHA-256
+  `64f07040099f576bbdc71b962de06ccd49ffcec3425088f4da3a908c2d1145b3`
+  and logical fingerprint
+  `6f399bd4b7af78c53a8179c195298906b5a6ecb6ff7a3d4cfa1fbd3f50a1cfe5`.
+  Exact replay returned `already_present` with zero network requests,
+  owner-only modes, and no symlink, partial, or staging residue.
+- Four focused tests, 12 linked tests, and the complete 2,726-test API suite
+  passed with two unchanged dependency deprecation warnings.
+- Source custody granted no identity, terminal value, strategy outcome,
+  `/data`, Historical Coverage, research, Candidate, publication, deployment,
+  or scheduler authority.
+
 ## 2026-09-14 — Freeze the listed-consideration residual source plan
 
 - Accepted ADR 0248 and reduced the three unresolved listed-stock identities

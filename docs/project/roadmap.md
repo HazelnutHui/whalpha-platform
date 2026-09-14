@@ -129,8 +129,9 @@ not five-year performance admission.
 19. Preserve the completed three-case residual plan: reuse the complementary
    retained registration and completion disclosures for two cases, and request
    only one exact earlier Fifth Third 424B3 for the third.
-20. Acquire that one file into private resumable custody, then adjudicate all
-   three residual identity chains and keep every non-match quarantined.
+20. Preserve that one exact Fifth Third file in private, formally reread
+   custody; adjudicate all three residual identity chains next and keep every
+   non-match quarantined.
 21. Test a commercial source only against the frozen residual field gap that
    remains after typed SEC review; do not repeat a global vendor scan.
 22. Resolve missing-event neutrality and remaining terminal outcomes without
