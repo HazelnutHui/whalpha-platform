@@ -19,6 +19,11 @@ and dated [audits](../audits/). Current capability and next work belong in
 - Bound the existing pure cohort engine to the same method, removed its
   duplicate numeric threshold tables, added inclusive-boundary verification,
   and stamped method identity on every zero-outcome mechanics batch.
+- Added the versioned outcome-blind method-diagnostics contract and pure
+  aggregator for explicit missingness, feature geometry, boundary crowding,
+  concentration, and all 24 trigger/control counts. It contains no outcome,
+  performance metric, or parameter-selection authority; no real private
+  population report was produced in this milestone.
 
 ## 2026-09-14 — Slim the default recovery path before strategy work
 

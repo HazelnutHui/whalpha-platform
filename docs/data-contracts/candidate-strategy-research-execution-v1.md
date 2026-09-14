@@ -59,7 +59,11 @@ boundary tests. ADR 0186 adds an outcome-free, fail-closed input-construction
 adapter with exact feature semantics and complete-cross-section admission.
 The execution service derives all 24 combinations and executable numeric
 thresholds from the canonical method instead of maintaining a second
-threshold table. There is no real filesystem orchestration, canonical
-persistence, CLI, development selection, real report, result publication, or
-deployment. The real experiment remains `preregistered_data_blocked`; this
-contract grants no authority to use incomplete current history.
+threshold table. The public pure classifier is also reused by the separate
+[method diagnostics contract](strong-leader-pullback-method-diagnostics-v1.md),
+so outcome-blind trigger counts and later admitted mechanics cannot silently
+implement different boundaries. There is no real filesystem orchestration,
+canonical persistence, CLI, development selection, real report, result
+publication, or deployment. The real experiment remains
+`preregistered_data_blocked`; this contract grants no authority to use
+incomplete current history.

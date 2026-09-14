@@ -268,6 +268,13 @@ future-label interfaces, and Lab method/readiness views. V1 remains
 advancement, validation, holdout access, performance claims, and Candidate
 authority remain prohibited.
 
+The versioned method-diagnostics contract and pure aggregator now define how
+coverage, missingness, ties, threshold crowding, Regime balance, session and
+instrument concentration, and all 24 trigger/control counts are measured. The
+contract contains no return field and makes those counts ineligible for
+parameter selection. A real private population report has not yet been
+materialized or published.
+
 ADR 0186 fixes an outcome-free, complete-cross-section input adapter and exact
 21-session feature semantics. It has fixture evidence only and has never run a
 real backtest. Before activation, the study must also challenge whether static

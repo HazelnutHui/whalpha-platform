@@ -131,6 +131,11 @@ method-only and Candidate-ineligible, and carries no real result.
 The pure mechanics contract is `candidate-strategy-research-execution/1.2`;
 each mechanics batch binds the same method and experiment fingerprints and is
 fixed to zero forward outcomes and zero performance authority.
+The private diagnostic contract is
+`strong-leader-pullback-method-diagnostics/1.0`; its pure aggregator binds the
+same method, preserves explicit missing paths, and carries no outcome or
+parameter-selection authority. No real private diagnostic report has yet been
+materialized.
 
 The final performance-admission report remains
 `rejected_data_blocked`. Report SHA-256:

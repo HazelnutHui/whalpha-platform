@@ -14,9 +14,10 @@ ADRs, and audits.
 - **Five-year source depth:** EOD price and stable Identity complete.
 - **Professional performance foundation:** incomplete; formal state
   `data_blocked`.
-- **First strategy:** its canonical method, derived Lab record, and pure
-  signal/cohort engine are implemented; outcome-blind diagnostics are next.
-  No real result or Candidate authority exists.
+- **First strategy:** its canonical method, derived Lab record, pure
+  signal/cohort engine, and outcome-blind diagnostic contract/aggregator are
+  implemented. The real private diagnostic population has not been
+  materialized; no real result or Candidate authority exists.
 - **External source:** none selected; the owner-reported LSEG inquiry is
   optional for the next engineering phase.
 - **Automation:** guarded manual daily operation works; unattended write-
@@ -94,6 +95,12 @@ gates, and research-authority flags. The outcome-free input contract and
 checked-in Lab record bind that same method; the former input-feature
 fingerprint is unchanged.
 
+The separate `strong-leader-pullback-method-diagnostics/1.0` contract and pure
+service now reconcile explicit missing paths, feature distributions and ties,
+threshold proximity, Regime balance, session/instrument concentration, and
+all 24 trigger/control counts. They contain no outcome or performance field
+and grant no parameter-selection authority. No real private report exists yet.
+
 ## Operations
 
 The installed wake timer is read-only. SMTP is unconfigured and no unattended
@@ -105,8 +112,10 @@ measured budget breach.
 
 ## Immediate boundary
 
-1. Build the private Strong-Leader Pullback outcome-blind diagnostics.
-2. Complete its adversarial and property-test suite.
+1. Build the private reconstructed-population reader and materialize the first
+   Strong-Leader Pullback outcome-blind diagnostic report.
+2. Complete real-population replay plus remaining adversarial and property
+   checks without opening an outcome.
 3. Complete the Lab method presentation and independent zero-authority review.
 4. Preserve Baseline V1, reconstructed Membership, and all unresolved evidence
    states without silent inference.

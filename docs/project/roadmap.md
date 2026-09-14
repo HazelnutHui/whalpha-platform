@@ -50,11 +50,16 @@ The pure signal/eligibility implementation is also complete: existing
 chronology and cohort mechanics now derive executable thresholds from that
 method and stamp its immutable identity on zero-outcome batches.
 
+The outcome-blind diagnostic contract and pure aggregator are complete. They
+bind explicit missing paths and summarize feature geometry, concentration,
+and all 24 trigger/control counts without outcomes. The private reconstructed
+population reader and first real diagnostic report remain to be built.
+
 Continue in this order:
 
-1. **Outcome-blind diagnostics:** measure feature coverage, distributions,
-   ties, missingness, concentration, and discontinuity sensitivity from the
-   fixed reconstructed method population. Preserve its
+1. **Outcome-blind diagnostic population:** read the fixed reconstructed
+   method population, preserve explicit missing paths, and materialize the
+   deterministic report at the
    `reconstructed_latest_vintage_method_engineering_only` tier.
 2. **Adversarial verification:** test chronology, warm-up, next-open boundary,
    rank ties, missing paths, split discontinuities, stable-ID collisions,

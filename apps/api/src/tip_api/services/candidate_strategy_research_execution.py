@@ -57,7 +57,7 @@ class ResearchOutcomeBarV1:
 
 
 @dataclass(frozen=True, slots=True)
-class _StrongLeaderPullbackExecutionRules:
+class StrongLeaderPullbackExecutionRules:
     leadership_gates: dict[str, tuple[Decimal, Decimal]]
     pullback_bands: dict[str, tuple[Decimal, Decimal]]
     recovery_triggers: frozenset[str]
@@ -259,12 +259,14 @@ def build_strong_leader_pullback_mechanics(
         experiment=frozen,
         method=canonical_method,
     )
-    execution_rules = _execution_rules(canonical_method)
+    execution_rules = compile_strong_leader_pullback_execution_rules(
+        canonical_method
+    )
     assignments: list[StrongLeaderPullbackCohortAssignmentV1] = []
     for combination in combinations:
         for observation in observations:
             session_assignment = assignment_by_session[observation.as_of_session]
-            role, leader, setup, reasons = _cohort_role(
+            role, leader, setup, reasons = classify_strong_leader_pullback_observation(
                 observation=observation,
                 combination=combination,
                 session_assignment=session_assignment,
@@ -494,13 +496,15 @@ def _build_forward_outcome(
     return CandidateStrategyForwardOutcomeV1.model_validate(normalized)
 
 
-def _cohort_role(
+def classify_strong_leader_pullback_observation(
     *,
     observation: StrongLeaderPullbackObservationV1,
     combination: StrongLeaderPullbackParameterCombinationV1,
     session_assignment: StrategyResearchSessionAssignmentV1,
-    execution_rules: _StrongLeaderPullbackExecutionRules,
+    execution_rules: StrongLeaderPullbackExecutionRules,
 ) -> tuple[StrongLeaderPullbackCohortRole, bool, bool, tuple[str, ...]]:
+    """Classify one source-dated observation under one registered combination."""
+
     if not session_assignment.usable_for_signal_evaluation:
         return (
             StrongLeaderPullbackCohortRole.EXCLUDED_CHRONOLOGICAL_BOUNDARY,
@@ -666,9 +670,12 @@ def _assignment_counts(
     return counts
 
 
-def _execution_rules(
+def compile_strong_leader_pullback_execution_rules(
     method: StrongLeaderPullbackMethodV1,
-) -> _StrongLeaderPullbackExecutionRules:
+) -> StrongLeaderPullbackExecutionRules:
+    """Compile the canonical parameter strings into deterministic numeric rules."""
+
+    _validate_canonical_method(method)
     values = {
         item.parameter_id: item.canonical_candidate_values
         for item in method.parameters
@@ -709,7 +716,7 @@ def _execution_rules(
         value: Decimal(value)
         for value in values["volume_contraction_ratio_max"]
     }
-    return _StrongLeaderPullbackExecutionRules(
+    return StrongLeaderPullbackExecutionRules(
         leadership_gates=leadership,
         pullback_bands=bands,
         recovery_triggers=recoveries,

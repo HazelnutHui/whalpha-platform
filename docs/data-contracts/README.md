@@ -71,6 +71,7 @@ adjustment evidence remains explicit.
 ## Quant Research Lab
 
 - [Strong-Leader Pullback Method V1](strong-leader-pullback-method-v1.md)
+- [Strong-Leader Pullback Method Diagnostics V1](strong-leader-pullback-method-diagnostics-v1.md)
 - [Quant Research Lab Model Record V1](quant-research-lab-model-record-v1.md)
 - [Candidate Strategy Research Experiment V1](candidate-strategy-research-experiment-v1.md)
 - [Strategy Research Readiness V1](strategy-research-readiness-v1.md)
