@@ -310,7 +310,7 @@ Important private Dell evidence includes:
   and logical fingerprint is
   `cb2aba6d936906d5e4a21f14fea2c9a6ff5337aee7ee3505c2c3977df909f0a7`;
   and
-- the authoritative first-strategy terminal-gap census V2: 42 of 65
+- the preserved first-strategy terminal-gap census V2: 42 of 65
   securities have gross daily reference-value evidence and 23 remain
   unresolved. The corresponding five-session split is 196 documented versus
   106 unresolved out of 302. `SCS` is the one newly in-scope stable-ID case
@@ -318,7 +318,9 @@ Important private Dell evidence includes:
   terminal-outcome or admission authority. Report SHA-256 is
   `1d920f4c44eb20bf312b667eb82a8944a9b63bfe0d3d7081a66e71c6f23e6cff`
   and logical fingerprint is
-  `1cb6984652842e8898cebbb484f0796bfdd7b6e4e7bee167d88bf47734e06d5f`;
+  `1cb6984652842e8898cebbb484f0796bfdd7b6e4e7bee167d88bf47734e06d5f`.
+  V3 supersedes only its current counts while preserving this evidence
+  vintage; and
   and
 - the corrected-population SEC source plan V2: the one newly in-scope stable ID
   is linked through retained lifecycle evidence to CIK `0001050825` and three
@@ -379,9 +381,23 @@ Important private Dell evidence includes:
   `6ec4beafbcb9191b2c27e86e90d32f37cde8b8c78d2ea2ec94b13cabebfd56ac`
   and logical fingerprint
   `4dc7ff5876b639195faf6c15d16c163749101c4f37d2f64a28620bf29ca8b0fd`.
-  Actual holder election, adjustment/proration details, global HNI security
-  identity, daily value, terminal outcome, and research authority remain
-  absent.
+  Actual holder election and adjustment/proration details remain absent; and
+- the corrected-population listed reference and terminal-gap census V3: HNI is
+  strictly assigned to stable ID `8bde034d-a7f8-5dce-a432-134c583eb9ac`
+  through source, SEC CIK/ticker/NYSE, and point-in-time canonical identity.
+  The 2025-12-10 HNI close is 42.54 USD; cash, mixed/default, and stock gross
+  references are 16.228286, 16.524768, and 16.760760 USD. The reference report
+  SHA-256 is
+  `86221d53e36b4ff8b2b56f1c7d6eefd893681ac66c4b62c92ca8ae2974f5e71e`
+  with logical fingerprint
+  `df154b5086d10527e1367c73d7980bf5ef5801d67d65d513829b49edf2b201b4`.
+  V3 changes only SCS and raises documented coverage to 43 securities / 197
+  five-session paths, leaving 22 / 105. Its SHA-256 is
+  `8c3f4f960218eaded49fabf3503865a24a885eb118b0e96ab2aeddfa51288462`
+  with logical fingerprint
+  `d94b5f22397df2b1fe49ac2c2c12e5f04d8617b076c8b95fb2e8127c886aa57e`.
+  Actual election, terminal outcome, strategy label, and research authority
+  remain absent.
 
 Exact package identities and counts are retained in:
 
@@ -423,6 +439,7 @@ Exact package identities and counts are retained in:
 - [First-strategy terminal-population SEC core-adjudication audit](../audits/strong-leader-pullback-terminal-population-sec-core-adjudication-2026-09-14.md)
 - [First-strategy terminal-population trading-cessation audit](../audits/strong-leader-pullback-terminal-population-trading-cessation-adjudication-2026-09-14.md)
 - [First-strategy terminal-population payoff-policy audit](../audits/strong-leader-pullback-terminal-population-payoff-policy-2026-09-14.md)
+- [First-strategy corrected listed-reference and gap-V3 audit](../audits/strong-leader-pullback-terminal-population-listed-reference-and-gap-v3-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)

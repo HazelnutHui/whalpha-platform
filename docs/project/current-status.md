@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete original 219-document custody and form-aware candidates, a 64-case source census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash and 12 listed-consideration daily reference values, a formal identity/EOD boundary correction, terminal-gap census V2, and complete source, parsing, extraction, core adjudication, daily cessation, and election-policy evidence for the new case | corrected EOD scope is 65 securities / 302 five-session paths. Forty-two securities / 196 paths have reference evidence; 23 / 106 remain. SCS has matched identity, completion, reason, last-EOD observation, five terms, three alternatives, and the no-election mixed default; global HNI identity and terminal value remain unresolved. References are not outcomes. The historical matrix remains 244 / 512; canonical lifecycle, strategy labels, terminal outcomes, and Historical Coverage are absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete original 219-document custody and form-aware candidates, a 64-case source census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash and 13 listed-consideration daily reference cases, a formal identity/EOD boundary correction, and terminal-gap census V3 | corrected EOD scope is 65 securities / 302 five-session paths. Forty-three securities / 197 paths have reference evidence; 22 / 105 remain. SCS now has a strict HNI stable-ID assignment and three default-plus-sensitivity values. References are not outcomes. The historical matrix remains 244 / 512; canonical lifecycle, strategy labels, terminal outcomes, and Historical Coverage are absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -164,11 +164,11 @@ Current admission remains rejected:
 - the terminal boundary census separates Instrument Master observation from
   stable-ID EOD presence. It changes at least one impact count for 55 of 89
   lifecycle rows and establishes 65 securities / 302 five-session paths as
-  the corrected scope. Terminal-gap census V2 preserves all legacy evidence
-  decisions: 42 securities / 196 paths have reference evidence, while 23 /
-  106 remain unresolved. The next evidence order is the newly in-scope `SCS`
-  primary-source case, nine cessation-timing cases, three legacy exceptional
-  cases, then CVRs, elections/proration, and the unlisted unit; and
+  the corrected scope. Terminal-gap census V3 preserves V2 and changes only
+  SCS: 43 securities / 197 paths have reference evidence, while 22 / 105
+  remain unresolved. The next evidence order is nine cessation-timing cases,
+  three legacy exceptional cases, then CVRs, elections/proration, and the
+  unlisted unit; and
 - the new SCS case now has a stable-ID-bound V2 source plan and complete raw
   custody for exactly three primary documents: one Form 25-NSE, one structured
   8-K, and one Form 15-12G. All three files formally reread with a valid plan-
@@ -196,8 +196,13 @@ Current admission remains rejected:
 - SCS payoff policy is now explicit: five source terms form cash, mixed, and
   stock alternatives; no valid holder election defaults to mixed. The future
   no-action research path uses that default with all alternatives retained as
-  sensitivity. Actual holder election, adjustment/proration details, HNI
-  stable identity, valuation, and outcome remain absent; and
+  sensitivity. Actual holder election and adjustment/proration details remain
+  absent; and
+- HNI is now strictly bound to stable ID
+  `8bde034d-a7f8-5dce-a432-134c583eb9ac` at the 2025-12-10 daily boundary.
+  HNI closed at 42.54 USD; SCS cash, mixed/default, and stock gross references
+  are 16.228286, 16.524768, and 16.760760 USD. Terminal-gap census V3 counts
+  this as one documented security/path, not three outcomes; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -237,13 +242,11 @@ project.
    listed-consideration identity assignments and gross daily reference values.
    Keep any non-match, complex
    consideration, unresolved timing, and LNW/REVG/SAND quarantined.
-3. Bind all future terminal work to terminal-gap census V2 and preserve the
-   completed SCS source, census, candidates, core adjudication, and matched
-   daily cessation boundary, and explicit default-plus-sensitivity payoff
-   policy. Bind HNI common stock through a strict point-in-time stable-security
-   chain, then value all three alternatives before completing that case. Do
-   not interpret a locator, retained byte, candidate field, lexical marker, or
-   reference value as an outcome.
+3. Bind all future terminal work to terminal-gap census V3. Preserve the
+   completed SCS source, core, cessation, payoff policy, strict HNI assignment,
+   and three gross references without interpreting any reference as an
+   outcome. Next process the nine cessation-timing and three legacy exception
+   cases before complex CVR, election/proration, and unlisted-unit policies.
 4. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
    boundary; do not infer the two absent sources. Complete only the
    lifecycle/terminal, action/adjustment, cost, and Historical Coverage

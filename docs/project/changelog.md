@@ -1,5 +1,21 @@
 # Changelog
 
+## 2026-09-14 — Bind SCS/HNI reference and extend terminal gaps
+
+- Strictly bound HNI common stock through SCS source language, official SEC
+  CIK/ticker/NYSE evidence, and the 2025-12-10 canonical stable-ID identity.
+- Valued the cash, mixed/default, and stock alternatives at the 42.54 USD HNI
+  daily close as 16.228286, 16.524768, and 16.760760 USD. These are gross
+  references, not holder elections, execution prices, outcomes, or returns.
+- Terminal-gap census V3 preserves V2 and changes only SCS. Documented
+  reference coverage is now 43 of 65 securities and 197 of 302 five-session
+  paths; 22 securities and 105 paths remain.
+- The reference and V3 reports have SHA-256
+  `86221d53e36b4ff8b2b56f1c7d6eefd893681ac66c4b62c92ca8ae2974f5e71e`
+  and `8c3f4f960218eaded49fabf3503865a24a885eb118b0e96ab2aeddfa51288462`.
+  Both replayed exactly with owner-only modes and no residue. The complete
+  2,778-test API suite and ten V3-linked focused tests passed.
+
 ## 2026-09-14 — Define corrected-population payoff policy
 
 - Accepted ADR 0261 and independently matched HNI/Steelcase source roles, five

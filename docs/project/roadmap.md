@@ -126,19 +126,18 @@ not five-year performance admission.
    non-election identities and gross daily reference values now pass their
    frozen evidence gates. All values retain unverified-adjustment flags and
    remain non-outcomes.
-19. Preserve the corrected EOD-boundary worklist: terminal-gap census V2 has
-   65 securities / 302 five-session paths. Forty-two securities / 196 paths
-   have daily reference evidence and 23 / 106 remain unresolved. References
-   are not outcomes.
+19. Preserve the corrected EOD-boundary worklist and its SCS extension:
+   terminal-gap census V3 has 65 securities / 302 five-session paths.
+   Forty-three securities / 197 paths have daily reference evidence and 22 /
+   105 remain unresolved. References are not outcomes.
 20. Preserve the authoritative SCS plan V2 and its valid plan-before-source
    chronology; the earlier V1 clock is superseded and grants no authority.
 21. Preserve complete SCS source custody: all three planned SEC primary
    documents formally reread with owner-only modes and zero residual staging.
 22. Preserve the completed SCS content census, form-aware candidates, core
    identity/event/reason/consideration adjudication, independently matched
-   daily cessation boundary, and default-plus-sensitivity election policy.
-   Next bind HNI common stock through strict point-in-time security evidence
-   and value all three alternatives without claiming an actual holder choice.
+   daily cessation boundary, default-plus-sensitivity election policy, strict
+   HNI stable-security assignment, and all three gross daily references.
 23. Adjudicate the nine cessation-timing cases and three legacy exceptional
    primary-source cases before complex valuation. Test a commercial source
    only against a measured remaining field; do not repeat a global vendor scan.
