@@ -318,7 +318,16 @@ Important private Dell evidence includes:
   terminal-outcome or admission authority. Report SHA-256 is
   `1d920f4c44eb20bf312b667eb82a8944a9b63bfe0d3d7081a66e71c6f23e6cff`
   and logical fingerprint is
-  `1cb6984652842e8898cebbb484f0796bfdd7b6e4e7bee167d88bf47734e06d5f`.
+  `1cb6984652842e8898cebbb484f0796bfdd7b6e4e7bee167d88bf47734e06d5f`;
+  and
+- the corrected-population SEC source plan: the one newly in-scope stable ID
+  is linked through retained lifecycle evidence to CIK `0001050825` and three
+  exact SEC primary-document requests: Form 25-NSE dated 2025-12-10, Form 8-K
+  dated 2025-12-11, and Form 15-12G dated 2025-12-22. No document content has
+  been requested or retained by this plan. Report SHA-256 is
+  `4e43d29c25cf0b6418ac865adf0e323d9c021b99d8fe917e8813edfdd9399968`
+  and logical fingerprint is
+  `539d42ead648bda44bf63818dffa5c4587de65edb59195a787945a9e8ea39b4c`.
 
 Exact package identities and counts are retained in:
 
@@ -353,6 +362,7 @@ Exact package identities and counts are retained in:
 - [First-strategy listed-consideration residual terminal evidence audit](../audits/strong-leader-pullback-listed-consideration-residual-terminal-evidence-2026-09-14.md)
 - [First-strategy terminal-gap census audit](../audits/strong-leader-pullback-terminal-gap-census-2026-09-14.md)
 - [First-strategy terminal-boundary correction audit](../audits/strong-leader-pullback-terminal-boundary-correction-2026-09-14.md)
+- [First-strategy terminal-population SEC source-plan audit](../audits/strong-leader-pullback-terminal-population-sec-source-plan-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)

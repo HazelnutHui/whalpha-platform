@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-09-14 — Freeze SEC sources for the corrected terminal addition
+
+- Accepted ADR 0255 and added a zero-network plan that joins terminal-gap V2,
+  stable-ID lifecycle lineage, and the formally retained SEC Submissions
+  snapshot before selecting any source document.
+- The one newly in-scope case resolves through retained lifecycle evidence to
+  CIK `0001050825`. The plan contains exactly three unique requests: Form
+  25-NSE dated 2025-12-10, structured Form 8-K dated 2025-12-11, and Form
+  15-12G dated 2025-12-22. Ticker remains locator-only.
+- The 6,028-byte report has SHA-256
+  `4e43d29c25cf0b6418ac865adf0e323d9c021b99d8fe917e8813edfdd9399968`
+  and logical fingerprint
+  `539d42ead648bda44bf63818dffa5c4587de65edb59195a787945a9e8ea39b4c`.
+  Exact replay returned `already_present`; custody and plan directories are
+  mode `0700`, the report is `0400`, and no symlink, partial, or staging
+  residue exists.
+- Twenty linked tests and the complete 2,754-test API suite passed with two
+  unchanged dependency warnings. No external request, credential read,
+  document write, `/data` write, lifecycle fact, terminal outcome, research
+  admission, Candidate change, publication, deployment, or scheduler mutation
+  occurred.
+
 ## 2026-09-14 — Correct terminal scope to canonical EOD presence
 
 - Accepted ADRs 0253 and 0254 after proving that the prior terminal-gap counts

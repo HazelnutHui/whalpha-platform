@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete 219-document custody and form-aware candidates, a 64-case source census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash and 12 listed-consideration daily reference values, a formal identity/EOD boundary correction, and terminal-gap census V2 | corrected EOD scope is 65 securities / 302 five-session paths. Forty-two securities / 196 paths have reference evidence; 23 / 106 remain: one new primary-source case, nine timing, six CVR, three election/proration, one unlisted-unit/election, and three legacy exceptional cases. References are not outcomes. The matrix remains 244 / 512; canonical lifecycle, strategy labels, terminal outcomes, and Historical Coverage are absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete 219-document custody and form-aware candidates, a 64-case source census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash and 12 listed-consideration daily reference values, a formal identity/EOD boundary correction, terminal-gap census V2, and a three-document SEC source plan for the new case | corrected EOD scope is 65 securities / 302 five-session paths. Forty-two securities / 196 paths have reference evidence; 23 / 106 remain. The new SCS stable-ID case has exact Form 25, 8-K, and Form 15 locators but no document custody or adjudicated fact. References are not outcomes. The matrix remains 244 / 512; canonical lifecycle, strategy labels, terminal outcomes, and Historical Coverage are absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -169,6 +169,10 @@ Current admission remains rejected:
   106 remain unresolved. The next evidence order is the newly in-scope `SCS`
   primary-source case, nine cessation-timing cases, three legacy exceptional
   cases, then CVRs, elections/proration, and the unlisted unit; and
+- the new SCS case now has a stable-ID-bound, zero-request SEC source plan for
+  exactly three primary documents: one Form 25-NSE, one structured 8-K, and
+  one Form 15-12G. The plan has not acquired content and grants no lifecycle,
+  terminal, or research authority; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -208,10 +212,11 @@ project.
    listed-consideration identity assignments and gross daily reference values.
    Keep any non-match, complex
    consideration, unresolved timing, and LNW/REVG/SAND quarantined.
-3. Bind all future terminal work to terminal-gap census V2. Adjudicate the
-   newly in-scope `SCS` stable-ID case first, then the nine timing cases and
-   three legacy exceptional primary-source cases before complex payoff
-   valuation. Do not interpret a reference value as an outcome.
+3. Bind all future terminal work to terminal-gap census V2. Retain the three
+   frozen SCS documents through a separately governed source-custody step,
+   then adjudicate that stable-ID case before the nine timing cases and three
+   legacy exceptional cases. Do not interpret a locator or reference value as
+   an outcome.
 4. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
    boundary; do not infer the two absent sources. Complete only the
    lifecycle/terminal, action/adjustment, cost, and Historical Coverage
