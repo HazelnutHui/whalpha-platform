@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0248](0248-reuse-complementary-sec-evidence-before-requesting-one-residual-registration-document.md):
+  reuses complementary retained SEC evidence for two residual identities and
+  limits new acquisition to one exact Fifth Third registration document.
 - [ADR 0247](0247-value-only-strictly-identified-listed-consideration-at-a-daily-reference-boundary.md):
   values only strictly assigned listed merger consideration at the target's
   first absent daily session while preserving price and timing limitations.
