@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete 219-document custody and form-aware candidates, a 64-case coverage census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash terminal observations, complete custody of 12 listed-consideration documents, and nine strict consideration-security identity assignments | two formula-only and one wrong-scope listed-stock cases remain unassigned; all listed-stock terminal values remain absent. Six cases need CVR treatment, four need election/unlisted treatment, and nine have timing conflict/insufficiency. The matrix remains 244 / 512; strategy outcome labels, canonical terminal outcomes, and the canonical family are absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete 219-document custody and form-aware candidates, a 64-case coverage census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash terminal observations, complete custody of 12 listed-consideration documents, nine strict consideration-security identity assignments, and nine gross listed-stock reference values | two formula-only and one wrong-scope listed-stock cases remain unassigned. Six cases need CVR treatment, four need election/unlisted treatment, and nine have timing conflict/insufficiency. The nine stock values retain unverified-adjustment flags and are not execution prices or returns. The matrix remains 244 / 512; strategy outcome labels, canonical terminal outcomes, and the canonical family are absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -159,7 +159,13 @@ Current admission remains rejected:
   consideration class, registered exchange ratio, and CIK-to-stable-security
   chain. IonQ/SkyWater and Boeing/Spirit are formula-only without the final
   exact ratio, while the selected Fifth Third filing is a senior-notes source;
-  those three remain unassigned and all 12 terminal values remain zero; and
+  those three remain unassigned; and
+- the nine matched cases now retain a gross daily reference value using cash
+  plus registered share ratio times the assigned consideration security's
+  canonical unadjusted close on the target's first absent session. All nine
+  rows are valid revision 1 but retain `adjustment_factors_unverified`. These
+  are not execution prices, strategy labels, returns, or canonical terminal
+  outcomes; the three unassigned cases remain excluded; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -195,13 +201,12 @@ project.
    termination reasons, common-share consideration decisions, and source-party
    topologies plus the 52 matched, one conflicting, and eight unsupported
    trading-cessation decisions, 81 source-bound payoff terms, and 30 nominal
-   fixed-cash terminal observations, 12 retained 424B3 source documents, and
-   nine strict listed-consideration identity assignments. Build reference
-   terminal values only for those nine identities and keep the two formula-only
-   plus one wrong-scope residual unassigned until a bounded replacement source
-   proves the final ratio. Keep complex
-   consideration, unresolved timing, and
-   LNW/REVG/SAND quarantined.
+   fixed-cash terminal observations, 12 retained 424B3 source documents, nine
+   strict listed-consideration identity assignments, and nine gross daily
+   listed-stock reference values. Freeze a bounded replacement-source plan for
+   only the two formula-only plus one wrong-scope residual; keep them unassigned
+   unless the exact transaction security and final ratio are proven. Keep
+   complex consideration, unresolved timing, and LNW/REVG/SAND quarantined.
 3. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
    boundary; do not infer the two absent sources. Complete only the
    lifecycle/terminal, action/adjustment, cost, and Historical Coverage

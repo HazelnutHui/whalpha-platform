@@ -123,13 +123,15 @@ not five-year performance admission.
 17. Preserve terminal cash evidence for the 30 fixed-cash cases with matched
    cessation timing. Keep the 12 matched-timing listed-equity cases separate
    until consideration-security identity is independently proven.
-18. Preserve the completed 12-document 424B3 source package and its nine strict
-   identity assignments. Value only those nine against a governed canonical
-   terminal session; keep the two formula-only and one wrong-scope cases
-   unassigned while planning their exact residual sources.
-19. Test a commercial source only against the frozen residual field gap that
+18. Preserve the completed 12-document 424B3 source package, its nine strict
+   identity assignments, and their nine gross daily reference values. These
+   are not execution prices, strategy labels, returns, or canonical outcomes.
+19. Freeze a replacement-source plan only for the two formula-only and one
+   wrong-scope listed-stock residual. Keep them quarantined unless exact
+   transaction-security and final-ratio evidence is obtained.
+20. Test a commercial source only against the frozen residual field gap that
    remains after typed SEC review; do not repeat a global vendor scan.
-20. Resolve missing-event neutrality and remaining terminal outcomes without
+21. Resolve missing-event neutrality and remaining terminal outcomes without
    turning a ticker match or unique historical candidate into an assignment.
 
 Massive Starter remains the primary price/reference source but is not the sole

@@ -268,8 +268,8 @@ Important private Dell evidence includes:
   and
 - the listed-consideration source package: all 12 exact 424B3 files are in
   formally reread owner-only custody with 30,122,047 source bytes, 12 requests,
-  and zero retries. Document content remains uninterpreted and all candidate
-  identity assignments and terminal values remain zero. Manifest SHA-256 is
+  and zero retries. This custody layer alone grants no identity or terminal-
+  value authority. Manifest SHA-256 is
   `826eacc85cf2b610e330465266a9629ac2c11f23ccd5d442f8eb14d7d3f963f6`
   and logical fingerprint is
   `0ff421cbc2a219ff9195e23ee7ff24d9b364646abdc154241d59d34e01334ca3`;
@@ -279,11 +279,22 @@ Important private Dell evidence includes:
   ratio, and CIK-to-stable-security chain. IonQ/SkyWater and Boeing/Spirit
   retain variable formulas without the final exact ratio; the selected Fifth
   Third 424B3 is a senior-notes offering, not a merger registration source.
-  Those three remain unassigned and all 12 retain zero terminal values. Report
-  SHA-256 is
+  Those three remain unassigned. This identity layer itself assigns no
+  terminal values. Report SHA-256 is
   `b23dd9fa6e308cf12f2adfead289f0fd967cc73fed93702c264e6bfdf530ed60`
   and logical fingerprint is
-  `b2f44efe02269331b890300f86389e84c471b578d581b9045a959af3b4d4bb09`.
+  `b2f44efe02269331b890300f86389e84c471b578d581b9045a959af3b4d4bb09`;
+  and
+- the listed-consideration terminal reference layer: the nine strictly
+  assigned consideration securities have one gross value each using
+  `cash + registered ratio × canonical unadjusted close` on the target's first
+  absent exchange session. All nine price rows are valid revision 1 and retain
+  `adjustment_factors_unverified`; the other three cases remain excluded. No
+  execution price, canonical outcome, strategy label, return, or research
+  admission is claimed. Report SHA-256 is
+  `18e47df490acca529aa3eaebdfaba70c989669ecb83e52a377d6885200913f2c`
+  and logical fingerprint is
+  `a7bb1a87258e08ddb71b9add9ab7936dd2005522640bae124eebf665a1fbf9ef`.
 
 Exact package identities and counts are retained in:
 
@@ -311,6 +322,7 @@ Exact package identities and counts are retained in:
 - [First-strategy listed-consideration source-plan audit](../audits/strong-leader-pullback-listed-consideration-source-plan-2026-09-14.md)
 - [First-strategy listed-consideration source audit](../audits/strong-leader-pullback-listed-consideration-source-2026-09-14.md)
 - [First-strategy listed-consideration adjudication audit](../audits/strong-leader-pullback-listed-consideration-adjudication-2026-09-14.md)
+- [First-strategy listed-consideration terminal evidence audit](../audits/strong-leader-pullback-listed-consideration-terminal-evidence-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)

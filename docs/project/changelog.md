@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-09-14 — Document listed-consideration terminal references
+
+- Accepted ADR 0247 and calculated one gross daily reference value for each of
+  the nine listed consideration identities that passed the strict four-element
+  registration-document gate.
+- Each value preserves cash, registered ratio, the assigned stable security's
+  canonical unadjusted close on the target's first absent session, EOD/Identity
+  integrity, source, revision, and quality flags. All nine rows are valid
+  revision 1 and retain `adjustment_factors_unverified`.
+- The other three decisions remain excluded: two sources do not prove the final
+  ratio, and one source is an unrelated notes offering.
+- The report has SHA-256
+  `18e47df490acca529aa3eaebdfaba70c989669ecb83e52a377d6885200913f2c`
+  and logical fingerprint
+  `a7bb1a87258e08ddb71b9add9ab7936dd2005522640bae124eebf665a1fbf9ef`.
+  Exact network-disabled replay returned `already_present` with owner-only
+  modes and zero residue.
+- Four focused tests, 24 linked tests, and the complete 2,718-test API suite
+  passed with two unchanged dependency deprecation warnings.
+- The values are not execution prices, strategy labels, returns, or canonical
+  terminal outcomes. `/data`, Historical Coverage, research, Candidate,
+  publication, deployment, and scheduler state remain unchanged.
+
 ## 2026-09-14 — Adjudicate listed-consideration identities
 
 - Accepted ADR 0246 and applied a four-element evidence gate to all 12 retained
