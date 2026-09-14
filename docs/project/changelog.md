@@ -6,6 +6,22 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-14 — Exercise the first method over reconstructed Dell evidence
+
+- Added an offline private reader, shared feature calculator, explicit proxy
+  semantics, and owner-only idempotent custody for Strong-Leader Pullback
+  method diagnostics.
+- Reconciled 437,402 paths across 287 sessions to 417,209 complete observations
+  and 20,193 explicit exclusions. Known split factors were applied on 700
+  retained paths; unresolved split days reject the entire cross-section.
+- Removed arbitrary ATR-depth and volume-ratio observation ceilings so extreme
+  finite non-signals remain visible instead of being mislabeled as missing.
+- Independently replayed the full population to the identical report and
+  passed all 2,823 backend tests before opening the Lab presentation step.
+- Preserved zero outcomes, zero performance metrics, zero parameter-selection
+  authority, and zero canonical or Production writes. The formal performance
+  gate remains `rejected_data_blocked`.
+
 ## 2026-09-14 — Establish the first canonical strategy method
 
 - Added one versioned, outcome-blind Strong-Leader Pullback method contract as

@@ -66,12 +66,18 @@ The contract fixes:
 - `external_request_count=0`; and
 - `production_write_count=0`.
 
-Observation/execution contract 1.1 accepts Stress and -20 through 20 ATR
-pullback depth. The experiment's positive trigger bands remain unchanged.
+Observation/execution contract 1.2 accepts Stress and preserves every finite
+ATR pullback depth and every finite, nonnegative volume ratio. Extreme raw
+observations remain valid non-signals rather than becoming missing data through
+arbitrary observation bounds. The experiment's positive trigger bands remain
+unchanged.
 
 ## Current status
 
-Contracts, pure calculation, and adversarial fixtures exist. Real construction
-is blocked because Dell does not yet have research-ready complete Membership,
-Corporate Action, Instrument Lifecycle, Adjustment Ledger, and transitive
-Historical Coverage evidence. No real batch has been created or persisted.
+Contracts, shared pure feature calculation, and adversarial fixtures exist.
+The separate reconstructed-population diagnostic has exercised the calculation
+over real Dell inputs, but that proxy population is not a research-input batch.
+Real research-input construction remains blocked because Dell does not yet have
+research-ready complete Membership, Corporate Action, Instrument Lifecycle,
+Adjustment Ledger, and transitive Historical Coverage evidence. No real
+outcome or performance batch has been created or persisted.

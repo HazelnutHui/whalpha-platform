@@ -29,7 +29,7 @@ from .strong_leader_pullback_method import (
 
 RESEARCH_EXECUTION_CONTRACT_VERSION = "candidate-strategy-research-execution/1.2"
 STRONG_LEADER_PULLBACK_OBSERVATION_VERSION = (
-    "strong-leader-pullback-observation/1.1"
+    "strong-leader-pullback-observation/1.2"
 )
 
 
@@ -199,18 +199,16 @@ class StrongLeaderPullbackObservationV1(FrozenModel):
             Decimal("0"),
             Decimal("100"),
         )
-        _bounded_decimal(
+        _scaled_decimal(
             self.pullback_depth_atr,
             "pullback_depth_atr",
-            Decimal("-20"),
-            Decimal("20"),
         )
-        _bounded_decimal(
+        pullback_volume_ratio = _scaled_decimal(
             self.pullback_volume_ratio,
             "pullback_volume_ratio",
-            Decimal("0"),
-            Decimal("100"),
         )
+        if pullback_volume_ratio < 0:
+            raise ValueError("pullback_volume_ratio cannot be negative")
         if research_execution_fingerprint(self) != self.logical_fingerprint:
             raise ValueError("research observation fingerprint mismatch")
         return self
@@ -363,4 +361,17 @@ def _bounded_decimal(
         or not minimum <= parsed <= maximum
     ):
         raise ValueError(f"{field_name} must use scale 4 within its bounds")
+    return parsed
+
+
+def _scaled_decimal(value: str, field_name: str) -> Decimal:
+    try:
+        parsed = Decimal(value)
+    except (InvalidOperation, ValueError) as exc:
+        raise ValueError(f"{field_name} must be a Decimal string") from exc
+    if (
+        not parsed.is_finite()
+        or value != format(parsed.quantize(Decimal("0.0001")), "f")
+    ):
+        raise ValueError(f"{field_name} must be finite and use scale 4")
     return parsed

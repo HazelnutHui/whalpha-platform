@@ -14,6 +14,10 @@ from tip_api.contracts.analytics.v1 import (
     StrongLeaderPullbackMethodDiagnosticsV1,
     strong_leader_pullback_method_v1,
 )
+from tip_api.persistence.strong_leader_pullback_diagnostics import (
+    read_strong_leader_pullback_diagnostics,
+    write_strong_leader_pullback_diagnostics,
+)
 from tip_api.services.candidate_strategy_research_execution import (
     build_candidate_strategy_chronological_plan,
     build_strong_leader_pullback_observation,
@@ -149,11 +153,13 @@ def test_diagnostics_are_deterministic_outcome_blind_and_method_bound(
         plan=plan,
         observations=observations,
         excluded_paths=excluded,
+        known_split_adjustment_applied_path_count=1,
     )
     second = build_strong_leader_pullback_method_diagnostics(
         plan=plan,
         observations=observations,
         excluded_paths=excluded,
+        known_split_adjustment_applied_path_count=1,
     )
 
     assert first == second
@@ -161,6 +167,9 @@ def test_diagnostics_are_deterministic_outcome_blind_and_method_bound(
     assert first.expected_path_count == 5
     assert first.complete_observation_count == 4
     assert first.excluded_path_count == 1
+    assert first.known_split_adjustment_applied_path_count == 1
+    assert first.known_split_adjustment_applied_path_rate == "0.2500"
+    assert first.canonical_feature_values_authorized is False
     assert len(first.parameter_combinations) == 24
     assert first.contains_forward_outcomes is False
     assert first.contains_performance_metrics is False
@@ -178,6 +187,7 @@ def test_diagnostics_expose_coverage_ties_thresholds_and_concentration(
         plan=plan,
         observations=observations,
         excluded_paths=excluded,
+        known_split_adjustment_applied_path_count=1,
     )
 
     coverage = {item.feature_id: item for item in report.feature_coverage}
@@ -220,6 +230,7 @@ def test_every_combination_classifies_the_whole_declared_population(
         plan=plan,
         observations=observations,
         excluded_paths=excluded,
+        known_split_adjustment_applied_path_count=1,
     )
 
     for item in report.parameter_combinations:
@@ -250,12 +261,14 @@ def test_diagnostics_reject_overlap_unsorted_inputs_and_method_drift(
             plan=plan,
             observations=observations,
             excluded_paths=(overlap,),
+            known_split_adjustment_applied_path_count=1,
         )
     with pytest.raises(StrongLeaderPullbackDiagnosticsError, match="unique and sorted"):
         build_strong_leader_pullback_method_diagnostics(
             plan=plan,
             observations=tuple(reversed(observations)),
             excluded_paths=excluded,
+            known_split_adjustment_applied_path_count=1,
         )
     changed_method = strong_leader_pullback_method_v1().model_copy(
         update={"decision_use": "changed"}
@@ -265,8 +278,43 @@ def test_diagnostics_reject_overlap_unsorted_inputs_and_method_drift(
             plan=plan,
             observations=observations,
             excluded_paths=excluded,
+            known_split_adjustment_applied_path_count=1,
             method=changed_method,
         )
+
+
+def test_private_diagnostic_custody_is_canonical_and_idempotent(
+    sessions: tuple[date, ...], tmp_path
+) -> None:
+    plan, observations, excluded = _inputs(sessions)
+    report = build_strong_leader_pullback_method_diagnostics(
+        plan=plan,
+        observations=observations,
+        excluded_paths=excluded,
+        known_split_adjustment_applied_path_count=1,
+    )
+    custody = tmp_path / "diagnostics"
+    custody.mkdir(mode=0o700)
+    output = custody / "report=test-v1"
+
+    first_path = write_strong_leader_pullback_diagnostics(
+        output_root=output,
+        output_custody_root=custody,
+        report=report,
+    )
+    second_path = write_strong_leader_pullback_diagnostics(
+        output_root=output,
+        output_custody_root=custody,
+        report=report,
+    )
+
+    assert first_path == second_path
+    assert read_strong_leader_pullback_diagnostics(
+        output_root=output,
+        output_custody_root=custody,
+    ) == report
+    assert output.stat().st_mode & 0o777 == 0o700
+    assert first_path.stat().st_mode & 0o777 == 0o400
 
 
 def test_diagnostic_contract_rejects_tampered_aggregate(
@@ -277,6 +325,7 @@ def test_diagnostic_contract_rejects_tampered_aggregate(
         plan=plan,
         observations=observations,
         excluded_paths=excluded,
+        known_split_adjustment_applied_path_count=1,
     )
     payload = report.model_dump(mode="json")
     payload["expected_path_count"] = 6

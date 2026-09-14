@@ -22,7 +22,7 @@ from .strong_leader_pullback_method import (
 
 
 STRONG_LEADER_PULLBACK_DIAGNOSTICS_CONTRACT_VERSION = (
-    "strong-leader-pullback-method-diagnostics/1.0"
+    "strong-leader-pullback-method-diagnostics/1.1"
 )
 STRONG_LEADER_PULLBACK_DIAGNOSTICS_EVIDENCE_TIER = (
     "reconstructed_latest_vintage_method_engineering_only"
@@ -304,6 +304,13 @@ class StrongLeaderPullbackMethodDiagnosticsV1(FrozenModel):
         STRONG_LEADER_PULLBACK_DIAGNOSTICS_EVIDENCE_TIER
     ] = STRONG_LEADER_PULLBACK_DIAGNOSTICS_EVIDENCE_TIER
     as_operated: Literal[False] = False
+    price_feature_basis: Literal[
+        "sparse_known_split_adjustment_proxy_with_unproven_neutral_rows"
+    ] = "sparse_known_split_adjustment_proxy_with_unproven_neutral_rows"
+    market_regime_basis: Literal[
+        "recomputed_reconstructed_same_session_proxy"
+    ] = "recomputed_reconstructed_same_session_proxy"
+    canonical_feature_values_authorized: Literal[False] = False
     chronological_plan_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
     source_population_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
     first_session: date
@@ -312,6 +319,8 @@ class StrongLeaderPullbackMethodDiagnosticsV1(FrozenModel):
     expected_path_count: int = Field(ge=0)
     complete_observation_count: int = Field(ge=0)
     excluded_path_count: int = Field(ge=0)
+    known_split_adjustment_applied_path_count: int = Field(ge=0)
+    known_split_adjustment_applied_path_rate: str
     feature_coverage: tuple[StrongLeaderPullbackFeatureCoverageV1, ...]
     numeric_diagnostics: tuple[StrongLeaderPullbackNumericDiagnosticV1, ...]
     boolean_diagnostics: tuple[StrongLeaderPullbackBooleanDiagnosticV1, ...]
@@ -343,6 +352,8 @@ class StrongLeaderPullbackMethodDiagnosticsV1(FrozenModel):
             self.first_session > self.last_session
             or self.expected_path_count
             != self.complete_observation_count + self.excluded_path_count
+            or self.known_split_adjustment_applied_path_count
+            > self.complete_observation_count
             or tuple(item.feature_id for item in self.feature_coverage)
             != _STRONG_LEADER_PULLBACK_METHOD_FEATURE_IDS
             or tuple(item.feature_id for item in self.numeric_diagnostics)
@@ -373,6 +384,12 @@ class StrongLeaderPullbackMethodDiagnosticsV1(FrozenModel):
             or self.limitation_codes != tuple(sorted(set(self.limitation_codes)))
         ):
             raise ValueError("Strong-Leader Pullback diagnostics differ")
+        _require_ratio(
+            self.known_split_adjustment_applied_path_rate,
+            self.known_split_adjustment_applied_path_count,
+            self.complete_observation_count,
+            "known split-adjustment path rate",
+        )
         for item in self.feature_coverage:
             if (
                 item.source_available_count + item.source_unavailable_count

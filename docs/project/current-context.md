@@ -132,10 +132,19 @@ The pure mechanics contract is `candidate-strategy-research-execution/1.2`;
 each mechanics batch binds the same method and experiment fingerprints and is
 fixed to zero forward outcomes and zero performance authority.
 The private diagnostic contract is
-`strong-leader-pullback-method-diagnostics/1.0`; its pure aggregator binds the
+`strong-leader-pullback-method-diagnostics/1.1`; its pure aggregator binds the
 same method, preserves explicit missing paths, and carries no outcome or
-parameter-selection authority. No real private diagnostic report has yet been
-materialized.
+parameter-selection authority. The retained Dell report is
+`historical-evidence/strong-leader-pullback-method-diagnostics/report=20260914-v2`:
+417,209 of 437,402 paths are complete across 287 sessions; report SHA-256
+`8bcd602c64c7a1ab403a9c97bea21c8edb1758b60d46f879cf23b4bf7c015b36`;
+logical fingerprint
+`c082566f283516b9a93d5658832450fb85071a3b59892cb8d922c1f37af34bd8`.
+Its price and Regime values are reconstructed proxies, not canonical or as
+operated. Observation contract 1.2 preserves finite extreme raw values without
+changing any registered trigger threshold. An independent complete replay
+returned the identical report and fingerprints with zero external, canonical,
+or Production writes.
 
 The final performance-admission report remains
 `rejected_data_blocked`. Report SHA-256:

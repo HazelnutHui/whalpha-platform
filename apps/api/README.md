@@ -40,7 +40,8 @@ production FastAPI service reads canonical Dell data remotely.
   review, and Historical Coverage mechanics;
 - Quant Research Lab model records, result semantics, chronological research,
   statistics, cost scenarios, holdout custody, and Strong-Leader Pullback
-  fixture-only input mechanics; and
+  fixture-only input mechanics plus private outcome-blind reconstructed-
+  population diagnostics; and
 - guarded daily planning, acquisition, Apply, analytics, publication, bundle,
   deployment-custody, recovery, and read-only scheduler contracts.
 

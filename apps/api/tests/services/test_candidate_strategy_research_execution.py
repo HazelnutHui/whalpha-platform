@@ -85,6 +85,37 @@ def _observation(
     )
 
 
+def test_observation_preserves_finite_extreme_non_signal_values(
+    ordered_sessions: tuple[date, ...],
+) -> None:
+    high_pullback = _observation(
+        session=ordered_sessions[40],
+        instrument_index=0,
+        pullback_depth="125.0000",
+        volume_ratio="250.0000",
+    )
+    breakout = _observation(
+        session=ordered_sessions[40],
+        instrument_index=1,
+        pullback_depth="-125.0000",
+    )
+
+    assert high_pullback.pullback_depth_atr == "125.0000"
+    assert high_pullback.pullback_volume_ratio == "250.0000"
+    assert breakout.pullback_depth_atr == "-125.0000"
+
+
+def test_observation_rejects_negative_volume_ratio(
+    ordered_sessions: tuple[date, ...],
+) -> None:
+    with pytest.raises(ValueError, match="cannot be negative"):
+        _observation(
+            session=ordered_sessions[40],
+            instrument_index=0,
+            volume_ratio="-0.1000",
+        )
+
+
 def _signal(*, session: date, split: str) -> CandidateStrategySignalV1:
     assessment_fingerprint = "a" * 64
     payload: dict[str, object] = {

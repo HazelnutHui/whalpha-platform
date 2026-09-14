@@ -59,6 +59,7 @@ def build_strong_leader_pullback_method_diagnostics(
     plan: CandidateStrategyChronologicalPlanV1,
     observations: tuple[StrongLeaderPullbackObservationV1, ...],
     excluded_paths: tuple[StrongLeaderPullbackDiagnosticExcludedPathV1, ...],
+    known_split_adjustment_applied_path_count: int,
     method: StrongLeaderPullbackMethodV1 | None = None,
 ) -> StrongLeaderPullbackMethodDiagnosticsV1:
     """Summarize feature geometry and triggers without reading any outcome."""
@@ -202,6 +203,11 @@ def build_strong_leader_pullback_method_diagnostics(
             "reconstructed_latest_vintage_method_engineering_only"
         ),
         "as_operated": False,
+        "price_feature_basis": (
+            "sparse_known_split_adjustment_proxy_with_unproven_neutral_rows"
+        ),
+        "market_regime_basis": "recomputed_reconstructed_same_session_proxy",
+        "canonical_feature_values_authorized": False,
         "chronological_plan_fingerprint": plan.logical_fingerprint,
         "source_population_fingerprint": _source_population_fingerprint(
             plan=plan,
@@ -214,6 +220,12 @@ def build_strong_leader_pullback_method_diagnostics(
         "expected_path_count": expected_path_count,
         "complete_observation_count": len(observations),
         "excluded_path_count": len(excluded_paths),
+        "known_split_adjustment_applied_path_count": (
+            known_split_adjustment_applied_path_count
+        ),
+        "known_split_adjustment_applied_path_rate": _ratio(
+            known_split_adjustment_applied_path_count, len(observations)
+        ),
         "feature_coverage": _feature_coverage(
             canonical_method=canonical_method,
             complete_count=len(observations),
@@ -257,7 +269,9 @@ def build_strong_leader_pullback_method_diagnostics(
                 {
                     "diagnostic_population_not_formal_research_sample",
                     "point_in_time_sector_concentration_unavailable",
+                    "recomputed_regime_not_as_operated",
                     "reconstructed_membership_not_as_operated",
+                    "sparse_adjustment_proxy_not_formal_adjustment_evidence",
                     "trigger_counts_not_parameter_selection_evidence",
                     *(
                         {"incomplete_paths_excluded_from_feature_distributions"}

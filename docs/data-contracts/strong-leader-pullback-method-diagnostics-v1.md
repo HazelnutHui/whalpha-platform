@@ -2,7 +2,7 @@
 
 ## Purpose
 
-`strong-leader-pullback-method-diagnostics/1.0` defines the private,
+`strong-leader-pullback-method-diagnostics/1.1` defines the private,
 outcome-blind engineering report for the first canonical method. It asks
 whether the reconstructed feature population is computable, sufficiently
 varied, and mechanically sensible before any real forward return is opened.
@@ -45,6 +45,13 @@ calculation, chronological plan, and source population. It contains:
   Membership exclusion, non-leader exclusion, and unavailable-input counts
   for each of the 24 preregistered parameter combinations.
 
+The 1.1 report fixes price features to a sparse-known-split-adjustment proxy:
+known clear split factors are applied, while missing neutral rows remain
+explicitly unproven. It separately counts paths on which a known factor was
+applied. Same-session Regime is recomputed from reconstructed inputs. Neither
+the price proxy nor the Regime replay is canonical or as operated, and the
+contract fixes `canonical_feature_values_authorized=false`.
+
 The proximity tolerances are engineering diagnostics, not extra parameter
 choices: 0.01 leadership-percentile units, one trend-quality point, 0.10 ATR,
 and 0.05 volume-ratio units. They measure boundary crowding only and cannot be
@@ -82,7 +89,17 @@ new preregistered method version before outcomes are opened.
 
 ## Current implementation boundary
 
-Python/Pydantic contracts, a pure deterministic aggregation service, and
-synthetic boundary tests are implemented. No private Dell population reader,
-saved real report, canonical persistence, public API, Lab publication,
-Candidate change, or deployment is part of this implementation boundary.
+Python/Pydantic contracts, a shared pure feature calculator, deterministic
+aggregation, an offline Dell reader, owner-only idempotent persistence, and
+synthetic/adversarial tests are implemented. The first retained real report is
+`report=20260914-v2`: 287 sessions and 437,402 declared paths reconcile to
+417,209 complete observations and 20,193 explicit exclusions. Twelve
+full-cross-section split-evidence isolation days explain 18,646 exclusions;
+the first available Regime bootstrap day explains the remaining 1,547. The
+report records 700 complete paths on which a known clear split factor was
+applied.
+
+The report is a private method-engineering artifact. It is not canonical
+research data and is not served by a public API, published to the Lab, consumed
+by Candidates, or deployed. Its proxy limitations and zero-authority flags
+remain binding.

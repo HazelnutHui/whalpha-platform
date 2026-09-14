@@ -16,7 +16,6 @@ from decimal import (
     localcontext,
 )
 from enum import Enum
-from statistics import median
 from typing import Any, Mapping
 from uuid import UUID
 
@@ -53,6 +52,11 @@ from tip_api.services.candidate_strategy_research_execution import (
     build_strong_leader_pullback_observation,
 )
 from tip_api.services.market_calendar import ExchangeCalendar, MarketSessionCalendar
+from tip_api.services.strong_leader_pullback_features import (
+    StrongLeaderPullbackFeatureBar,
+    StrongLeaderPullbackFeatureError,
+    calculate_strong_leader_pullback_features,
+)
 from tip_api.services.strategy_research_readiness import (
     StrategyResearchReadinessAssessment,
     StrategyResearchReadinessStatus,
@@ -62,10 +66,7 @@ from tip_api.services.strategy_research_readiness import (
 
 SOURCE_SESSION_COUNT = 21
 ZERO = Decimal("0")
-ONE = Decimal("1")
-HUNDRED = Decimal("100")
 RAW_QUANTUM = Decimal("0.0000000001")
-SCORE_QUANTUM = Decimal("0.0001")
 
 
 class StrongLeaderPullbackResearchInputError(ValueError):
@@ -150,12 +151,19 @@ def build_strong_leader_pullback_research_input(
             ],
         }
     )
-    benchmark_return = _return_20(adjusted[benchmark_instrument_id])
-    relative_returns = {
-        item.instrument_id: _return_20(adjusted[item.instrument_id]) - benchmark_return
-        for item in member_rows
+    try:
+        feature_panel = calculate_strong_leader_pullback_features(
+            member_ids=member_ids,
+            benchmark_instrument_id=benchmark_instrument_id,
+            series_by_instrument=adjusted,
+        )
+    except StrongLeaderPullbackFeatureError as exc:
+        raise StrongLeaderPullbackResearchInputError(
+            "registered feature panel is incomplete or invalid"
+        ) from exc
+    features_by_id = {
+        item.instrument_id: item for item in feature_panel.features
     }
-    percentiles = _average_rank_percentiles(relative_returns)
     observations = []
     dataset_bindings = tuple(
         StrongLeaderPullbackDatasetBindingV1(
@@ -166,22 +174,7 @@ def build_strong_leader_pullback_research_input(
         for item in sorted(coverage.datasets, key=lambda row: row.family.value)
     )
     for membership in sorted(member_rows, key=lambda row: str(row.instrument_id)):
-        series = adjusted[membership.instrument_id]
-        current = series[-1]
-        prior = series[-2]
-        atr = _atr14(series)
-        if atr <= ZERO:
-            raise StrongLeaderPullbackResearchInputError(
-                f"non-positive ATR for {membership.instrument_id}"
-            )
-        prior_close_high = max(item.close for item in series[:-1])
-        pullback_depth = _divide(prior_close_high - current.close, atr)
-        prior_volumes = tuple(item.volume for item in series[:-1])
-        median_volume = Decimal(str(median(prior_volumes)))
-        if median_volume <= ZERO:
-            raise StrongLeaderPullbackResearchInputError(
-                f"non-positive prior volume median for {membership.instrument_id}"
-            )
+        features = features_by_id[membership.instrument_id]
         values = {
             "as_of_session": as_of_session,
             "universe_id": "primary",
@@ -190,12 +183,14 @@ def build_strong_leader_pullback_research_input(
             "membership_mode": StrategyMembershipMode.POINT_IN_TIME,
             "membership_session": as_of_session,
             "membership_included": True,
-            "relative_strength_20s_percentile": _score(percentiles[membership.instrument_id]),
-            "trend_quality_score": _score(_trend_quality(series)),
-            "pullback_depth_atr": _score(pullback_depth),
-            "close_above_prior_close": current.close > prior.close,
-            "close_above_prior_high": current.close > prior.high,
-            "pullback_volume_ratio": _score(_divide(current.volume, median_volume)),
+            "relative_strength_20s_percentile": (
+                features.relative_strength_20s_percentile
+            ),
+            "trend_quality_score": features.trend_quality_score,
+            "pullback_depth_atr": features.pullback_depth_atr,
+            "close_above_prior_close": features.close_above_prior_close,
+            "close_above_prior_high": features.close_above_prior_high,
+            "pullback_volume_ratio": features.pullback_volume_ratio,
             "market_regime": regime_label,
             "source_max_session": as_of_session,
             "source_fingerprint": _fingerprint(
@@ -235,7 +230,9 @@ def build_strong_leader_pullback_research_input(
         "source_sessions": source_sessions,
         "benchmark_instrument_id": benchmark_instrument_id,
         "benchmark_ticker": "SPY",
-        "benchmark_20_session_return": _raw(benchmark_return),
+        "benchmark_20_session_return": _raw(
+            feature_panel.benchmark_20_session_return
+        ),
         "readiness_fingerprint": readiness.logical_content_fingerprint,
         "coverage_fingerprint": coverage.logical_fingerprint,
         "membership_publication_fingerprint": membership_publication.logical_fingerprint,
@@ -599,30 +596,10 @@ def _validate_adjustments(
     return output
 
 
-class _AdjustedBar:
-    __slots__ = ("session", "open", "high", "low", "close", "volume")
-
-    def __init__(
-        self,
-        session: date,
-        open_: Decimal,
-        high: Decimal,
-        low: Decimal,
-        close: Decimal,
-        volume: Decimal,
-    ):
-        self.session = session
-        self.open = open_
-        self.high = high
-        self.low = low
-        self.close = close
-        self.volume = volume
-
-
 def _adjusted_series(
     bars: tuple[EodMarketBarReadModel, ...],
     adjustments: tuple[AdjustmentLedgerEntryV1, ...],
-) -> tuple[_AdjustedBar, ...]:
+) -> tuple[StrongLeaderPullbackFeatureBar, ...]:
     with localcontext(_context()):
         output = []
         for bar, adjustment in zip(bars, adjustments, strict=True):
@@ -634,104 +611,21 @@ def _adjusted_series(
             volume = adjustment.split_volume_multiplier_to_basis
             assert price is not None and volume is not None
             output.append(
-                _AdjustedBar(
-                    bar.session_date,
-                    bar.open * price,
-                    bar.high * price,
-                    bar.low * price,
-                    bar.close * price,
-                    bar.volume * volume,
+                StrongLeaderPullbackFeatureBar(
+                    session=bar.session_date,
+                    open=bar.open * price,
+                    high=bar.high * price,
+                    low=bar.low * price,
+                    close=bar.close * price,
+                    volume=bar.volume * volume,
                 )
             )
         return tuple(output)
 
 
-def _return_20(series: tuple[_AdjustedBar, ...]) -> Decimal:
-    with localcontext(_context()):
-        return series[-1].close / series[0].close - ONE
-
-
-def _trend_quality(series: tuple[_AdjustedBar, ...]) -> Decimal:
-    with localcontext(_context()):
-        closes = tuple(item.close for item in series)
-        sma10 = sum(closes[-10:], ZERO) / Decimal(10)
-        sma20 = sum(closes[-20:], ZERO) / Decimal(20)
-        above = HUNDRED if closes[-1] > sma10 else ZERO
-        ratio = _linear(sma10 / sma20 - ONE, Decimal("-0.03"), Decimal("0.03"))
-        drawdown = abs(_maximum_drawdown(closes[-6:]))
-        drawdown_score = HUNDRED - _linear(
-            drawdown, Decimal("0.02"), Decimal("0.12")
-        )
-        return (
-            (Decimal("0.35") * above)
-            + (Decimal("0.35") * ratio)
-            + (Decimal("0.30") * drawdown_score)
-        )
-
-
-def _atr14(series: tuple[_AdjustedBar, ...]) -> Decimal:
-    with localcontext(_context()):
-        true_ranges = []
-        for previous, current in zip(series[-15:-1], series[-14:]):
-            true_ranges.append(
-                max(
-                    current.high - current.low,
-                    abs(current.high - previous.close),
-                    abs(current.low - previous.close),
-                )
-            )
-        return sum(true_ranges, ZERO) / Decimal(14)
-
-
-def _average_rank_percentiles(values: Mapping[UUID, Decimal]) -> dict[UUID, Decimal]:
-    if not values:
-        raise StrongLeaderPullbackResearchInputError("relative-strength cross-section is empty")
-    if len(set(values.values())) == 1:
-        return {key: Decimal("0.5") for key in values}
-    with localcontext(_context()):
-        groups: dict[Decimal, list[UUID]] = defaultdict(list)
-        for key, value in values.items():
-            groups[value].append(key)
-        output = {}
-        rank_start = 1
-        denominator = Decimal(len(values) - 1)
-        for value in sorted(groups):
-            keys = sorted(groups[value], key=str)
-            rank_end = rank_start + len(keys) - 1
-            average_rank = (Decimal(rank_start) + Decimal(rank_end)) / Decimal(2)
-            percentile = (average_rank - ONE) / denominator
-            for key in keys:
-                output[key] = percentile
-            rank_start = rank_end + 1
-        return output
-
-
-def _maximum_drawdown(values: tuple[Decimal, ...]) -> Decimal:
-    peak = values[0]
-    drawdown = ZERO
-    for value in values:
-        peak = max(peak, value)
-        drawdown = min(drawdown, value / peak - ONE)
-    return drawdown
-
-
-def _linear(value: Decimal, low: Decimal, high: Decimal) -> Decimal:
-    return min(HUNDRED, max(ZERO, HUNDRED * (value - low) / (high - low)))
-
-
-def _divide(numerator: Decimal, denominator: Decimal) -> Decimal:
-    with localcontext(_context()):
-        return numerator / denominator
-
-
 def _raw(value: Decimal) -> str:
     with localcontext(_context()):
         return format(value.quantize(RAW_QUANTUM), "f")
-
-
-def _score(value: Decimal) -> str:
-    with localcontext(_context()):
-        return format(value.quantize(SCORE_QUANTUM), "f")
 
 
 def _context() -> Context:
