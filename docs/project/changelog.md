@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-14 — Retain listed-consideration registration sources
+
+- Accepted ADR 0245 and retained all 12 exact 424B3 documents frozen by the
+  listed-consideration source plan in resumable owner-only private custody.
+- A one-document live probe completed first; the continuation reread it and
+  fetched only the other 11. The final package contains 30,122,047 source
+  bytes from 12 requests with zero retries.
+- The manifest has SHA-256
+  `826eacc85cf2b610e330465266a9629ac2c11f23ccd5d442f8eb14d7d3f963f6`
+  and logical fingerprint
+  `0ff421cbc2a219ff9195e23ee7ff24d9b364646abdc154241d59d34e01334ca3`.
+  Exact replay returned `already_present` with zero network requests, owner-only
+  modes, and no symlink, partial, or staging residue.
+- Four focused tests, 19 linked tests, and the complete 2,710-test API suite
+  passed with two unchanged dependency deprecation warnings.
+- Content interpretation, candidate identity assignment, terminal value,
+  `/data`, Historical Coverage, research, Candidate, publication, deployment,
+  and scheduler state remain unchanged.
+
 ## 2026-09-14 — Freeze listed-consideration identity sources
 
 - Accepted ADR 0244 and froze one exact 424B3 source file for each of the 12

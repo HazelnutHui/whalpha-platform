@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete 219-document custody and form-aware candidates, a 64-case coverage census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash terminal observations, and a 12-document listed-consideration source plan | the 12 planned 424B3 documents are not yet in custody or adjudicated; six cases need CVR treatment, four need election/unlisted treatment, and nine have timing conflict/insufficiency. The matrix remains 244 / 512; strategy outcome labels, canonical terminal outcomes, and the canonical family are absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete 219-document custody and form-aware candidates, a 64-case coverage census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash terminal observations, and complete custody of the 12 planned listed-consideration documents | the 12 retained 424B3 documents are not yet content-adjudicated and assign no consideration identity; six cases need CVR treatment, four need election/unlisted treatment, and nine have timing conflict/insufficiency. The matrix remains 244 / 512; strategy outcome labels, canonical terminal outcomes, and the canonical family are absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -151,8 +151,11 @@ Current admission remains rejected:
 - the 12 non-election listed-stock/timing-ready cases now have a frozen
   transaction-registration source plan. Twelve unique point-in-time stable-ID
   candidates and exact 424B3 filing rows are retained, including the explicit
-  `EQR` to `VMRK` locator transition, but the documents are not yet in custody
-  and candidate identity assignments remain zero; and
+  `EQR` to `VMRK` locator transition; and
+- all 12 exact 424B3 files are now in formally reread private custody with
+  30,122,047 source bytes, 12 requests, and zero retries. The content remains
+  uninterpreted, and candidate identity assignments and terminal values remain
+  zero; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -188,9 +191,10 @@ project.
    termination reasons, common-share consideration decisions, and source-party
    topologies plus the 52 matched, one conflicting, and eight unsupported
    trading-cessation decisions, 81 source-bound payoff terms, and 30 nominal
-   fixed-cash terminal observations. Acquire only the 12 frozen 424B3 source
-   documents, then assign listed consideration identities only where their
-   transaction, class, and exchange-ratio evidence matches. Keep complex
+   fixed-cash terminal observations and 12 retained 424B3 source documents.
+   Assign listed consideration identities only where content adjudication
+   matches the transaction, target common security, consideration class, and
+   exchange ratio. Keep complex
    consideration, unresolved timing, and
    LNW/REVG/SAND quarantined.
 3. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
