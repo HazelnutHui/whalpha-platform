@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0263](0263-extend-terminal-gap-census-with-corrected-listed-reference.md):
+  preserves V2 and replaces only the SCS gap decision after strict HNI
+  reference evidence, then recomputes the complete corrected worklist.
 - [ADR 0262](0262-bind-corrected-terminal-listed-reference-through-stable-security-evidence.md):
   binds HNI through source, SEC, and point-in-time canonical identity evidence
   before calculating the three SCS gross daily reference alternatives.

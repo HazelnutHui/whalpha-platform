@@ -145,6 +145,9 @@ Stock Candidates.
 - [Strong-Leader Pullback Terminal Gap Census V2](data-contracts/strong-leader-pullback-terminal-gap-census-v2.md):
   preserves prior evidence states while rebuilding the terminal worklist on
   corrected EOD-boundary counts and stable-ID source lineage.
+- [Strong-Leader Pullback Terminal Gap Census V3](data-contracts/strong-leader-pullback-terminal-gap-census-v3.md):
+  extends V2 with the strict SCS/HNI reference and recomputes the complete
+  worklist without opening outcomes.
 - [Strong-Leader Pullback Terminal-Population SEC Source Plan V1](data-contracts/strong-leader-pullback-terminal-population-sec-source-plan-v1.md):
   freezes exact SEC locators for newly in-scope stable-ID cases before any
   external request or fact adjudication.
