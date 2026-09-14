@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0247](0247-value-only-strictly-identified-listed-consideration-at-a-daily-reference-boundary.md):
+  values only strictly assigned listed merger consideration at the target's
+  first absent daily session while preserving price and timing limitations.
 - [ADR 0246](0246-require-four-element-registration-evidence-before-listed-consideration-identity.md):
   requires transaction, target class, consideration class and exact ratio plus
   a CIK-to-stable-security identifier chain before assigning listed payoff
