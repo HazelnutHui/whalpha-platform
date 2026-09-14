@@ -38,6 +38,6 @@ def test_fixed_values_preserve_declared_precision() -> None:
     assert service._fixed(Decimal("79.03"), 10) == "79.0300000000"
 
 
-def test_ruleset_binds_all_five_cases() -> None:
-    assert service._EXPECTED_SEQUENCES == frozenset({92, 109, 136, 161, 194})
+def test_ruleset_binds_only_four_provable_cases() -> None:
+    assert service._EXPECTED_SEQUENCES == frozenset({109, 136, 161, 194})
     assert len(service._ruleset_fingerprint()) == 64

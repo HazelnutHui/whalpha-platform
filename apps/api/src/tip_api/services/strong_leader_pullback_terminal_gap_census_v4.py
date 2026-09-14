@@ -2,12 +2,10 @@
 
 from __future__ import annotations
 
-import json
 import os
 import re
 import shutil
 import stat
-import zipfile
 from collections import Counter
 from dataclasses import dataclass
 from datetime import date, datetime
@@ -20,10 +18,6 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator, model_valida
 
 from tip_api.contracts.common import normalize_utc_datetime
 from tip_api.persistence.parquet.eod_read import CanonicalEodReadRepository
-from tip_api.providers.sec.submissions_source import (
-    ARCHIVE_FILE,
-    read_sec_submissions_source_package,
-)
 from tip_api.services import strong_leader_pullback_sec_document_content_census as base
 from tip_api.services import strong_leader_pullback_sec_document_source as source_base
 from tip_api.services import (
@@ -39,12 +33,10 @@ CONTRACT_VERSION = "strong-leader-pullback-terminal-gap-census/4.0"
 REPORT_FILE = "terminal-gap-census-v4.json"
 MAXIMUM_REPORT_BYTES = 1024 * 1024
 MAXIMUM_EVIDENCE_TEXT_CHARS = 2048
-MAXIMUM_SUBMISSIONS_MEMBER_BYTES = 8 * 1024 * 1024
 _SHA256_PATTERN = r"^[0-9a-f]{64}$"
 _REVISION_PATTERN = r"^[0-9a-f]{40}$"
 _OUTPUT_NAME_PATTERN = r"^census=[A-Za-z0-9._-]+$"
 _VALUE_PATTERN = r"^(?:0|[1-9][0-9]*)\.[0-9]{16}$"
-_PRICE_PATTERN = r"^(?:0|[1-9][0-9]*)\.[0-9]{10}$"
 
 
 @dataclass(frozen=True, slots=True)
@@ -52,12 +44,9 @@ class _CaseSpec:
     sequence: int
     ticker: str
     reference_session: date
-    reference_kind: Literal["fixed_cash", "default_mixed_listed_equity", "default_cash"]
+    reference_kind: Literal["fixed_cash", "default_cash"]
     timing_pattern: str | None = None
-    consideration_ticker: str | None = None
-    consideration_cik: str | None = None
     cash_term: str | None = None
-    ratio_term: str | None = None
     alternative_code: str | None = None
 
 
@@ -87,17 +76,6 @@ _CASE_SPECS = (
         cash_term="guaranteed_cash",
     ),
     _CaseSpec(
-        92,
-        "THR",
-        date(2026, 6, 1),
-        "default_mixed_listed_equity",
-        consideration_ticker="CECO",
-        consideration_cik="0000003197",
-        cash_term="mixed_election_cash",
-        ratio_term="mixed_election_ratio",
-        alternative_code="mixed_election",
-    ),
-    _CaseSpec(
         194,
         "FL",
         date(2025, 9, 8),
@@ -111,7 +89,6 @@ _PRIOR_GAP_STATES = {
     109: "cessation_timing_not_matched",
     136: "cessation_timing_not_matched",
     161: "cessation_timing_not_matched",
-    92: "holder_election_or_proration_unresolved",
     194: "holder_election_or_proration_unresolved",
 }
 
@@ -135,7 +112,6 @@ class TerminalGapLocalReferenceV1(_FrozenModel):
     resolution_basis: Literal[
         "source_stated_after_close_halt_and_fixed_cash",
         "source_stated_before_open_stop_and_fixed_cash",
-        "source_stated_no_election_mixed_listed_equity",
         "source_stated_no_election_fixed_cash",
     ]
     terminal_reference_session: date
@@ -149,19 +125,10 @@ class TerminalGapLocalReferenceV1(_FrozenModel):
     payoff_term_fingerprints: tuple[str, ...] = Field(min_length=1)
     default_policy_code: str | None = None
     cash_amount_usd: str = Field(pattern=_VALUE_PATTERN)
-    listed_equity_ratio: str = Field(pattern=_VALUE_PATTERN)
-    consideration_instrument_id: UUID | None = None
-    consideration_ticker: str | None = None
-    consideration_cik: str | None = None
-    consideration_close_usd: str | None = Field(default=None, pattern=_PRICE_PATTERN)
-    consideration_component_value_usd: str = Field(pattern=_VALUE_PATTERN)
     gross_reference_value_usd: str = Field(pattern=_VALUE_PATTERN)
     eod_session_content_fingerprint: str = Field(pattern=_SHA256_PATTERN)
     eod_session_parquet_sha256: str = Field(pattern=_SHA256_PATTERN)
     identity_snapshot_fingerprint: str = Field(pattern=_SHA256_PATTERN)
-    sec_identity_member_sha256: str | None = Field(
-        default=None, pattern=_SHA256_PATTERN
-    )
     source_available_before_strategy_outcome_use: Literal[True] = True
     reference_is_execution_price: Literal[False] = False
     reference_is_realized_holder_election: Literal[False] = False
@@ -185,30 +152,13 @@ class TerminalGapLocalReferenceV1(_FrozenModel):
 
     @model_validator(mode="after")
     def reference_reconciles(self) -> "TerminalGapLocalReferenceV1":
-        listed = self.consideration_instrument_id is not None
         if (
-            (listed and any(value is None for value in (
-                self.consideration_ticker,
-                self.consideration_cik,
-                self.consideration_close_usd,
-                self.sec_identity_member_sha256,
-            )))
-            or (
-                not listed
-                and any(value is not None for value in (
-                    self.consideration_ticker,
-                    self.consideration_cik,
-                    self.consideration_close_usd,
-                    self.sec_identity_member_sha256,
-                ))
-            )
-            or self.source_timing_evidence_sha256
+            self.source_timing_evidence_sha256
             != cessation_reader._optional_text_sha256(
                 self.source_timing_evidence_text
             )
             or Decimal(self.gross_reference_value_usd)
             != Decimal(self.cash_amount_usd)
-            + Decimal(self.consideration_component_value_usd)
             or self.logical_fingerprint
             != base._fingerprint(
                 self.model_dump(mode="json", exclude={"logical_fingerprint"})
@@ -236,13 +186,10 @@ class StrongLeaderPullbackTerminalGapCensusV4(_FrozenModel):
     cessation_logical_fingerprint: str = Field(pattern=_SHA256_PATTERN)
     termination_reason_report_sha256: str = Field(pattern=_SHA256_PATTERN)
     termination_reason_logical_fingerprint: str = Field(pattern=_SHA256_PATTERN)
-    sec_submissions_manifest_sha256: str = Field(pattern=_SHA256_PATTERN)
-    sec_submissions_archive_sha256: str = Field(pattern=_SHA256_PATTERN)
-    sec_submissions_logical_fingerprint: str = Field(pattern=_SHA256_PATTERN)
     population_instrument_count: Literal[65] = 65
-    extension_reference_count: Literal[5] = 5
-    reference_documented_instrument_count: Literal[48] = 48
-    remaining_gap_instrument_count: Literal[17] = 17
+    extension_reference_count: Literal[4] = 4
+    reference_documented_instrument_count: Literal[47] = 47
+    remaining_gap_instrument_count: Literal[18] = 18
     documented_horizon_1_crossing_path_count: int = Field(ge=0)
     documented_horizon_3_crossing_path_count: int = Field(ge=0)
     documented_horizon_5_crossing_path_count: int = Field(ge=0)
@@ -250,11 +197,12 @@ class StrongLeaderPullbackTerminalGapCensusV4(_FrozenModel):
     remaining_horizon_3_crossing_path_count: int = Field(ge=0)
     remaining_horizon_5_crossing_path_count: int = Field(ge=0)
     remaining_state_impacts: tuple[tuple[str, int, int, int, int], ...]
-    references: tuple[TerminalGapLocalReferenceV1, ...] = Field(min_length=5, max_length=5)
+    references: tuple[TerminalGapLocalReferenceV1, ...] = Field(min_length=4, max_length=4)
     unresolved_successor_identity_count: Literal[1] = 1
     unresolved_cvr_or_complex_value_count: Literal[8] = 8
     unresolved_primary_source_case_count: Literal[3] = 3
     unresolved_cessation_or_eod_conflict_count: Literal[5] = 5
+    unresolved_election_or_proration_count: Literal[1] = 1
     prior_v3_preserved: Literal[True] = True
     outcome_blind: Literal[True] = True
     strategy_trigger_count: Literal[0] = 0
@@ -291,13 +239,19 @@ class StrongLeaderPullbackTerminalGapCensusV4(_FrozenModel):
             or self.documented_horizon_5_crossing_path_count
             + self.remaining_horizon_5_crossing_path_count
             != 302
-            or sum(item[1] for item in self.remaining_state_impacts) != 17
+            or sum(item[1] for item in self.remaining_state_impacts) != 18
             or sum(item[2] for item in self.remaining_state_impacts)
             != self.remaining_horizon_1_crossing_path_count
             or sum(item[3] for item in self.remaining_state_impacts)
             != self.remaining_horizon_3_crossing_path_count
             or sum(item[4] for item in self.remaining_state_impacts)
             != self.remaining_horizon_5_crossing_path_count
+            or self.unresolved_successor_identity_count
+            + self.unresolved_cvr_or_complex_value_count
+            + self.unresolved_primary_source_case_count
+            + self.unresolved_cessation_or_eod_conflict_count
+            + self.unresolved_election_or_proration_count
+            != self.remaining_gap_instrument_count
             or self.ruleset_fingerprint != _ruleset_fingerprint()
             or self.logical_fingerprint
             != base._fingerprint(
@@ -326,15 +280,13 @@ def build_strong_leader_pullback_terminal_gap_census_v4(
     cessation_custody_root: Path,
     termination_reason_root: Path,
     termination_reason_custody_root: Path,
-    submissions_package_root: Path,
-    submissions_custody_root: Path,
     canonical_eod_root: Path,
     output_root: Path,
     output_custody_root: Path,
     implementation_revision: str,
     evaluated_at: datetime,
 ) -> StrongLeaderPullbackTerminalGapCensusV4Result:
-    """Extend V3 with five exact, locally provable daily references."""
+    """Extend V3 with four exact, locally provable daily references."""
 
     with cessation_reader._network_prohibited():
         prior = prior_reader.read_strong_leader_pullback_terminal_gap_census_v3(
@@ -353,17 +305,11 @@ def build_strong_leader_pullback_terminal_gap_census_v4(
             output_root=termination_reason_root,
             output_custody_root=termination_reason_custody_root,
         )
-        submissions = read_sec_submissions_source_package(
-            package_path=submissions_package_root,
-            approved_custody_root=submissions_custody_root,
-        )
         report = _build_report(
             prior=prior,
             payoff=payoff,
             cessation=cessation,
             reasons=reasons,
-            submissions=submissions,
-            submissions_root=submissions_package_root,
             repository=CanonicalEodReadRepository(canonical_eod_root),
             implementation_revision=implementation_revision,
             evaluated_at=evaluated_at,
@@ -406,7 +352,6 @@ def read_strong_leader_pullback_terminal_gap_census_v4(
 
 def _build_report(
     *, prior: Any, payoff: Any, cessation: Any, reasons: Any,
-    submissions: Any, submissions_root: Path,
     repository: CanonicalEodReadRepository,
     implementation_revision: str, evaluated_at: datetime,
 ) -> StrongLeaderPullbackTerminalGapCensusV4:
@@ -443,11 +388,6 @@ def _build_report(
             "V4 reference-session evidence differs"
         )
     by_session = {item.integrity.session_date: item for item in history}
-    member_sha, member_payload = _read_submission_member(
-        submissions_root / ARCHIVE_FILE, "0000003197"
-    )
-    _validate_sec_profile(member_payload, ticker="CECO", exchange="Nasdaq")
-
     references = tuple(
         _build_reference(
             spec=spec,
@@ -457,9 +397,6 @@ def _build_report(
             reason_decision=reason_decisions[spec.sequence],
             session_read=by_session[spec.reference_session],
             repository=repository,
-            sec_identity_member_sha256=(
-                member_sha if spec.consideration_ticker == "CECO" else None
-            ),
         )
         for spec in sorted(_CASE_SPECS, key=lambda item: item.sequence)
     )
@@ -504,11 +441,6 @@ def _build_report(
         "cessation_logical_fingerprint": cessation.report.logical_fingerprint,
         "termination_reason_report_sha256": reasons.report_sha256,
         "termination_reason_logical_fingerprint": reasons.report.logical_fingerprint,
-        "sec_submissions_manifest_sha256": base._sha256_bytes(
-            (submissions_root / "package.json").read_bytes()
-        ),
-        "sec_submissions_archive_sha256": submissions.archive_sha256,
-        "sec_submissions_logical_fingerprint": submissions.logical_fingerprint,
         "documented_horizon_1_crossing_path_count": (
             prior_report.documented_horizon_1_crossing_path_count + newly_h1
         ),
@@ -547,7 +479,6 @@ def _build_reference(
     *, spec: _CaseSpec, prior_decision: Any, payoff_decision: Any,
     cessation_decision: Any, reason_decision: Any, session_read: Any,
     repository: CanonicalEodReadRepository,
-    sec_identity_member_sha256: str | None,
 ) -> TerminalGapLocalReferenceV1:
     if (
         prior_decision.gap_state != _PRIOR_GAP_STATES[spec.sequence]
@@ -570,38 +501,6 @@ def _build_reference(
     terms = {item.term_key: item for item in payoff_decision.terms}
     selected_terms = [terms[spec.cash_term]] if spec.cash_term is not None else []
     cash = Decimal(selected_terms[0].normalized_value) if selected_terms else Decimal(0)
-    ratio = Decimal(0)
-    component = Decimal(0)
-    consideration_id = None
-    consideration_close = None
-    if spec.ratio_term is not None:
-        ratio_term = terms[spec.ratio_term]
-        selected_terms.append(ratio_term)
-        ratio = Decimal(ratio_term.normalized_value)
-        matches = tuple(
-            item
-            for item in repository.read_instruments_for_session(spec.reference_session)
-            if item.ticker == spec.consideration_ticker
-            and item.cik == spec.consideration_cik
-            and item.instrument_type.value == "common_stock"
-            and item.quality_status.value == "valid"
-        )
-        if len(matches) != 1:
-            raise StrongLeaderPullbackTerminalGapCensusV4Error(
-                f"V4 case {spec.sequence} listed identity differs"
-            )
-        consideration_id = matches[0].instrument_id
-        bars = tuple(
-            item
-            for item in session_read.bars
-            if item.instrument_id == consideration_id
-        )
-        if len(bars) != 1 or bars[0].close <= 0:
-            raise StrongLeaderPullbackTerminalGapCensusV4Error(
-                f"V4 case {spec.sequence} listed price differs"
-            )
-        consideration_close = bars[0].close
-        component = ratio * consideration_close
     timing_text = None
     resolution_basis = "source_stated_no_election_fixed_cash"
     default_policy = None
@@ -623,23 +522,7 @@ def _build_reference(
                 f"V4 case {spec.sequence} default election differs"
             )
         default_policy = f"no_valid_election_{spec.alternative_code}"
-        if spec.reference_kind == "default_mixed_listed_equity":
-            text = payoff_decision.consideration_evidence_text
-            if (
-                re.search(r"no election was made were treated as Mixed Election", text, re.I)
-                is None
-                or re.search(
-                    r"Cash Consideration and Stock Consideration were each subject to proration",
-                    text,
-                    re.I,
-                )
-                is None
-            ):
-                raise StrongLeaderPullbackTerminalGapCensusV4Error(
-                    "THR default/non-proration evidence differs"
-                )
-            resolution_basis = "source_stated_no_election_mixed_listed_equity"
-        elif alternative.subject_to_proration:
+        if alternative.subject_to_proration:
             raise StrongLeaderPullbackTerminalGapCensusV4Error(
                 f"V4 case {spec.sequence} default election is prorated"
             )
@@ -660,21 +543,10 @@ def _build_reference(
         ),
         "default_policy_code": default_policy,
         "cash_amount_usd": _fixed(cash, 16),
-        "listed_equity_ratio": _fixed(ratio, 16),
-        "consideration_instrument_id": consideration_id,
-        "consideration_ticker": spec.consideration_ticker,
-        "consideration_cik": spec.consideration_cik,
-        "consideration_close_usd": (
-            _fixed(consideration_close, 10)
-            if consideration_close is not None
-            else None
-        ),
-        "consideration_component_value_usd": _fixed(component, 16),
-        "gross_reference_value_usd": _fixed(cash + component, 16),
+        "gross_reference_value_usd": _fixed(cash, 16),
         "eod_session_content_fingerprint": integrity.content_fingerprint,
         "eod_session_parquet_sha256": integrity.parquet_sha256,
         "identity_snapshot_fingerprint": integrity.identity_snapshot_fingerprint,
-        "sec_identity_member_sha256": sec_identity_member_sha256,
     }
     provisional = TerminalGapLocalReferenceV1.model_construct(
         **values, logical_fingerprint="0" * 64
@@ -707,40 +579,6 @@ def _extract_timing_evidence(text: str, pattern: str) -> str:
     return result
 
 
-def _read_submission_member(
-    archive_path: Path, cik: str
-) -> tuple[str, dict[str, Any]]:
-    member = f"CIK{cik}.json"
-    try:
-        with zipfile.ZipFile(archive_path) as archive:
-            info = archive.getinfo(member)
-            if info.file_size < 1 or info.file_size > MAXIMUM_SUBMISSIONS_MEMBER_BYTES:
-                raise StrongLeaderPullbackTerminalGapCensusV4Error(
-                    "V4 SEC identity member size differs"
-                )
-            raw = archive.read(info)
-        payload = json.loads(raw)
-    except (KeyError, OSError, zipfile.BadZipFile, json.JSONDecodeError) as exc:
-        raise StrongLeaderPullbackTerminalGapCensusV4Error(
-            "V4 SEC identity member read failed"
-        ) from exc
-    return base._sha256_bytes(raw), payload
-
-
-def _validate_sec_profile(payload: dict[str, Any], *, ticker: str, exchange: str) -> None:
-    try:
-        index = payload["tickers"].index(ticker)
-        observed_exchange = payload["exchanges"][index]
-    except (KeyError, TypeError, ValueError, IndexError) as exc:
-        raise StrongLeaderPullbackTerminalGapCensusV4Error(
-            "V4 SEC identity profile differs"
-        ) from exc
-    if payload.get("entityType") != "operating" or observed_exchange != exchange:
-        raise StrongLeaderPullbackTerminalGapCensusV4Error(
-            "V4 SEC identity profile differs"
-        )
-
-
 def _fixed(value: Decimal, places: int) -> str:
     return format(value, f".{places}f")
 
@@ -756,16 +594,13 @@ def _ruleset_fingerprint() -> str:
                     "reference_session": item.reference_session.isoformat(),
                     "reference_kind": item.reference_kind,
                     "timing_pattern": item.timing_pattern,
-                    "consideration_ticker": item.consideration_ticker,
-                    "consideration_cik": item.consideration_cik,
                     "cash_term": item.cash_term,
-                    "ratio_term": item.ratio_term,
                     "alternative_code": item.alternative_code,
                 }
                 for item in _CASE_SPECS
             ],
-            "identity_rule": "source_term_plus_sec_profile_plus_canonical_stable_id",
-            "reference_rule": "cash_plus_ratio_times_same_session_unadjusted_close",
+            "identity_rule": "prior_stable_id_plus_source_timing_plus_eod_absence",
+            "reference_rule": "source_stated_fixed_or_default_cash",
             "terminal_outcome": False,
         }
     )

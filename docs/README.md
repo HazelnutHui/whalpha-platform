@@ -149,7 +149,7 @@ Stock Candidates.
   extends V2 with the strict SCS/HNI reference and recomputes the complete
   worklist without opening outcomes.
 - [Strong-Leader Pullback Terminal Gap Census V4](data-contracts/strong-leader-pullback-terminal-gap-census-v4.md):
-  adds five locally provable daily references while retaining every unresolved
+  adds four locally provable daily references while retaining every unresolved
   terminal limitation and keeping research closed.
 - [Strong-Leader Pullback Terminal-Population SEC Source Plan V1](data-contracts/strong-leader-pullback-terminal-population-sec-source-plan-v1.md):
   freezes exact SEC locators for newly in-scope stable-ID cases before any

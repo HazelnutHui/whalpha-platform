@@ -13,8 +13,6 @@ scripts/admin/build-strong-leader-pullback-terminal-gap-census-v4.sh \
   --cessation-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-trading-cessation-adjudication \
   --termination-reasons /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-sec-termination-reason-adjudication/adjudication=20260913-v1 \
   --termination-reasons-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-sec-termination-reason-adjudication \
-  --submissions-package /home/hui/.local/state/trading-intelligence-platform/historical-source/sec-submissions/snapshot=2026-09-10 \
-  --submissions-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-source/sec-submissions \
   --canonical-eod-root /data/trading-intelligence-platform \
   --output-root /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-gap-census-v4/census=<bounded-id> \
   --output-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-gap-census-v4 \
@@ -22,6 +20,6 @@ scripts/admin/build-strong-leader-pullback-terminal-gap-census-v4.sh \
   --execute
 ```
 
-Expected result: five added references, 48 documented and 17 remaining
+Expected result: four added references, 47 documented and 18 remaining
 securities. Exact replay must return `already_present`; directory/file modes
 must be `0700/0400`; no partial or symlink residue may remain.
