@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0251](0251-extend-listed-consideration-reference-values-without-rewriting-prior-evidence.md):
+  adds the three residual daily reference values while preserving the original
+  nine-value report and its evidence vintage.
 - [ADR 0250](0250-require-a-complete-composite-chain-for-residual-listed-consideration-identity.md):
   assigns a residual listed consideration security only when the frozen
   registration, completion, and stable-identity chain all agree.
