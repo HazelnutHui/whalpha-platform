@@ -103,6 +103,9 @@ Stock Candidates.
 - [Strong-Leader Pullback SEC Consideration Adjudication V1](data-contracts/strong-leader-pullback-sec-consideration-adjudication-v1.md):
   classifies the primary ordinary/common-share consideration clause without
   normalizing a terminal payoff.
+- [Strong-Leader Pullback SEC Party Relation Adjudication V1](data-contracts/strong-leader-pullback-sec-party-relation-adjudication-v1.md):
+  binds target, acquirer-group, and legal-survivor source topology without
+  assigning global counterparty identities.
 - [Strong-Leader Pullback SEC Case Coverage Census V1](data-contracts/strong-leader-pullback-sec-case-coverage-census-v1.md):
   measures stable-ID candidate coverage while leaving all field results
   unadjudicated.
@@ -196,6 +199,7 @@ separately approved bounded serving artifacts.
 - [Strong-Leader Pullback SEC Transaction Event Adjudication](operations/strong-leader-pullback-sec-transaction-event-adjudication.md)
 - [Strong-Leader Pullback SEC Termination Reason Adjudication](operations/strong-leader-pullback-sec-termination-reason-adjudication.md)
 - [Strong-Leader Pullback SEC Consideration Adjudication](operations/strong-leader-pullback-sec-consideration-adjudication.md)
+- [Strong-Leader Pullback SEC Party Relation Adjudication](operations/strong-leader-pullback-sec-party-relation-adjudication.md)
 - [Bounded Identity Extension Family Evidence](operations/bounded-identity-extension-family-evidence.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)

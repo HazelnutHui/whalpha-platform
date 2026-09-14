@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0240](0240-adjudicate-source-party-relations-before-resolving-global-identities.md):
+  preserves filing-local target, acquirer-group, and legal-survivor topology
+  while forbidding unproven global counterparty identity assignments.
 - [ADR 0239](0239-adjudicate-primary-common-share-consideration-before-normalizing-payoffs.md):
   classifies only the primary ordinary/common-share consideration clause,
   separating fractional-share cash, awards, preferred stock, and payoff
