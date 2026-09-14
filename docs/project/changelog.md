@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-09-14 — Retain bounded fixed-cash terminal evidence
+
+- Accepted ADR 0243 and retained gross nominal terminal-cash evidence for all
+  30 cash-only cases with matched cessation timing while preserving the full
+  61-case denominator.
+- Twenty-seven cases use a before-open boundary and three an after-close
+  boundary. Twenty-four completion dates equal the stop date; three precede it
+  and three follow it by one calendar day, but all complete no later than the
+  first exchange session without a target EOD bar.
+- The report has SHA-256
+  `e500a6419efee4bb150d5b0cdec85819c9c9aa8749860c4cf0d3b95ce922d429`
+  and logical fingerprint
+  `000526478feff78e94244fede566ad03441f5870479bcb25c2942a3f38bd45cc`.
+  Exact network-disabled replay returned `already_present` with owner-only
+  modes and zero residue.
+- Four focused tests, 21 linked tests, and the complete 2,702-test API suite
+  passed with two unchanged warnings. Strategy labels, returns, canonical
+  terminal outcomes, `/data`, Historical Coverage, research, Candidate,
+  publication, deployment, and scheduler state remain unchanged.
+
 ## 2026-09-14 — Normalize terminal-payoff source terms
 
 - Accepted ADR 0242 and retained 81 exact numeric source terms for all 61

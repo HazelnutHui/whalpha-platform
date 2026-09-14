@@ -239,11 +239,23 @@ Important private Dell evidence includes:
   retain 37 fixed-cash structures, 16 listed-equity ratio cases, seven CVRs,
   four elections, one unlisted-unit case, and eight separate fractional-share
   adjustments. Thirty fixed-cash cases also have matched cessation timing and
-  are candidates for later terminal cash evidence. Terminal outcome and stable
-  consideration-issuer assignments remain zero. Report SHA-256 is
+  form the bounded input to the subsequent terminal-cash evidence layer.
+  Terminal outcome and stable consideration-issuer assignments remain zero.
+  Report SHA-256 is
   `f0b2e805a46e9f2b3e88432d1c5aa6a8782d095ffdda5790cb8894639d2be1a9`
   and logical fingerprint is
-  `00d0651df3da6bcc114a1dbcd270a4a78f41006d741e6fefb1ff2eebabd951fb`.
+  `00d0651df3da6bcc114a1dbcd270a4a78f41006d741e6fefb1ff2eebabd951fb`;
+  and
+- the fixed-cash terminal evidence layer: all 30 cash-only/timing-ready cases
+  retain gross nominal USD amounts on the first exchange session after the
+  observed last EOD. Twenty-seven are before-open and three are after-close;
+  24 completion dates equal the stop boundary while three precede and three
+  follow it by one calendar day. The other 31 cases remain explicitly
+  excluded. Strategy labels, returns, canonical terminal outcomes, and
+  research admission remain zero. Report SHA-256 is
+  `e500a6419efee4bb150d5b0cdec85819c9c9aa8749860c4cf0d3b95ce922d429`
+  and logical fingerprint is
+  `000526478feff78e94244fede566ad03441f5870479bcb25c2942a3f38bd45cc`.
 
 Exact package identities and counts are retained in:
 
@@ -267,6 +279,7 @@ Exact package identities and counts are retained in:
 - [First-strategy SEC party-relation adjudication audit](../audits/strong-leader-pullback-sec-party-relation-adjudication-2026-09-14.md)
 - [First-strategy trading-cessation adjudication audit](../audits/strong-leader-pullback-trading-cessation-adjudication-2026-09-14.md)
 - [First-strategy terminal-payoff term audit](../audits/strong-leader-pullback-terminal-payoff-terms-2026-09-14.md)
+- [First-strategy fixed-cash terminal evidence audit](../audits/strong-leader-pullback-fixed-cash-terminal-evidence-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
@@ -313,9 +326,10 @@ units remain distinct. Global party IDs remain unassigned. Source-stated stop
 timing now agrees with formal EOD presence in 52 cases, conflicts in one, and
 is unsupported in eight; this does not complete either sampled tradability
 field. Eighty-one source payoff terms are now normalized without valuing a
-complex component; 30 fixed-cash cases have matched timing. The next internal
-gate is their terminal cash evidence, followed only by the listed-security
-identity required for remaining payoffs. LNW, REVG, SAND, CVRs, elections,
+complex component. Thirty fixed-cash cases now retain nominal terminal-value
+evidence after their last observed EOD, but this is not a strategy label or
+return. The next internal gate is only the listed-security identity required
+for 12 matched-timing remaining payoffs. LNW, REVG, SAND, CVRs, elections,
 unlisted units, and unsupported timing remain quarantined. A commercial sample
 remains limited to a measured residual after that work. Massive Starter is not
 the sole lifecycle authority.

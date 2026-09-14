@@ -120,9 +120,10 @@ not five-year performance admission.
    16 listed-equity ratio cases, seven CVRs, four elections, one unlisted-unit
    case, and eight separate fractional-share adjustments. No complex value or
    terminal outcome is implied.
-17. Construct terminal cash evidence for the 30 fixed-cash cases with matched
-   cessation timing. Then map consideration-issuer identities only for the 12
-   matched-timing listed-equity cases, without building a global entity master.
+17. Preserve terminal cash evidence for the 30 fixed-cash cases with matched
+   cessation timing. Next map consideration-issuer identities only for the 12
+   matched-timing listed-equity cases, without building a global entity master
+   or treating a source-local company name as identity proof.
 18. Test a commercial source only against the frozen residual field gap that
    remains after typed SEC review; do not repeat a global vendor scan.
 19. Resolve missing-event neutrality and remaining terminal outcomes without turning a

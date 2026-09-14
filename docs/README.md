@@ -175,6 +175,7 @@ the detailed dependency and supersession chain.
 - [First-Strategy SEC Party Relation Adjudication](audits/strong-leader-pullback-sec-party-relation-adjudication-2026-09-14.md)
 - [First-Strategy Trading Cessation Adjudication](audits/strong-leader-pullback-trading-cessation-adjudication-2026-09-14.md)
 - [First-Strategy Terminal Payoff Terms](audits/strong-leader-pullback-terminal-payoff-terms-2026-09-14.md)
+- [First-Strategy Fixed-Cash Terminal Evidence](audits/strong-leader-pullback-fixed-cash-terminal-evidence-2026-09-14.md)
 - [SEC Company Facts Semantic Census](audits/sec-companyfacts-semantic-census-2026-09-13.md)
 - [SEC Fundamental Query Readiness Census](audits/sec-fundamental-query-readiness-census-2026-09-13.md)
 - [SEC Fundamental Projection Readiness Census](audits/sec-fundamental-projection-readiness-census-2026-09-13.md)
