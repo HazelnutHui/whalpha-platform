@@ -18,8 +18,10 @@
   `0c433cd4d8f97c5e6b9df0af5cfaf4533f83160ab07d88ed7c5774dbd74d5bb1`;
   its logical fingerprint is
   `b58a3671451ba89332b0fe437ecdea48389156ffac59bd1cc26266700c81a149`.
-  Twenty-one related tests passed. Repetitive manual case work now stops until
-  a targeted point-in-time lifecycle/action source changes a mandatory input.
+  Twenty-one focused tests and the complete 2,787-test API suite passed with
+  the two unchanged dependency warnings. Repetitive manual case work now stops
+  until a targeted point-in-time lifecycle/action source changes a mandatory
+  input.
 
 ## 2026-09-14 — Bind SCS/HNI reference and extend terminal gaps
 

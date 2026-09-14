@@ -81,7 +81,8 @@ evidence remain valuable inputs but do not jointly prove the missing fields.
 
 ## Safety
 
-Twenty-one related tests passed. Both real reviews recomputed the 2.8-million-
-transition split diagnostic with zero external request. The process wrote no
-canonical `/data`, strategy, Candidate, Snapshot, bundle, deployment, or
-scheduler state.
+Twenty-one focused tests and the complete 2,787-test API suite passed. The
+suite retained only the two existing dependency deprecation warnings. Both
+real reviews recomputed the 2.8-million-transition split diagnostic with zero
+external request. The process wrote no canonical `/data`, strategy, Candidate,
+Snapshot, bundle, deployment, or scheduler state.
