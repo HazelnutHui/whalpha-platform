@@ -112,6 +112,9 @@ Stock Candidates.
 - [Strong-Leader Pullback Terminal Payoff Terms V1](data-contracts/strong-leader-pullback-terminal-payoff-terms-v1.md):
   normalizes source-bound cash, stock, CVR, and election terms without valuing
   complex consideration or calculating terminal returns.
+- [Strong-Leader Pullback Fixed-Cash Terminal Evidence V1](data-contracts/strong-leader-pullback-fixed-cash-terminal-evidence-v1.md):
+  binds deterministic gross cash terms to matched daily cessation boundaries
+  while keeping strategy labels and returns absent.
 - [Strong-Leader Pullback SEC Case Coverage Census V1](data-contracts/strong-leader-pullback-sec-case-coverage-census-v1.md):
   measures stable-ID candidate coverage while leaving all field results
   unadjudicated.
@@ -211,6 +214,7 @@ separately approved bounded serving artifacts.
 - [Strong-Leader Pullback SEC Party Relation Adjudication](operations/strong-leader-pullback-sec-party-relation-adjudication.md)
 - [Strong-Leader Pullback Trading Cessation Adjudication](operations/strong-leader-pullback-trading-cessation-adjudication.md)
 - [Strong-Leader Pullback Terminal Payoff Terms](operations/strong-leader-pullback-terminal-payoff-terms.md)
+- [Strong-Leader Pullback Fixed-Cash Terminal Evidence](operations/strong-leader-pullback-fixed-cash-terminal-evidence.md)
 - [Bounded Identity Extension Family Evidence](operations/bounded-identity-extension-family-evidence.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)

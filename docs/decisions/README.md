@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0243](0243-retain-fixed-cash-terminal-evidence-without-creating-strategy-returns.md):
+  binds deterministic cash-only terms to matched daily cessation boundaries
+  without inventing intraday timing, strategy labels, or returns.
 - [ADR 0242](0242-normalize-terminal-payoff-terms-before-valuing-complex-consideration.md):
   binds exact cash, exchange-ratio, CVR, and election terms while leaving
   external values, identity, and terminal outcomes unresolved.
