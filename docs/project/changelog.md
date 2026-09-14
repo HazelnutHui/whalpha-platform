@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-09-14 — Define corrected-population payoff policy
+
+- Accepted ADR 0261 and independently matched HNI/Steelcase source roles, five
+  exact common-share payoff terms, three election alternatives, and the
+  contractual mixed alternative for holders with no valid election.
+- Registered the future no-action daily research convention as the mixed
+  default plus full cash/mixed/stock sensitivity. Actual holder election,
+  automatic-adjustment details, and proration remain unresolved.
+- The report has SHA-256
+  `6ec4beafbcb9191b2c27e86e90d32f37cde8b8c78d2ea2ec94b13cabebfd56ac`
+  and logical fingerprint
+  `4dc7ff5876b639195faf6c15d16c163749101c4f37d2f64a28620bf29ca8b0fd`.
+  Exact replay returned `already_present`; modes are `0700/0400` and no
+  symlink, partial, or staging residue exists.
+- Four focused tests, nineteen linked tests, and the complete 2,774-test API
+  suite passed with two unchanged dependency warnings. Global HNI security
+  identity, terminal value, outcome, research admission, `/data`, Candidate,
+  publication, deployment, and scheduler state remain unchanged.
+
 ## 2026-09-14 — Match corrected-population trading cessation
 
 - Accepted ADR 0260 and independently selected the realized SCS Item 3.01

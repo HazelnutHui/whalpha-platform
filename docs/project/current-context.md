@@ -372,7 +372,16 @@ Important private Dell evidence includes:
   and logical fingerprint
   `342bbafdcf797efd3ef13eae0ab4b96b2d7c25a5d6d4c98ac1c518098ba299eb`.
   This is last-EOD-observation evidence, not legal delisting or terminal-value
-  authority.
+  authority; and
+- the corrected-population SCS payoff policy: HNI/Steelcase source roles, five
+  numeric terms, three election alternatives, and the contractual mixed
+  default for no valid election are matched. The report has SHA-256
+  `6ec4beafbcb9191b2c27e86e90d32f37cde8b8c78d2ea2ec94b13cabebfd56ac`
+  and logical fingerprint
+  `4dc7ff5876b639195faf6c15d16c163749101c4f37d2f64a28620bf29ca8b0fd`.
+  Actual holder election, adjustment/proration details, global HNI security
+  identity, daily value, terminal outcome, and research authority remain
+  absent.
 
 Exact package identities and counts are retained in:
 
@@ -413,6 +422,7 @@ Exact package identities and counts are retained in:
 - [First-strategy terminal-population SEC field-candidate audit](../audits/strong-leader-pullback-terminal-population-sec-field-candidates-2026-09-14.md)
 - [First-strategy terminal-population SEC core-adjudication audit](../audits/strong-leader-pullback-terminal-population-sec-core-adjudication-2026-09-14.md)
 - [First-strategy terminal-population trading-cessation audit](../audits/strong-leader-pullback-terminal-population-trading-cessation-adjudication-2026-09-14.md)
+- [First-strategy terminal-population payoff-policy audit](../audits/strong-leader-pullback-terminal-population-payoff-policy-2026-09-14.md)
 - [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
 - [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
 - [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)

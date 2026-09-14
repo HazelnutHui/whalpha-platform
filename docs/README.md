@@ -246,6 +246,7 @@ the detailed dependency and supersession chain.
 - [First-Strategy Terminal-Population SEC Field Candidates](audits/strong-leader-pullback-terminal-population-sec-field-candidates-2026-09-14.md)
 - [First-Strategy Terminal-Population SEC Core Adjudication](audits/strong-leader-pullback-terminal-population-sec-core-adjudication-2026-09-14.md)
 - [First-Strategy Terminal-Population Trading Cessation Adjudication](audits/strong-leader-pullback-terminal-population-trading-cessation-adjudication-2026-09-14.md)
+- [First-Strategy Terminal-Population Payoff Policy](audits/strong-leader-pullback-terminal-population-payoff-policy-2026-09-14.md)
 - [SEC Company Facts Semantic Census](audits/sec-companyfacts-semantic-census-2026-09-13.md)
 - [SEC Fundamental Query Readiness Census](audits/sec-fundamental-query-readiness-census-2026-09-13.md)
 - [SEC Fundamental Projection Readiness Census](audits/sec-fundamental-projection-readiness-census-2026-09-13.md)

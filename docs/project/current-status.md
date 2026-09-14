@@ -52,7 +52,7 @@ price-acquisition gap.
 | Stable Identity | aligned to all EOD sessions | depth complete; two source-time sessions unbound |
 | Universe Membership | 3 signal-eligible + 1,250 research-only sessions; combined 1,253 / 1,255 | only two source-custody sessions missing; reconstructed history is not as-operated and currently has no point-in-time authority |
 | Corporate actions | full private split/dividend source packages plus bounded canonical split facts | incomplete availability, assignment, neutrality, and total-return semantics |
-| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete original 219-document custody and form-aware candidates, a 64-case source census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash and 12 listed-consideration daily reference values, a formal identity/EOD boundary correction, terminal-gap census V2, and complete source, parsing, extraction, core adjudication, and daily cessation matching for the new case | corrected EOD scope is 65 securities / 302 five-session paths. Forty-two securities / 196 paths have reference evidence; 23 / 106 remain. SCS has matched identity, completion, reason, election-consideration structure, and last-EOD observation, but election/proration and terminal value remain unresolved. References are not outcomes. The historical matrix remains 244 / 512; canonical lifecycle, strategy labels, terminal outcomes, and Historical Coverage are absent |
+| Lifecycle/terminal outcomes | bounded inactive/FINRA diagnostics, complete original 219-document custody and form-aware candidates, a 64-case source census, point-in-time cover identity, typed events/reasons/consideration/party topology, SEC/EOD cessation comparison, 81 normalized payoff source terms, 30 nominal fixed-cash and 12 listed-consideration daily reference values, a formal identity/EOD boundary correction, terminal-gap census V2, and complete source, parsing, extraction, core adjudication, daily cessation, and election-policy evidence for the new case | corrected EOD scope is 65 securities / 302 five-session paths. Forty-two securities / 196 paths have reference evidence; 23 / 106 remain. SCS has matched identity, completion, reason, last-EOD observation, five terms, three alternatives, and the no-election mixed default; global HNI identity and terminal value remain unresolved. References are not outcomes. The historical matrix remains 244 / 512; canonical lifecycle, strategy labels, terminal outcomes, and Historical Coverage are absent |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | official source custody, filing clocks, four registered queries, cutoff-aware issuer selection, and complete aggregate projection census | engineering path complete; only four strict projection sessions, so historical performance use remains rejected and reconstruction-only coverage cannot pass validation |
 | Costs/liquidity | transparent scenario mechanics | no observed spread/impact calibration |
@@ -193,6 +193,11 @@ Current admission remains rejected:
   halted before the 2025-12-10 open; stable-ID EOD presence exists through
   2025-12-09 and is absent on 2025-12-10. This is not legal-delisting,
   terminal-value, or lifecycle authority; and
+- SCS payoff policy is now explicit: five source terms form cash, mixed, and
+  stock alternatives; no valid holder election defaults to mixed. The future
+  no-action research path uses that default with all alternatives retained as
+  sensitivity. Actual holder election, adjustment/proration details, HNI
+  stable identity, valuation, and outcome remain absent; and
 - no trigger, outcome, metric, parameter winner, cohort, or real backtest has
   been authorized.
 
@@ -234,10 +239,11 @@ project.
    consideration, unresolved timing, and LNW/REVG/SAND quarantined.
 3. Bind all future terminal work to terminal-gap census V2 and preserve the
    completed SCS source, census, candidates, core adjudication, and matched
-   daily cessation boundary. Adjudicate its complex election/proration policy,
-   then complete that stable-ID case before the nine timing cases and three
-   legacy exceptional cases. Do not interpret a locator, retained byte,
-   candidate field, lexical marker, or reference value as an outcome.
+   daily cessation boundary, and explicit default-plus-sensitivity payoff
+   policy. Bind HNI common stock through a strict point-in-time stable-security
+   chain, then value all three alternatives before completing that case. Do
+   not interpret a locator, retained byte, candidate field, lexical marker, or
+   reference value as an outcome.
 4. Stop reconstructed Membership expansion at the verified 1,253 / 1,255
    boundary; do not infer the two absent sources. Complete only the
    lifecycle/terminal, action/adjustment, cost, and Historical Coverage
