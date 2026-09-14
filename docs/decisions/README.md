@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0245](0245-retain-listed-consideration-registration-documents-in-resumable-private-custody.md):
+  retains the 12 frozen 424B3 documents in restart-safe private custody without
+  assigning security identity or terminal value.
 - [ADR 0244](0244-require-transaction-registration-evidence-before-mapping-listed-consideration.md):
   freezes 12 transaction-registration documents before any listed-payoff
   security identity can be assigned from party names or ticker candidates.
