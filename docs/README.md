@@ -160,6 +160,9 @@ Stock Candidates.
 - [Strong-Leader Pullback Terminal-Population SEC Core Adjudication V1](data-contracts/strong-leader-pullback-terminal-population-sec-core-adjudication-v1.md):
   resolves four bounded SCS source-evidence questions while leaving terminal
   policy and outcome authority absent.
+- [Strong-Leader Pullback Terminal-Population Trading Cessation Adjudication V1](data-contracts/strong-leader-pullback-terminal-population-trading-cessation-adjudication-v1.md):
+  compares the SCS source-stated before-open stop with stable-ID EOD presence
+  without inferring legal delisting or a terminal outcome.
 - [Strong-Leader Pullback Terminal Gap Census V1](data-contracts/strong-leader-pullback-terminal-gap-census-v1.md):
   preserves the original identity-boundary result; ADR 0253 requires a
   versioned EOD-boundary successor before its counts are used again.
@@ -295,6 +298,7 @@ separately approved bounded serving artifacts.
 - [Strong-Leader Pullback Terminal-Population SEC Content Census](operations/strong-leader-pullback-terminal-population-sec-content-census.md)
 - [Strong-Leader Pullback Terminal-Population SEC Field Candidates](operations/strong-leader-pullback-terminal-population-sec-field-candidates.md)
 - [Strong-Leader Pullback Terminal-Population SEC Core Adjudication](operations/strong-leader-pullback-terminal-population-sec-core-adjudication.md)
+- [Strong-Leader Pullback Terminal-Population Trading Cessation Adjudication](operations/strong-leader-pullback-terminal-population-trading-cessation-adjudication.md)
 - [Bounded Identity Extension Family Evidence](operations/bounded-identity-extension-family-evidence.md)
 - [Reconciled EOD Edition](operations/reconciled-eod-edition.md)
 - [Reconciled EOD Source Reacquisition](operations/reconciled-eod-source-reacquisition.md)

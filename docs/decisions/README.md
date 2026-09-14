@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0260](0260-bind-corrected-terminal-cessation-to-stable-id-eod-presence.md):
+  independently binds the SCS before-open stop statement to stable-ID EOD
+  presence without creating legal-delisting or terminal-outcome authority.
 - [ADR 0259](0259-adjudicate-corrected-terminal-core-evidence-before-terminal-policy.md):
   applies the established identity, event, reason, and consideration rules to
   SCS while leaving cessation, payoff, and terminal authority unresolved.
