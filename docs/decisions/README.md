@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0261](0261-model-corrected-terminal-election-as-default-plus-sensitivity.md):
+  uses the SCS contractual no-election default as a future daily research path
+  while retaining all alternatives and unknown actual holder behavior.
 - [ADR 0260](0260-bind-corrected-terminal-cessation-to-stable-id-eod-presence.md):
   independently binds the SCS before-open stop statement to stable-ID EOD
   presence without creating legal-delisting or terminal-outcome authority.
