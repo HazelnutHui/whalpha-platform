@@ -1,26 +1,20 @@
 # Roadmap
 
-This is proposed sequencing, not operational authorization. Volatile verified
-facts belong in [current context](current-context.md), actual capability in
-[current status](current-status.md), and completed execution history in the
+This is future sequencing, not operational authorization. Verified facts belong
+in [current context](current-context.md), actual capability in
+[current status](current-status.md), and completed work in the
 [changelog](changelog.md), ADRs, and audits.
 
 ## Direction
 
-Quant Research Lab is the product and model-development center. Stock
-Candidates is its downstream decision surface and will eventually consume only
+Quant Research Lab is the model-development and evidence center. Stock
+Candidates is its downstream decision surface and may eventually consume only
 one to three separately validated and explicitly activated models. The current
-Candidate score and Strategy Channels remain frozen **Baseline V1**, not a
-formula-tuning target.
+Candidate score and Strategy Channels remain frozen **Baseline V1**.
 
-The three stable market workspaces remain supporting tools:
-
-1. Market Regime & Opportunities;
-2. Sector ETF Rotation; and
-3. Market Structure & Activity.
-
-The future AI Quant Research Factory is a governed Lab backend, not another
-workspace or an unbounded factor search.
+Market Regime & Opportunities, Sector ETF Rotation, and Market Structure &
+Activity remain supporting tools. The future AI Quant Research Factory is a
+governed Lab backend, not another workspace or an unbounded factor search.
 
 ```text
 governed data -> registered research -> validation and holdout
@@ -31,198 +25,95 @@ governed data -> registered research -> validation and holdout
 
 - Research one falsifiable strategy family at a time.
 - Add or buy data only for a named feature, label, bias control, or decision.
-- Use the simplest defensible baseline before increasing model complexity.
-- Keep data stages, features, labels, costs, and holdout custody reproducible.
+- Use the simplest defensible baseline before increasing complexity.
+- Keep data, features, labels, costs, experiments, and holdout custody
+  reproducible and stage-isolated.
 - Disclose formulas, parameters, evidence, counterevidence, uncertainty,
   failure, and decay.
 - Separate event studies from portfolio simulations and stock outcomes from
   option outcomes.
-- Keep experiment, validation, shadow, active, rejected, and retired states
-  explicit.
-- Stop when a stage reaches its exit criterion; do not continue optimizing
-  merely because another change is possible.
+- Stop when a phase reaches its exit criterion; completed execution detail does
+  not remain in this roadmap.
 
-## Current phase — Start outcome-blind method engineering
+## Current phase — Strong-Leader Pullback method and Lab surface
 
-The rolling five-year price and Identity depth is complete. The professional
-backtest foundation is not. Exact current counts and limitations are maintained
-in [current context](current-context.md). ADR 0266 now permits the first
-strategy and Lab method surface to proceed without treating that incomplete
-foundation as performance-ready.
+ADR 0266 permits outcome-blind engineering without treating the incomplete
+performance foundation as research-ready. The immutable launch report binds
+the unchanged V1 experiment, 287 sessions, 437,402 paths, and all unresolved
+formal blockers.
 
-### Lane A — Point-in-time fundamentals
+Execute in this order:
 
-The first registry, cutoff-aware issuer selector, source-readiness census, and
-aggregate security-projection census are complete for Assets, Stockholders'
-Equity, annual Net Income/Loss, and annual Operating Income/Loss. They have
-deterministic semantics, measured availability/age/ambiguity, and typed
-rejection paths without outcome access or retained security-level values.
+1. **Method contract:** expose the registered leadership, trend, ATR pullback,
+   recovery, volume, Regime, Universe, cutoff, and missingness rules through one
+   versioned method projection. Do not duplicate formulas between API, report,
+   and frontend.
+2. **Pure implementation:** complete the signal/eligibility calculation using
+   stable-ID joins and explicit session clocks. No forward outcome may be read
+   or emitted.
+3. **Outcome-blind diagnostics:** measure feature coverage, distributions,
+   ties, missingness, concentration, and discontinuity sensitivity from the
+   fixed reconstructed method population. Preserve its
+   `reconstructed_latest_vintage_method_engineering_only` tier.
+4. **Adversarial verification:** test chronology, warm-up, next-open boundary,
+   rank ties, missing paths, split discontinuities, stable-ID collisions,
+   deterministic replay, and zero-label isolation.
+5. **Lab presentation:** show model ownership, hypothesis, mechanism, complete
+   formulas, fixed 24-combination budget, intended evaluation, readiness,
+   blockers, limitations, lifecycle, and reproduction identity. Display no
+   empty or invented performance metric.
+6. **Independent completion review:** prove the method and Lab projection bind
+   the same versioned inputs, every real outcome/selection count is zero, and
+   the formal performance gate remains rejected.
 
-The engineering exit criterion is met, but the data-admission result is a
-measured rejection: only four sessions have strict as-operated next-open
-projection evidence. Reconstructed history is development-only. Stop this lane
-here; do not build a broad daily Cartesian panel or security feature. Reopen it
-only when newly admitted historical knowledge-time evidence or a separately
-registered strategy creates a concrete need.
+If diagnostics motivate a formula or parameter-grid change, register V2 before
+any outcome is opened. Engineering observations cannot become independent
+validation or holdout evidence.
 
-Revenue taxonomy fragmentation, quarterly-flow derivation, per-share facts,
-share counts, market capitalization, IFRS coverage, and valuation ratios remain
-separate future decisions. A broad fact-by-session Cartesian panel is
-explicitly unnecessary.
+Exit criterion: the registered method is deterministic and explainable, the
+Lab record can be reproduced from the same source, all zero-label guarantees
+pass, and no Production or Candidate authority changed.
 
-Completed exit: cutoff-aware issuer selection and the exact permitted
-projection population are reproducible, every unsupported class, time, and
-ambiguity is explicit, and no strategy outcome was opened. This completion is
-not five-year performance admission.
+## Gated phase — Performance-data admission
 
-### Lane B — First-strategy action and lifecycle evidence
+This phase may proceed in parallel only when a mandatory evidence input truly
+changes. It must not interrupt method work with repeated manual adjudication.
 
-1. Keep the immutable first-strategy acceptance population fixed at 20 action
-   relations and 64 lifecycle-crossing IDs.
-2. Preserve the completed SEC metadata pilot: 64 / 64 CIK roots, 2,144 filing
-   locators, and 219 transition-period candidates, with every complete
-   security-level lifecycle field still unsupported.
-3. Preserve the completed no-request document plan: 219 unique URLs in 22
-   deterministic batches, bounded to the transition-period population.
-4. Preserve the completed resumable private source package: 219 / 219
-   documents, exact plan binding, response-level hashes, and formal reread.
-5. Preserve the completed content census: all 219 documents parse and every
-   marker remains an unresolved lexical candidate rather than a fact.
-6. Preserve the completed Form 25 candidate extraction: 64 / 64 notices across
-   62 stable-ID locators, with no last-trade or effective-date inference.
-7. Preserve the completed Form 15 candidate extraction: 66 / 66 documents
-   across 62 stable-ID locators, with multi-value and date differences retained
-   and no effective-status inference.
-8. Preserve the completed form-aware transaction candidate extraction: 89 / 89
-   primary documents, including explicit non-Item-2.01, referenced-exhibit-
-   only, and no-registered-scope states.
-9. Preserve the completed stable-ID coverage census: all 219 candidates are
-   joined to 64 cases, 61 have structured transaction scopes, and all 512
-   complete case/field results remain unsupported.
-10. Preserve the first point-in-time cover adjudication: 61 structured cases
-   have an in-window CIK+ticker+exchange common-equity match, one later IPG
-   debt-event filing is excluded, and LNW/REVG/SAND remain unsupported.
-11. Preserve the completed typed transaction-event adjudication: all 61 linked
-   Item 2.01 cases have one issuer completion date, with nine cover-date
-   differences retained and zero listing-terminal authority.
-12. Preserve the completed termination-reason adjudication: all 61 linked Item
-   3.01 sections connect merger/acquisition completion to listing or trading
-   action without inferring effective or last-trading dates.
-13. Preserve the completed primary common-share consideration adjudication:
-   61 / 61 clauses are typed while fractional-share cash, numeric payoff
-   normalization, and terminal return remain separate.
-14. Preserve the completed source-party topology adjudication: 49 target legal
-   entities survive, 11 are absorbed, and one enters a new holding-company
-   combination; source roles do not assign global party IDs.
-15. Preserve the bounded cessation comparison: 52 SEC/EOD matches, one
-   conflict, and eight unsupported timing cases across 114 formal sessions.
-   Do not count observed-last-EOD evidence as a complete first/last-tradability
-   or legal-delisting field.
-16. Preserve the 81 normalized source payoff terms: 37 fixed-cash structures,
-   16 listed-equity ratio cases, seven CVRs, four elections, one unlisted-unit
-   case, and eight separate fractional-share adjustments. No complex value or
-   terminal outcome is implied.
-17. Preserve terminal cash evidence for the 30 fixed-cash cases with matched
-   cessation timing.
-18. Preserve the completed listed-consideration chain: 12 / 12 timing-ready
-   non-election identities and gross daily reference values now pass their
-   frozen evidence gates. All values retain unverified-adjustment flags and
-   remain non-outcomes.
-19. Preserve the corrected EOD-boundary worklist and its local-evidence
-   extension: terminal-gap census V4 has 65 securities / 302 five-session
-   paths. Forty-seven securities / 214 paths have daily reference evidence and
-   18 / 88 remain unresolved. References are not outcomes.
-20. Preserve the authoritative SCS plan V2 and its valid plan-before-source
-   chronology; the earlier V1 clock is superseded and grants no authority.
-21. Preserve complete SCS source custody: all three planned SEC primary
-   documents formally reread with owner-only modes and zero residual staging.
-22. Preserve the completed SCS content census, form-aware candidates, core
-   identity/event/reason/consideration adjudication, independently matched
-   daily cessation boundary, default-plus-sensitivity election policy, strict
-   HNI stable-security assignment, and all three gross daily references.
-23. Preserve the four additional exact local references for RNAM, TERN, PLYM,
-   and FL. Keep prorated THR and unresolved SNV quarantined.
-24. Stop repetitive manual case adjudication against unchanged source
-   capability. A future lifecycle/action source is evaluated only against the
-   exact 18-case terminal and missing-neutrality fields; it is not a dependency
-   for outcome-blind method engineering.
-25. Version and rerun the outcome-blind admission gate only after a mandatory
-   evidence input materially changes.
+Required gates remain:
 
-Massive Starter remains the primary price/reference source but is not the sole
-lifecycle authority. SEC is an official document locator and issuer-event
-source, not a consolidated security lifecycle feed. LSEG, ICE, S&P, Norgate,
-or another source remains optional future evidence work and must use the same
-frozen acceptance population. No undirected global scan, named-vendor
-dependency, or speculative adapter is justified.
+- complete point-in-time session Membership without survivor selection;
+- lifecycle and terminal outcomes for every included path;
+- complete corporate-action absence neutrality and adjustment basis;
+- exact Historical Coverage and source-time lineage;
+- declared costs/liquidity evidence; and
+- a real chronological evaluation dataset with sealed holdout custody.
 
-Exit criterion: the first strategy's exact lifecycle/action cases have
-governed evidence or explicit quarantine with measured admission impact.
+Massive remains the primary price/reference source, not the sole lifecycle or
+terminal authority. LSEG, ICE, S&P, Norgate, or another source is optional
+future evidence work and must be evaluated against the frozen 20-action /
+64-lifecycle acceptance population. Do not build an adapter from marketing
+claims or repeat scans against unchanged source capability.
 
-### Lane C — Membership, adjustment, costs, and coverage
+Exit criterion: one immutable admission report identifies complete sessions
+and securities with no hidden exclusion. The current result is allowed to
+remain `rejected_data_blocked`.
 
-1. Preserve the completed 1,250-session latest-vintage reconstructed
-   Membership archive in its research-only family; never present it as
-   `as_operated` or signal-eligible. ADR 0227's V4 method recovered all 37
-   collision-derived gaps. Stop at 1,253 / 1,255 combined sessions and keep the
-   two unavailable Identity sources explicitly missing.
-2. Apply path-local split bases only after admissible coverage exists. Keep
-   dividends as event context unless a separately governed total-return basis
-   is selected.
-3. Calibrate costs from observed evidence when available; until then keep
-   scenario mechanics visibly provisional.
-4. Preserve the completed V2 transitive admission review and its current
-   `rejected_data_blocked` result. Do not publish a Historical Coverage
-   manifest while any mandatory family is unready.
-5. Rerun the complete-session admission decision only after a mandatory input
-   changes.
-6. Preserve the method-engineering launch report as a separate positive
-   engineering decision, not a Historical Coverage or performance decision.
+## Gated phase — Real Strong-Leader Pullback study
 
-Exit criterion: one immutable readiness report identifies the admitted
-sessions and securities and leaves no unresolved mandatory family hidden by an
-aggregate percentage.
-
-## Next phase — Implement Strong-Leader Pullback and the Lab method surface
-
-Under the immutable method-engineering launch review:
-
-1. implement the registered feature and signal method without opening forward
-   outcomes;
-2. build private outcome-blind feature-quality and coverage diagnostics while
-   preserving every reconstructed/not-as-operated limitation;
-3. complete synthetic, adversarial, and property tests for leakage, split
-   boundaries, rank ties, missing paths, and stable-ID joins;
-4. prepare provider-neutral future-label and sensitivity interfaces with zero
-   real label rows; and
-5. expose the model logic, formulas, fixed 24-combination budget, data
-   readiness, blockers, ownership, and lifecycle state in Quant Research Lab
-   without performance placeholders.
-
-If feature diagnostics require a formula or parameter-grid change, register a
-new experiment version before any outcome is opened. Engineering observations
-cannot become independent validation or holdout evidence.
-
-Exit criterion: the registered method and Lab record are reproducible from the
-same bound inputs, all real outcome and selection counts remain zero, and the
-formal performance gate remains visibly rejected.
-
-## Gated phase — Execute the real Strong-Leader Pullback study
-
-After dataset admission:
+Only after formal data admission:
 
 1. run the preregistered development stage on Dell;
-2. lock at most one specification within the registered search budget;
+2. lock at most one specification within the 24-combination budget;
 3. evaluate chronological validation with purge/embargo, session-balanced
    inference, multiplicity control, and realistic cost sensitivity;
 4. consume the sealed holdout once only if validation gates pass;
 5. preserve rejection without retuning V1, or record validated research; and
 6. use prospective shadow before any activation review when appropriate.
 
-The first headline is a signal/event-study result: net expectancy,
-signal-control contrast, uncertainty, sample/coverage, MFE/MAE, win/payoff/PF,
-cost sensitivity, and stability. AR, Sharpe, and MDD require a separately
-frozen tradable portfolio construction.
+The first headline is an event-study result: net expectancy, signal-control
+contrast, uncertainty, sample/coverage, MFE/MAE, win/payoff/PF, cost
+sensitivity, and stability. AR, Sharpe, and MDD require a separately frozen
+tradable portfolio construction.
 
 Exit criterion: a reproducible real result or recorded failure exists. Neither
 automatically changes Stock Candidates.
@@ -231,60 +122,47 @@ automatically changes Stock Candidates.
 
 Only after one complete, rejection-capable strategy path:
 
-1. extract reusable hypothesis, data-admission, feature, label, experiment,
-   result, and failure registries;
-2. deduplicate equivalent ideas and retain the real trial count;
+1. extract reusable hypothesis, data, feature, label, experiment, result, and
+   failure registries;
+2. retain the true trial count and deduplicate equivalent ideas;
 3. isolate development, validation, holdout, red-team, reproduction, and
-   shadow data access;
+   shadow access;
 4. pilot a small number of specialized roles while Dell remains the
    deterministic calculation authority; and
-5. measure reproducibility, unique-hypothesis yield, leakage detection,
-   rejection quality, compute cost, and holdout integrity before scaling.
-
-Exit criterion: an independent replay reaches the same registered decision,
-failed attempts remain visible, and no agent can inspect or promote evidence
-outside its stage.
+5. measure reproducibility, leakage detection, rejection quality, compute
+   cost, and holdout integrity before scaling.
 
 ## Then — Activate and redesign Stock Candidates
 
-Only after research and operational review:
-
-1. approve the exact model/version, Universe, market-applicability rule,
-   monitoring, decay, and rollback;
-2. publish one bounded active-model result;
-3. show model identity, current applicability, within-model rank, evidence,
-   counterevidence, entry readiness, chase risk, and invalidation; and
-4. link every Candidate to its complete Lab record.
-
-Ranks remain separate unless an ensemble is independently registered and
-validated. The page may remain sparse or explicitly unavailable before this
-gate; daily tuning of Baseline V1 is not a priority.
+Activation is a separate reviewed decision. The downstream page must show the
+exact model/version, current applicability, within-model rank, evidence and
+counterevidence, entry readiness, chase risk, invalidation, and a link to the
+complete Lab record. Different model ranks remain separate unless an ensemble
+is independently registered and validated.
 
 ## Later research and product sequence
 
 1. Momentum Breakout.
-2. Trend Continuation, only if its features and incremental value are distinct.
+2. Trend Continuation, only if distinct from the first two families.
 3. Oversold Technical Reversal.
-4. Fundamental Value Reversal after point-in-time fundamental and valuation
-   evidence exists.
+4. Fundamental Value Reversal after point-in-time fundamentals and valuation.
 5. Regime-conditioned defensive/resilience opportunities.
-6. Cross-asset macro context after the single-security research path is proven.
-7. Options expression after historical chain liquidity, bid/ask, OI, IV,
-   term/skew, Greeks, events, adjustments, and payoff/cost evidence exist.
-8. Position management, account risk, and IBKR integration after reliable stock
-   research and options expression.
+6. Cross-asset macro context after the single-security path is proven.
+7. Options expression after historical chain, liquidity, bid/ask, OI, IV,
+   term/skew, Greeks, events, adjustments, payoff, and cost evidence exist.
+8. Position management, account risk, and IBKR integration after reliable
+   stock research and options expression.
 
 Earnings, guidance, macro, and news begin as risk/context or stratification
-evidence, not as a claim of first-information speed. Options remain a separate
-expression of a stock thesis and never inherit stock-return performance.
+evidence, not as a first-information-speed claim. Options are a separate
+expression layer and never inherit stock-return performance.
 
 ## Parallel operational maintenance
 
-Normal daily reliability and one bounded next-session automation rehearsal may
-run when an eligible completed session exists. They must not block Lab work or
-become an indefinite optimization program. Reopen Candidate performance work
-only after a measured clean-path budget breach and a design addressing the
-known end-to-end gaps.
+Normal daily reliability work may proceed when an eligible completed session
+exists. It must not block Lab work or become an indefinite optimization
+program. Reopen Candidate runtime optimization only after a measured clean-
+path budget breach and a bounded design addressing the observed bottleneck.
 
 ## Explicitly deferred
 
@@ -292,6 +170,6 @@ known end-to-end gaps.
 - broad intraday architecture without a registered strategy need;
 - opaque ML, deep learning, or unbounded factor search;
 - guest/credential capability differences;
-- a new database service, microservices, Kubernetes, or distributed compute
-  without a measured requirement; and
+- new database services, microservices, Kubernetes, or distributed compute
+  without measured need; and
 - paid datasets without a named fact family and acceptance test.

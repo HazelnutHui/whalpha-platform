@@ -1,15 +1,15 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-13T22:16:53Z
+Operational state verified at: 2026-09-14T16:58:59Z
 
 Deployment state verified at: 2026-09-11T21:23:56Z
 
 Repository context updated at: 2026-09-14 UTC
 
-This is the compact recovery source for a new task or device. It records the
-latest verified identities, capabilities, and hard boundaries. Actual-state
-interpretation belongs in [current status](current-status.md), proposed work in
-the [roadmap](roadmap.md), and execution history in the
+This is the compact recovery source for a new task or device. It records only
+the latest verified identities, capability boundaries, and exact evidence
+needed to resume work. Interpretation belongs in [current status](current-status.md),
+future sequencing in the [roadmap](roadmap.md), and execution history in the
 [changelog](changelog.md), dated audits, and ADRs.
 
 ## Repository and infrastructure
@@ -18,23 +18,21 @@ the [roadmap](roadmap.md), and execution history in the
 | --- | --- |
 | Workstation / user | `dell5820` / `hui` |
 | Source repository | `/home/hui/projects/trading-intelligence-platform` |
-| Source branch | `main`; verify the live HEAD with the report |
-| Working tree | clean |
+| Source branch | `main`; verify the live HEAD with the context report |
+| Working tree | clean at the verified report boundary |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
 | Active OCI release | `2026-09-11T211340Z-26cab64fabda` |
 | Deployed source | `26cab64fabdafca710d6471cb09ac8c62ef17c2d` |
 
-Dell is the authority for code, data, governance, and heavy computation. OCI
-is limited to static serving plus the localhost authentication and public
-Session boundary. Windows and a future Mac are remote entry points. A newer
-clean source commit does not imply that Production has been redeployed.
+Dell owns code, data, governance, and heavy computation. OCI is limited to
+bounded public serving and localhost authentication. A newer clean source
+commit does not imply Production was redeployed.
 
 Use `scripts/admin/report-current-context.sh` for a credential-free,
-network-disabled reread. The shared virtual environment still points its
-editable metadata at an older worktree, so operator commands must use
-`scripts/dev/run-project-python.sh` or repository-aware admin wrappers rather
-than bare `.venv/bin/python -m`.
+network-disabled reread. Run project Python only through
+`scripts/dev/run-project-python.sh` or repository-aware admin wrappers because
+the shared virtual environment retains older editable-worktree metadata.
 
 ## Production
 
@@ -49,42 +47,43 @@ than bare `.venv/bin/python -m`.
 | Access | guest and credential Sessions intentionally have identical capability |
 | Failure policy | API/Snapshot failure closes without synthetic Production data |
 
-The active site contains Quant Research Lab, Model-Driven Equity Selection,
-and three supporting market tools. The Lab is the sole model authority and
-default workspace. The deployed Candidate score, Entry Geometry, and technical
-Strategy Channels remain transparent but unvalidated **Baseline V1**. No Lab
-model is active and no Production performance claim exists.
+Quant Research Lab is the sole core workspace and model authority.
+Model-Driven Equity Selection is its future downstream consumer. The deployed
+Candidate score, Entry Geometry, and technical Strategy Channels remain
+transparent, unvalidated **Baseline V1**. No Lab model is active and no
+Production performance claim exists.
 
-Independent deployment postflight matched the release, source, bundle,
-checksums, services, protected routes, guest flow, Candidate routes, logout,
-and residue state. Password login and final visual appearance remain manual
-checks. Production consumes only 26 Market Intelligence sessions, so its
-analytics status is `degraded_short_history` even though canonical EOD is much
-deeper.
+Independent postflight matched release, source, bundle, checksums, services,
+protected routes, guest flow, Candidate routes, logout, and residue state.
+Password login and final visual appearance remain manual checks. Production
+Market Intelligence still consumes only 26 sessions and therefore reports
+`degraded_short_history`; this is a consumer-integration limit, not a price-
+acquisition gap.
 
 ## Canonical Dell data
 
 | Family | Verified current state |
 | --- | --- |
 | EOD | 1,255 contiguous XNYS sessions, 2021-09-13 through 2026-09-11; latest 9,971 rows; latest fingerprint `eec1f813851b378f47fbcd810728ed8b33b4748929ba85ff5d77e837bd12c904` |
-| Identity | all 1,255 EOD sessions plus one Identity-only 2021-09-10 partition; latest 10,000 instruments / 13,176 provider identities |
+| Identity | aligned to all EOD sessions plus one Identity-only 2021-09-10 partition; latest 10,000 instruments / 13,176 provider identities |
 | Identity source | 1,253 target sessions; 2026-08-13 and 2026-08-19 remain explicitly unbound |
-| Membership | three signal-eligible sessions / 59,892 decisions; 1,250 physically separate latest-vintage research-only sessions / 21,263,558 decisions; combined 1,253 / 1,255 sessions |
-| Corporate actions | 4,643 first-strategy exposures: 4,623 exact event-date assignments and 20 unassigned; the sole unassigned split-like exposure and 387 unexplained severe price breaks keep absence neutrality unproven |
-| Adjustment | 101,321 sparse split-only rows: 98,291 clear and 3,030 quarantined; neutral omitted rows and total-return coverage are not proven |
-| Lifecycle | 89 scoped instruments; 47 of 65 terminal cases have daily reference evidence, but 18 remain and canonical terminal outcomes are absent |
-| Classification | historical point-in-time research classification absent |
-| Fundamentals | cutoff-aware SEC issuer selection and aggregate security-projection census complete for four registered queries; only four sessions have strict as-operated next-open projection evidence, while reconstructed history remains development-only |
-| Historical Coverage | final pre-research gate V2 is `rejected_data_blocked`; no research-ready manifest was published |
-| Method engineering | launch review V1 is `ready_for_outcome_blind_method_engineering` over 287 sessions / 437,402 paths; true labels, selection, validation, holdout, performance, and Candidate authority remain false |
+| Membership | 3 signal-eligible plus 1,250 physically separate reconstructed research-only sessions; combined 1,253 / 1,255 |
+| Corporate actions | 4,643 first-strategy exposures; 4,623 exact event-date assignments and 20 unassigned; absence neutrality remains unproven |
+| Adjustment | 101,321 sparse split-only rows; 98,291 clear and 3,030 quarantined; neutral omitted rows and total-return coverage are unproven |
+| Lifecycle/terminal | 47 of 65 scoped terminal securities / 214 of 302 five-session paths have reference evidence; 18 / 88 remain; references are not outcomes |
+| Classification | complete point-in-time historical classification absent |
+| Fundamentals | cutoff-aware SEC engineering exists for four registered queries; only four sessions have strict as-operated next-open projection evidence |
+| Historical Coverage | final pre-research review V2 is `rejected_data_blocked`; no research-ready manifest exists |
+| Method engineering | launch review V1 is `ready_for_outcome_blind_method_engineering` over 287 sessions / 437,402 paths |
 
-The canonical inventory is 21,025 files / 7,397,444,417 bytes with zero
-symlinks and zero publication residue. Its last full inventory fingerprint is
+Canonical inventory: 21,025 files / 7,397,444,417 bytes, zero symlinks, zero
+publication residue; fingerprint
 `b4f1dc83b5b26a6ccde3b5dffd47ac58de465fced41d129ef74c0e2282228ff7`.
 
-The corrected EOD edition covers 1,234 fully source-bound sessions through
-2026-08-12 and has published EOD/Identity family evidence. This does not make
-the full 1,255-session foundation or any research cohort performance-ready.
+The five-year price and stable-Identity depth is complete. The professional
+performance-eligible database is not complete. Reconstructed Membership is
+not `as_operated`; price depth never relabels lifecycle, action, adjustment,
+fundamental, cost, or Historical Coverage evidence as ready.
 
 ## Universe
 
@@ -98,458 +97,58 @@ analysis session 2026-08-19.
 
 Activation pointer fingerprint:
 `dbe6056e1ed4b87ebce88b356c346831ce67431a263066cd283b9ad7e8067168`.
-Provider security form does not prove issuer operating structure or domicile.
-Future Core/Broad activation remains deferred.
+Provider form does not prove issuer operating structure or domicile. Future
+Core/Broad activation remains deferred.
 
-## Five-year research evidence
+## First research program
 
-The rolling five-year **price and identity foundation is complete**. The
-five-year **performance-eligible research database is not complete** and the
-formal state remains `data_blocked`.
+Strong-Leader Pullback V1 is frozen as
+`preregistered_data_blocked`. Its 24-combination budget, Primary/Secondary
+roles, next-open entry, 1/3/5-session stock outcomes, chronological split,
+purge/embargo, costs, controls, statistics, and holdout rules are registered.
 
-Important private Dell evidence includes:
+Two different gates must remain visible:
 
-- 1,250 physically separate reconstructed latest-vintage Membership sessions;
-  together with three signal-eligible sessions, the formal five-year census
-  covers 1,253 / 1,255 sessions and 21,323,450 decisions. ADR 0227 recovered
-  the 37 collision-derived join-gate gaps under a separate V4 research method;
-  only the two unavailable source sessions remain missing;
-- a complete 1,255-session SEC filer/security link candidate with 10,681,604
-  decisions; all issuer projection was initially disabled;
-- ADR 0224's conservative issuer-fact projection class, covering 6,122,451
-  admitted single-common-stock row-sessions structurally. The complete
-  cutoff-aware census admits only 17,879 rows across four sessions at the
-  strict as-operated next-open tier; 6,104,572 reconstructed rows across 1,249
-  sessions remain development-only;
-- 41,619,407 normalized SEC fact occurrences, a complete semantic census, and
-  four exact issuer-level source queries. The complete 24,489,804-evaluation
-  projection census measures reconstructed selection coverage of 84.97%
-  Assets, 81.52% equity, 73.01% annual net income, and 61.98% annual operating
-  income without retaining issuer values or opening outcomes;
-- a complete five-year corporate-action source package and private resolution
-  diagnostics, still without canonical lifecycle, terminal-return, neutral-row,
-  or total-return authority; and
-- the exact first-strategy source acceptance population: 20 unresolved action
-  relations across four IDs plus 64 lifecycle-crossing IDs; and
-- a formally bound SEC metadata pilot over all 64 lifecycle cases, retaining
-  2,144 official filing locators. All cases have one of 219 candidates on or
-  after their last canonical observation, but all eight complete security-
-  lifecycle fields remain unsupported; document content and security identity
-  require separate adjudication; and
-- an immutable 219-request SEC primary-document plan with 219 unique official
-  URLs in 22 fixed batches; and
-- the completed private SEC primary-document source package: 219 / 219
-  documents, 5,430,894 retained bytes, zero retries, manifest SHA-256
-  `38d7cf826769e4f3541ba5e22b4066b3f9a8779e56c770f81e7c2b5fc0833bb5`,
-  and logical fingerprint
-  `2bf0aa1510902415c0530d2f49630b7b03757d6780805157b03ffbad1c7d1c3e`.
-  Every document passed a separate zero-network formal reread, but no content
-  has been interpreted into a security-level lifecycle fact; and
-- the completed document-content census: 219 / 219 parsed, report SHA-256
-  `a566d966236fb046a88e662dacbcfa35ff93d57f319b86a218ef0f0ddde46869`,
-  logical fingerprint
-  `d22f5436aaeabeee3fe8bee8061594b42f479f25b8ad9f575fab81f3e781e77a`.
-  Its bounded contexts are lexical candidates only; fact counts remain zero;
-  and
-- the completed structured Form 25 candidate package: 64 / 64 notices across
-  62 stable-ID locators, report SHA-256
-  `c634eaa46a4d143810f2e24c51d7192a48f83a590b6c8b54b353f48563b2c099`,
-  and logical fingerprint
-  `acdf61a7438ea494f01f47ec110db6f914fa028b40cdb214602721d09960e505`.
-  The two repeated IDs remain separate and every complete field-support count
-  is still zero; and
-- the completed field-level Form 15 candidate package: 66 / 66 documents
-  across 62 stable-ID locators, report SHA-256
-  `12a8164025d0aefee9de277b79f1e94f2f371afc84fd1e8c363cb4607de4acca`,
-  and logical fingerprint
-  `b5a953a4e3227ed93eef73bd1c39db7bca0a9c3061611fc1e98e45fb97914e78`.
-  It preserves two multi-file-number records and one certification date before
-  filing without inferring effective or terminal status; and
-- the completed form-aware transaction candidate package: 89 / 89 documents
-  across 63 stable-ID locators, report SHA-256
-  `fbaf9116fc23e00dcdeeb21075c7bdfb196b6d178b588d76fb549b27d8d790ae`,
-  and logical fingerprint
-  `15ecfe9c5e737aa4090ed144de822b916040390a7a513f36b09715ecf25b9d2b`.
-  It separates 61 structured 8-K completion scopes, one non-Item-2.01 8-K, 24
-  tender amendments, one referenced-exhibit-only 6-K, and two proxy materials;
-  candidate contexts remain non-facts; and
-- the completed cross-document case coverage census: all 219 candidate
-  documents joined to the exact 64 stable-ID cases, with 61 structured
-  transaction scopes and three explicitly exceptional profiles. Candidate
-  material is present for 0 to 64 cases depending on the field, but all 512
-  case/field results remain `unsupported`. Report SHA-256 is
-  `77b81064c1a494275029a2c667bac7ef2cb99c83d446aa491c2be29a3fe1e09a`
-  and logical fingerprint is
-  `98d9c5d3da4d02316c020f0705ce1e8714a8b4086ead1a897a9e3a5511f7c1b9`;
-  and
-- the first point-in-time case adjudication: all 62 Form 8-K covers parsed into
-  70 complete security rows, with 61 in-window common-equity document matches
-  and one later IPG debt-event document rejected outside the source lifecycle
-  window. Sixty-one stable-security/listing fields are now matched; the other
-  451 case/field cells remain unsupported. Report SHA-256 is
-  `7f868b6f1d4471cd8690d4ff4f0daf2b439f0d51808021ba5aaa30de6cb1eb94`
-  and logical fingerprint is
-  `e15db9ddd43efaa489fc1542ca0d42daf7e410bae91440cdf0bcccaee3507bcd`;
-  and
-- the typed transaction-event adjudication: all 61 in-window structured cases
-  have one unique issuer completion date under four bounded rules. Fifty-two
-  dates equal the cover report date and nine occur one to four days later.
-  Report SHA-256 is
-  `acf4b350e89d56bbb9ac32bfcd906cec08c66721d5d5661994ab5ed68a0fd237`
-  and logical fingerprint is
-  `89d4c7388aa7e47d1609fcadee3d388e9d4f342d1ff4da02b76c113528e3d510`;
-  and
-- the typed termination-reason adjudication: all 61 linked Item 3.01 sections
-  explicitly connect merger/acquisition completion to a listing or trading
-  action. All 61 reasons are matched as `merger_or_acquisition`; effective
-  market-status and terminal dates remain unresolved. Report SHA-256 is
-  `c3ef6f8a0e51def3419b07d7f1303105a00df9e693ec4c6cbb0a2c4c1434224d`
-  and logical fingerprint is
-  `dbc47b9e31bd9043259b6849f8a92816790ad2b088c23e2b87e56e60d7d49fcf`;
-  and
-- the typed common-share consideration adjudication: all 61 primary clauses
-  are matched as 37 cash-only, 10 stock-only, three fixed cash-and-stock,
-  seven cash-plus-CVR, three cash-or-stock elections, and one cash-or-unlisted-
-  unit election. Eight fractional-share cash adjustments remain separate.
-  Report SHA-256 is
-  `834bf44dbc512c70a0722af18fab282c7b885dd881dbf48c126dd01ae0e00120`
-  and logical fingerprint is
-  `9c1d68b7391dbfbea105f58edb261827c64928ab134ea756a4f4ce1509f2c5ae`;
-  and
-- the typed source-party relation adjudication: all 61 agreement-party and
-  legal-survivor relations are matched as 49 target-survives, 11 target-
-  absorbed, and one new-holding-company combination. Sixteen listed-equity
-  consideration cases remain flagged for later issuer-security mapping, while
-  global counterparty and successor stable-ID counts remain zero. Report
-  SHA-256 is
-  `a44dff5ace2ef6dc9b7cb8487b2bc529732522f215caa482299f0b8c4cd2176a`
-  and logical fingerprint is
-  `08791989e04803e57d4a7881bb0495c2224ef24812c79767d365a93210906de2`;
-  and
-- the trading-cessation comparison: 45 before-open, eight after-close, and
-  eight unsupported source-timing profiles produce 52 SEC/EOD matches, one
-  retained conflict, and 53 observed-last-EOD evidence cases across 114
-  formally reread sessions. First tradability, legal delisting effectiveness,
-  both complete sampled date fields, and canonical lifecycle facts remain
-  zero. Report SHA-256 is
-  `694e8b01274fdcad9bef2e0178e805df994f2526c190598b665e965541c2fae9`
-  and logical fingerprint is
-  `40b9ab103837a01e77131355c41c72a15317354f3e7c4f19807a3ea4f8747301`;
-  and
-- the terminal-payoff source-term layer: 81 exact literals across 61 cases
-  retain 37 fixed-cash structures, 16 listed-equity ratio cases, seven CVRs,
-  four elections, one unlisted-unit case, and eight separate fractional-share
-  adjustments. Thirty fixed-cash cases also have matched cessation timing and
-  form the bounded input to the subsequent terminal-cash evidence layer.
-  Terminal outcome and stable consideration-issuer assignments remain zero.
-  Report SHA-256 is
-  `f0b2e805a46e9f2b3e88432d1c5aa6a8782d095ffdda5790cb8894639d2be1a9`
-  and logical fingerprint is
-  `00d0651df3da6bcc114a1dbcd270a4a78f41006d741e6fefb1ff2eebabd951fb`;
-  and
-- the fixed-cash terminal evidence layer: all 30 cash-only/timing-ready cases
-  retain gross nominal USD amounts on the first exchange session after the
-  observed last EOD. Twenty-seven are before-open and three are after-close;
-  24 completion dates equal the stop boundary while three precede and three
-  follow it by one calendar day. The other 31 cases remain explicitly
-  excluded. Strategy labels, returns, canonical terminal outcomes, and
-  research admission remain zero. Report SHA-256 is
-  `e500a6419efee4bb150d5b0cdec85819c9c9aa8749860c4cf0d3b95ce922d429`
-  and logical fingerprint is
-  `000526478feff78e94244fede566ad03441f5870479bcb25c2942a3f38bd45cc`;
-  and
-- the listed-consideration source plan: 12 exact 424B3 filings are frozen for
-  12 unique point-in-time common-stock candidates across 11 EOD/Identity
-  sessions. Eleven event tickers equal the SEC Submissions current ticker;
-  Vivmark retains event locator `EQR` and current locator `VMRK` under one
-  proposed stable ID and CIK. Report SHA-256 is
-  `9b58e80e2e1da7010f19bc9a227ab6fb1b6745d1b1285b2fcd5d9cb09752351d`
-  and logical fingerprint is
-  `0e677da4c7dcce4553994196db9c79cc5280c07dbee249402d1a0cf67cd37f52`;
-  and
-- the listed-consideration source package: all 12 exact 424B3 files are in
-  formally reread owner-only custody with 30,122,047 source bytes, 12 requests,
-  and zero retries. This custody layer alone grants no identity or terminal-
-  value authority. Manifest SHA-256 is
-  `826eacc85cf2b610e330465266a9629ac2c11f23ccd5d442f8eb14d7d3f963f6`
-  and logical fingerprint is
-  `0ff421cbc2a219ff9195e23ee7ff24d9b364646abdc154241d59d34e01334ca3`;
-  and
-- the listed-consideration identity chain: nine cases pass the strict single-
-  registration-document gate and three pass the frozen residual composite
-  gate. The latter combines existing registration and completion disclosures
-  for two cases and uses the exact replacement Fifth Third merger 424B3 for
-  the third. The final result is 12 / 12 without ticker-only assignment. The
-  initial and residual report SHA-256 values are
-  `b23dd9fa6e308cf12f2adfead289f0fd967cc73fed93702c264e6bfdf530ed60`
-  and
-  `49976645be6e247f0b1fa92f4b57b734836b99f158dedc8f730d00a57dd22bba`
-  respectively; the final residual logical fingerprint is
-  `36e512b29f2636aaa74b892d0e26815c2009a62261c58f39ca9f99709ba35533`;
-  and
-- the listed-consideration terminal reference layer: all 12 assigned
-  securities have valid revision-1 gross daily values under
-  `cash + ratio × canonical unadjusted close` on the target's first absent
-  session. All retain
-  `adjustment_factors_unverified`; cumulative listed-stock reference coverage
-  is 12 / 12, while execution prices, strategy returns, canonical terminal
-  outcomes, and research admission remain absent. The initial nine-value and
-  residual three-value report SHA-256 values are
-  `18e47df490acca529aa3eaebdfaba70c989669ecb83e52a377d6885200913f2c`
-  and
-  `7ee02be39f2ad89a8a9e84edf030bc69b04101c6676f09d8b6ca46b174ae6e21`
-  respectively; the final residual logical fingerprint is
-  `88d4a22d607b45a6c0fbc23a0b318ae568dc35c5cd56393a6a796f113ea54168`;
-  and
-- the first-strategy terminal boundary correction: Instrument Master's last
-  observation is now kept separate from the last stable-ID EOD presence in
-  the registered strategy window. Fifty-five of 89 lifecycle rows change at
-  least one 1/3/5-session impact count; corrected five-session scope is 65
-  securities / 302 paths instead of the historical identity-boundary result
-  of 64 / 252. The correction report SHA-256 is
-  `a1fddf42680e65ad90250df2cb94b87058f02e0e157240c375551529606f9013`
-  and logical fingerprint is
-  `cb2aba6d936906d5e4a21f14fea2c9a6ff5337aee7ee3505c2c3977df909f0a7`;
-  and
-- the preserved first-strategy terminal-gap census V2: 42 of 65
-  securities have gross daily reference-value evidence and 23 remain
-  unresolved. The corresponding five-session split is 196 documented versus
-  106 unresolved out of 302. `SCS` is the one newly in-scope stable-ID case
-  and remains unadjudicated; ticker grants no identity authority. This is not
-  terminal-outcome or admission authority. Report SHA-256 is
-  `1d920f4c44eb20bf312b667eb82a8944a9b63bfe0d3d7081a66e71c6f23e6cff`
-  and logical fingerprint is
-  `1cb6984652842e8898cebbb484f0796bfdd7b6e4e7bee167d88bf47734e06d5f`.
-  V3 supersedes only its current counts while preserving this evidence
-  vintage; and
-  and
-- the corrected-population SEC source plan V2: the one newly in-scope stable ID
-  is linked through retained lifecycle evidence to CIK `0001050825` and three
-  exact SEC primary-document requests: Form 25-NSE dated 2025-12-10, Form 8-K
-  dated 2025-12-11, and Form 15-12G dated 2025-12-22. The superseded V1 plan
-  had an invalid future `planned_at` and has no authority. V2 report SHA-256 is
-  `6986c5e1f2b5c9eb863f1db6284c65a47d25edb977dddee2633b8b34547a27f5`
-  and logical fingerprint is
-  `3acbd745b320301c3aeb52db89e06ac58b07e64511ed13f348f5f1f0e61ab84a`;
-  and
-- the corrected-population SEC source custody V2: all three planned files are
-  retained as 73,520 owner-only bytes with zero retry. Plan time
-  `2026-09-14T06:43:39Z` precedes the first observation at
-  `2026-09-14T06:44:26.624111Z`. Manifest SHA-256 is
-  `f0f2ab15129bd3acf4d8ef7d88ca04edf6df84cf625964aa8ab401d23fe96188`
-  and logical fingerprint is
-  `62e4d1d01cf9cd8215267e980fb8694820f51880cdcd2f176d5336e32f4b81b1`.
-  Source custody alone grants no lifecycle or outcome fact; and
-- the corrected-population SEC content census: all three documents parse under
-  the original eight-field lexical ruleset, with one HTML, one SEC-SGML HTML,
-  and one inline-XBRL profile. The 73,520 physical bytes normalize to 20,343
-  text characters. Report SHA-256 is
-  `0431de1dd61646ebc67c69f53a50db48ba91fbd8c741c9c99514e1345f3cbf87`
-  and logical fingerprint is
-  `972ef6dd9aa83a7e8d04edfca24bbebff3d9fc70ff209976e1a7369561b39a2d`.
-  Marker contexts remain unresolved candidates; lifecycle and outcome fact
-  counts are zero; and
-- the corrected-population SEC field-candidate package: the one Form 25-NSE,
-  one Form 15-12G, and one structured 8-K all pass their established form-aware
-  extractors for the same stable ID. Report SHA-256 is
-  `f64a9df580409e426b31032cce602c1d14ff077f1d7e887736ea8812c09c41fd`
-  and logical fingerprint is
-  `c351199c90fb5016900980841a776eb61dbdef7a0d24887c8c0ea78e208ff5a3`.
-  Every complete lifecycle-field support and authority count remains zero;
-  and
-- the corrected-population SEC core adjudication: SCS has one point-in-time
-  matched XNYS Class A common-equity cover, a uniquely selected 2025-12-10
-  issuer completion date, a bounded Item 3.01 merger/acquisition termination
-  reason, and a primary holder-election cash-or-stock consideration structure.
-  The report has SHA-256
-  `aa37836aa161ee21f96c5a8920e09ae780fc454455d22c85703c9538377f7321`
-  and logical fingerprint
-  `773ba35192f1d722412c1e1bea2fc98c8988722335f664eb2b5dcf9656054698`.
-  Cessation, effective delisting, election/proration, terminal value, outcome,
-  and research authority remain absent; and
-- the corrected-population SCS trading-cessation adjudication: the 8-K states
-  that trading halted before the 2025-12-10 open, while stable-ID canonical EOD
-  presence ends on 2025-12-09 and is absent on the next exchange session. The
-  matched report has SHA-256
-  `8a94a697249735e05d0a861b4e8ad62dac50f1a7218d5fb75f841c339a263048`
-  and logical fingerprint
-  `342bbafdcf797efd3ef13eae0ab4b96b2d7c25a5d6d4c98ac1c518098ba299eb`.
-  This is last-EOD-observation evidence, not legal delisting or terminal-value
-  authority; and
-- the corrected-population SCS payoff policy: HNI/Steelcase source roles, five
-  numeric terms, three election alternatives, and the contractual mixed
-  default for no valid election are matched. The report has SHA-256
-  `6ec4beafbcb9191b2c27e86e90d32f37cde8b8c78d2ea2ec94b13cabebfd56ac`
-  and logical fingerprint
-  `4dc7ff5876b639195faf6c15d16c163749101c4f37d2f64a28620bf29ca8b0fd`.
-  Actual holder election and adjustment/proration details remain absent; and
-- the corrected-population listed reference and terminal-gap census V3: HNI is
-  strictly assigned to stable ID `8bde034d-a7f8-5dce-a432-134c583eb9ac`
-  through source, SEC CIK/ticker/NYSE, and point-in-time canonical identity.
-  The 2025-12-10 HNI close is 42.54 USD; cash, mixed/default, and stock gross
-  references are 16.228286, 16.524768, and 16.760760 USD. The reference report
-  SHA-256 is
-  `86221d53e36b4ff8b2b56f1c7d6eefd893681ac66c4b62c92ca8ae2974f5e71e`
-  with logical fingerprint
-  `df154b5086d10527e1367c73d7980bf5ef5801d67d65d513829b49edf2b201b4`.
-  V3 changes only SCS and raises documented coverage to 43 securities / 197
-  five-session paths, leaving 22 / 105. Its SHA-256 is
-  `8c3f4f960218eaded49fabf3503865a24a885eb118b0e96ab2aeddfa51288462`
-  with logical fingerprint
-  `d94b5f22397df2b1fe49ac2c2c12e5f04d8617b076c8b95fb2e8127c886aa57e`.
-  Actual election, terminal outcome, strategy label, and research authority
-  remain absent; and
-- terminal-gap census V4 and the final pre-research admission review: four
-  additional locally provable references raise coverage to 47 of 65
-  securities and 214 of 302 five-session paths. Eighteen securities and 88
-  paths remain quarantined. The formal review binds all 287 strategy
-  Membership sessions, 4,643 action exposures, the canonical sparse adjustment
-  publication, a fresh 387-discontinuity diagnostic, 89 lifecycle exposures,
-  and V4. Its decision is `rejected_data_blocked`; no Historical Coverage
-  manifest or return label was opened. The V4 report SHA-256 is
-  `997c490156ebab6dde08f751f3382fb6a54feed2edb6d6540e3dba59c9ab4cbb`.
-  The final review SHA-256 is
-  `0c433cd4d8f97c5e6b9df0af5cfaf4533f83160ab07d88ed7c5774dbd74d5bb1`
-  with logical fingerprint
-  `b58a3671451ba89332b0fe437ecdea48389156ffac59bd1cc26266700c81a149`.
+- **Method engineering:** authorized for the registered method, synthetic and
+  adversarial tests, private outcome-blind diagnostics, zero-row future-label
+  interfaces, and Lab method/readiness presentation.
+- **Performance research:** rejected until complete point-in-time Membership,
+  lifecycle/terminal outcomes, corporate-action neutrality, adjustment basis,
+  exact Historical Coverage, costs, and sealed evaluation custody are admitted.
 
-Exact package identities and counts are retained in:
-
-- [Five-year SEC filer/security candidate audit](../audits/five-year-sec-filer-security-link-candidate-2026-09-13.md)
-- [SEC projection-readiness audit](../audits/sec-filer-security-projection-readiness-2026-09-13.md)
-- [SEC fundamental-query readiness audit](../audits/sec-fundamental-query-readiness-census-2026-09-13.md)
-- [SEC fundamental-projection readiness audit](../audits/sec-fundamental-projection-readiness-census-2026-09-13.md)
-- [First-strategy source sample audit](../audits/strong-leader-pullback-source-acceptance-sample-2026-09-13.md)
-- [First-strategy SEC lifecycle pilot audit](../audits/strong-leader-pullback-sec-lifecycle-pilot-2026-09-13.md)
-- [First-strategy SEC document plan audit](../audits/strong-leader-pullback-sec-document-plan-2026-09-13.md)
-- [First-strategy SEC document source audit](../audits/strong-leader-pullback-sec-document-source-2026-09-13.md)
-- [First-strategy SEC content census audit](../audits/strong-leader-pullback-sec-document-content-census-2026-09-13.md)
-- [First-strategy SEC Form 25 candidate audit](../audits/strong-leader-pullback-sec-form25-candidates-2026-09-13.md)
-- [First-strategy SEC Form 15 candidate audit](../audits/strong-leader-pullback-sec-form15-candidates-2026-09-13.md)
-- [First-strategy SEC transaction candidate audit](../audits/strong-leader-pullback-sec-transaction-candidates-2026-09-13.md)
-- [First-strategy SEC case coverage census audit](../audits/strong-leader-pullback-sec-case-coverage-census-2026-09-13.md)
-- [First-strategy SEC case adjudication audit](../audits/strong-leader-pullback-sec-case-adjudication-2026-09-13.md)
-- [First-strategy SEC transaction-event adjudication audit](../audits/strong-leader-pullback-sec-transaction-event-adjudication-2026-09-13.md)
-- [First-strategy SEC termination-reason adjudication audit](../audits/strong-leader-pullback-sec-termination-reason-adjudication-2026-09-13.md)
-- [First-strategy SEC consideration adjudication audit](../audits/strong-leader-pullback-sec-consideration-adjudication-2026-09-13.md)
-- [First-strategy SEC party-relation adjudication audit](../audits/strong-leader-pullback-sec-party-relation-adjudication-2026-09-14.md)
-- [First-strategy trading-cessation adjudication audit](../audits/strong-leader-pullback-trading-cessation-adjudication-2026-09-14.md)
-- [First-strategy terminal-payoff term audit](../audits/strong-leader-pullback-terminal-payoff-terms-2026-09-14.md)
-- [First-strategy fixed-cash terminal evidence audit](../audits/strong-leader-pullback-fixed-cash-terminal-evidence-2026-09-14.md)
-- [First-strategy listed-consideration source-plan audit](../audits/strong-leader-pullback-listed-consideration-source-plan-2026-09-14.md)
-- [First-strategy listed-consideration source audit](../audits/strong-leader-pullback-listed-consideration-source-2026-09-14.md)
-- [First-strategy listed-consideration adjudication audit](../audits/strong-leader-pullback-listed-consideration-adjudication-2026-09-14.md)
-- [First-strategy listed-consideration terminal evidence audit](../audits/strong-leader-pullback-listed-consideration-terminal-evidence-2026-09-14.md)
-- [First-strategy listed-consideration residual source-plan audit](../audits/strong-leader-pullback-listed-consideration-residual-source-plan-2026-09-14.md)
-- [First-strategy listed-consideration residual source audit](../audits/strong-leader-pullback-listed-consideration-residual-source-2026-09-14.md)
-- [First-strategy listed-consideration residual adjudication audit](../audits/strong-leader-pullback-listed-consideration-residual-adjudication-2026-09-14.md)
-- [First-strategy listed-consideration residual terminal evidence audit](../audits/strong-leader-pullback-listed-consideration-residual-terminal-evidence-2026-09-14.md)
-- [First-strategy terminal-gap census audit](../audits/strong-leader-pullback-terminal-gap-census-2026-09-14.md)
-- [First-strategy terminal-boundary correction audit](../audits/strong-leader-pullback-terminal-boundary-correction-2026-09-14.md)
-- [First-strategy terminal-population SEC source-plan audit](../audits/strong-leader-pullback-terminal-population-sec-source-plan-2026-09-14.md)
-- [First-strategy terminal-population SEC source-custody audit](../audits/strong-leader-pullback-terminal-population-sec-source-custody-2026-09-14.md)
-- [First-strategy terminal-population SEC content-census audit](../audits/strong-leader-pullback-terminal-population-sec-content-census-2026-09-14.md)
-- [First-strategy terminal-population SEC field-candidate audit](../audits/strong-leader-pullback-terminal-population-sec-field-candidates-2026-09-14.md)
-- [First-strategy terminal-population SEC core-adjudication audit](../audits/strong-leader-pullback-terminal-population-sec-core-adjudication-2026-09-14.md)
-- [First-strategy terminal-population trading-cessation audit](../audits/strong-leader-pullback-terminal-population-trading-cessation-adjudication-2026-09-14.md)
-- [First-strategy terminal-population payoff-policy audit](../audits/strong-leader-pullback-terminal-population-payoff-policy-2026-09-14.md)
-- [First-strategy corrected listed-reference and gap-V3 audit](../audits/strong-leader-pullback-terminal-population-listed-reference-and-gap-v3-2026-09-14.md)
-- [First-strategy pre-research admission review](../audits/strong-leader-pullback-pre-research-admission-review-2026-09-14.md)
-- [First-strategy method-engineering launch review](../audits/strong-leader-pullback-method-engineering-launch-review-2026-09-14.md)
-- [Five-year research baseline](../audits/five-year-research-foundation-baseline-2026-09-10.md)
-- [Five-year research Membership continuation](../audits/five-year-research-membership-continuation-2026-09-13.md)
-- [Five-year research Membership collision recovery](../audits/five-year-research-membership-collision-recovery-2026-09-13.md)
-
-## Research and product authority
-
-The durable product chain is:
-
-```text
-market state -> strength direction -> sector/theme -> validated stock candidate
--> trade preparation -> entry/invalidation -> position management
-```
-
-Quant Research Lab owns model identity, methods, evidence, validation, failure,
-and lifecycle. Stock Candidates will consume only one to three separately
-validated and explicitly activated models. Strong-Leader Pullback V1 remains
-`preregistered_data_blocked`; it has fixture-tested mechanics, zero real
-out-of-sample observations, and no Candidate authority.
-
-The first SEC issuer-query registry, cutoff-aware selector, source-readiness
-census, and aggregate security-projection census are finished. The engineering
-path is reproducible, but the historical data gate is rejected: only four
-sessions have strict projection evidence. Do not build a broad fact-by-session
-panel or a security feature. Reopen this lane only for newly admitted
-historical source-time evidence or a separately registered strategy need.
-
-The first source-specific lifecycle pilot is now bound to the immutable
-20-action / 64-lifecycle sample. SEC metadata narrowed the 64 lifecycle cases
-to 2,144 document candidates, including 219 on or after the last canonical
-observation, without promoting a single terminal fact. Those 219 documents are
-now frozen into 22 deterministic batches and all 219 source documents are in
-formally reread private custody. The completed deterministic parse census
-localizes lexical evidence without promoting a fact. Form 25, Form 15, and
-transaction candidate extraction is complete. The stable-ID coverage census
-now measures candidate material across all 64 cases while keeping all 512
-case/field results unsupported. Point-in-time inline-XBRL cover adjudication
-then matched the stable security/listing field for 61 structured transaction
-cases without a ticker-only join. Typed transaction completion/date work is
-now complete for all 61, including nine retained cover-date differences. The
-termination reason is also now matched for all 61 through bounded Item 3.01
-evidence. Primary common-share consideration and source-party topology are now
-matched for all 61 while fractional-share cash, elections, CVRs, and unlisted
-units remain distinct. Global party IDs remain unassigned. Source-stated stop
-timing now agrees with formal EOD presence in 52 cases, conflicts in one, and
-is unsupported in eight; this does not complete either sampled tradability
-field. Eighty-one source payoff terms are now normalized without valuing a
-complex component. Thirty fixed-cash cases now retain nominal terminal-value
-evidence after their last observed EOD, but this is not a strategy label or
-return. Twelve exact 424B3 files are retained for the non-election listed-stock
-payoffs. All 12 consideration identities now pass their applicable frozen
-evidence gates and have gross daily reference values; the three former
-residuals were resolved without ticker-only assignment. Terminal-gap census
-V4 now measures 47 reference-documented and 18 unresolved lifecycle-crossing
-securities. LNW, REVG, SAND, CVRs, elections/proration, unlisted units,
-successor identity, and unsupported/conflicting timing remain quarantined. The
-final transitive gate is `rejected_data_blocked`. Repetitive manual case work
-stops here; the next data action is a targeted evaluation of point-in-time
-lifecycle, complete corporate-action/adjustment, and terminal-consideration
-source capability. Massive Starter is not the sole lifecycle authority.
-The owner reported submitting general and student-information LSEG contact
-forms; no response, sample, quote, entitlement, or permission decision has
-been reviewed. LSEG is not a prerequisite for the next method-engineering
-phase. If any lifecycle/action provider is evaluated later, its sample must
-pass the frozen 20-action / 64-lifecycle acceptance population before an
-adapter is justified.
-
-The method-engineering launch review is now complete in owner-only Dell
-custody at
-`strong-leader-pullback-method-engineering-launch-review/review=20260914-v1`.
-Its report SHA-256 is
-`db242897d66fb61a4f638762e5736b27b3cb788f328431a32636d02d2d9da690`
-and logical fingerprint is
+The launch report is in owner-only Dell custody at
+`historical-evidence/strong-leader-pullback-method-engineering-launch-review/review=20260914-v1`.
+Report SHA-256:
+`db242897d66fb61a4f638762e5736b27b3cb788f328431a32636d02d2d9da690`;
+logical fingerprint:
 `1abb4ed53d4a4cb5bb6482432db254a0019168aae2712983a9d00aaa4cffef8c`.
-It authorizes outcome-blind strategy and Lab method engineering only; formal
-data admission remains rejected and no real outcome was opened.
 
-Only after admissible Membership, lifecycle/terminal outcomes, action/adjustment
-semantics, exact Historical Coverage, costs, and sealed evaluation custody are
-admitted may the first real chronological study begin. See the
-[roadmap](roadmap.md).
+The final performance-admission report remains
+`rejected_data_blocked`. Report SHA-256:
+`0c433cd4d8f97c5e6b9df0af5cfaf4533f83160ab07d88ed7c5774dbd74d5bb1`;
+logical fingerprint:
+`b58a3671451ba89332b0fe437ecdea48389156ffac59bd1cc26266700c81a149`.
+
+All detailed source packages, intermediate hashes, and case-by-case decisions
+remain in the [dated audits](../audits/) and
+[historical execution archive](../audits/project-execution-archive-through-2026-09-14.md).
+Do not copy them back into this recovery file.
+
+LSEG contact is owner-reported submitted, but no response, sample, quote,
+entitlement, or permission decision has been reviewed. LSEG, ICE, S&P,
+Norgate, or another provider is optional future evidence work. No named source
+is a prerequisite for outcome-blind method engineering; any future sample must
+pass the frozen 20-action / 64-lifecycle acceptance population.
 
 ## Automation and boundaries
 
 The installed daily wake timer is active but read-only. It performs no fetch,
-Apply, analytics, publication, deployment, alert delivery, or credential
-access. No unattended write-capable scheduler is installed; SMTP is
-unconfigured. The guarded manual daily chain works end to end. Its latest
-measured offline portion took about 17.1 minutes; Candidate was the main
-hotspot at about 7.0 minutes and one CPU core. The rejected segmented path must
-not be reopened without a new measured budget breach and a design addressing
-both known gaps.
+Apply, analytics, publication, deployment, credential access, or alert
+delivery. No unattended write-capable scheduler is installed; SMTP is
+unconfigured. The guarded manual chain works end to end.
 
 No current document authorizes provider access, credential use, `/data`
-mutation, research outcome opening, model activation, publication, deployment,
+mutation, real research outcomes, model activation, publication, deployment,
 scheduler mutation, order execution, or destructive cleanup.
 
 ## Cross-device continuity
@@ -566,11 +165,9 @@ scheduler mutation, order execution, or destructive cleanup.
 
 1. Read `AGENTS.md`, root `README.md`, `docs/README.md`, this file, and
    `current-status.md`.
-2. Run `scripts/admin/report-current-context.sh`; use full history validation
+2. Run `scripts/admin/report-current-context.sh`; use full-history validation
    only for periodic or investigative review.
-3. Compare repository, EOD, Identity, Activation, MI, Snapshot, inventory, and
-   residue with this baseline.
-4. Classify differences before mutation. Never silently fetch, Apply, publish,
-   deploy, rewrite a pointer, or clean a release.
-5. Read only the contracts, ADRs, operations, and audits tied to the selected
+3. Classify every difference before mutation. Never silently fetch, Apply,
+   publish, deploy, rewrite a pointer, or clean a release.
+4. Read only the contracts, ADRs, operations, and audits tied to the selected
    objective.

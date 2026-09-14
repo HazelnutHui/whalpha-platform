@@ -13,9 +13,13 @@
 
 - use the implemented Quant Research Lab registry as the transparent
   methodology, validation, failure, and lifecycle authority;
-- complete only the data families required by a named research question;
-- research one falsifiable strategy family at a time, beginning with
-  Strong-Leader Pullback;
+- implement the registered Strong-Leader Pullback method and Lab surface under
+  the outcome-blind engineering boundary, with real labels and performance
+  still closed;
+- improve only data families tied to a named research requirement and frozen
+  acceptance test;
+- execute real research for one falsifiable strategy family at a time only
+  after its formal data admission;
 - prove one complete, rejection-capable research path before generalizing it
   into a bounded AI Quant Research Factory;
 - publish professional research metrics on a slower reviewed cadence;
