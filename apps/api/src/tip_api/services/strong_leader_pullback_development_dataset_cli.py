@@ -470,12 +470,10 @@ def _build_labels(
                 ):
                     reasons.add("missing_eod_before_terminal_boundary")
                 adjusted_target = tuple(
-                    _adjusted_bar(
+                    _adjusted_target_bar(
                         bar,
                         adjustment_by_key.get((observation.instrument_id, source_session)),
                     )
-                    if bar is not None and _valid_bar(bar)
-                    else None
                     for source_session, bar in zip(path, target_bars, strict=True)
                 )
                 adjusted_spy = tuple(
@@ -600,6 +598,20 @@ def _adjusted_bar(bar: EodMarketBarReadModel, adjustment) -> ReconstructedOutcom
         low=bar.low * multiplier,
         close=bar.close * multiplier,
     )
+
+
+def _adjusted_target_bar(
+    bar: EodMarketBarReadModel | None, adjustment
+) -> ReconstructedOutcomeBarV1 | None:
+    if bar is None or not _valid_bar(bar):
+        return None
+    if (
+        adjustment is not None
+        and adjustment.split_adjustment_status
+        is not AdjustmentAvailabilityStatus.CLEAR
+    ):
+        return None
+    return _adjusted_bar(bar, adjustment)
 
 
 def _valid_bar(bar: EodMarketBarReadModel) -> bool:
