@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0283](0283-reuse-content-addressed-research-artifacts-and-publish-milestones.md):
+  reuses fingerprint-bound research panels, keeps label custody separate, and
+  synchronizes reviewed Lab milestones without treating the site as a live
+  process log.
 - [ADR 0282](0282-separate-v2-factor-control-and-label-evidence-sources.md):
   permits exact replay of qualification-bound private split evidence only for
   V2 factor observations while keeping controls and future labels canonical.

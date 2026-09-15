@@ -46,20 +46,17 @@ network-disabled reread. Run project Python through
 
 The current release passed independent release, source, bundle, checksum,
 service, protected-route, guest-flow, Candidate-route, logout, and residue
-checks. Public landing content and the protected Lab now expose Factor
-Discovery V2 as current: eight exact definitions, 431,249 / 437,402 complete
-vectors, 98.59% coverage, the byte-identical qualification pass, six registered
-Development trials, all 14 cumulative trials, and zero read V2 outcomes. ADR
-0282 and the committed Dell-only implementation separately bind the
-qualification-bound factor replay to canonical-only controls and labels. The
-exact frozen V1 diagnostics, rather than all 118 raw Development sessions,
-reconstruct the 106-session cohort. This implementation is not a Production
-deployment. One formal report and one exact replay are the next boundary.
-V1 screening and Strong-Leader Pullback remain historical failed research; all
-model, strategy, Validation, Holdout, Candidate, and option-performance
-authority stays locked. An unauthenticated Dashboard request redirects to
-Session entry. Password login and final visual appearance remain manual checks.
-Production Market Intelligence still consumes only 26 sessions and reports
+checks. It still exposes the registered, outcome-unread V2 screen. Dell source
+has since completed the single formal V2 Development report and one exact
+replay: four candidate-Alpha trials failed, two risk guards qualified as risk
+evidence but were not selected, and no model opened. The reviewed Product
+projection for that result is implemented but not yet deployed; repository
+state must not be confused with the live release above. V1 screening and
+Strong-Leader Pullback remain historical failed research; all model, strategy,
+Validation, Holdout, Candidate, and option-performance authority stays locked.
+An unauthenticated Dashboard request redirects to Session entry. Password
+login and final visual appearance remain manual checks. Production Market
+Intelligence still consumes only 26 sessions and reports
 `degraded_short_history`; canonical history is deeper.
 
 ## Canonical Dell data
@@ -201,11 +198,27 @@ conditioner and applicability input have zero standalone outcome trials.
 Cumulative ledger V2 preserves all eight V1 trials and appends the six unread
 V2 trials for 14 total; its logical fingerprint is
 `cdc07a2194540b94dbba6bfee673a720ce232dc1d939f8b2c7496dda628946e9`.
-ADR 0282 now binds an exact qualification-evidence replay for factor inputs,
+ADR 0282 binds the exact qualification-evidence replay for factor inputs,
 canonical-only control and label evidence, three ordered input-collection
-fingerprints, and a clean committed implementation revision. No V2 outcome has
-been read. The next action is the single formal Development report and its one
-exact replay; Validation and Holdout remain closed.
+fingerprints, and a clean committed implementation revision. The single V2
+report and exact replay are now complete at `closed_no_candidate_alpha`: 106
+signal sessions, 167,860 observations, 503,580 labels, four rejected Alpha
+trials, two qualified-but-unselected risk guards, and zero selected model
+inputs. Report logical fingerprint is
+`caf88beb14434f60d4cf018dc6bc5c33b2c788b6504b1db93107faecdd313f42`;
+SHA-256 is
+`c900ce46f1685e140e3ef9f309bf0d1cda34b1838df7f4741678b9170d4f0733`.
+Cumulative ledger V3 closes all 14 consumed trials under logical fingerprint
+`284ab895644ad8eff5feb7d5510f087c3fa1b6436ee655cd71f6a9cedc50a661`.
+Validation and Holdout remain closed. The next research action is a new finite,
+outcome-unread factor campaign designed around economically distinct signals
+and point-in-time market-structure applicability; it is not yet registered.
+
+ADR 0283 now requires content-addressed reuse of expensive deterministic
+research panels, separated feature/label custody, compact machine summaries,
+and atomic milestone synchronization across contracts, ledgers, status,
+audits, the trilingual Lab projection, and tests. Production deployment remains
+a separate guarded state.
 
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility

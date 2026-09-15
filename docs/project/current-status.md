@@ -40,8 +40,10 @@ ADRs, and audits.
   evidence; the deterministic runner, result contracts, immutable custody, and
   tests are implemented. Exact frozen V1 diagnostics reconstruct the
   106-session cohort and prevent all 118 raw Development sessions from entering
-  it. No V2 factor is admitted; the single formal report
-  and exact replay are the next executable boundary and outcomes remain unread.
+  it. The single formal V2 report and exact replay are complete: all four Alpha
+  trials failed, both risk guards passed their own gates but were not selected,
+  and no model opened. Ledger V3 closes all 14 consumed trials. A new finite
+  factor campaign is the next design boundary; it is not yet registered.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -62,18 +64,15 @@ same data and capability. Snapshot/API failure closes without synthetic
 Production data.
 
 The Lab presents the Factor Discovery -> Model Construction -> Strategy
-Expression architecture with Factor Catalog V2 as the current campaign. The
-website shows all eight exact V2 definitions, the 431,249 /
-437,402 complete-vector result, 98.59% coverage, byte-identical replay, and zero
-admitted Alpha factors. The Development screen is registered before outcome
-access: four Alpha and two risk-guard trials, 14 cumulative trials, 106
-declared Development sessions, 167,860 declared paths, and zero read V2
-outcomes. The implementation is ready for the single formal report and exact
-replay. V1 screening and the Pullback program remain visible as
-historical failed research. The public landing dossier carries the same
-registered/no-model state. This
-presentation changes no market analytics, Baseline Candidate calculation,
-model authority, or research result.
+Expression architecture. Dell source now shows Factor Catalog V2 as a closed
+campaign: all eight definitions and their 98.59% outcome-blind qualification,
+the six-trial Development result, four rejected Alpha trials, two
+qualified-but-unselected risk guards, exact replay identities, 14 cumulative
+trials, and zero model inputs. V1 screening and the Pullback program remain
+visible as historical failed research. The current live release still shows
+the prior registered/no-outcome state until the reviewed source change is
+separately deployed. Neither presentation changes market analytics, Baseline
+Candidate calculation, model authority, or Candidate activation.
 
 The current Candidate score, Entry Geometry, and technical Strategy Channels
 remain visible, transparent, unvalidated **Baseline V1**. They are not expected-
@@ -214,16 +213,15 @@ factor or interaction trials before any further Development outcome is read.
 Campaign-level adjusted statistics remain selection evidence rather than a
 globally independent Alpha claim.
 
-Factor Catalog V2 is registered at logical fingerprint
+Factor Catalog V2 was registered at logical fingerprint
 `6620000334a0a8bd23103341dfc1958d57c712a063dff0a39e23ffc82d51bed5`.
 It contains four candidate Alpha measurements across medium-horizon relative
 continuation, short-term relative reversal, and intraday/overnight return
 timing; one defensive-state conditioner; one Amihud liquidity applicability
 input; and two related downside-risk guards. The pure 127-session calculator
 has no outcome input and rejects timing, denominator, benchmark-variance, and
-missingness defects explicitly. Real factor values have been inspected only by
-the outcome-blind qualification; none has been outcome-screened or admitted,
-and no new outcome has been read. ADR
+missingness defects explicitly. Real factor values were first inspected only by
+the outcome-blind qualification. ADR
 0279 freezes the V2 outcome-blind qualification protocol under logical
 fingerprint
 `b74214155cc148d1e0d37c530ab4fea2f385af1a81237b901eec45e1fee2eb0b`.
@@ -257,19 +255,29 @@ replicates, chronological halves, unchanged V1 gates, Holm correction within
 the four-Alpha and two-risk families, and fixed cost diagnostics. The
 conditioner and applicability input consume no standalone outcome trials.
 
-Cumulative ledger V2 carries all eight completed V1 trials unchanged and adds
-the six V2 trials as `registered_pending_development_screen`, for 14 total
-trials under logical fingerprint
+Cumulative ledger V2 preserved all eight completed V1 trials and preregistered
+the six V2 trials under logical fingerprint
 `cdc07a2194540b94dbba6bfee673a720ce232dc1d939f8b2c7496dda628946e9`.
-All V2 result identities and outcome-access dates remain empty. Implementation
-is now bound by ADR 0282: factor observations must exactly replay the admitted
-qualification evidence, while the nuisance control and all future labels use
-canonical split evidence only. The report records separate source and exact
-input-collection fingerprints plus the V1 cohort-diagnostics logical and
-physical identity, accepts no selected risk guard without a surviving Alpha,
-and requires a clean committed revision. One formal report and
-one exact replay are next; Model Construction stays locked unless at least one
-Alpha factor survives every gate.
+ADR 0282 then bound factor observations to the admitted qualification evidence
+and kept the nuisance control and every future label on canonical evidence.
+
+The one formal report and one full replay are complete at
+`closed_no_candidate_alpha`. All four candidate-Alpha trials failed at least
+one frozen gate. Both risk guards passed their own gates, with robust effects
+0.3438 and 0.3259, but were not selected because no Alpha survived. Report
+logical fingerprint is
+`caf88beb14434f60d4cf018dc6bc5c33b2c788b6504b1db93107faecdd313f42`;
+SHA-256 is
+`c900ce46f1685e140e3ef9f309bf0d1cda34b1838df7f4741678b9170d4f0733`.
+Ledger V3 closes all 14 consumed trials at logical fingerprint
+`284ab895644ad8eff5feb7d5510f087c3fa1b6436ee655cd71f6a9cedc50a661`.
+No factor is authorized as a model input, so Model Construction remains locked.
+
+ADR 0283 now requires exact reuse of content-addressed research panels,
+separate feature and label custody, compact typed summaries for ordinary agent
+work, and atomic source synchronization at material milestones. This improves
+cycle time and token use without deleting immutable evidence or presenting
+intermediate process events as public research results.
 
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
@@ -321,12 +329,13 @@ measured budget breach.
 7. Preserve the completed ADR 0276 screen and exact replay. Do not revise its
    gates, treat the retained risk guard as Alpha, or construct a model from a
    batch with zero admitted candidate Alpha.
-8. Preserve the completed V1 ledger, registered V2 catalog, qualification pass,
-   frozen ADR 0281 screen, ADR 0282 evidence separation, and preregistered
-   ledger V2. Execute the committed six-trial implementation once, retain all
-   exclusions, then perform its one exact replay. Do not alter gates, open
-   Validation/Holdout, or preselect Momentum Breakout or another named strategy.
-9. Keep Factor Discovery, Model Construction, and Strategy Expression as
+8. Preserve the completed V1 and V2 campaigns, exact replays, all 14 consumed
+   trials, and ledger V3. Do not alter their gates, treat V2 risk evidence as
+   Alpha, open Validation/Holdout, or preselect a named strategy.
+9. Design the next finite factor campaign outcome-blind. First define reusable
+   point-in-time market-state inputs and economically distinct hypotheses, then
+   qualify data and preregister every outcome trial in a new ledger version.
+10. Keep Factor Discovery, Model Construction, and Strategy Expression as
    separate versioned records; lock the complete lineage before Validation.
 
 Do not project current Membership or taxonomy backward, infer lifecycle from

@@ -6,6 +6,24 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Close Factor Discovery V2 and synchronize the Lab source
+
+- Completed the single frozen V2 Development report and one full exact replay:
+  106 signal sessions, 167,860 observations, 503,580 labels, and identical
+  logical and physical report identities.
+- Rejected all four candidate-Alpha trials. Both risk guards passed their own
+  frozen gates but were not selected because no Alpha survived; no model input,
+  Validation, Holdout, Candidate, publication, or trading authority opened.
+- Added cumulative ledger V3, preserving all 14 consumed trials and recording
+  zero admitted Alpha and zero model inputs.
+- Accepted ADR 0283: immutable evidence remains retained, while expensive
+  deterministic panels become fingerprint-reusable, labels stay custody-
+  separated, ordinary agent work consumes compact summaries, and the Lab
+  publishes reviewed milestones rather than process chatter.
+- Updated the authoritative status, roadmap, audit trail, trilingual Lab source,
+  and tests to the same closed V2 state. This source milestone is not a claim
+  that the Production release has already changed.
+
 ## 2026-09-15 — Implement the frozen Factor Discovery V2 screen
 
 - Accepted ADR 0282 before any V2 outcome access, narrowly permitting the

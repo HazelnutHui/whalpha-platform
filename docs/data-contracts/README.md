@@ -136,12 +136,15 @@ see [ADR 0274](../decisions/0274-adopt-factor-model-strategy-three-layer-researc
   retains every consumed factor-screen trial before a later adaptive campaign.
 - [Quant Research Discovery Trial Ledger V2](quant-research-discovery-trial-ledger-v2.md)
   carries the eight consumed V1 trials plus the six preregistered V2 trials.
+- [Quant Research Discovery Trial Ledger V3](quant-research-discovery-trial-ledger-v3.md)
+  closes all 14 consumed V1/V2 trials and records zero model inputs.
 - [Quant Research Factor Screening V1](quant-research-factor-screening-v1.md)
   freezes the first Development screen; its completed no-Alpha result and exact
   replay are recorded in the [screening audit](../audits/quant-research-factor-screening-2026-09-15.md).
 - [Quant Research Factor Screening V2](quant-research-factor-screening-v2.md)
-  freezes the current six-trial Development screen and its separated
-  factor/control/label evidence boundary before outcomes.
+  freezes the six-trial Development screen and its separated
+  factor/control/label evidence boundary; its closed result is recorded in the
+  [V2 screening audit](../audits/quant-research-factor-screening-v2-2026-09-15.md).
 - `quant-research-factor-value/1.0`, `quant-research-factor-observation/1.0`,
   and `quant-research-factor-diagnostics/1.0` are the typed implementation and
   private qualification-report contracts for that catalog. Their frozen

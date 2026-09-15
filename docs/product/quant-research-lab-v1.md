@@ -168,14 +168,25 @@ across 255 eligible sessions, retains 18,646 explicit quarantines, and finds no
 pair meeting the frozen near-duplicate rule. These are calculation-quality
 facts, not Alpha evidence. Its later frozen Development screen rejected every
 candidate-Alpha factor and retained only one risk guard, so V1 is closed
-without a model. ADR 0277 preserves all eight consumed trials. ADR 0278 now
-registers a separate eight-definition V2 catalog with zero outcome access; its
-outcome-blind qualification is the current gate.
+without a model. ADR 0277 preserves all eight consumed V1 trials. ADR 0278
+registered a separate eight-definition V2 catalog; its outcome-blind
+qualification passed, but the frozen Development screen rejected all four
+candidate-Alpha trials. Two risk guards passed their own gates but were not
+selected because no Alpha survived. Ledger V3 now closes all 14 consumed
+trials, no model input exists, and the next factor campaign is an unregistered
+design boundary.
 
 No candidate-Alpha factor has been admitted. No selected threshold, model
 weight, three-layer model,
 strategy expression, Lab performance publication, or active Candidate model
 currently exists.
+
+The public Lab is a reviewed milestone projection, not a live process log. A
+material state change must update the typed record, cumulative ledger,
+authoritative project state, dated audit, trilingual Product projection, and
+tests together. Deployment remains separately verified. Current decisions stay
+expanded; formulas, parameters, lineage, hashes, limitations, and historical
+campaigns may use disclosure panels without becoming unavailable.
 
 ## AI Quant Research Factory
 

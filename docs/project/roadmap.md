@@ -85,11 +85,7 @@ without changed gates, post-hoc interactions, or retuning.
 Exit: closed without a model. `rolling_maximum_drawdown_10s` remains risk
 evidence only and cannot independently open Model Construction.
 
-## Current gated phase — Factor Discovery next campaign
-
-The next campaign must be a new, finite, preregistered discovery version. Its
-purpose is to broaden economically distinct Alpha hypotheses without turning
-the same five failed definitions into an unlimited parameter search.
+## Completed factor campaign — Factor Discovery V2
 
 Sequence:
 
@@ -118,8 +114,10 @@ Sequence:
    evidence from canonical-only controls and labels;~~ complete under ADR 0282,
    including immutable input-collection fingerprints and clean-revision
    enforcement; and
-7. execute one Development report and one exact replay, then accept rejection
-   if no candidate Alpha survives.
+7. ~~execute one Development report and one exact replay, then accept rejection
+   if no candidate Alpha survives.~~ Complete: all four Alpha trials failed;
+   both risk guards qualified but were not selected; ledger V3 closes all 14
+   cumulative trials and Model Construction remains locked.
 
 Potential territories include market- and ETF-relative residual strength,
 medium-term trend with short-term reversal, volatility compression/expansion,
@@ -128,9 +126,34 @@ in-time fundamental or event evidence. They are research territories, not a
 promised fixed strategy menu. Historical sector-neutral work remains blocked
 until point-in-time classification has a named evidence source.
 
-Exit: either at least one non-redundant candidate-Alpha factor plus any useful
-risk/applicability evidence is eligible for a separately frozen Model
-Construction protocol, or the campaign closes with exact reasons.
+Exit: closed without a model at `closed_no_candidate_alpha`.
+
+## Current gated phase — next Factor Discovery campaign
+
+The next campaign is not yet registered. Its purpose is to find economically
+distinct evidence whose usefulness may depend on the point-in-time market
+structure, without converting V1/V2 failures into an unlimited parameter
+search.
+
+Sequence:
+
+1. implement ADR 0283 reuse boundaries for population, feature,
+   market-state, control, and label panels; measure before parallelizing;
+2. define an outcome-blind point-in-time market-state feature vector and its
+   permitted applicability role;
+3. propose and deduplicate a finite set of economically distinct factor and
+   interaction hypotheses, including explicit null and failure conditions;
+4. implement formulas and complete zero-outcome coverage, timing,
+   concentration, redundancy, and exact-replay qualification;
+5. append the exact trial family, horizons, costs, multiplicity, stability,
+   selection cap, and stopping rule to a new cumulative ledger before reading
+   outcomes; and
+6. execute once, replay once, retain every failure, and either open a separately
+   frozen Model Construction protocol or close the campaign.
+
+Historical sector-neutral work remains blocked until point-in-time
+classification has a named evidence source. The campaign must not receive a
+marketing name or promised stock-selection role before evidence earns it.
 
 ## Conditional next phase — Model Construction
 

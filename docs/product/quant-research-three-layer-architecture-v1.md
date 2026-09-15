@@ -229,8 +229,14 @@ authority.
   then rejected all five candidate-Alpha factors and retained one risk guard;
   the batch is closed without a model.
 - ADR 0277 binds all eight consumed V1 trials in a cumulative ledger. ADR 0278
-  registers a separate eight-definition Factor Catalog V2 with zero outcome
-  access. Its outcome-blind qualification is the current research gate.
+  registered the separate eight-definition Factor Catalog V2. Its
+  outcome-blind qualification passed, but its frozen Development screen closed
+  without candidate Alpha: four Alpha trials failed and two risk guards
+  qualified but were not selected. Ledger V3 closes all 14 consumed trials.
+- The next factor campaign is not registered. It must append a finite trial
+  family to a new ledger before outcomes and should test economically distinct,
+  point-in-time market-structure-conditioned evidence without reopening V1 or
+  V2.
 - The current six Strategy Channels and Candidate score remain frozen,
   unvalidated Baseline V1 compatibility surfaces until separately replaced.
 - No three-layer model or strategy expression is active in Stock Candidates.
