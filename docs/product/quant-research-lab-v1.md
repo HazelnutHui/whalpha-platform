@@ -188,6 +188,13 @@ tests together. Deployment remains separately verified. Current decisions stay
 expanded; formulas, parameters, lineage, hashes, limitations, and historical
 campaigns may use disclosure panels without becoming unavailable.
 
+The Lab also exposes the renewable Factor Discovery cycle. This is a permanent
+process contract, not a third model or a promise that research is unattended:
+the overall program can keep returning to hypothesis intake, while each
+campaign remains finite, deduplicated, outcome-isolated, preregistered,
+replayed, and closed into the cumulative ledger. A successful campaign may
+open a separate Model Construction path without stopping later discovery.
+
 ## AI Quant Research Factory
 
 The future Factory is a governed backend of these three layers, not another

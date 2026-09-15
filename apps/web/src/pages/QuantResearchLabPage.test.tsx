@@ -23,6 +23,13 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('Model Construction').parentElement).toHaveTextContent('LOCKED');
     expect(screen.getByText('Strategy Expression').parentElement).toHaveTextContent('LOCKED');
     expect(screen.getByText(/A factor is not a model/)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Renewable factor-discovery loop' })).toBeInTheDocument();
+    expect(screen.getByText('Operating mode').parentElement).toHaveTextContent('RENEWABLE');
+    expect(screen.getByText('Current stage').parentElement).toHaveTextContent('HYPOTHESIS INTAKE');
+    expect(screen.getByText('Completed campaigns').parentElement).toHaveTextContent('2');
+    expect(screen.getByText('Formal trials consumed').parentElement).toHaveTextContent('14');
+    expect(screen.getByText('Current position').parentElement).toHaveTextContent('READY FOR A NEW QUESTION');
+    expect(screen.getByText('Why the loop continues').parentElement).toHaveTextContent('FAILURE DOES NOT END DISCOVERY');
     expect(screen.getByRole('heading', { name: 'Evidence ladder' })).toBeInTheDocument();
     expect(screen.getByText('Three-layer architecture').parentElement).toHaveTextContent('ACCEPTED');
     expect(screen.getByText('Cumulative research ledger').parentElement).toHaveTextContent('CLOSED · 14 TRIALS');
@@ -74,6 +81,10 @@ describe('Quant Research Lab', () => {
     expect(screen.queryByText(/win\/payoff\/PF/i)).not.toBeNull();
     expect(screen.queryByText(/annualized return/i)).not.toBeInTheDocument();
 
+    await user.click(screen.getByText(/Inspect deduplication, budget/));
+    expect(screen.getByText('Duplicate identity')).toBeInTheDocument();
+    expect(screen.getByText('55c1eaccbd5ef5c8ef6dd695c4e4e010ed0e11c6483e55f1a2ce6b70898f8218')).toBeInTheDocument();
+
     await user.click(screen.getByText(/Inspect complete logic/));
     expect(screen.getByText(/max\(close\[t-20:t-1\]\)/)).toBeInTheDocument();
     expect(screen.getByText('4622fb2fe86cc28249f53c89003f450a9e9d19c5696cd4eb865f413140b982c8')).toBeInTheDocument();
@@ -89,7 +100,7 @@ describe('Quant Research Lab', () => {
     expect(screen.getAllByText('126-session relative momentum, skipping the latest five')).toHaveLength(3);
     expect(screen.getByText('5441468ef8b392f555aac5a4e9cc8c6d50a9fb064349b6da342ccc2540dc193b')).toBeInTheDocument();
     expect(screen.getByText('cdc07a2194540b94dbba6bfee673a720ce232dc1d939f8b2c7496dda628946e9')).toBeInTheDocument();
-    expect(screen.getByText('284ab895644ad8eff5feb7d5510f087c3fa1b6436ee655cd71f6a9cedc50a661')).toBeInTheDocument();
+    expect(screen.getAllByText('284ab895644ad8eff5feb7d5510f087c3fa1b6436ee655cd71f6a9cedc50a661')).toHaveLength(2);
     expect(screen.getByText('caf88beb14434f60d4cf018dc6bc5c33b2c788b6504b1db93107faecdd313f42')).toBeInTheDocument();
     expect(screen.getByText('c900ce46f1685e140e3ef9f309bf0d1cda34b1838df7f4741678b9170d4f0733')).toBeInTheDocument();
 
@@ -108,6 +119,9 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('因子发现层').parentElement).toHaveTextContent('当前阶段 · V2 已关闭');
     expect(screen.getByText('模型构建层').parentElement).toHaveTextContent('保持锁定');
     expect(screen.getByText('策略表达层').parentElement).toHaveTextContent('保持锁定');
+    expect(screen.getByRole('heading', { name: '可持续因子发现循环' })).toBeInTheDocument();
+    expect(screen.getByText('运行模式').parentElement).toHaveTextContent('持续循环');
+    expect(screen.getByText('当前位置').parentElement).toHaveTextContent('可以开始提出新问题');
     expect(screen.getByRole('heading', { name: '证据阶梯' })).toBeInTheDocument();
     expect(screen.getByText('三层研究架构').parentElement).toHaveTextContent('已生效');
     expect(screen.getByText('累计研究账本').parentElement).toHaveTextContent('已关闭 · 共14项试验');
@@ -148,6 +162,9 @@ describe('Quant Research Lab', () => {
     expect(screen.getAllByText('Descubrimiento de factores')[0].parentElement).toHaveTextContent('FASE ACTUAL · V2 CERRADO');
     expect(screen.getAllByText('Construcción del modelo')[0].parentElement).toHaveTextContent('BLOQUEADA');
     expect(screen.getAllByText('Expresión de estrategia')[0].parentElement).toHaveTextContent('BLOQUEADA');
+    expect(screen.getByRole('heading', { name: 'Ciclo renovable de descubrimiento de factores' })).toBeInTheDocument();
+    expect(screen.getByText('Modo operativo').parentElement).toHaveTextContent('RENOVABLE');
+    expect(screen.getByText('Posición actual').parentElement).toHaveTextContent('LISTO PARA UNA NUEVA PREGUNTA');
     expect(screen.getByRole('heading', { name: 'Escalera de evidencia' })).toBeInTheDocument();
     expect(screen.getByText('Arquitectura de tres capas').parentElement).toHaveTextContent('ACEPTADA');
     expect(screen.getByText('Registro acumulativo de investigación').parentElement).toHaveTextContent('CERRADO · 14 PRUEBAS');

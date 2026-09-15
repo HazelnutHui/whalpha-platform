@@ -43,7 +43,9 @@ ADRs, and audits.
   it. The single formal V2 report and exact replay are complete: all four Alpha
   trials failed, both risk guards passed their own gates but were not selected,
   and no model opened. Ledger V3 closes all 14 consumed trials. A new finite
-  factor campaign is the next design boundary; it is not yet registered.
+  factor campaign is the next design boundary; it is not yet registered. ADR
+  0284 now makes the long-run discovery program renewable while keeping each
+  campaign finite, deduplicated, stage-isolated, preregistered, and replayed.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -72,6 +74,12 @@ trials, and zero model inputs. V1 screening and the Pullback program remain
 visible as historical failed research. The public entry dossier carries the
 same result in all three languages. This changes no market analytics, Baseline
 Candidate calculation, model authority, or Candidate activation.
+
+Dell source additionally contains the reviewed renewable-cycle panel. It shows
+the current return to hypothesis intake, the 2 completed campaigns / 14 formal
+trials, seven-dimensional duplicate identity, finite preregistration budget,
+stage isolation, and automatic pause conditions. It is a research-control
+surface, not evidence that an unattended factor miner is already running.
 
 The current Candidate score, Entry Geometry, and technical Strategy Channels
 remain visible, transparent, unvalidated **Baseline V1**. They are not expected-
@@ -334,7 +342,10 @@ measured budget breach.
 9. Design the next finite factor campaign outcome-blind. First define reusable
    point-in-time market-state inputs and economically distinct hypotheses, then
    qualify data and preregister every outcome trial in a new ledger version.
-10. Keep Factor Discovery, Model Construction, and Strategy Expression as
+10. Use the ADR 0284 cycle for every successor campaign: deduplicate before
+    implementation, close and append before another campaign reads outcomes,
+    and return to intake after either success or failure.
+11. Keep Factor Discovery, Model Construction, and Strategy Expression as
    separate versioned records; lock the complete lineage before Validation.
 
 Do not project current Membership or taxonomy backward, infer lifecycle from

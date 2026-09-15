@@ -39,6 +39,9 @@ research architecture.
 - Keep factor, model, and strategy-expression versions independently traceable.
 - Lock the full lineage before Validation; open Holdout once only.
 - Keep all attempts and failures in the true multiplicity ledger.
+- Keep the overall discovery program renewable while making every
+  outcome-reading campaign finite, deduplicated, preregistered, replayed, and
+  closed before the next campaign reads outcomes.
 - Separate event studies from portfolios and stock outcomes from option
   outcomes.
 - Add or buy data only for a named feature, label, bias control, execution
@@ -133,7 +136,10 @@ Exit: closed without a model at `closed_no_candidate_alpha`.
 The next campaign is not yet registered. Its purpose is to find economically
 distinct evidence whose usefulness may depend on the point-in-time market
 structure, without converting V1/V2 failures into an unlimited parameter
-search.
+search. ADR 0284 supplies the permanent loop: hypothesis intake,
+seven-dimensional deduplication, data admission, outcome-blind qualification,
+protocol preregistration, Development screen, replay/red-team, and ledger close
+before returning to intake.
 
 Sequence:
 

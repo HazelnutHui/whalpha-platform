@@ -1,5 +1,6 @@
 import modelRecord from '../modelRecords/quant-research-lab-model-record-v1.json';
 import factorQualification from '../modelRecords/quant-research-factor-qualification-v2.json';
+import discoveryCycle from '../modelRecords/quant-research-discovery-cycle-v1.json';
 import factorScreeningV2 from '../modelRecords/quant-research-factor-screening-v2.json';
 import factorScreening from '../modelRecords/quant-research-factor-screening-v1.json';
 import { useI18n } from '../i18n/I18nProvider';
@@ -140,6 +141,25 @@ const COPY = {
       ['Next discovery campaign', 'DESIGN BOUNDARY', 'A new finite batch may study market-structure-conditioned applicability. Its definitions and trial budget are not yet registered.', 'active'],
       ['Model, strategy & Product', 'LOCKED', 'No predictive model, strategy expression, Candidate authority, or option-performance claim exists.', 'locked'],
     ],
+    cycle: 'Renewable factor-discovery loop', cycleNote: 'The research program may continue indefinitely. Every campaign inside it is finite, deduplicated, preregistered, replayed, and permanently counted.', cycleBadge: 'CONTINUOUS SYSTEM · BOUNDED CAMPAIGNS',
+    cycleStats: ['Operating mode', 'Current stage', 'Completed campaigns', 'Formal trials consumed', 'Next campaign'], cycleStatValues: ['RENEWABLE', 'HYPOTHESIS INTAKE', '2', '14', 'NOT REGISTERED'],
+    cycleStages: [
+      ['01', 'Propose & deduplicate', 'CURRENT', 'State the mechanism, falsifiable expectation, data clock, and novelty signature. Exact duplicates stop; near-duplicates share one family.'],
+      ['02', 'Build without outcomes', 'NEXT', 'Admit point-in-time data, implement the factor, and qualify timing, coverage, variation, concentration, and redundancy without labels.'],
+      ['03', 'Register & falsify', 'LOCKED', 'Freeze the finite trial budget, outcomes, costs, multiplicity, gates, caps, and stop rule before opening Development labels.'],
+      ['04', 'Replay, close & return', 'LOCKED', 'Attack leakage and stability, reproduce the exact result, append every failure, route any survivor, then return to hypothesis intake.'],
+    ],
+    cycleCurrent: 'Current position', cycleCurrentValue: 'READY FOR A NEW QUESTION', cycleCurrentBody: 'V1 and V2 are closed. The next campaign has no factor list, parameter grid, outcome access, or marketing name yet.',
+    cycleContinuity: 'Why the loop continues', cycleContinuityValue: 'FAILURE DOES NOT END DISCOVERY', cycleContinuityBody: 'A failed batch returns to new hypothesis intake. A successful batch may open a separate model-construction path while Factor Discovery continues independently.',
+    cycleInspect: 'Inspect deduplication, budget, isolation, and pause rules',
+    cycleGuardTitles: ['Duplicate identity', 'Finite trial budget', 'Stage isolation', 'Automatic pause'],
+    cycleGuardBodies: [
+      'Novelty is checked across mechanism, information set and cutoff, formula, Universe, horizon, parameter neighborhood, and related hypothesis family.',
+      'Factor and interaction count, parameter variants, horizons, hypothesis families, multiplicity, selection cap, and stopping rule must all be frozen.',
+      'Idea and qualification stages cannot read outcomes. Development access begins only for a newly registered campaign; Validation and Holdout remain separate.',
+      'Lineage mismatch, stage leakage, trial-budget breach, replay failure, or sealed-partition breach stops the affected campaign without erasing prior work.',
+    ],
+    cycleIdentity: 'Cycle fingerprint',
     foundation: 'Research foundation snapshot', foundationNote: 'Verified, versioned evidence already built on Dell. Each item states both its useful scope and its limit.', foundationBadge: 'EVIDENCE REVIEWED · 15 SEP 2026',
     foundationItems: [
       ['Five-year market base', 'DEPTH COMPLETE', 'Contiguous EOD price and stable-identity depth are complete.', 'verified'],
@@ -221,6 +241,25 @@ const COPY = {
       ['下一批因子发现', '设计边界', '下一有限批次可以研究市场结构对因子适用性的影响；定义和试验预算尚未登记。', 'active'],
       ['模型、策略与产品', '锁定', '目前仍没有预测模型、策略表达、个股候选权限或期权绩效主张。', 'locked'],
     ],
+    cycle: '可持续因子发现循环', cycleNote: '整个研究计划可以持续迭代，但其中每一批研究都必须有限、去重、预登记、精确复现并永久计入试验账本。', cycleBadge: '持续研究系统 · 单批次有边界',
+    cycleStats: ['运行模式', '当前阶段', '已完成批次', '已消耗正式试验', '下一批次'], cycleStatValues: ['持续循环', '假设提出', '2', '14', '尚未登记'],
+    cycleStages: [
+      ['01', '提出假设并去重', '当前', '明确经济机制、可证伪预期、数据时钟和新颖性签名；完全重复直接停止，近重复归入同一假设家族。'],
+      ['02', '不读取结果地构建', '下一步', '准入点时数据，实现因子，并在不接触标签的情况下审查时点、覆盖、变异、集中度和冗余。'],
+      ['03', '预登记并反证', '锁定', '在打开开发期标签前，冻结有限试验预算、结果定义、成本、重复检验、门槛、入选上限与停止规则。'],
+      ['04', '重放、关闭并返回', '锁定', '攻击泄漏与稳定性，精确复现结果，追加全部失败，分流幸存证据，然后返回新假设入口。'],
+    ],
+    cycleCurrent: '当前位置', cycleCurrentValue: '可以开始提出新问题', cycleCurrentBody: 'V1 与 V2 已经关闭；下一批目前没有因子清单、参数网格、结果访问权或营销名称。',
+    cycleContinuity: '为何可以持续循环', cycleContinuityValue: '单批失败不终止发现', cycleContinuityBody: '失败批次返回新假设入口；成功批次可以另行开启模型构建，而因子发现仍作为独立研究线继续运行。',
+    cycleInspect: '查看去重、预算、隔离与暂停规则',
+    cycleGuardTitles: ['重复身份', '有限试验预算', '阶段隔离', '自动暂停'],
+    cycleGuardBodies: [
+      '从经济机制、信息集合与截止时点、公式、Universe、周期、参数邻域及相关假设家族七个维度判断是否重复。',
+      '因子与交互数量、参数变体、周期、假设家族、重复检验方法、入选上限和停止规则必须全部冻结。',
+      '提出想法和资格诊断阶段不能读取结果；只有新批次完成登记后才能打开开发期结果，验证集与留出集继续独立隔离。',
+      '来源谱系不一致、阶段泄漏、超出试验预算、重放失败或密封分区泄漏会立即停止受影响批次，但不会抹去已有研究。',
+    ],
+    cycleIdentity: '循环逻辑指纹',
     foundation: '研究基础快照', foundationNote: '以下是已经在戴尔完成核验并版本化的工程证据；每一项同时标明可用范围与证据边界。', foundationBadge: '证据核对 · 2026-09-15',
     foundationItems: [
       ['五年行情基础', '深度已完成', '连续日线行情与稳定证券身份的五年深度已经完成。', 'verified'],
@@ -302,6 +341,25 @@ const COPY = {
       ['Próxima campaña', 'LÍMITE DE DISEÑO', 'Un nuevo lote finito podrá estudiar la aplicabilidad condicionada por la estructura del mercado; aún no se han registrado definiciones ni presupuesto.', 'active'],
       ['Modelo, estrategia y Producto', 'BLOQUEADOS', 'No existe modelo predictivo, expresión de estrategia, autoridad sobre Candidatos ni afirmación sobre opciones.', 'locked'],
     ],
+    cycle: 'Ciclo renovable de descubrimiento de factores', cycleNote: 'El programa puede continuar de forma indefinida. Cada campaña es finita, deduplicada, prerregistrada, reproducida y contabilizada de forma permanente.', cycleBadge: 'SISTEMA CONTINUO · CAMPAÑAS ACOTADAS',
+    cycleStats: ['Modo operativo', 'Fase actual', 'Campañas concluidas', 'Pruebas formales consumidas', 'Próxima campaña'], cycleStatValues: ['RENOVABLE', 'ENTRADA DE HIPÓTESIS', '2', '14', 'NO REGISTRADA'],
+    cycleStages: [
+      ['01', 'Proponer y deduplicar', 'ACTUAL', 'Definir el mecanismo, la expectativa refutable, el reloj de datos y la firma de novedad. Los duplicados exactos se detienen y los cercanos comparten familia.'],
+      ['02', 'Construir sin resultados', 'SIGUIENTE', 'Admitir datos point-in-time, implementar el factor y calificar calendario, cobertura, variación, concentración y redundancia sin etiquetas.'],
+      ['03', 'Registrar y refutar', 'BLOQUEADA', 'Congelar presupuesto, resultados, costes, multiplicidad, criterios, límites de selección y regla de parada antes de abrir Desarrollo.'],
+      ['04', 'Reproducir, cerrar y volver', 'BLOQUEADA', 'Atacar fugas y estabilidad, reproducir el resultado exacto, conservar cada fallo, encaminar supervivientes y volver a la entrada de hipótesis.'],
+    ],
+    cycleCurrent: 'Posición actual', cycleCurrentValue: 'LISTO PARA UNA NUEVA PREGUNTA', cycleCurrentBody: 'V1 y V2 están cerrados. La próxima campaña aún no tiene factores, rejilla de parámetros, acceso a resultados ni nombre comercial.',
+    cycleContinuity: 'Por qué continúa el ciclo', cycleContinuityValue: 'UN FALLO NO DETIENE EL DESCUBRIMIENTO', cycleContinuityBody: 'Una campaña fallida vuelve a la entrada de hipótesis. Una campaña exitosa puede abrir una ruta separada de modelos mientras el descubrimiento continúa.',
+    cycleInspect: 'Examinar deduplicación, presupuesto, aislamiento y pausas',
+    cycleGuardTitles: ['Identidad de duplicados', 'Presupuesto finito', 'Aislamiento por etapas', 'Pausa automática'],
+    cycleGuardBodies: [
+      'La novedad se revisa por mecanismo, información y corte, fórmula, universo, horizonte, vecindad de parámetros y familia de hipótesis relacionada.',
+      'Deben congelarse el número de factores e interacciones, variantes, horizontes, familias, multiplicidad, límite de selección y regla de parada.',
+      'Las fases de ideas y calificación no pueden leer resultados. Desarrollo se abre solo para una campaña nueva registrada; Validación y Holdout siguen separados.',
+      'Una discrepancia de linaje, fuga entre etapas, exceso de presupuesto, fallo de reproducción o ruptura de una partición sellada detiene la campaña afectada.',
+    ],
+    cycleIdentity: 'Huella lógica del ciclo',
     foundation: 'Resumen de la base de investigación', foundationNote: 'Evidencia verificada y versionada que ya existe en Dell. Cada punto indica tanto su utilidad como su límite.', foundationBadge: 'EVIDENCIA REVISADA · 15 SEP 2026',
     foundationItems: [
       ['Base de mercado a cinco años', 'PROFUNDIDAD COMPLETA', 'La profundidad continua de precios diarios e identidad estable está completa.', 'verified'],
@@ -407,6 +465,13 @@ export function QuantResearchLabPage(): JSX.Element {
     numberFormat.format(factorScreening.label_count),
     `${factorScreening.selected_alpha_count} / ${factorScreening.selected_risk_guard_count}`,
   ];
+  const cycleStats = [
+    c.cycleStatValues[0],
+    c.cycleStatValues[1],
+    numberFormat.format(discoveryCycle.completed_campaign_count),
+    numberFormat.format(discoveryCycle.cumulative_formal_trial_count),
+    c.cycleStatValues[4],
+  ];
   const foundationValues = [
     numberFormat.format(1_255),
     `${numberFormat.format(1_253)} / ${numberFormat.format(1_255)}`,
@@ -435,6 +500,30 @@ export function QuantResearchLabPage(): JSX.Element {
         {architecture.layers.map(([index, title, state, body], layerIndex) => <article className={layerIndex === 0 ? 'active' : 'locked'} key={title}><div><span>{index}</span><b>{state}</b></div><h3>{title}</h3><p>{body}</p></article>)}
       </div>
       <strong className="research-architecture-boundary">{architecture.boundary}</strong>
+    </section>
+
+    <section className="research-card research-engineering-evidence" aria-labelledby="research-cycle-title">
+      <header><span>∞</span><div><h2 id="research-cycle-title">{c.cycle}</h2><p>{c.cycleNote}</p></div><b>{c.cycleBadge}</b></header>
+      <div className="research-factor-stats">
+        {c.cycleStats.map((label, index) => <article key={label}><span>{label}</span><strong>{cycleStats[index]}</strong></article>)}
+      </div>
+      <ol className="research-engineering-rail">
+        {c.cycleStages.map(([index, title, state, body], stageIndex) => <li className={stageIndex === 0 ? 'done' : 'blocked'} key={title}><i>{stageIndex === 0 ? '●' : '→'}</i><strong>{index} · {title}</strong><small>{state} · {body}</small></li>)}
+      </ol>
+      <div className="research-screen-verdict">
+        <article className="retained"><span>{c.cycleCurrent}</span><strong>{c.cycleCurrentValue}</strong><p>{c.cycleCurrentBody}</p></article>
+        <article className="retained"><span>{c.cycleContinuity}</span><strong>{c.cycleContinuityValue}</strong><p>{c.cycleContinuityBody}</p></article>
+      </div>
+      <details className="research-factor-details research-screen-details">
+        <summary>{c.cycleInspect}</summary>
+        <div className="research-screen-protocol">
+          {c.cycleGuardTitles.map((title, index) => <article key={title}><strong>{title}</strong><p>{c.cycleGuardBodies[index]}</p></article>)}
+        </div>
+        <dl className="research-factor-reproduction">
+          <div><dt>{c.cycleIdentity}</dt><dd><code>{discoveryCycle.logical_fingerprint}</code></dd></div>
+          <div><dt>completed ledger</dt><dd><code>{discoveryCycle.source_completed_ledger_fingerprint}</code></dd></div>
+        </dl>
+      </details>
     </section>
 
     <section className="research-readiness" aria-labelledby="research-readiness-title"><header><span>01</span><h2 id="research-readiness-title">{c.readiness}</h2></header><div>{c.readinessItems.map(([name, state, body, tone]) => <article className={`research-readiness-${tone}`} key={name}><span>{state}</span><strong>{name}</strong><p>{body}</p></article>)}</div></section>

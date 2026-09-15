@@ -237,6 +237,9 @@ authority.
   family to a new ledger before outcomes and should test economically distinct,
   point-in-time market-structure-conditioned evidence without reopening V1 or
   V2.
+- ADR 0284 makes Factor Discovery itself renewable: close and count each finite
+  campaign, then return to deduplicated hypothesis intake. Model Construction
+  may open only for admitted Alpha and runs independently from later discovery.
 - The current six Strategy Channels and Candidate score remain frozen,
   unvalidated Baseline V1 compatibility surfaces until separately replaced.
 - No three-layer model or strategy expression is active in Stock Candidates.

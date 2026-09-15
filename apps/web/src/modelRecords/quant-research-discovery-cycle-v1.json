@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "contract_version": "quant-research-discovery-cycle/1.0",
+  "cycle_version": "whalpha.factor-discovery-cycle/1.0.0",
+  "operating_mode": "continuous_sequence_of_finite_campaigns",
+  "current_status": "ready_for_next_campaign_design",
+  "current_stage": "hypothesis_intake",
+  "completed_campaign_count": 2,
+  "cumulative_formal_trial_count": 14,
+  "source_completed_ledger_fingerprint": "284ab895644ad8eff5feb7d5510f087c3fa1b6436ee655cd71f6a9cedc50a661",
+  "active_campaign_id": null,
+  "next_campaign_registered": false,
+  "program_campaign_limit": null,
+  "stages": [
+    {
+      "order": 1,
+      "stage_id": "hypothesis_intake",
+      "outcome_access_allowed": false,
+      "required_exit_evidence": ["economic_mechanism", "falsifiable_expectation", "data_clock"]
+    },
+    {
+      "order": 2,
+      "stage_id": "deduplication",
+      "outcome_access_allowed": false,
+      "required_exit_evidence": ["identity_signature", "related_family", "novelty_disposition"]
+    },
+    {
+      "order": 3,
+      "stage_id": "data_admission",
+      "outcome_access_allowed": false,
+      "required_exit_evidence": ["source_lineage", "point_in_time_availability", "missingness_policy"]
+    },
+    {
+      "order": 4,
+      "stage_id": "outcome_blind_qualification",
+      "outcome_access_allowed": false,
+      "required_exit_evidence": ["coverage", "timing", "variation", "redundancy", "exact_replay"]
+    },
+    {
+      "order": 5,
+      "stage_id": "protocol_preregistration",
+      "outcome_access_allowed": false,
+      "required_exit_evidence": ["finite_trial_budget", "gates", "multiplicity", "stopping_rule"]
+    },
+    {
+      "order": 6,
+      "stage_id": "development_screen",
+      "outcome_access_allowed": true,
+      "required_exit_evidence": ["immutable_report", "all_failures_retained", "selection_cap"]
+    },
+    {
+      "order": 7,
+      "stage_id": "independent_replay_and_red_team",
+      "outcome_access_allowed": true,
+      "required_exit_evidence": ["exact_replay", "leakage_attack", "stability_attack"]
+    },
+    {
+      "order": 8,
+      "stage_id": "ledger_close_and_route",
+      "outcome_access_allowed": false,
+      "required_exit_evidence": ["append_only_ledger", "authority_decision", "next_design_return"]
+    }
+  ],
+  "dedup_identity_fields": [
+    "economic_mechanism",
+    "information_set_and_cutoff",
+    "formula_and_transform",
+    "universe_and_eligibility",
+    "horizon_and_label",
+    "parameter_neighborhood",
+    "related_hypothesis_family"
+  ],
+  "dedup_rule": "reject_exact_duplicates_group_near_duplicates_register_distinct_trials",
+  "preregistration_budget_fields": [
+    "factor_and_interaction_count",
+    "parameter_variant_count",
+    "outcome_horizons",
+    "related_hypothesis_families",
+    "multiplicity_method",
+    "selection_cap",
+    "stopping_rule"
+  ],
+  "failed_campaign_reopen_authorized": false,
+  "next_design_after_close_authorized": true,
+  "outcome_access_requires_new_registered_campaign": true,
+  "model_construction_requires_admitted_alpha": true,
+  "validation_and_holdout_remain_separate": true,
+  "activation_remains_human_reviewed": true,
+  "pause_reason_codes": [
+    "data_lineage_mismatch",
+    "stage_isolation_breach",
+    "trial_budget_breach",
+    "exact_replay_failure",
+    "sealed_partition_breach"
+  ],
+  "logical_fingerprint": "55c1eaccbd5ef5c8ef6dd695c4e4e010ed0e11c6483e55f1a2ce6b70898f8218"
+}

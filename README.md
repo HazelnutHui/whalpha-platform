@@ -23,9 +23,10 @@ The first three are stable market-context workspaces. Quant Research Lab is
 the factor, model, strategy-expression, and validation authority. Research now
 uses the durable sequence **Factor Discovery -> Model Construction -> Strategy
 Expression**. It is not limited to a fixed list of chart-pattern strategies;
-successive discovery batches may explore new evidence, while every batch that
-reads outcomes remains deduplicated, budgeted, data-isolated, deterministic,
-and falsifiable. Stock Candidates will eventually consume only the small set
+successive discovery batches may explore new evidence. The program is a
+renewable sequence of finite campaigns: every batch that reads outcomes
+remains deduplicated, budgeted, data-isolated, deterministic, replayed, and
+permanently trial-counted. Stock Candidates will eventually consume only the small set
 of Lab expressions that receive separate activation. The currently deployed
 Candidate score, Entry Geometry, and technical Strategy Channels remain
 transparent but unvalidated **Baseline V1**, not a direct tuning target or the

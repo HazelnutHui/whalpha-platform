@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0284](0284-adopt-a-renewable-sequence-of-bounded-factor-campaigns.md):
+  makes the research program continuous through separately closed finite
+  campaigns with seven-dimensional deduplication and append-only accounting.
 - [ADR 0283](0283-reuse-content-addressed-research-artifacts-and-publish-milestones.md):
   reuses fingerprint-bound research panels, keeps label custody separate, and
   synchronizes reviewed Lab milestones without treating the site as a live

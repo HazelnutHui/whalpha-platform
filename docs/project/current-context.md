@@ -219,6 +219,15 @@ audits, the trilingual Lab projection, and tests. Production deployment remains
 a separately verified state. The current source milestone is deployed in the
 release identified above.
 
+ADR 0284 and `quant-research-discovery-cycle/1.0` make Factor Discovery a
+renewable sequence of finite campaigns. The current cycle is
+`ready_for_next_campaign_design` at `hypothesis_intake`: two campaigns and 14
+formal trials are closed, no new campaign is registered, and no outcome access
+or model input is authorized. Exact duplicates stop, near-duplicates share a
+related family and multiplicity accounting, and every campaign must freeze its
+budget before Development outcomes. Cycle logical fingerprint is
+`55c1eaccbd5ef5c8ef6dd695c4e4e010ed0e11c6483e55f1a2ce6b70898f8218`.
+
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility
 behavior. They are not expected-return models and do not define the future

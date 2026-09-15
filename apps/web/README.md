@@ -35,6 +35,13 @@ method remain explicitly historical. The displayed 95.38% lower on the page is
 the old Pullback method-computability coverage, not a hit rate, prediction
 accuracy, or return.
 
+The Lab also shows the permanent renewable discovery loop. It distinguishes an
+indefinitely continuing research program from each finite campaign and exposes
+the current intake stage, cumulative campaigns/trials, duplicate identity,
+preregistration budget, stage isolation, and automatic pause rules. This is a
+control surface; it does not claim that unattended mining or outcome access is
+active.
+
 The active Dashboard uses Activation V2 Primary/Secondary Universes. Provider
 security form remains provisional and does not establish issuer structure or
 domicile.

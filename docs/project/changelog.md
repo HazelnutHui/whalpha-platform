@@ -6,6 +6,20 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Make Factor Discovery renewable without making a campaign unbounded
+
+- Accepted ADR 0284 and added a typed eight-stage discovery-cycle contract.
+- Made the overall program an indefinite sequence of finite campaigns while
+  keeping outcome access limited to a preregistered Development screen and its
+  exact replay.
+- Added seven-dimensional duplicate identity, mandatory finite budget fields,
+  append-only return-to-intake behavior, and five automatic pause conditions.
+- Bound the cycle to the completed ledger V3: two campaigns, 14 consumed formal
+  trials, no active campaign, no new outcome access, and no model input.
+- Added a trilingual Lab control panel that exposes the current stage,
+  repeatability, deduplication, budget, isolation, and pause rules without
+  implying that an unattended miner is already active.
+
 ## 2026-09-15 — Close Factor Discovery V2 and synchronize the Lab source
 
 - Completed the single frozen V2 Development report and one full exact replay:
