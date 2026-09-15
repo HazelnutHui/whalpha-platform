@@ -19,6 +19,10 @@ and dated [audits](../audits/). Current capability and next work belong in
 - Added a trilingual Lab control panel that exposes the current stage,
   repeatability, deduplication, budget, isolation, and pause rules without
   implying that an unattended miner is already active.
+- Deployed release `2026-09-15T222626Z-9ef8bff` from source `9ef8bff3107a`.
+  Independent postflight matched source, bundle, checksums, guest/protected
+  routes, services, listeners, and zero failed/staging residue; password login
+  and final appearance remain manual checks.
 
 ## 2026-09-15 — Close Factor Discovery V2 and synchronize the Lab source
 

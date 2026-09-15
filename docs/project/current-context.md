@@ -1,8 +1,8 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-15T22:00:06Z
+Operational state verified at: 2026-09-15T22:27:26Z
 
-Deployment state verified at: 2026-09-15T22:00:06Z
+Deployment state verified at: 2026-09-15T22:27:26Z
 
 Repository context updated at: 2026-09-15 UTC
 
@@ -20,8 +20,8 @@ ADRs, and dated audits.
 | Branch | `main`; verify live HEAD before mutation |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Active OCI release | `2026-09-15T215904Z-286334f` |
-| Deployed source | `286334f256d52675fd0cffa6432e3cffcbff8f12` |
+| Active OCI release | `2026-09-15T222626Z-9ef8bff` |
+| Deployed source | `9ef8bff3107afb2abc8ddaad16a32c137d959cd0` |
 
 Dell owns code, canonical data, governance, and heavy computation. OCI is the
 bounded public-serving tier. A newer clean repository commit does not imply a
@@ -227,6 +227,7 @@ or model input is authorized. Exact duplicates stop, near-duplicates share a
 related family and multiplicity accounting, and every campaign must freeze its
 budget before Development outcomes. Cycle logical fingerprint is
 `55c1eaccbd5ef5c8ef6dd695c4e4e010ed0e11c6483e55f1a2ce6b70898f8218`.
+The trilingual cycle panel is deployed in the release identified above.
 
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility

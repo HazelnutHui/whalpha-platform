@@ -75,7 +75,7 @@ visible as historical failed research. The public entry dossier carries the
 same result in all three languages. This changes no market analytics, Baseline
 Candidate calculation, model authority, or Candidate activation.
 
-Dell source additionally contains the reviewed renewable-cycle panel. It shows
+Production additionally contains the reviewed renewable-cycle panel. It shows
 the current return to hypothesis intake, the 2 completed campaigns / 14 formal
 trials, seven-dimensional duplicate identity, finite preregistration budget,
 stage isolation, and automatic pause conditions. It is a research-control

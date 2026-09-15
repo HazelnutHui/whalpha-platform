@@ -70,6 +70,7 @@ Read this bounded set before new Lab research:
 - [ADR 0283: content-addressed research reuse and milestone publication](decisions/0283-reuse-content-addressed-research-artifacts-and-publish-milestones.md)
 - [Renewable Factor Discovery Cycle V1](data-contracts/quant-research-discovery-cycle-v1.md)
 - [ADR 0284: renewable sequence of bounded factor campaigns](decisions/0284-adopt-a-renewable-sequence-of-bounded-factor-campaigns.md)
+- [Renewable Factor Discovery cycle UI deployment audit](audits/quant-research-discovery-cycle-ui-deployment-2026-09-15.md)
 - [Factor Catalog V2 screen-registration UI deployment audit](audits/quant-research-v2-screen-registration-ui-deployment-2026-09-15.md)
 - [Factor Screening V1 UI deployment audit](audits/quant-research-factor-screening-ui-deployment-2026-09-15.md)
 - [Factor Qualification UI deployment audit](audits/quant-research-factor-qualification-ui-deployment-2026-09-15.md)
