@@ -63,8 +63,7 @@ scheduler, Candidate, validation, or holdout action belongs to this operation.
 
 The initial review identified exactly two supplemental free SEC documents as
 the minimal correction. Their metadata and frozen plan are recorded in the dated
-[source review](../audits/strong-leader-pullback-terminal-reference-sec-source-2026-09-15.md),
-but they are not authorized or acquired by this runbook.
+[source review](../audits/strong-leader-pullback-terminal-reference-sec-source-2026-09-15.md).
 
 ## 4. Supplemental plan
 
@@ -83,7 +82,8 @@ scripts/admin/plan-strong-leader-pullback-terminal-reference-sec-supplement.sh \
   --execute
 ```
 
-After separate explicit authority, acquire only that plan with:
+The separately authorized `20260915-v1` supplement is now retained. Its exact
+replay command is:
 
 ```bash
 scripts/admin/acquire-strong-leader-pullback-terminal-reference-sec-supplement.sh \
@@ -98,8 +98,47 @@ This command cannot fetch a third URL and inherits the same SEC rate, retry,
 size, hash, atomic-custody, and no-credential-retention boundaries as the
 initial source operation.
 
-After acquisition, the dedicated supplemental adjudicator reads only the
-retained two-file source and tests the two REVG consideration fields plus the
-SKX mixed-election cash field. Its fixture-tested contract contains no terminal
-reference, outcome, metric, parameter, canonical-write, or Production
-authority.
+The dedicated supplemental adjudicator reads only the retained two-file source
+and tests the two REVG consideration fields plus the SKX mixed-election cash
+field. Its contract contains no terminal reference, outcome, metric, parameter,
+canonical-write, or Production authority.
+
+## 5. Final zero-network terminal-reference review
+
+Run only from a clean committed Dell source tree. This operation rereads the
+V3/V4 terminal population, retained payoff evidence, the original and both
+terminal SEC source packages, and six registered canonical EOD sessions. It
+does not make a network request or read a forward outcome.
+
+```bash
+scripts/admin/review-strong-leader-pullback-terminal-references.sh \
+  --gap-v3 /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-gap-census-v3/census=20260914-v3 \
+  --gap-v3-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-gap-census-v3 \
+  --gap-v4 /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-gap-census-v4/census=20260914-v4 \
+  --gap-v4-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-gap-census-v4 \
+  --payoff-terms /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-payoff-terms/adjudication=20260914-v1 \
+  --payoff-terms-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-payoff-terms \
+  --consideration /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-sec-consideration-adjudication/adjudication=20260913-v1 \
+  --consideration-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-sec-consideration-adjudication \
+  --legacy-sec-source /home/hui/.local/state/trading-intelligence-platform/historical-source/strong-leader-pullback-sec-document-content/source=20260913-v1 \
+  --legacy-sec-source-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-source/strong-leader-pullback-sec-document-content \
+  --terminal-sec-plan /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-reference-sec-plan/plan=20260915-v1 \
+  --terminal-sec-plan-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-reference-sec-plan \
+  --terminal-sec-source /home/hui/.local/state/trading-intelligence-platform/historical-source/strong-leader-pullback-terminal-reference-sec-document-content/source=20260915-v1 \
+  --terminal-sec-source-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-source/strong-leader-pullback-terminal-reference-sec-document-content \
+  --supplement-plan /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-reference-sec-supplement-plan/plan=20260915-v1 \
+  --supplement-plan-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-reference-sec-supplement-plan \
+  --supplement-source /home/hui/.local/state/trading-intelligence-platform/historical-source/strong-leader-pullback-terminal-reference-sec-supplement-content/source=20260915-v1 \
+  --supplement-source-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-source/strong-leader-pullback-terminal-reference-sec-supplement-content \
+  --canonical-eod-root /data/trading-intelligence-platform \
+  --output-root /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-reference-final-review/review=20260915-v1 \
+  --output-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-reference-final-review \
+  --evaluated-at <reviewed-UTC-timestamp> \
+  --execute
+```
+
+The report is an immutable source-derived boundary artifact. A complete result
+must reconcile 18 cases / 88 residual paths, 219 exact paths, 83 finite-interval
+paths, and zero unbounded paths. It still contains zero outcomes, metrics,
+parameters, canonical writes, or Production authority. Research Admission V2
+must be run separately; a bounds report alone does not open development.
