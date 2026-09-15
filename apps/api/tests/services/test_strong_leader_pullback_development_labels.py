@@ -161,6 +161,27 @@ def test_no_next_open_is_retained_as_unexecutable_without_return() -> None:
     assert label.reason_codes == ("no_executable_next_session_open",)
 
 
+def test_unproven_missing_next_open_is_unavailable_not_unexecutable() -> None:
+    label = build_reconstructed_development_label(
+        **_values(),
+        instrument_bars=(
+            None,
+            _bar(SESSIONS[1], "102", "106", "101", "105"),
+            _bar(SESSIONS[2], "105", "108", "104", "107"),
+        ),
+        unavailable_reason_codes=(
+            "missing_next_session_eod_without_terminal_evidence",
+        ),
+    )
+
+    assert label.state is ReconstructedDevelopmentLabelState.UNAVAILABLE_EVIDENCE
+    assert label.entry_price_usd is None
+    assert label.terminal_reference_fingerprint is None
+    assert label.reason_codes == (
+        "missing_next_session_eod_without_terminal_evidence",
+    )
+
+
 def test_missing_exit_without_terminal_evidence_fails_closed() -> None:
     with pytest.raises(
         StrongLeaderPullbackDevelopmentLabelError,

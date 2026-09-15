@@ -429,6 +429,8 @@ def _build_labels(
 
     terminal_by_id = {item.instrument_id: item for item in terminal_references}
     labels = []
+    label_rejection_count = 0
+    label_rejection_examples: list[str] = []
     for session_index, signal_session in enumerate(
         sorted(observations_by_session), start=1
     ):
@@ -450,6 +452,10 @@ def _build_labels(
                         "SPY outcome path is incomplete or invalid"
                     )
                 reasons = set()
+                if target_bars[0] is None and terminal is None:
+                    reasons.add(
+                        "missing_next_session_eod_without_terminal_evidence"
+                    )
                 for source_session, bar in zip(path, target_bars, strict=True):
                     if bar is not None and not _valid_bar(bar):
                         reasons.add("invalid_target_eod_bar")
@@ -510,11 +516,14 @@ def _build_labels(
                         unavailable_reason_codes=tuple(sorted(reasons)),
                     )
                 except Exception as exc:
-                    raise StrongLeaderPullbackDevelopmentDatasetCliError(
-                        "development label rejected for "
-                        f"{signal_session.isoformat()}/"
-                        f"{observation.instrument_id}/{horizon}"
-                    ) from exc
+                    label_rejection_count += 1
+                    if len(label_rejection_examples) < 10:
+                        label_rejection_examples.append(
+                            f"{signal_session.isoformat()}/"
+                            f"{observation.instrument_id}/{horizon}/"
+                            f"{type(exc).__name__}"
+                        )
+                    continue
                 labels.append(label)
         if session_index % 25 == 0 or session_index == len(observations_by_session):
             print(
@@ -530,6 +539,11 @@ def _build_labels(
                 file=sys.stderr,
                 flush=True,
             )
+    if label_rejection_count:
+        raise StrongLeaderPullbackDevelopmentDatasetCliError(
+            f"{label_rejection_count} development labels were rejected; "
+            f"examples={','.join(label_rejection_examples)}"
+        )
     return tuple(
         sorted(
             labels,
