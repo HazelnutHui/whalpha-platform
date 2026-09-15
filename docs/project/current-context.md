@@ -1,8 +1,8 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-15T22:27:26Z
+Operational state verified at: 2026-09-15T23:41:30Z
 
-Deployment state verified at: 2026-09-15T22:27:26Z
+Deployment state verified at: 2026-09-15T23:41:30Z
 
 Repository context updated at: 2026-09-15 UTC
 
@@ -20,8 +20,8 @@ ADRs, and dated audits.
 | Branch | `main`; verify live HEAD before mutation |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Active OCI release | `2026-09-15T222626Z-9ef8bff` |
-| Deployed source | `9ef8bff3107afb2abc8ddaad16a32c137d959cd0` |
+| Active OCI release | `2026-09-15T234025Z-30b0f10` |
+| Deployed source | `30b0f101bceaaf8b80df760c9b4f8b3df31ba45a` |
 
 Dell owns code, canonical data, governance, and heavy computation. OCI is the
 bounded public-serving tier. A newer clean repository commit does not imply a
@@ -45,11 +45,15 @@ network-disabled reread. Run project Python through
 | Failure policy | API/Snapshot failure closes without synthetic Production data |
 
 The current release passed independent release, source, bundle, checksum,
-service, protected-route, guest-flow, Candidate-route, logout, and residue
-checks. The public entry dossier and protected Lab now expose the completed V2
+service, protected-route, guest-flow, Candidate-route, logout, listener, and
+residue checks. The public entry dossier and protected Lab expose the completed V2
 Development result: four candidate-Alpha trials failed, two risk guards
 qualified as risk evidence but were not selected, the exact replay matched,
-and no model opened. English, Chinese, and Spanish agree on that state. V1 screening and
+and no model opened. The Lab also exposes the reusable-input contract state and
+links hypothesis submissions to `@whalphalab`. The protected workspace now
+shows an identifier-free cumulative guest-entry counter; the internal baseline
+is 1,050 and the first actual guest workspace entry displays 1,051. English,
+Chinese, and Spanish agree on that state. V1 screening and
 Strong-Leader Pullback remain historical failed research; all model, strategy,
 Validation, Holdout, Candidate, and option-performance authority stays locked.
 An unauthenticated Dashboard request redirects to Session entry. Password
@@ -216,8 +220,12 @@ ADR 0283 now requires content-addressed reuse of expensive deterministic
 research panels, separated feature/label custody, compact machine summaries,
 and atomic milestone synchronization across contracts, ledgers, status,
 audits, the trilingual Lab projection, and tests. Production deployment remains
-a separately verified state. The current source milestone is deployed in the
-release identified above.
+a separately verified state. The reusable-artifact registry is now implemented
+at `contract_ready_not_materialized` with logical fingerprint
+`70a88ceaa6e2294cc4795f1909fc18717327c27a32fa109cb44e46e160dec68a`.
+It contains five family policies and zero materialized panels, active campaigns,
+new outcome access, physical data writes, or new services. This source milestone
+is deployed in the release identified above.
 
 ADR 0284 and `quant-research-discovery-cycle/1.0` make Factor Discovery a
 renewable sequence of finite campaigns. The current cycle is

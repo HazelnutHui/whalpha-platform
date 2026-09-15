@@ -6,6 +6,28 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Prepare reusable research inputs and add a bounded guest-entry metric
+
+- Implemented the content-addressed reusable-artifact registry required by ADR
+  0283 across population, market-state, feature, nuisance-control, and outcome-
+  label families. The registry remains `contract_ready_not_materialized`: zero
+  panels, zero new outcomes, no third campaign, and no data write authority.
+- Added exact identity/reuse validation, outcome-blind versus outcome-bearing
+  custody, a checked-in web projection, contract tests, and a trilingual Lab
+  status panel.
+- Added the trilingual research-hypothesis invitation and linked it to the
+  public WH Alpha Research account `@whalphalab`.
+- Accepted ADR 0285 and added a persistent cumulative guest-entry counter with
+  owner-selected internal baseline 1,050. A guest Session increments once when
+  it first opens the protected workspace; credential Sessions, refreshes, and
+  deployment-only guest checks do not increment. No visitor identifiers are
+  retained, and guest/credential product capability remains identical.
+- Passed 3,007 backend tests, 129 frontend tests, and the production build.
+- Deployed release `2026-09-15T234025Z-30b0f10` from source `30b0f101bcea`.
+  Independent postflight matched source, bundle, checksums, protected routes,
+  guest flow, services, listener boundary, and zero failed/staging residue;
+  password login and final browser appearance remain manual checks.
+
 ## 2026-09-15 — Make Factor Discovery renewable without making a campaign unbounded
 
 - Accepted ADR 0284 and added a typed eight-stage discovery-cycle contract.

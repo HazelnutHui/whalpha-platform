@@ -81,6 +81,14 @@ trials, seven-dimensional duplicate identity, finite preregistration budget,
 stage isolation, and automatic pause conditions. It is a research-control
 surface, not evidence that an unattended factor miner is already running.
 
+The reusable research-input registry is implemented and visible at
+`contract_ready_not_materialized`: five content-addressed panel families, zero
+materialized panels, no active third campaign, and no new outcome access. The
+Lab accepts factor/strategy hypotheses through the public `@whalphalab`
+contact. The protected workspace footer now shows a persistent cumulative
+guest-entry count without retaining IP addresses, user agents, fingerprints,
+or browsing paths; it is not a unique-visitor metric or research evidence.
+
 The current Candidate score, Entry Geometry, and technical Strategy Channels
 remain visible, transparent, unvalidated **Baseline V1**. They are not expected-
 return models and will not be tuned in place. Current display counts are 870
