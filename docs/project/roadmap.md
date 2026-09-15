@@ -152,23 +152,25 @@ commonly eligible, but endpoint worlds selected different winners. The exact
 result replayed successfully and the family is closed without Validation or
 Holdout access.
 
-## Current gated phase — Register the next independent strategy
+## Current gated phase — Govern factor discovery before the next strategy
 
-Begin with Momentum Breakout unless an outcome-blind comparison of independent
-hypotheses selects a more useful family. Before reading any new outcome:
+ADR 0273 registers 12 exact factor definitions without opening outcomes. The
+next bounded sequence is:
 
-1. define the economic mechanism, target population, benchmark, signal,
-   invalidation, holding horizon, and explicit non-claims;
-2. bind point-in-time inputs and data limitations to the admitted research
-   foundation;
-3. register a finite parameter family, costs, multiplicity, stability checks,
-   and development/Validation/Holdout boundaries; and
-4. implement outcome-free diagnostics before opening development labels.
+1. implement the typed factor catalog and deterministic formulas;
+2. calculate only outcome-free coverage, missingness, ties, dispersion,
+   concentration, correlation, and reproducibility evidence;
+3. freeze a finite factor-screening and trial-accounting protocol from those
+   diagnostics before reading future returns;
+4. evaluate only the admitted development factors, retain all failures, and
+   select a small non-redundant set or select none; and
+5. freeze Momentum Breakout or another independent model only from admitted
+   factor evidence, with its own finite combination budget.
 
-The rejected Pullback outcomes cannot be reused to tune this independent
-family, and no new strategy may enter Stock Candidates before completing its
-own locked Validation, single Holdout, publication, shadow, and activation
-reviews.
+The rejected Pullback outcomes cannot choose any factor. Conditioners do not
+receive standalone Alpha claims. No new strategy may enter Stock Candidates
+before completing its own locked Validation, single Holdout, publication,
+shadow, and activation reviews.
 
 ## Then — Generalize the bounded AI research factory
 

@@ -56,6 +56,7 @@ Read this bounded set before Strong-Leader Pullback or Lab work:
 - [Reconstructed development dataset](data-contracts/strong-leader-pullback-reconstructed-development-dataset-v1.md)
 - [Reconstructed development statistics](data-contracts/strong-leader-pullback-reconstructed-development-statistics-v1.md)
 - [Reconstructed replacement selection](data-contracts/strong-leader-pullback-reconstructed-replacement-selection-v1.md)
+- [Outcome-blind factor catalog](data-contracts/quant-research-factor-catalog-v1.md)
 - [Current terminal-bounds review](audits/strong-leader-pullback-terminal-reference-final-review-2026-09-15.md)
 - [Current reconstructed admission review](audits/strong-leader-pullback-research-admission-v2-final-review-2026-09-15.md)
 - [Current reconstructed development dataset audit](audits/strong-leader-pullback-reconstructed-development-dataset-2026-09-15.md)
@@ -73,6 +74,7 @@ Read this bounded set before Strong-Leader Pullback or Lab work:
 - [ADR 0270: isolated reconstructed development labels](decisions/0270-materialize-reconstructed-development-labels-without-opening-evaluation.md)
 - [ADR 0271: freeze reconstructed development statistics](decisions/0271-freeze-reconstructed-development-statistics-before-reading-results.md)
 - [ADR 0272: one coverage-corrected replacement selection](decisions/0272-register-one-coverage-corrected-replacement-selection-protocol.md)
+- [ADR 0273: governed factor discovery before strategy construction](decisions/0273-separate-governed-factor-discovery-from-strategy-construction.md)
 
 The complete registries remain available through the
 [data-contract index](data-contracts/README.md) and

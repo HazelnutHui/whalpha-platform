@@ -6,6 +6,20 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Separate governed factor discovery from strategy construction
+
+- Accepted ADR 0273 after the Pullback rejection so research can expand beyond
+  one chart setup without reopening its consumed development outcomes.
+- Registered 12 outcome-blind price/volume factor definitions across relative
+  leadership, trend path, volatility/structure, participation/execution, and
+  downside fragility, with exact formulas and explicit conditioner versus
+  directional-factor roles.
+- Required factor coverage, redundancy, ties, dispersion, and concentration to
+  be measured before any return is read. A later committed protocol must own
+  trial counts, multiplicity, labels, costs, and the factor-selection cap.
+- Validation, Holdout, Candidate ranking, publication, deployment, and
+  Production remain unchanged and closed.
+
 ## 2026-09-15 — Reject the Strong-Leader Pullback replacement on endpoint instability
 
 - Executed the single ADR 0272 replacement attempt against the exact immutable

@@ -149,6 +149,14 @@ Strong-Leader Pullback cannot receive a third selection rule over the same
 development outcome; the next work is a genuinely independent strategy
 hypothesis.
 
+ADR 0273 now inserts a governed Factor Discovery stage before the next model.
+Its initial registry contains 12 exact, outcome-blind definitions across five
+economic families. The immediate operation is formula-contract implementation
+followed by a zero-outcome coverage, missingness, distribution, concentration,
+and redundancy report. No factor return, threshold, model weight, or Alpha
+claim may be computed until a separate post-coverage/before-outcomes screening
+protocol is committed.
+
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
 gates, and research-authority flags. The outcome-free input contract and
@@ -194,8 +202,10 @@ measured budget breach.
    it cannot be retuned.
 5. Preserve the completed ADR 0272 rejection and do not create V3 over the
    same development result. Validation and Holdout remain untouched and closed.
-6. Register the next independent strategy hypothesis before reading any of its
-   outcome evidence; Momentum Breakout is the current first candidate.
+6. Implement and inspect the ADR 0273 outcome-blind factor catalog before
+   reading any new outcome evidence.
+7. Freeze the bounded factor-screening protocol only after that coverage
+   report; Momentum Breakout remains the leading next strategy family.
 
 Do not project current Membership or taxonomy backward, infer lifecycle from
 ticker patterns, call price/volume fund flow, call stock outcomes option

@@ -317,6 +317,9 @@ accepted ADR was deployed unless current operational evidence says so.
 - [ADR 0268](0268-admit-reconstructed-research-only-with-adversarial-missingness-bounds.md):
   permit a separately disclosed research lane only when missing terminal
   labels are bounded adversarially before outcomes.
+- [ADR 0273](0273-separate-governed-factor-discovery-from-strategy-construction.md):
+  broaden research through an outcome-blind, trial-counted factor layer before
+  constructing the next strategy.
 
 ## Data-governance decisions
 

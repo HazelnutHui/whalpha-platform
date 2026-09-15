@@ -233,6 +233,12 @@ logical fingerprint:
 Exact replay matched. Strong-Leader Pullback cannot receive another selection
 variation over these outcomes; the next strategy must be independent.
 
+ADR 0273 inserts an outcome-blind Factor Discovery layer before that next
+strategy. Twelve exact definitions across five economic families are
+registered, but no factor value, future return, threshold, model weight, or
+selection result exists yet. Coverage and redundancy must be measured before a
+separate screening protocol can open development outcomes.
+
 The original five-document and exact two-document supplemental SEC packages
 are retained in owner-only custody. The supplement used two requests, zero
 retries, and 5,064,066 bytes; manifest SHA-256
@@ -258,8 +264,9 @@ No current document authorizes another live SEC acquisition, `/data` mutation,
 validation or holdout access, model activation, publication, deployment,
 scheduler mutation, order execution, or destructive cleanup. The development-
 only statistics and single replacement stages are complete. V1 cannot be
-retuned and V2 was rejected on endpoint instability. The next strategy must be
-independently preregistered; no Validation or later stage is open.
+retuned and V2 was rejected on endpoint instability. Factor definitions and
+outcome-blind diagnostics are the only open research work; no new development
+outcome, Validation, or later stage is open.
 
 ## Cross-device continuity
 
