@@ -93,6 +93,7 @@ class QuantResearchFactorDefinitionV2(FrozenModel):
         "explicit_unavailable_never_zero_fill"
     )
     related_factor_group: str = Field(pattern=r"^[a-z0-9][a-z0-9_]*$")
+    redundancy_priority: int = Field(ge=1, le=8)
     relationship_to_consumed_trials: str
     consumed_trial_links: tuple[str, ...]
     primary_research_references: tuple[str, ...] = Field(min_length=1)
@@ -176,6 +177,16 @@ class QuantResearchFactorCatalogV2(FrozenModel):
             QuantResearchFactorRoleV2.RISK_GUARD: 2,
         }:
             raise ValueError("Factor Catalog V2 role counts differ")
+        priorities_by_group: dict[str, list[int]] = {}
+        for item in self.definitions:
+            priorities_by_group.setdefault(item.related_factor_group, []).append(
+                item.redundancy_priority
+            )
+        if any(
+            len(priorities) != len(set(priorities))
+            for priorities in priorities_by_group.values()
+        ):
+            raise ValueError("Factor Catalog V2 redundancy priorities differ")
         if factor_catalog_v2_fingerprint(self) != self.logical_fingerprint:
             raise ValueError("Factor Catalog V2 fingerprint mismatch")
         return self
@@ -316,6 +327,7 @@ def _factor_payload(
     transform: str,
     unit: str,
     group: str,
+    redundancy_priority: int,
     consumed_relationship: str,
     consumed_links: tuple[str, ...],
     references: tuple[str, ...],
@@ -345,6 +357,7 @@ def _factor_payload(
         "unit": unit,
         "missingness_rule": "explicit_unavailable_never_zero_fill",
         "related_factor_group": group,
+        "redundancy_priority": redundancy_priority,
         "relationship_to_consumed_trials": consumed_relationship,
         "consumed_trial_links": consumed_links,
         "primary_research_references": references,
@@ -405,6 +418,7 @@ _FACTOR_V2_PAYLOADS = (
         transform="raw_log_relative_return",
         unit="log_return",
         group="medium_horizon_relative_continuation",
+        redundancy_priority=1,
         consumed_relationship=(
             "related_horizon_extension_not_independent_of_v1_relative_return_trials"
         ),
@@ -435,6 +449,7 @@ _FACTOR_V2_PAYLOADS = (
         transform="sign_reversed_raw_log_relative_return",
         unit="log_return",
         group="short_horizon_relative_reversal",
+        redundancy_priority=1,
         consumed_relationship=(
             "economically_opposite_horizon_to_consumed_relative_continuation_trials"
         ),
@@ -464,6 +479,7 @@ _FACTOR_V2_PAYLOADS = (
         transform="sign_reversed_market_adjusted_log_intraday_return_sum",
         unit="log_return",
         group="short_horizon_relative_reversal",
+        redundancy_priority=2,
         consumed_relationship=(
             "new_return_timing_decomposition_related_to_v1_relative_return_family"
         ),
@@ -494,6 +510,7 @@ _FACTOR_V2_PAYLOADS = (
         transform="market_adjusted_log_overnight_return_sum",
         unit="log_return",
         group="overnight_information_timing",
+        redundancy_priority=1,
         consumed_relationship="new_return_timing_decomposition_related_to_v1_gap_risk_trial",
         consumed_links=(
             "whalpha.discovery-trial.price-volume-v1.absolute_overnight_gap_atr14.h3",
@@ -521,6 +538,7 @@ _FACTOR_V2_PAYLOADS = (
         transform="conditional_mean_log_relative_return",
         unit="mean_daily_log_return",
         group="defensive_market_applicability",
+        redundancy_priority=1,
         consumed_relationship="new_market_state_conditioner_no_consumed_standalone_trial",
         consumed_links=(),
         references=_DOWNSIDE_RISK_REFERENCE,
@@ -546,6 +564,7 @@ _FACTOR_V2_PAYLOADS = (
         transform="mean_absolute_log_return_per_dollar_volume_scaled_one_million",
         unit="absolute_log_return_per_usd_million",
         group="liquidity_capacity",
+        redundancy_priority=1,
         consumed_relationship="new_applicability_role_related_to_v1_participation_measurement_only",
         consumed_links=(),
         references=_ILLIQUIDITY_REFERENCE,
@@ -571,6 +590,7 @@ _FACTOR_V2_PAYLOADS = (
         transform="annualized_single_index_ols_residual_standard_deviation",
         unit="annualized_log_return_volatility",
         group="residual_downside_risk",
+        redundancy_priority=1,
         consumed_relationship="new_risk_measure_related_to_retained_v1_drawdown_guard",
         consumed_links=(
             "whalpha.discovery-trial.price-volume-v1.rolling_maximum_drawdown_10s.h3",
@@ -598,6 +618,7 @@ _FACTOR_V2_PAYLOADS = (
         transform="annualized_relative_downside_semideviation",
         unit="annualized_log_return_volatility",
         group="residual_downside_risk",
+        redundancy_priority=2,
         consumed_relationship="new_risk_measure_related_to_retained_v1_drawdown_guard",
         consumed_links=(
             "whalpha.discovery-trial.price-volume-v1.rolling_maximum_drawdown_10s.h3",

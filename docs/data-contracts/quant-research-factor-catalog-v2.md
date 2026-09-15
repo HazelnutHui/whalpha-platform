@@ -8,7 +8,7 @@ closed without candidate Alpha while retaining V1 trial lineage.
 
 The typed contract is `quant-research-factor-catalog/2.0`; its catalog ID is
 `whalpha.factor-catalog.daily-behavior-v2` and its logical fingerprint is
-`077ebe1b0c57b2093380c2a0dc87c9a0a0581b895c4433faacdf7ecc401c9647`.
+`6620000334a0a8bd23103341dfc1958d57c712a063dff0a39e23ffc82d51bed5`.
 
 ## Definitions
 
@@ -45,6 +45,11 @@ The catalog binds prior cumulative discovery-ledger fingerprint
 Each definition states whether it extends, opposes, decomposes, or is merely
 related to a consumed V1 trial. The catalog is adaptive Development research,
 not a statistically independent first attempt.
+
+Definitions sharing a related-factor group carry a fixed redundancy priority
+set before real values are read. If outcome-blind diagnostics later identify a
+near duplicate, the lower-priority definition cannot enter the screen merely
+because its realized distribution looks more attractive.
 
 ## Outcome-blind boundary
 

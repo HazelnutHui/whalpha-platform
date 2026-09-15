@@ -62,8 +62,10 @@ def _calculate_quant_research_factor_values_v2(
     benchmark_series: tuple[QuantResearchFactorBarV2, ...],
 ) -> tuple[QuantResearchFactorValueV2, ...]:
 
-    stock_issue = _series_issue(stock_series, label="stock")
-    benchmark_issue = _series_issue(benchmark_series, label="benchmark")
+    stock_issue = quant_research_factor_series_issue_v2(stock_series, label="stock")
+    benchmark_issue = quant_research_factor_series_issue_v2(
+        benchmark_series, label="benchmark"
+    )
     if stock_issue is None and benchmark_issue is None and tuple(
         item.session for item in stock_series
     ) != tuple(item.session for item in benchmark_series):
@@ -169,7 +171,7 @@ def _calculate_quant_research_factor_values_v2(
     )
 
 
-def _series_issue(
+def quant_research_factor_series_issue_v2(
     series: tuple[QuantResearchFactorBarV2, ...], *, label: str
 ) -> str | None:
     if len(series) != QUANT_RESEARCH_FACTOR_V2_SOURCE_SESSION_COUNT:

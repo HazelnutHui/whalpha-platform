@@ -6,6 +6,22 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Freeze Factor Catalog V2 outcome-blind qualification
+
+- Accepted ADR 0279 and froze the V2 coverage, missingness, distribution,
+  concentration, redundancy, isolation, and exact-replay gates before reading
+  any real factor value or forward outcome.
+- Bound qualification directly to the 287-session, 437,402-path reconstructed
+  Membership population rather than the closed Strong-Leader Pullback launch.
+- Added a vectorized NumPy calculator checked against the pure Decimal
+  reference, streaming diagnostics, owner-only canonical report custody, and
+  a network-disabled Dell runner.
+- Required stock-specific source defects to quarantine only the affected
+  stable ID, while a SPY defect closes the complete signal session.
+- Preserved zero outcome access, factor admission, model, strategy,
+  Validation, Holdout, Candidate, canonical-data, or Production authority. The
+  first real V2 qualification report and exact replay remain pending.
+
 ## 2026-09-15 — Register an adaptive Factor Catalog V2 without outcomes
 
 - Accepted ADR 0278 and implemented eight immutable 127-session daily factor

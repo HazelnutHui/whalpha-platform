@@ -30,7 +30,7 @@ independent merely because its formulas differ.
 
 Register outcome-blind Factor Catalog V2,
 `whalpha.factor-catalog.daily-behavior-v2`, with logical fingerprint
-`077ebe1b0c57b2093380c2a0dc87c9a0a0581b895c4433faacdf7ecc401c9647`.
+`6620000334a0a8bd23103341dfc1958d57c712a063dff0a39e23ffc82d51bed5`.
 It contains exactly eight definitions across six economic families and an
 exact 127-session source window.
 
@@ -46,10 +46,11 @@ exact 127-session source window.
    over five sessions.
 
 The two short-horizon reversal measurements share one related-factor group and
-cannot later be treated as independent discoveries. The medium-horizon factor
-is explicitly linked to the two failed V1 relative-return trials. The
-overnight definition is linked to the failed V1 gap-risk trial. These links do
-not pre-reject V2; they preserve the true search lineage.
+carry a fixed standard-relative-return-first redundancy priority; they cannot
+later be treated as independent discoveries. The medium-horizon factor is
+explicitly linked to the two failed V1 relative-return trials. The overnight
+definition is linked to the failed V1 gap-risk trial. These links do not pre-
+reject V2; they preserve the true search lineage.
 
 ### Non-Alpha measurements
 
@@ -60,8 +61,9 @@ not pre-reject V2; they preserve the true search lineage.
   daily price-impact proxy, not observed spread, impact, order flow, or fund
   flow.
 - `single_index_residual_volatility_60s` and
-  `relative_downside_semideviation_60s` are related risk guards. At most one
-  may later survive the shared risk group.
+  `relative_downside_semideviation_60s` are related risk guards with a fixed
+  residual-volatility-first redundancy priority. At most one may later survive
+  the shared risk group.
 
 The definitions cite primary research lineages for medium-horizon momentum,
 short-horizon reversal, intraday/overnight return decomposition, daily

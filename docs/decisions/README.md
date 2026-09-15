@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0279](0279-freeze-factor-catalog-v2-outcome-blind-qualification.md):
+  freezes V2 coverage, missingness, distribution, concentration, redundancy,
+  isolation, and exact-replay rules before any real factor value is inspected.
 - [ADR 0278](0278-register-factor-catalog-v2-without-outcomes.md): registers a
   finite adaptive V2 catalog across continuation, reversal, return timing,
   defensive applicability, liquidity, and downside risk without reading

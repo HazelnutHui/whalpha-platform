@@ -158,13 +158,19 @@ outcome access and must disclose that its design is adaptive to consumed V1
 Development evidence.
 
 ADR 0278 registers outcome-blind Factor Catalog V2 under logical fingerprint
-`077ebe1b0c57b2093380c2a0dc87c9a0a0581b895c4433faacdf7ecc401c9647`.
+`6620000334a0a8bd23103341dfc1958d57c712a063dff0a39e23ffc82d51bed5`.
 Its eight exact daily definitions use a 127-session maximum source window and
 separate four candidate Alpha measurements, one setup conditioner, one
 applicability input, and two risk guards. They bind their relationship to
 consumed V1 trials and contain no outcome, factor admission, model, strategy,
 Validation, Holdout, or Product authority. No real V2 factor value or forward
-return has been used for selection; outcome-blind qualification is next.
+return has been used for selection. ADR 0279 now freezes the independent V2
+outcome-blind qualification protocol at logical fingerprint
+`b74214155cc148d1e0d37c530ab4fea2f385af1a81237b901eec45e1fee2eb0b`.
+It uses per-stable-ID stock quarantine, complete-session SPY failure, fixed
+within-group redundancy priority, and one exact replay. The first real report
+has not yet run; no V2 factor has been admitted or registered for an outcome
+screen.
 
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility

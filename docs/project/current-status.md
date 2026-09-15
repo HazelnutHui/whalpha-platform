@@ -199,14 +199,21 @@ Campaign-level adjusted statistics remain selection evidence rather than a
 globally independent Alpha claim.
 
 Factor Catalog V2 is now registered at logical fingerprint
-`077ebe1b0c57b2093380c2a0dc87c9a0a0581b895c4433faacdf7ecc401c9647`.
+`6620000334a0a8bd23103341dfc1958d57c712a063dff0a39e23ffc82d51bed5`.
 It contains four candidate Alpha measurements across medium-horizon relative
 continuation, short-term relative reversal, and intraday/overnight return
 timing; one defensive-state conditioner; one Amihud liquidity applicability
 input; and two related downside-risk guards. The pure 127-session calculator
 has no outcome input and rejects timing, denominator, benchmark-variance, and
 missingness defects explicitly. No real V2 factor value has yet been admitted
-or screened, and no new cumulative outcome trial has yet been appended.
+or screened, and no new cumulative outcome trial has yet been appended. ADR
+0279 freezes the V2 outcome-blind qualification protocol under logical
+fingerprint
+`b74214155cc148d1e0d37c530ab4fea2f385af1a81237b901eec45e1fee2eb0b`.
+Its implementation fingerprints the population independently from the closed
+Pullback strategy, quarantines stock defects by stable ID, closes sessions for
+SPY defects, and requires one exact replay. The first real V2 qualification
+report is not yet complete.
 
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
