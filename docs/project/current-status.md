@@ -21,8 +21,9 @@ ADRs, and audits.
   The reconstructed private population has been diagnosed and independently
   replayed; no real outcome, performance result, or Candidate authority exists.
 - **External source:** no commercial lifecycle source is selected or required
-  for the current bounded step. The exact five-document free official SEC plan
-  is frozen and retained; its separately authorized acquisition has not run.
+  for the current bounded step. The frozen five-document free official SEC
+  batch is retained and hash-verified; it supports 8 of 11 preregistered facts.
+  Two exact free SEC supplemental files are still needed.
 - **Automation:** guarded manual daily operation works; unattended write-
   capable operation is not active.
 
@@ -63,7 +64,7 @@ history is much deeper.
 | Membership | combined 1,253 / 1,255 sessions | reconstructed history is not `as_operated` |
 | Corporate actions | 4,643 first-strategy exposures; 20 unassigned | absence neutrality unproven |
 | Adjustment | 101,321 sparse split-only rows | no neutral-row or total-return authority |
-| Lifecycle/terminal | 214 exact + 63 finite-interval paths of 302 | 25 paths / 5 cases remain unbounded; references are not outcomes |
+| Lifecycle/terminal | 214 exact + 63 finite-interval paths of 302; five SEC documents retained | 8/11 planned source facts matched, but 25 paths stay unbounded until supplemental evidence and a new bounds report; references are not outcomes |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | four registered query paths; four strict sessions | engineering evidence only |
 | Costs/liquidity | transparent fixed scenarios | no observed spread/impact calibration |
@@ -104,10 +105,14 @@ that strict result. Its pure V2 evaluator recognizes 274 complete
 cross-sections and the frozen mechanical split evidence, but the initial review
 is still blocked: 214 of 302 terminal-crossing paths have exact reference
 values and 63 now have frozen conservative intervals—not calculated returns.
-The remaining 25 paths across LNW, MTSR, REVG, SAND, and SKX are unbounded.
-Missing terminal rows cannot be silently removed or point-imputed. Development
-labels and parameters therefore remain closed until those five official-source
-gaps are adjudicated and the gate is rerun.
+The remaining 25 paths across LNW, MTSR, REVG, SAND, and SKX are still
+unbounded in the authoritative bounds report. The first five-document SEC
+batch is now retained and eight of eleven preregistered facts match. The
+selected REVG completion release omits its two consideration values, while the
+selected SKX 10-K omits the mixed-election cash value. Missing terminal rows
+cannot be silently removed or point-imputed. Development labels and parameters
+remain closed until the two free supplemental SEC documents are retained, all
+fields are adjudicated, the bounds report is rebuilt, and the gate is rerun.
 
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
@@ -147,8 +152,9 @@ measured budget breach.
    preregistered version.
 2. Preserve Baseline V1, reconstructed Membership, and all unresolved evidence
    states without silent inference.
-3. Retain and adjudicate only the five frozen official SEC documents for LNW,
-   MTSR, REVG, SAND, and SKX; do not build a general adapter or reopen the 13
+3. Preserve the verified five-document SEC source, freeze and acquire only the
+   two metadata-verified supplemental SEC documents for REVG and SKX, and then
+   adjudicate all named fields; do not build a general adapter or reopen the 13
    cases whose finite intervals already reconcile.
 4. Rerun reconstructed-research V2. Only a positive decision may open
    development labels; validation and the single-use holdout stay separate.

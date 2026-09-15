@@ -184,20 +184,20 @@ _RULES: dict[str, tuple[tuple[str, str, str], ...]] = {
         ),
     ),
     "MTSR": (
-        ("cash_usd", "65.60", r"\$65\.60.{0,240}(?:cash|share)"),
+        ("cash_usd", "65.60", r"\$\s*65\.60.{0,240}(?:cash|share)"),
         (
             "cvr_cap_usd",
             "20.65",
             r"(?:CVR|contingent value right).{0,480}"
-            r"(?:up to|maximum|aggregate).{0,160}\$20\.65|"
-            r"\$20\.65.{0,320}(?:CVR|contingent value right)",
+            r"(?:up to|maximum|aggregate).{0,160}\$\s*20\.65|"
+            r"\$\s*20\.65.{0,320}(?:CVR|contingent value right)",
         ),
     ),
     "REVG": (
         (
             "cash_usd",
             "8.71",
-            r"\$8\.71.{0,480}0\.9809|0\.9809.{0,480}\$8\.71",
+            r"\$\s*8\.71.{0,480}0\.9809|0\.9809.{0,480}\$\s*8\.71",
         ),
         (
             "listed_equity_ratio",
@@ -213,11 +213,16 @@ _RULES: dict[str, tuple[tuple[str, str, str], ...]] = {
         ),
     ),
     "SKX": (
-        ("cash_election_usd", "63.00", r"\$63(?:\.00)?.{0,240}cash"),
+        (
+            "cash_election_usd",
+            "63.00",
+            r"\$\s*63(?:\.00)?.{0,240}cash|cash.{0,240}\$\s*63"
+            r"(?:\.00)?.{0,240}(?:purchase price|per share)",
+        ),
         (
             "mixed_cash_usd",
             "57.00",
-            r"\$57(?:\.00)?.{0,320}(?:Common Unit|common unit)",
+            r"\$\s*57(?:\.00)?.{0,320}(?:Common Unit|common unit)",
         ),
         (
             "unlisted_unit_count",
@@ -228,8 +233,8 @@ _RULES: dict[str, tuple[tuple[str, str, str], ...]] = {
             "unlisted_unit_value_usd",
             "29.00",
             r"(?:market value|fair value).{0,320}(?:Common Unit|common unit)"
-            r".{0,320}\$29(?:\.00)?|(?:Common Unit|common unit).{0,320}"
-            r"(?:market value|fair value).{0,320}\$29(?:\.00)?",
+            r".{0,320}\$\s*29(?:\.00)?|(?:Common Unit|common unit).{0,320}"
+            r"(?:market value|fair value).{0,320}\$\s*29(?:\.00)?",
         ),
     ),
 }
@@ -359,7 +364,7 @@ def _match_field(
         )
     start = max(0, match.start() - 96)
     end = min(len(normalized), match.end() + 96)
-    evidence = normalized[start:end]
+    evidence = _normalize(normalized[start:end])
     return TerminalReferenceSourceFieldV1(
         field_key=key,
         expected_value=value,

@@ -195,8 +195,18 @@ It binds LNW, MTSR, REVG, SAND, and SKX to implementation revision
 `68e47bdb57f94edcb9143baa659d26174092502cb12573e3355dd1c363f8e3a1`,
 and logical fingerprint
 `385178ea480fc5813719a2fa924ba0a5abfd1efe046d37fbf6f28bc5c593c410`.
-It is `planned_not_executed`: zero external requests, credential reads, or
-document writes occurred, and no terminal-reference source package exists.
+Its exact five documents are now retained under source revision
+`60709ee653e015c3a3b520ba2c6e3c91d5adc49c`: five requests, zero retries,
+7,316,540 bytes, manifest SHA-256
+`8a475a228dc36d95f21611963fff1c6e09f5605b1eab6bb0cec89d5b8951c0e4`,
+and logical fingerprint
+`1cad0618842eae64cc88d8b5e38b9c1f6d51b1e1b0e7b12940b207240144e113`.
+Formal reread used zero requests. Outcome-blind review matched 8 of 11 frozen
+facts: REVG's selected completion release omits both consideration values and
+SKX's selected 10-K omits the mixed-election cash value. No bound or admission
+state changed. Two free SEC supplemental candidates are metadata-verified but
+not yet frozen or acquired; see the
+[dated audit](../audits/strong-leader-pullback-terminal-reference-sec-source-2026-09-15.md).
 
 ## Automation and boundaries
 
@@ -205,9 +215,9 @@ Apply, analytics, publication, deployment, credential access, or alert
 delivery. No unattended write-capable scheduler is installed; SMTP is
 unconfigured. The guarded manual chain works end to end.
 
-No current document authorizes the planned live SEC acquisition, credential
-use, `/data` mutation, real research outcomes, model activation, publication,
-deployment, scheduler mutation, order execution, or destructive cleanup.
+No current document authorizes another live SEC acquisition, `/data` mutation,
+real research outcomes, model activation, publication, deployment, scheduler
+mutation, order execution, or destructive cleanup.
 
 ## Cross-device continuity
 

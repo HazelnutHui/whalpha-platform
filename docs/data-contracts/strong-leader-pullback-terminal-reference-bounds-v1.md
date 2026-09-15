@@ -45,3 +45,9 @@ zero requests, credential reads, source content, adjudications, outcomes,
 parameters, canonical writes, or Production authority. The acquisition wrapper
 then reuses the existing bounded SEC transport and atomic owner-only custody;
 it cannot add a sixth URL or convert downloaded text into a fact.
+
+An acquired batch remains immutable even when a selected document does not
+prove its named field. Missing evidence must remain unresolved and be supplied
+through a separately frozen supplemental plan; it cannot be repaired by
+editing retained content, weakening match rules, or silently substituting a
+different URL.

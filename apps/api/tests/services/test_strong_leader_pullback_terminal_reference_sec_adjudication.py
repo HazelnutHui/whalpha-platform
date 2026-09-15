@@ -102,6 +102,12 @@ def test_all_five_sources_match_without_creating_references(
     assert result.terminal_reference_count == 0
     assert result.outcome_count == 0
     assert result.performance_metric_count == 0
+    assert all(
+        field.evidence_text == service._normalize(field.evidence_text)
+        for case in result.cases
+        for field in case.fields
+        if field.evidence_text is not None
+    )
 
 
 def test_missing_source_language_stays_unsupported(

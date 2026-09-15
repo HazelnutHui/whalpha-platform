@@ -5,6 +5,11 @@ documents required by ADR 0269. Planning is network-disabled and does not read
 the private SEC User-Agent. Acquisition is a separate live operation and is
 not authorized by this runbook.
 
+The `20260915-v1` batch was acquired and formally reread on 2026-09-15. It is
+immutable partial evidence: eight of eleven preregistered fields matched, but
+the selected REVG and SKX files omit three required terms. Do not edit or
+replace the retained package; use a separately frozen supplemental plan.
+
 ## 1. Publish the zero-request plan
 
 Run only from a clean committed Dell source tree:
@@ -55,3 +60,8 @@ not prove the requested field, terminal value, outcome, or return. A separate
 zero-network adjudication must bind the five named facts, rebuild all 18 bounds,
 and rerun Research Admission V2. No `/data`, Snapshot, publication, deployment,
 scheduler, Candidate, validation, or holdout action belongs to this operation.
+
+The initial review identified exactly two supplemental free SEC documents as
+the minimal correction. Their metadata is recorded in the dated
+[source review](../audits/strong-leader-pullback-terminal-reference-sec-source-2026-09-15.md),
+but they are not authorized or acquired by this runbook.
