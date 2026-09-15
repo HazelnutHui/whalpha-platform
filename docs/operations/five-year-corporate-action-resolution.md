@@ -59,8 +59,11 @@ scripts/dev/run-project-python.sh \
   --execute
 ```
 
-The output groups only resolved split-like rows by stable `instrument_id` and
-event date, composes known ratios, and separately projects possible impacts of
-unresolved tickers without assigning those events. It remains owner-only,
-temporary, outcome-reconciliation evidence with no canonical write,
-Adjustment Ledger status, research-input authority, or neutral-absence claim.
+Contract 1.1 binds the composite Identity Resolver evidence through the
+shadow's `identity_binding_fingerprint`; legacy single-evidence 1.0 candidates
+remain readable. The output groups only resolved split-like rows by stable
+`instrument_id` and event date, composes known ratios, and separately projects
+possible impacts of unresolved tickers without assigning those events. It
+remains owner-only, temporary, outcome-reconciliation evidence with no
+canonical write, Adjustment Ledger status, research-input authority, or
+neutral-absence claim.

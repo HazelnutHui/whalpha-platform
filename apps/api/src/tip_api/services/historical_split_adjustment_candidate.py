@@ -40,7 +40,8 @@ from tip_api.services.historical_corporate_action_resolution_shadow import (
 )
 
 
-CONTRACT_VERSION = "historical-split-adjustment-candidate/1.0"
+LEGACY_CONTRACT_VERSION = "historical-split-adjustment-candidate/1.0"
+CONTRACT_VERSION = "historical-split-adjustment-candidate/1.1"
 METHODOLOGY_VERSION = "resolved-event-ratio-split-adjustment-v1"
 APPROVED_DATA_ROOT = Path("/data/trading-intelligence-platform")
 FILE_NAME = "candidate.json"
@@ -202,7 +203,8 @@ class UnresolvedSplitImpactCandidateV1(FrozenModel):
 
 class HistoricalSplitAdjustmentCandidateV1(FrozenModel):
     contract_version: Literal[
-        "historical-split-adjustment-candidate/1.0"
+        "historical-split-adjustment-candidate/1.0",
+        "historical-split-adjustment-candidate/1.1",
     ] = CONTRACT_VERSION
     completion_status: Literal["completed"] = "completed"
     methodology_version: Literal[
@@ -213,7 +215,12 @@ class HistoricalSplitAdjustmentCandidateV1(FrozenModel):
     calculated_at: datetime
     resolution_shadow_manifest_sha256: str = Field(pattern=_SHA256_PATTERN)
     resolution_shadow_logical_fingerprint: str = Field(pattern=_SHA256_PATTERN)
-    identity_evidence_logical_fingerprint: str = Field(pattern=_SHA256_PATTERN)
+    identity_evidence_logical_fingerprint: str | None = Field(
+        default=None, pattern=_SHA256_PATTERN
+    )
+    identity_binding_fingerprint: str | None = Field(
+        default=None, pattern=_SHA256_PATTERN
+    )
     split_source_record_count: int = Field(ge=1)
     resolved_split_source_record_count: int = Field(ge=0)
     unresolved_split_source_record_count: int = Field(ge=0)
@@ -256,6 +263,17 @@ class HistoricalSplitAdjustmentCandidateV1(FrozenModel):
 
     @model_validator(mode="after")
     def candidate_reconciles(self) -> "HistoricalSplitAdjustmentCandidateV1":
+        if self.contract_version == LEGACY_CONTRACT_VERSION:
+            if (
+                self.identity_evidence_logical_fingerprint is None
+                or self.identity_binding_fingerprint is not None
+            ):
+                raise ValueError("legacy split candidate Identity binding differs")
+        elif (
+            self.identity_evidence_logical_fingerprint is not None
+            or self.identity_binding_fingerprint is None
+        ):
+            raise ValueError("composite split candidate Identity binding differs")
         if self.basis_session < self.start_date:
             raise ValueError("split candidate basis precedes start")
         if self.split_source_record_count != (
@@ -316,9 +334,13 @@ class HistoricalSplitAdjustmentCandidateV1(FrozenModel):
             > self.unresolved_with_historical_identity_count
         ):
             raise ValueError("split candidate aggregate counts differ")
-        expected = _fingerprint(
-            self.model_dump(mode="json", exclude={"logical_fingerprint"})
+        excluded = {"logical_fingerprint"}
+        excluded.add(
+            "identity_binding_fingerprint"
+            if self.contract_version == LEGACY_CONTRACT_VERSION
+            else "identity_evidence_logical_fingerprint"
         )
+        expected = _fingerprint(self.model_dump(mode="json", exclude=excluded))
         if self.logical_fingerprint != expected:
             raise ValueError("split candidate logical fingerprint differs")
         return self
@@ -415,9 +437,7 @@ def build_historical_split_adjustment_candidate(
             "calculated_at": calculated_at,
             "resolution_shadow_manifest_sha256": shadow.manifest_sha256,
             "resolution_shadow_logical_fingerprint": shadow.manifest.logical_fingerprint,
-            "identity_evidence_logical_fingerprint": (
-                shadow.manifest.identity_evidence_logical_fingerprint
-            ),
+            "identity_binding_fingerprint": shadow.manifest.identity_binding_fingerprint,
             "split_source_record_count": len(split_records),
             "resolved_split_source_record_count": len(resolved),
             "unresolved_split_source_record_count": len(unresolved),
@@ -467,7 +487,9 @@ def build_historical_split_adjustment_candidate(
         staging.mkdir(mode=0o700)
         try:
             output = staging / FILE_NAME
-            output.write_bytes(_pretty_json(candidate.model_dump(mode="json")))
+            output.write_bytes(
+                _pretty_json(candidate.model_dump(mode="json", exclude_none=True))
+            )
             output.chmod(0o400)
             _fsync_file(output)
             _fsync_directory(staging)

@@ -121,12 +121,14 @@ def _patch_inputs(monkeypatch, tmp_path: Path) -> dict[str, object]:
     data_root.mkdir(mode=0o700)
     records = _records()
     manifest = SimpleNamespace(
+        contract_version="historical-corporate-action-resolution-shadow/1.1",
         start_date=START,
         end_date=BASIS,
         materialized_at=datetime(2026, 9, 2, tzinfo=UTC),
         split_source_record_count=len(records),
         logical_fingerprint="a" * 64,
-        identity_evidence_logical_fingerprint="b" * 64,
+        identity_evidence_logical_fingerprint=None,
+        identity_binding_fingerprint="b" * 64,
     )
     shadow = SimpleNamespace(
         manifest=manifest,
@@ -161,6 +163,11 @@ def test_builds_split_first_owner_only_candidate(monkeypatch, tmp_path: Path) ->
 
     assert result.status == "published"
     assert result.candidate.split_source_record_count == 4
+    assert result.candidate.contract_version == (
+        "historical-split-adjustment-candidate/1.1"
+    )
+    assert result.candidate.identity_binding_fingerprint == "b" * 64
+    assert result.candidate.identity_evidence_logical_fingerprint is None
     assert result.candidate.resolved_split_source_record_count == 2
     assert result.candidate.unresolved_split_source_record_count == 2
     assert result.candidate.resolved_event_group_count == 1
@@ -196,6 +203,26 @@ def test_exact_rerun_is_idempotent(monkeypatch, tmp_path: Path) -> None:
 
     assert first.candidate == second.candidate
     assert second.status == "already_present"
+
+
+def test_legacy_single_identity_candidate_remains_readable(
+    monkeypatch, tmp_path: Path
+) -> None:
+    inputs = _patch_inputs(monkeypatch, tmp_path)
+    result = build_historical_split_adjustment_candidate(**inputs)  # type: ignore[arg-type]
+    payload = result.candidate.model_dump(
+        mode="json",
+        exclude={"logical_fingerprint", "identity_binding_fingerprint"},
+    )
+    payload["contract_version"] = module.LEGACY_CONTRACT_VERSION
+    payload["identity_evidence_logical_fingerprint"] = "d" * 64
+    payload["logical_fingerprint"] = module._fingerprint(payload)
+
+    legacy = module.HistoricalSplitAdjustmentCandidateV1.model_validate(payload)
+
+    assert legacy.contract_version == module.LEGACY_CONTRACT_VERSION
+    assert legacy.identity_evidence_logical_fingerprint == "d" * 64
+    assert legacy.identity_binding_fingerprint is None
 
 
 def test_basis_must_equal_resolution_end(monkeypatch, tmp_path: Path) -> None:
