@@ -115,6 +115,8 @@ adjustment evidence remains explicit.
 - [Strong-Leader Pullback Terminal-Population Trading Cessation Adjudication V1](strong-leader-pullback-terminal-population-trading-cessation-adjudication-v1.md)
 - [Strong-Leader Pullback Terminal-Population Payoff Policy V1](strong-leader-pullback-terminal-population-payoff-policy-v1.md)
 - [Strong-Leader Pullback Research Input V1](strong-leader-pullback-research-input-v1.md)
+- [Strong-Leader Pullback Research Admission V2](strong-leader-pullback-research-admission-v2.md)
+- [Strong-Leader Pullback Terminal Reference Bounds V1](strong-leader-pullback-terminal-reference-bounds-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)
 - [Candidate Strategy Holdout Custody V1](candidate-strategy-holdout-custody-v1.md)

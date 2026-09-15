@@ -70,7 +70,7 @@ acquisition gap.
 | Membership | 3 signal-eligible plus 1,250 physically separate reconstructed research-only sessions; combined 1,253 / 1,255 |
 | Corporate actions | 4,643 first-strategy exposures; 4,623 exact event-date assignments and 20 unassigned; absence neutrality remains unproven |
 | Adjustment | 101,321 sparse split-only rows; 98,291 clear and 3,030 quarantined; neutral omitted rows and total-return coverage are unproven |
-| Lifecycle/terminal | 47 of 65 scoped terminal securities / 214 of 302 five-session paths have reference evidence; 18 / 88 remain; references are not outcomes |
+| Lifecycle/terminal | 214 exact + 63 finite-interval references of 302 five-session paths; 25 paths / 5 cases remain unbounded; references are not outcomes |
 | Classification | complete point-in-time historical classification absent |
 | Fundamentals | cutoff-aware SEC engineering exists for four registered queries; only four sessions have strict as-operated next-open projection evidence |
 | Historical Coverage | final pre-research review V2 is `rejected_data_blocked`; no research-ready manifest exists |
@@ -168,15 +168,25 @@ Do not copy them back into this recovery file.
 
 LSEG contact is owner-reported submitted, but no response, sample, quote,
 entitlement, or permission decision has been reviewed. LSEG, ICE, S&P,
-Norgate, or another provider is optional future evidence work. No named source
-is a prerequisite for outcome-blind method engineering; any future sample must
-pass the frozen 20-action / 64-lifecycle acceptance population.
+Norgate, or another provider remains optional future evidence work. No named
+source is a prerequisite for the current reconstructed lane. The remaining
+terminal-bound plan is limited to five free official SEC documents; future
+commercial samples must still pass the frozen 20-action / 64-lifecycle
+acceptance population.
 
-ADR 0267 and Source Acceptance Result V1 now freeze the pure provider-neutral
-evaluation of that population. A 2026-09-15 official-public review retains SEC,
-FINRA, OpenFIGI, Alpha Vantage Listing Status, and exchange evidence in narrow
-free-source roles. No real new-provider sample has been received or evaluated,
-and no free composition has changed the formal `rejected_data_blocked` result.
+ADR 0267 and Source Acceptance Result V1 freeze provider-neutral evaluation of
+that population. ADR 0268 now adds a separate reconstructed-research admission
+that preserves complete cross-section ranks and requires finite adversarial
+bounds for every non-exact terminal reference. Its initial in-memory review binds
+274 complete feature sessions and binds 214 exact plus 63 interval-censored
+terminal references. It remains `blocked` solely because 25 paths across LNW,
+MTSR, REVG, SAND, and SKX are still unbounded; terminal-bounds fingerprint
+`7975716fffe346a432c2a184bbef35cf47e306868ac33e66356edbe652cc5e6f` and
+current decision fingerprint
+`a3d7d94cffb8564208217f06fe035ac0c6c9f2fbcec7382a9c4cfebd916d720d`.
+No outcome or parameter was opened. SEC, FINRA, OpenFIGI, Alpha Vantage Listing
+Status, issuer, and exchange evidence retain narrow free-source roles; no
+commercial provider sample has been promoted.
 
 ## Automation and boundaries
 

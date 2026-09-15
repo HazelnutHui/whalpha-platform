@@ -74,29 +74,34 @@ The exit criterion passed: the registered method is deterministic and
 explainable, the Lab record reproduces the same source identities, all
 zero-label guarantees pass, and no Production or Candidate authority changed.
 
-## Gated phase — Performance-data admission
+## Current gated phase — Reconstructed performance-data admission
 
 This phase may proceed in parallel only when a mandatory evidence input truly
 changes. It must not interrupt method work with repeated manual adjudication.
 
-Required gates remain:
+ADR 0268 separates a research-grade retrospective lane from the stronger
+exact/as-operated claim. Required gates for the research lane are:
 
-- complete point-in-time session Membership without survivor selection;
-- lifecycle and terminal outcomes for every included path;
-- complete corporate-action absence neutrality and adjustment basis;
-- exact Historical Coverage and source-time lineage;
+- complete same-session feature cross-sections without survivor selection;
+- at least 252 such sessions;
+- frozen-vintage, adjustment-only split evidence with every hazardous session
+  excluded before outcomes;
+- an exact label or finite pre-outcome interval for every terminal crossing;
 - declared costs/liquidity evidence; and
 - a real chronological evaluation dataset with sealed holdout custody.
 
-Massive remains the primary price/reference source, not the sole lifecycle or
-terminal authority. LSEG, ICE, S&P, Norgate, or another source is optional
-future evidence work and must be evaluated against the frozen 20-action /
-64-lifecycle acceptance population. Do not build an adapter from marketing
-claims or repeat scans against unchanged source capability.
+The V2 review recognizes 274 complete feature sessions. ADR 0269 now binds 63
+of 88 residual paths to finite conservative intervals, leaving 25 paths across
+five securities unbounded. Massive remains the primary price/reference source,
+not the sole lifecycle or terminal authority. The immediate plan uses five
+exact free official SEC documents; LSEG or another commercial source is
+optional. Do not build adapters from marketing claims or repeat scans against
+unchanged capability.
 
-Exit criterion: one immutable admission report identifies complete sessions
-and securities with no hidden exclusion. The current result is allowed to
-remain `rejected_data_blocked`.
+Exit criterion: one immutable V2 admission report identifies every complete
+feature session and every exact or interval-censored terminal path with no
+hidden exclusion. A positive result opens development only, not validation,
+holdout, performance claims, or Candidate activation.
 
 ## Gated phase — Real Strong-Leader Pullback study
 

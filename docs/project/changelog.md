@@ -6,6 +6,24 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Bound reconstructed research without hiding missing outcomes
+
+- Accepted ADR 0268 and added a pure V2 research-admission evaluator that
+  preserves complete cross-section ranking while allowing a clearly labelled
+  latest-vintage retrospective lane.
+- Required every non-exact terminal reference to have a finite pre-outcome interval
+  and required adverse endpoint evaluation; point imputation, silent dropping,
+  and complete-case headlines remain prohibited.
+- Accepted ADR 0269 and added a strict terminal-reference bounds contract.
+  Existing official evidence now supports 63 finite conservative intervals;
+  25 paths across LNW, MTSR, REVG, SAND, and SKX remain unbounded.
+- Froze a five-document official SEC completion plan. No commercial vendor is
+  required for this step, and no broad adapter will be built merely because a
+  source is available.
+- The current V2 review recognizes 274 complete feature sessions but remains
+  blocked solely on those five source cases. No outcome or parameter was
+  opened.
+
 ## 2026-09-15 — Freeze provider-neutral evidence acceptance
 
 - Added a pure evaluator for the complete 20-action / 64-lifecycle source

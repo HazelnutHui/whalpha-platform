@@ -13,15 +13,16 @@ ADRs, and audits.
   UI to equal guest/credential flows; underlying data is stale by one completed
   session at the 2026-09-14 deployment review.
 - **Five-year source depth:** EOD price and stable Identity complete.
-- **Professional performance foundation:** incomplete; formal state
-  `data_blocked`.
+- **Professional performance foundation:** the strict exact/as-operated gate
+  remains `data_blocked`; reconstructed-research V2 is separately blocked only
+  on 25 still-unbounded terminal-crossing paths.
 - **First strategy:** its canonical method, derived Lab record, pure
   signal/cohort engine, and outcome-blind diagnostic pipeline are implemented.
   The reconstructed private population has been diagnosed and independently
   replayed; no real outcome, performance result, or Candidate authority exists.
-- **External source:** none selected; LSEG is optional. A source-neutral
-  evaluator is implemented, and the free-source composition remains
-  corroboration-only until a real frozen-sample result proves otherwise.
+- **External source:** no commercial lifecycle source is selected or required
+  for the current bounded step. A source-neutral evaluator is implemented; five
+  exact free official SEC documents remain to complete the terminal intervals.
 - **Automation:** guarded manual daily operation works; unattended write-
   capable operation is not active.
 
@@ -62,11 +63,12 @@ history is much deeper.
 | Membership | combined 1,253 / 1,255 sessions | reconstructed history is not `as_operated` |
 | Corporate actions | 4,643 first-strategy exposures; 20 unassigned | absence neutrality unproven |
 | Adjustment | 101,321 sparse split-only rows | no neutral-row or total-return authority |
-| Lifecycle/terminal | 47 / 65 securities have daily references | 18 unresolved; references are not outcomes |
+| Lifecycle/terminal | 214 exact + 63 finite-interval paths of 302 | 25 paths / 5 cases remain unbounded; references are not outcomes |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | four registered query paths; four strict sessions | engineering evidence only |
 | Costs/liquidity | transparent fixed scenarios | no observed spread/impact calibration |
-| Historical Coverage | immutable final review V2 | `rejected_data_blocked` |
+| Historical Coverage | immutable strict review V2 | `rejected_data_blocked` |
+| Reconstructed research admission | 274 complete feature sessions; 25 unbounded terminal paths | `blocked` |
 | Evaluation/holdout | fixture-tested mechanics | no real dataset or sealed real holdout |
 
 The five-year database is therefore a strong source and engineering foundation,
@@ -92,11 +94,20 @@ paths. It authorizes:
 - provider-neutral future-label interfaces containing zero real rows; and
 - Lab views of logic, formulas, parameters, readiness, blockers, and lifecycle.
 
-It does **not** authorize true labels, parameter selection, formal development,
-validation, holdout access, performance claims, Candidate activation, or
-Production use. The formal gate still has zero complete Primary session cross-
-sections. Unresolved action neutrality, adjustments, terminal outcomes,
-Historical Coverage, costs, and source-time evidence remain visible.
+It does **not** by itself authorize true labels, parameter selection, formal
+development, validation, holdout access, performance claims, Candidate
+activation, or Production use. The strict exact/as-operated gate still has
+zero complete Primary session cross-sections.
+
+ADR 0268 adds a distinct latest-vintage reconstructed lane without changing
+that strict result. Its pure V2 evaluator recognizes 274 complete
+cross-sections and the frozen mechanical split evidence, but the initial review
+is still blocked: 214 of 302 terminal-crossing paths have exact reference
+values and 63 now have frozen conservative intervals—not calculated returns.
+The remaining 25 paths across LNW, MTSR, REVG, SAND, and SKX are unbounded.
+Missing terminal rows cannot be silently removed or point-imputed. Development
+labels and parameters therefore remain closed until those five official-source
+gaps are adjudicated and the gate is rerun.
 
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
@@ -136,12 +147,12 @@ measured budget breach.
    preregistered version.
 2. Preserve Baseline V1, reconstructed Membership, and all unresolved evidence
    states without silent inference.
-3. Reconsider lifecycle/action providers only against the frozen acceptance
-   sample. Start with a bounded Alpha Vantage Listing Status corroboration
-   sample if a private-use free key is locally configured; do not infer shared
-   publication permission or complete lifecycle capability.
-4. Execute the real chronological study only after formal performance
-   admission, then preserve either validation or failure without retuning V1.
+3. Retain and adjudicate only the five frozen official SEC documents for LNW,
+   MTSR, REVG, SAND, and SKX; do not build a general adapter or reopen the 13
+   cases whose finite intervals already reconcile.
+4. Rerun reconstructed-research V2. Only a positive decision may open
+   development labels; validation and the single-use holdout stay separate.
+5. Preserve either validation or failure without retuning V1.
 
 Do not project current Membership or taxonomy backward, infer lifecycle from
 ticker patterns, call price/volume fund flow, call stock outcomes option

@@ -11,6 +11,13 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0269](0269-bound-reconstructed-terminal-references-with-frozen-gross-value-intervals.md):
+  freezes conservative gross-value intervals and adverse endpoint evaluation
+  for the residual terminal population without point-imputing holder outcomes.
+- [ADR 0268](0268-admit-reconstructed-research-only-with-adversarial-missingness-bounds.md):
+  separates a disclosed reconstructed research lane from the stricter
+  exact/as-operated claim while preserving complete cross-sections and holdout
+  custody.
 - [ADR 0267](0267-freeze-provider-neutral-performance-evidence-acceptance.md):
   freezes the exact case-, field-, evidence-, and permission-level evaluator
   that every free, trial, or paid performance-evidence source must pass.
@@ -298,6 +305,9 @@ accepted ADR was deployed unless current operational evidence says so.
   separate current display taxonomy from historical research classification.
 - [ADR 0179](0179-separate-equity-cost-mechanics-from-execution-evidence.md):
   separate cost formulas from observed execution evidence.
+- [ADR 0268](0268-admit-reconstructed-research-only-with-adversarial-missingness-bounds.md):
+  permit a separately disclosed research lane only when missing terminal
+  labels are bounded adversarially before outcomes.
 
 ## Data-governance decisions
 
