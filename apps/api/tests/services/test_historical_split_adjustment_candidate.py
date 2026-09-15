@@ -147,6 +147,7 @@ def _patch_inputs(monkeypatch, tmp_path: Path) -> dict[str, object]:
     return {
         "data_root": data_root,
         "resolution_shadow_output_root": tmp_path / "resolution-shadow",
+        "resolution_shadow_custody_root": tmp_path / "resolution-shadow-custody",
         "output_root": tmp_path / "split-candidate",
         "basis_session": BASIS,
         "calculated_at": CALCULATED_AT,

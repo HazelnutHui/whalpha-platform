@@ -42,3 +42,25 @@ Keep the separate baseline/repeat diff packages. Five split IDs changed while
 their non-ID economic payload did not; this run does not reinterpret those ID
 changes. Do not use the candidate for return adjustment or model research
 until the subsequent event-identity and adjustment gates pass.
+
+## Derived split-adjustment review candidate
+
+The disconnected split-adjustment candidate may reread the persistent shadow
+only when both the exact build path and its approved custody root are supplied:
+
+```bash
+scripts/dev/run-project-python.sh \
+  -m tip_api.services.historical_split_adjustment_candidate_cli \
+  --resolution-shadow <exact-persistent-shadow-build> \
+  --resolution-shadow-custody-root <exact-owner-only-shadow-custody-root> \
+  --output-root <absent-direct-child-below-tmp> \
+  --basis-session <shadow-end-session> \
+  --calculated-at <fixed-utc-time> \
+  --execute
+```
+
+The output groups only resolved split-like rows by stable `instrument_id` and
+event date, composes known ratios, and separately projects possible impacts of
+unresolved tickers without assigning those events. It remains owner-only,
+temporary, outcome-reconciliation evidence with no canonical write,
+Adjustment Ledger status, research-input authority, or neutral-absence claim.

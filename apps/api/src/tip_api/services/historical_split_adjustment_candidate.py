@@ -336,6 +336,7 @@ def build_historical_split_adjustment_candidate(
     *,
     data_root: Path,
     resolution_shadow_output_root: Path,
+    resolution_shadow_custody_root: Path | None = None,
     output_root: Path,
     basis_session: date,
     calculated_at: datetime,
@@ -347,7 +348,8 @@ def build_historical_split_adjustment_candidate(
         target = _validated_output_target(output_root)
         calculated_at = normalize_utc_datetime(calculated_at)
         shadow = read_historical_corporate_action_resolution_shadow(
-            output_root=resolution_shadow_output_root
+            output_root=resolution_shadow_output_root,
+            output_custody_root=resolution_shadow_custody_root,
         )
         if basis_session != shadow.manifest.end_date:
             raise HistoricalSplitAdjustmentCandidateError(
@@ -381,6 +383,7 @@ def build_historical_split_adjustment_candidate(
                 read_historical_ticker_candidates_bound_to_resolution_shadow(
                     data_root=root,
                     resolution_shadow_output_root=resolution_shadow_output_root,
+                    resolution_shadow_custody_root=resolution_shadow_custody_root,
                     provider_tickers=requested_tickers,
                 )
                 if requested_tickers
