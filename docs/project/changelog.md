@@ -36,6 +36,9 @@ and dated [audits](../audits/). Current capability and next work belong in
   retained SEC Submissions archive. Planning used zero network requests,
   credential reads, document writes, outcomes, or Production authority; live
   acquisition remains separate.
+- Added fixture-tested, outcome-blind adjudication for exactly the three
+  supplemental REVG/SKX fields. It cannot create terminal references, labels,
+  metrics, parameters, canonical writes, or Production state.
 - The current V2 review recognizes 274 complete feature sessions but remains
   blocked solely on those five source cases. No outcome or parameter was
   opened.

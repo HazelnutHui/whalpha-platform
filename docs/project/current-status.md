@@ -24,7 +24,7 @@ ADRs, and audits.
   for the current bounded step. The frozen five-document free official SEC
   batch is retained and hash-verified; it supports 8 of 11 preregistered facts.
   The exact two-file free SEC supplement is frozen and metadata-verified but
-  not acquired.
+  not acquired; its three-field outcome-blind adjudicator is fixture-tested.
 - **Automation:** guarded manual daily operation works; unattended write-
   capable operation is not active.
 

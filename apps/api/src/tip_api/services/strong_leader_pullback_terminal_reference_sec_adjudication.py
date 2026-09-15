@@ -21,12 +21,22 @@ from tip_api.services import strong_leader_pullback_terminal_reference_sec_plan 
 from tip_api.services import (
     strong_leader_pullback_terminal_reference_sec_source as source,
 )
+from tip_api.services import (
+    strong_leader_pullback_terminal_reference_sec_supplement_plan as supplement_plan,
+)
+from tip_api.services import (
+    strong_leader_pullback_terminal_reference_sec_supplement_source as supplement_source,
+)
 
 
 CONTRACT_VERSION = (
     "strong-leader-pullback-terminal-reference-sec-adjudication/1.0"
 )
+SUPPLEMENT_CONTRACT_VERSION = (
+    "strong-leader-pullback-terminal-reference-sec-supplement-adjudication/1.0"
+)
 EXPECTED_CASE_COUNT = 5
+EXPECTED_SUPPLEMENT_CASE_COUNT = 2
 _SHA256_PATTERN = r"^[0-9a-f]{64}$"
 _REVISION_PATTERN = r"^[0-9a-f]{40}$"
 
@@ -166,6 +176,78 @@ class StrongLeaderPullbackTerminalReferenceSecAdjudicationV1(_FrozenModel):
         return self
 
 
+class StrongLeaderPullbackTerminalReferenceSecSupplementAdjudicationV1(
+    _FrozenModel
+):
+    contract_version: Literal[
+        "strong-leader-pullback-terminal-reference-sec-supplement-adjudication/1.0"
+    ] = SUPPLEMENT_CONTRACT_VERSION
+    completion_status: Literal["all_fields_matched", "source_fields_unresolved"]
+    implementation_revision: str = Field(pattern=_REVISION_PATTERN)
+    evaluated_at: datetime
+    plan_report_sha256: str = Field(pattern=_SHA256_PATTERN)
+    plan_logical_fingerprint: str = Field(pattern=_SHA256_PATTERN)
+    source_manifest_sha256: str = Field(pattern=_SHA256_PATTERN)
+    source_logical_fingerprint: str = Field(pattern=_SHA256_PATTERN)
+    ruleset_fingerprint: str = Field(pattern=_SHA256_PATTERN)
+    case_count: Literal[2] = EXPECTED_SUPPLEMENT_CASE_COUNT
+    matched_case_count: int = Field(ge=0, le=2)
+    unsupported_case_count: int = Field(ge=0, le=2)
+    cases: tuple[TerminalReferenceSourceCaseV1, ...] = Field(
+        min_length=2, max_length=2
+    )
+    source_fact_count: int = Field(ge=0, le=3)
+    terminal_reference_count: Literal[0] = 0
+    outcome_count: Literal[0] = 0
+    performance_metric_count: Literal[0] = 0
+    parameter_selection_count: Literal[0] = 0
+    canonical_data_write_count: Literal[0] = 0
+    production_write_count: Literal[0] = 0
+    network_request_count: Literal[0] = 0
+    logical_fingerprint: str = Field(pattern=_SHA256_PATTERN)
+
+    @field_validator("evaluated_at")
+    @classmethod
+    def time_is_utc(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @model_validator(mode="after")
+    def report_reconciles(
+        self,
+    ) -> "StrongLeaderPullbackTerminalReferenceSecSupplementAdjudicationV1":
+        keys = tuple(item.ticker_locator for item in self.cases)
+        matched = sum(item.completion_status == "matched" for item in self.cases)
+        source_facts = sum(
+            item.state is TerminalReferenceSourceFieldState.MATCHED
+            for case in self.cases
+            for item in case.fields
+        )
+        expected_status = (
+            "all_fields_matched"
+            if matched == EXPECTED_SUPPLEMENT_CASE_COUNT
+            else "source_fields_unresolved"
+        )
+        if (
+            len(self.cases) != EXPECTED_SUPPLEMENT_CASE_COUNT
+            or keys != tuple(sorted(set(keys)))
+            or keys != tuple(_SUPPLEMENT_RULES)
+            or self.matched_case_count != matched
+            or self.unsupported_case_count
+            != EXPECTED_SUPPLEMENT_CASE_COUNT - matched
+            or self.source_fact_count != source_facts
+            or self.completion_status != expected_status
+            or self.ruleset_fingerprint != _fingerprint(_SUPPLEMENT_RULES)
+            or self.logical_fingerprint
+            != _fingerprint(
+                self.model_dump(mode="json", exclude={"logical_fingerprint"})
+            )
+        ):
+            raise ValueError(
+                "terminal-reference SEC supplement adjudication differs"
+            )
+        return self
+
+
 _RULES: dict[str, tuple[tuple[str, str, str], ...]] = {
     "LNW": (
         (
@@ -235,6 +317,30 @@ _RULES: dict[str, tuple[tuple[str, str, str], ...]] = {
             r"(?:market value|fair value).{0,320}(?:Common Unit|common unit)"
             r".{0,320}\$\s*29(?:\.00)?|(?:Common Unit|common unit).{0,320}"
             r"(?:market value|fair value).{0,320}\$\s*29(?:\.00)?",
+        ),
+    ),
+}
+
+
+_SUPPLEMENT_RULES: dict[str, tuple[tuple[str, str, str], ...]] = {
+    "REVG": (
+        (
+            "cash_usd",
+            "8.71",
+            r"\$\s*8\.71.{0,480}0\.9809|0\.9809.{0,480}\$\s*8\.71",
+        ),
+        (
+            "listed_equity_ratio",
+            "0.9809",
+            r"0\.9809.{0,240}(?:Terex|combined company|common stock|share)",
+        ),
+    ),
+    "SKX": (
+        (
+            "mixed_cash_usd",
+            "57.00",
+            r"\$\s*57(?:\.00)?.{0,320}(?:one|1).{0,120}"
+            r"(?:Common Unit|common limited liability company unit)",
         ),
     ),
 }
@@ -310,8 +416,91 @@ def adjudicate_strong_leader_pullback_terminal_reference_sec_source(
     )
 
 
+def adjudicate_strong_leader_pullback_terminal_reference_sec_supplement_source(
+    *,
+    plan_root: Path,
+    plan_custody_root: Path,
+    source_root: Path,
+    source_custody_root: Path,
+    implementation_revision: str,
+    evaluated_at: datetime,
+) -> StrongLeaderPullbackTerminalReferenceSecSupplementAdjudicationV1:
+    """Adjudicate only the three fields missing from the initial batch."""
+
+    plan_result = (
+        supplement_plan
+        .read_strong_leader_pullback_terminal_reference_sec_supplement_plan(
+            output_root=plan_root,
+            output_custody_root=plan_custody_root,
+        )
+    )
+    source_result = (
+        supplement_source
+        .read_strong_leader_pullback_terminal_reference_sec_supplement_source(
+            plan_root=plan_root,
+            plan_custody_root=plan_custody_root,
+            output_root=source_root,
+            output_custody_root=source_custody_root,
+        )
+    )
+    cases = tuple(
+        _adjudicate_case(
+            item=item,
+            document_path=(
+                source_result.output_root
+                / f"request={item.request_sequence:06d}"
+                / source_base.DOCUMENT_FILE
+            ),
+            rules=_SUPPLEMENT_RULES[item.ticker_locator],
+        )
+        for item in plan_result.report.items
+    )
+    matched = sum(item.completion_status == "matched" for item in cases)
+    values = {
+        "completion_status": (
+            "all_fields_matched"
+            if matched == EXPECTED_SUPPLEMENT_CASE_COUNT
+            else "source_fields_unresolved"
+        ),
+        "implementation_revision": implementation_revision,
+        "evaluated_at": normalize_utc_datetime(evaluated_at),
+        "plan_report_sha256": plan_result.report_sha256,
+        "plan_logical_fingerprint": plan_result.report.logical_fingerprint,
+        "source_manifest_sha256": source_result.manifest_sha256,
+        "source_logical_fingerprint": source_result.manifest.logical_fingerprint,
+        "ruleset_fingerprint": _fingerprint(_SUPPLEMENT_RULES),
+        "matched_case_count": matched,
+        "unsupported_case_count": EXPECTED_SUPPLEMENT_CASE_COUNT - matched,
+        "cases": cases,
+        "source_fact_count": sum(
+            field.state is TerminalReferenceSourceFieldState.MATCHED
+            for case in cases
+            for field in case.fields
+        ),
+    }
+    report_class = (
+        StrongLeaderPullbackTerminalReferenceSecSupplementAdjudicationV1
+    )
+    provisional = report_class.model_construct(
+        **values, logical_fingerprint="0" * 64
+    )
+    return report_class.model_validate(
+        {
+            **values,
+            "logical_fingerprint": _fingerprint(
+                provisional.model_dump(
+                    mode="json", exclude={"logical_fingerprint"}
+                )
+            ),
+        }
+    )
+
+
 def _adjudicate_case(
-    *, item: plan.TerminalReferenceSecPlanItemV1, document_path: Path
+    *,
+    item: plan.TerminalReferenceSecPlanItemV1,
+    document_path: Path,
+    rules: tuple[tuple[str, str, str], ...] | None = None,
 ) -> TerminalReferenceSourceCaseV1:
     raw = document_path.read_bytes()
     decoded, _ = text._decode(raw)
@@ -319,9 +508,10 @@ def _adjudicate_case(
     parser.feed(decoded)
     parser.close()
     normalized = _normalize(" ".join(parser.parts))
+    active_rules = rules or _RULES[item.ticker_locator]
     fields = tuple(
         _match_field(normalized=normalized, key=key, value=value, pattern=pattern)
-        for key, value, pattern in sorted(_RULES[item.ticker_locator])
+        for key, value, pattern in sorted(active_rules)
     )
     matched = all(
         field.state is TerminalReferenceSourceFieldState.MATCHED

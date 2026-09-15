@@ -97,3 +97,9 @@ scripts/admin/acquire-strong-leader-pullback-terminal-reference-sec-supplement.s
 This command cannot fetch a third URL and inherits the same SEC rate, retry,
 size, hash, atomic-custody, and no-credential-retention boundaries as the
 initial source operation.
+
+After acquisition, the dedicated supplemental adjudicator reads only the
+retained two-file source and tests the two REVG consideration fields plus the
+SKX mixed-election cash field. Its fixture-tested contract contains no terminal
+reference, outcome, metric, parameter, canonical-write, or Production
+authority.

@@ -69,3 +69,7 @@ Formal reread produced identical evidence with zero network, credential, or
 document writes. The two documents have not been acquired. The immutable
 five-document source remains retained as valid partial evidence, and LSEG is
 not required for this correction.
+
+The supplemental three-field adjudicator is fixture-tested and remains
+outcome-blind. It has not run against real supplemental content because that
+content does not yet exist.
