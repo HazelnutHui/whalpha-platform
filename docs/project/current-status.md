@@ -33,8 +33,10 @@ ADRs, and audits.
   definitions with zero outcome access. Under ADR 0280, retained five-year split
   evidence repaired the proved source boundary without changing formulas,
   population, or gates. Qualification and its byte-identical replay now pass at
-  98.59% coverage. This opens only design of a finite Development screen; no V2
-  factor is admitted and outcomes remain unread.
+  98.59% coverage. ADR 0281 now freezes six Development trials and ledger V2
+  carries all 14 cumulative trials before outcomes. No V2 factor is admitted;
+  the registered screen is the next executable boundary and outcomes remain
+  unread.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -213,7 +215,7 @@ input; and two related downside-risk guards. The pure 127-session calculator
 has no outcome input and rejects timing, denominator, benchmark-variance, and
 missingness defects explicitly. Real factor values have been inspected only by
 the outcome-blind qualification; none has been outcome-screened or admitted,
-and no new cumulative outcome trial has yet been appended. ADR
+and no new outcome has been read. ADR
 0279 freezes the V2 outcome-blind qualification protocol under logical
 fingerprint
 `b74214155cc148d1e0d37c530ab4fea2f385af1a81237b901eec45e1fee2eb0b`.
@@ -235,8 +237,25 @@ availability, 431,249 complete and 6,153 incomplete vectors, and 267 eligible
 sessions split 123 / 144 across the frozen chronological halves. All eight
 definitions clear the fixed coverage, variation, tie, concentration, and
 redundancy gates. This qualifies measurements for protocol review only; no
-Alpha, model, strategy, or Product authority exists. Development outcomes
-remain prohibited until the finite screen is fully registered.
+Alpha, model, strategy, or Product authority exists. That qualification result
+alone did not authorize Development outcome access.
+
+ADR 0281 now freezes that finite screen at logical fingerprint
+`5441468ef8b392f555aac5a4e9cc8c6d50a9fb064349b6da342ccc2540dc193b`.
+It registers four candidate-Alpha and two risk-guard trials over the 106-session,
+167,860-path Development cohort, with 3-session primary labels, 1/5-session
+decay, per-stable-ID exclusions, 10,000 five-session block-bootstrap
+replicates, chronological halves, unchanged V1 gates, Holm correction within
+the four-Alpha and two-risk families, and fixed cost diagnostics. The
+conditioner and applicability input consume no standalone outcome trials.
+
+Cumulative ledger V2 carries all eight completed V1 trials unchanged and adds
+the six V2 trials as `registered_pending_development_screen`, for 14 total
+trials under logical fingerprint
+`cdc07a2194540b94dbba6bfee673a720ce232dc1d939f8b2c7496dda628946e9`.
+All V2 result identities and outcome-access dates remain empty. Implementation
+and one exact replay of the frozen screen are next; Model Construction stays
+locked unless at least one Alpha factor survives every gate.
 
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
@@ -288,12 +307,11 @@ measured budget breach.
 7. Preserve the completed ADR 0276 screen and exact replay. Do not revise its
    gates, treat the retained risk guard as Alpha, or construct a model from a
    batch with zero admitted candidate Alpha.
-8. Preserve the completed cumulative V1 trial ledger, registered V2 catalog,
-   and byte-identical V2 qualification pass. Register the finite Development
-   cohort, labels, costs, hypothesis families, stability tests, multiplicity,
-   factor cap, and stopping rule before appending a new trial-ledger version or
-   reading outcomes. Do not preselect Momentum Breakout or another named
-   strategy.
+8. Preserve the completed V1 ledger, registered V2 catalog, qualification pass,
+   frozen ADR 0281 screen, and preregistered ledger V2. Implement exactly six
+   Development trials, retain all exclusions, then write one immutable report
+   and one exact replay. Do not alter gates, open Validation/Holdout, or
+   preselect Momentum Breakout or another named strategy.
 9. Keep Factor Discovery, Model Construction, and Strategy Expression as
    separate versioned records; lock the complete lineage before Validation.
 

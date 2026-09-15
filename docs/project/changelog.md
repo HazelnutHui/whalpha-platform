@@ -6,6 +6,25 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Freeze the finite Factor Discovery V2 screen before outcomes
+
+- Accepted ADR 0281 and implemented protocol
+  `quant-research-factor-screening/2.0.0` at logical fingerprint
+  `5441468e...c193b` before any V2 outcome access.
+- Registered four candidate-Alpha and two risk-guard trials over the declared
+  106-session, 167,860-path Development cohort; 3 sessions are primary and 1/5
+  sessions are decay diagnostics.
+- Reused the V1 statistical gates unchanged, required partial rank evidence
+  against the consumed V1 20-session relative-return control, retained
+  session-block inference, chronological stability, Holm families, fixed cost
+  diagnostics, and a maximum of two Alpha factors plus one risk guard.
+- Kept the market-state conditioner and Amihud applicability input at zero
+  standalone trials; interactions and capacity segments require a later finite
+  protocol.
+- Created cumulative ledger V2 at fingerprint `cdc07a21...946e9`, carrying all
+  eight V1 trials and appending six V2 trials with unread outcomes, empty result
+  identities, and no model or Candidate authority.
+
 ## 2026-09-15 — Requalify Factor Catalog V2 with five-year split evidence
 
 - Persisted an owner-only, versioned split candidate from the retained Dell

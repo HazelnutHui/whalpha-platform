@@ -51,3 +51,6 @@ reproduction, shadow review, and any separate Product activation decision.
 This contract grants no new data access, outcome read, factor admission, Model
 Construction, Strategy Expression, Validation, Holdout, Candidate,
 publication, deployment, broker, or execution authority.
+
+The immutable V1 content is carried forward unchanged by the
+[V2 preregistration ledger](quant-research-discovery-trial-ledger-v2.md).

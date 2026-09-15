@@ -110,8 +110,10 @@ Sequence:
    five-year split candidate without changing the protocol; the repaired report
    and replay are byte-identical at 98.59% coverage and all eight definitions
    are eligible for screening-protocol review;
-5. freeze the new cohort, labels, related-hypothesis groups, multiplicity,
-   stability, cost, selection, and stop rules; and
+5. ~~freeze the new cohort, labels, related-hypothesis groups, multiplicity,
+   stability, cost, selection, and stop rules;~~ ADR 0281 registers six V2
+   trials, carries all 14 cumulative trials in ledger V2, and leaves every V2
+   outcome unread; and
 6. execute one Development report and one exact replay, then accept rejection
    if no candidate Alpha survives.
 

@@ -185,8 +185,19 @@ and SHA-256
 Status is `ready_for_screening_protocol_review`: 431,249 / 437,402 complete
 vectors, 98.5933% coverage, and 267 eligible sessions split 123 / 144 across
 the frozen chronological halves. All eight definitions qualify for protocol
-review, but none is admitted as Alpha or registered for an outcome screen. The
-next action is to freeze one finite Development screen before opening outcomes.
+review, but none is admitted as Alpha.
+
+ADR 0281 freezes the finite V2 Development screen at logical fingerprint
+`5441468ef8b392f555aac5a4e9cc8c6d50a9fb064349b6da342ccc2540dc193b`.
+It registers four Alpha and two risk-guard trials, 3-session primary outcomes,
+1/5-session decay, unchanged V1 gates, block inference, Holm families, fixed
+cost diagnostics, a three-factor cap, and one-report/one-replay stopping. The
+conditioner and applicability input have zero standalone outcome trials.
+Cumulative ledger V2 preserves all eight V1 trials and appends the six unread
+V2 trials for 14 total; its logical fingerprint is
+`cdc07a2194540b94dbba6bfee673a720ce232dc1d939f8b2c7496dda628946e9`.
+No V2 outcome has been read. The next action is exact implementation and test of
+this frozen Development screen; Validation and Holdout remain closed.
 
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility
