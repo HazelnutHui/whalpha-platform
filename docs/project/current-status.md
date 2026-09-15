@@ -47,14 +47,15 @@ presentation layers. Guest and credential Sessions intentionally receive the
 same data and capability. Snapshot/API failure closes without synthetic
 Production data.
 
-The currently deployed Lab presents the Factor Discovery -> Model Construction
--> Strategy Expression architecture, the first outcome-blind 12-definition
-catalog, its exact-replay qualification report, all formulas and timing rules,
-the retained Pullback rejection, and a dated research-foundation snapshot.
-The newer Factor Catalog V1 Development result exists on Dell but is not yet
-deployed at this status checkpoint. Its planned Product projection must show
-the failed Alpha screen, retained risk guard, exact evidence, and continuing
-lock without implying model or Candidate authority.
+The deployed Lab presents the Factor Discovery -> Model Construction ->
+Strategy Expression architecture, the first 12-definition catalog, its
+outcome-blind qualification, all formulas and timing rules, all eight
+Development decisions, the failed Alpha screen, retained risk guard, exact
+evidence identities, limitations, continuing model/Product lock, the retained
+Pullback rejection, and a dated research-foundation snapshot. The public
+landing page carries the same no-Alpha/no-model state. The deployment changed
+no market analytics, Baseline Candidate calculation, model authority, or
+research result.
 
 The current Candidate score, Entry Geometry, and technical Strategy Channels
 remain visible, transparent, unvalidated **Baseline V1**. They are not expected-

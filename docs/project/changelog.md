@@ -28,6 +28,11 @@ and dated [audits](../audits/). Current capability and next work belong in
 - Added the complete audit and synchronized the trilingual login and Quant
   Research Lab projection so the failed Alpha evidence, retained risk guard,
   protocol, limitations, and exact identities remain visible.
+- Deployed OCI release `2026-09-15T115210Z-bb478169d42c` from source
+  `bb478169d42c1784f4c1ff3f05302f6dc0644f3e`, reusing the immutable 2026-09-11
+  Snapshot and Market Intelligence publication. Independent postflight proved
+  bundle/checksum parity, equal guest capability, protected routes, healthy
+  services, and zero staging or failed residue.
 
 ## 2026-09-15 — Freeze the first development-only factor screen
 

@@ -50,6 +50,7 @@ Read this bounded set before new Lab research:
 - [Outcome-blind Factor Qualification V1 audit](audits/quant-research-factor-qualification-2026-09-15.md)
 - [Factor Screening V1 contract](data-contracts/quant-research-factor-screening-v1.md)
 - [Factor Screening V1 result audit](audits/quant-research-factor-screening-2026-09-15.md)
+- [Factor Screening V1 UI deployment audit](audits/quant-research-factor-screening-ui-deployment-2026-09-15.md)
 - [Factor Qualification UI deployment audit](audits/quant-research-factor-qualification-ui-deployment-2026-09-15.md)
 - [ADR 0276: frozen Development screening protocol](decisions/0276-freeze-factor-catalog-v1-development-screening-protocol.md)
 - [ADR 0275: frozen factor-qualification protocol](decisions/0275-freeze-outcome-blind-factor-qualification-protocol.md)
