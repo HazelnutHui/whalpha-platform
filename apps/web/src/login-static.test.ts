@@ -65,7 +65,9 @@ describe('static login client', () => {
     expect(loginHtml).toContain('data-i18n="currentProgram">Factor Discovery V2');
     expect(loginHtml).toContain('<span>V2</span>');
     expect(loginHtml).toContain('class="dossier-state" data-state="qualified"');
+    expect(loginHtml).toContain('data-i18n="researchState">Development screen registered · outcomes unread');
     expect(loginHtml).toContain('data-i18n="stateQualified">Passed · 98.59% coverage');
+    expect(loginHtml).toContain('the cumulative ledger now counts 14');
     expect(loginHtml).toContain('data-i18n="priorProgram"');
     expect(loginHtml).toContain('data-i18n="flowData">Model construction');
     expect(loginHtml).toContain('data-i18n="flowValidation">Strategy expression');

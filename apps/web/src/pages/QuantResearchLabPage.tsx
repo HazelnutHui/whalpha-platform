@@ -1,5 +1,6 @@
 import modelRecord from '../modelRecords/quant-research-lab-model-record-v1.json';
 import factorQualification from '../modelRecords/quant-research-factor-qualification-v2.json';
+import factorScreeningV2 from '../modelRecords/quant-research-factor-screening-v2.json';
 import factorScreening from '../modelRecords/quant-research-factor-screening-v1.json';
 import { useI18n } from '../i18n/I18nProvider';
 
@@ -9,7 +10,7 @@ const ARCHITECTURE_COPY = {
     title: 'From measurement to a decision—without collapsing the evidence.',
     note: 'The research universe can expand over time. Every batch that reads outcomes remains finite, registered, and fully counted.',
     layers: [
-      ['01', 'Factor Discovery', 'CURRENT · V2 SCREEN DESIGN', 'Catalog V2 has eight outcome-blind measurements and an exactly replayed qualification pass. All eight cleared the fixed data gates; the next boundary is a finite Development screen registered before any outcome is read.'],
+      ['01', 'Factor Discovery', 'CURRENT · V2 SCREEN IMPLEMENTATION', 'Catalog V2 passed outcome-blind qualification. Six Development trials are now frozen and the cumulative ledger counts all 14 trials; no V2 outcome has been read. The next boundary is exact implementation, one report, and one replay.'],
       ['02', 'Model Construction', 'LOCKED', 'Combine a small admitted factor set into an explainable rank, probability, distribution, or risk state. No model is preselected.'],
       ['03', 'Strategy Expression', 'LOCKED', 'Translate a locked model into entry, exit, holding, sizing, cost, capacity, and risk rules. Stock and option expressions remain separate.'],
     ],
@@ -22,7 +23,7 @@ const ARCHITECTURE_COPY = {
     title: '从测量到决策，每一层证据都保持独立。',
     note: '长期研究方向可以持续扩展；但每一批读取结果的实验都必须有限、预先登记并计入真实试验次数。',
     layers: [
-      ['01', '因子发现层', '当前阶段 · V2 筛选设计', '因子目录 V2 的8项测量已按原协议通过不读取结果的资格诊断，并完成精确重放。下一道边界是在读取任何结果前，先登记有限的开发期筛选。'],
+      ['01', '因子发现层', '当前阶段 · V2 筛选实现', '因子目录 V2 已通过不读取结果的资格诊断。6项开发期试验已经冻结，累计账本完整记录14项试验；V2 尚未读取任何结果。下一道边界是精确实现、一次报告和一次重放。'],
       ['02', '模型构建层', '保持锁定', '用少量合格且非冗余的因子构建可解释排名、概率、分布或风险状态。目前没有预先指定模型。'],
       ['03', '策略表达层', '保持锁定', '把锁定模型转为入场、退出、持有、仓位、成本、容量与风险规则；股票和期权表达分开验证。'],
     ],
@@ -35,7 +36,7 @@ const ARCHITECTURE_COPY = {
     title: 'De la medición a la decisión, sin mezclar las capas de evidencia.',
     note: 'El universo de investigación puede ampliarse con el tiempo. Cada campaña que consulta resultados sigue siendo finita, registrada y contabilizada.',
     layers: [
-      ['01', 'Descubrimiento de factores', 'FASE ACTUAL · DISEÑO DEL FILTRO V2', 'Las ocho mediciones del Catálogo V2 superaron la calificación sin resultados con el protocolo intacto y una reproducción exacta. El siguiente límite es registrar una selección de Desarrollo finita antes de consultar cualquier resultado.'],
+      ['01', 'Descubrimiento de factores', 'FASE ACTUAL · IMPLEMENTACIÓN DEL FILTRO V2', 'El Catálogo V2 superó la calificación sin resultados. Ya están congeladas seis pruebas de Desarrollo y el registro acumulativo contabiliza las 14 pruebas; no se ha consultado ningún resultado V2. El siguiente límite es la implementación exacta, un informe y una reproducción.'],
       ['02', 'Construcción del modelo', 'BLOQUEADA', 'Combina un pequeño conjunto de factores admitidos en un rango, probabilidad, distribución o estado de riesgo explicable. No hay un modelo preseleccionado.'],
       ['03', 'Expresión de estrategia', 'BLOQUEADA', 'Convierte un modelo bloqueado en reglas de entrada, salida, tenencia, tamaño, costes, capacidad y riesgo. Acciones y opciones se validan por separado.'],
     ],
@@ -125,16 +126,17 @@ const COPY = {
     eyebrow: 'Factor, model, and strategy research · governed registry',
     title: 'Quant Research Lab',
     subtitle: 'The authoritative record of what is measured, what is modeled, how it becomes a strategy, and where the evidence fails.',
-    status: 'FACTOR DISCOVERY V2', statusValue: 'QUALIFIED · SCREEN DESIGN OPEN',
-    statusNote: 'Five-year split evidence repaired the proved coverage boundary without changing formulas or gates. Two byte-identical outcome-blind runs reached 98.59% coverage. All eight factors may enter screening-protocol review; none is predictive or admitted yet.',
+    status: 'FACTOR DISCOVERY V2', statusValue: 'SCREEN REGISTERED · OUTCOMES UNREAD',
+    statusNote: 'Five-year split evidence produced a byte-identical 98.59% qualification pass. Six finite Development trials are now frozen and appended to the cumulative ledger before outcome access. No factor is predictive or admitted yet.',
     coverage: 'Evidence state', coverageNote: 'Method completeness and model effectiveness are separate questions.',
     coverageBoundary: 'A published method is not a validated strategy, current-market recommendation, or option-return forecast.',
     readiness: 'Evidence ladder', readinessItems: [
       ['Three-layer architecture', 'ACCEPTED', 'Factor Discovery, Model Construction, and Strategy Expression now have separate version and evidence boundaries.', 'met'],
-      ['Cumulative research ledger', 'CURRENT', 'V1 failures and its one retained risk guard remain counted; V2 is explicitly adaptive to that consumed Development evidence.', 'met'],
+      ['Cumulative research ledger', 'REGISTERED · 14 TRIALS', 'All eight consumed V1 trials remain intact; four V2 Alpha and two V2 risk trials are appended with outcomes unread.', 'met'],
       ['Factor Catalog V2', 'REGISTERED', 'Eight exact definitions cover continuation, reversal, return timing, defensive state, liquidity applicability, and downside risk.', 'met'],
       ['V2 data qualification', 'PASSED', 'The report and replay are byte-identical: 98.59% complete vectors, 267 eligible sessions, and all eight definitions clear the frozen gates.', 'met'],
-      ['Development screen design', 'CURRENT', 'Freeze a finite set of Alpha and risk-guard hypotheses, labels, costs, stability tests, multiplicity, caps, and stopping rules before opening outcomes.', 'active'],
+      ['Development screen', 'REGISTERED', 'Six trials, labels, unchanged gates, block inference, Holm families, costs, promotion caps, and one-report/one-replay stopping are frozen.', 'met'],
+      ['Screen implementation', 'CURRENT', 'Implement the frozen protocol exactly, retain every exclusion, then create one immutable Development report and one exact replay.', 'active'],
       ['Model, strategy & Product', 'LOCKED', 'Qualification is not Alpha. No predictive model, strategy expression, Candidate authority, or option-performance claim exists.', 'locked'],
     ],
     foundation: 'Research foundation snapshot', foundationNote: 'Verified, versioned evidence already built on Dell. Each item states both its useful scope and its limit.', foundationBadge: 'EVIDENCE REVIEWED · 15 SEP 2026',
@@ -156,8 +158,13 @@ const COPY = {
     factorRole: 'Role', factorFormula: 'Exact formula', factorWindow: 'Point-in-time source window', factorExpectation: 'Registered relationship',
     factorCutoffValue: 'completed session close → next session open', factorMissingValue: 'explicit unavailable · never zero-fill',
     factorVerdict: 'What V2 earned', factorVerdictValue: '8 / 8 eligible for protocol review', factorVerdictBody: 'Four candidate Alpha measurements, one setup conditioner, one applicability input, and two risk guards cleared coverage, chronology, variation, tie, and redundancy gates. They are measurements awaiting a registered outcome test—not admitted factors.',
-    factorNext: 'Next bounded action', factorNextValue: 'REGISTER FINITE DEVELOPMENT SCREEN', factorNextBody: 'Lock the exact cohort, labels, trial families, costs, stability tests, multiple-testing correction, factor cap, and stopping rule before reading Development outcomes. Validation, Holdout, model construction, and Candidate ranking stay closed.',
+    factorNext: 'Next bounded action', factorNextValue: 'IMPLEMENT EXACT SCREEN · THEN REPLAY', factorNextBody: 'The finite protocol is registered. Implement its six trials without revising formulas or gates, then retain one Development report and one exact replay. Validation, Holdout, model construction, and Candidate ranking stay closed.',
     factorLimits: 'Qualification limits', factorLimitsBody: 'Membership is reconstructed rather than as operated; historical classifications and broad Regime diversity remain unproven; daily bars do not observe spreads or signed order flow; and split-neutral absence remains a disclosed source limitation despite the qualified reconstruction.',
+    screeningV2: 'Registered Development Screen · Factor Catalog V2', screeningV2Note: 'The outcome-reading question is now finite and machine-bound. Registration authorizes exact implementation of the screen—not a model or a strategy.', screeningV2Badge: 'REGISTERED · OUTCOMES UNREAD',
+    screeningV2Stats: ['Formal trials', 'Cumulative trials', 'Development sessions', 'Declared paths', 'Primary / decay'],
+    screeningV2State: 'Current evidence state', screeningV2StateValue: '0 outcomes read', screeningV2StateBody: 'Four Alpha and two risk-guard trials are registered. The conditioner and Amihud applicability input consume no standalone outcome trials.',
+    screeningV2Selection: 'Promotion boundary', screeningV2SelectionValue: '≤2 Alpha + ≤1 risk guard', screeningV2SelectionBody: 'Every survivor must pass standalone and incremental evidence, chronology, concentration, monotonicity, decay, and Holm gates. At least one Alpha survivor is required before Model Construction.',
+    screeningV2Inspect: 'Inspect the frozen six-trial protocol and cumulative ledger', screeningV2Protocol: 'Frozen evaluation', screeningV2ProtocolBody: '3-session primary stock outcome · 1/5-session decay · same-session ranks · 10,000 circular five-session block-bootstrap replications · unchanged V1 gates · Holm within 4-Alpha and 2-risk families · 0/10/25/50 bps-per-side diagnostics.', screeningV2Limits: 'What remains closed', screeningV2LimitsBody: 'Historical sector neutralization and broad Regime diversity are unavailable. The screen is reconstructed Development selection evidence only; Validation, Holdout, model, strategy, Candidate, options, and trading remain locked.',
     factorScreen: 'Historical Development Screen · Factor Catalog V1', factorScreenNote: 'Retained failed research, not the current campaign. Its finite protocol was committed before outcome access and executed twice against the same Development cohort; no candidate Alpha passed.', factorScreenBadge: 'RETAINED FAILURE · EXACT REPLAY',
     factorScreenStats: ['Formal hypotheses', 'Signal sessions', 'Observations', 'Forward labels', 'Selected Alpha / risk'],
     factorScreenOutcome: 'The honest result', factorScreenOutcomeBody: 'Zero candidate-Alpha factors passed the frozen gates. Factor Catalog V1 therefore closes without a predictive model and cannot change Stock Candidates.',
@@ -189,7 +196,7 @@ const COPY = {
     lifecycle: 'Three-layer promotion path', stages: ['Factor discovery', 'Model construction', 'Strategy expression', 'Validation', 'Sealed holdout', 'Shadow', 'Activation'],
     current: 'Current', locked: 'Locked', blocked: 'Blocked by evidence',
     results: 'Current research ledger', resultsNote: 'Failures remain visible; no synthetic substitute and no implied active performance',
-    resultCards: [['Factor Catalog V2', 'Qualified · screen design next'], ['Factor Screen V1', 'Closed · no candidate Alpha'], ['Pullback program', 'Closed · no stable selection'], ['Active models', 'None']],
+    resultCards: [['Factor Catalog V2', 'Screen registered · outcomes unread'], ['Factor Screen V1', 'Closed · no candidate Alpha'], ['Pullback program', 'Closed · no stable selection'], ['Active models', 'None']],
     interpret: 'How future evidence will read', interpretBody: 'Signal research will show net expectancy, uncertainty, costs, sample coverage, win/payoff/PF, MFE/MAE, sensitivity, concentration, and counterevidence. It will not be reduced to one score.',
     optionBoundary: 'Stock evidence is not option performance', optionBoundaryBody: 'Options require a separate expression layer using contemporaneous quotes, IV, Greeks, spreads, open interest, expiry, and event risk.',
   },
@@ -197,16 +204,17 @@ const COPY = {
     eyebrow: '因子、模型与策略研究 · 受控档案库',
     title: '量化研究实验室',
     subtitle: '权威记录测量什么、如何建模、怎样形成策略，以及证据在哪一层失败，而不是只陈列漂亮回测。',
-    status: '因子发现 V2', statusValue: '资格通过 · 开放筛选设计',
-    statusNote: '五年拆股证据在不改公式和门槛的前提下修复了已确认的覆盖缺口。两次逐字节一致的不读取结果运行达到98.59%覆盖率；8项因子均可进入筛选协议审查，但尚无预测结论，也未正式获准进入模型。',
+    status: '因子发现 V2', statusValue: '筛选已登记 · 尚未读取结果',
+    statusNote: '五年拆股证据带来了逐字节一致、覆盖率98.59%的资格通过。6项有限开发期试验已经在读取结果前冻结并写入累计账本；目前没有因子被证明有效或获准进入模型。',
     coverage: '证据状态', coverageNote: '方法是否完整与模型是否有效，是两个不同问题。',
     coverageBoundary: '公开方法不代表策略已验证，不代表适合当前市场，也不预测期权收益。',
     readiness: '证据阶梯', readinessItems: [
       ['三层研究架构', '已生效', '因子发现、模型构建与策略表达现在拥有相互独立的版本和证据边界。', 'met'],
-      ['累计研究账本', '已更新', 'V1 的失败和唯一保留风险护栏继续计入；V2 明确披露其设计使用过这些开发期证据。', 'met'],
+      ['累计研究账本', '已登记 · 共14项试验', 'V1 已消耗的8项试验原样保留；V2 新增4项 Alpha 与2项风险试验，且结果尚未读取。', 'met'],
       ['因子目录 V2', '已登记', '8项精确定义覆盖延续、反转、收益时段、防御状态、流动性适用性与下行风险。', 'met'],
       ['V2 数据资格诊断', '已通过', '报告与重放逐字节一致：完整向量覆盖率98.59%，267个合格交易日，8项定义全部通过冻结门槛；6,491条五年拆股来源与旧正式证据重叠冲突为零。', 'met'],
-      ['开发期筛选设计', '当前工作', '在读取结果前冻结有限的 Alpha 与风险假设、标签、成本、稳定性检验、多重校正、因子上限和停止规则。', 'active'],
+      ['开发期筛选', '已登记', '6项试验、标签、原有门槛、区块推断、Holm家族、成本、晋级上限与一次报告/一次重放规则均已冻结。', 'met'],
+      ['筛选实现', '当前工作', '严格实现冻结协议，保留每一条排除原因，然后只生成一份不可变开发期报告与一次精确重放。', 'active'],
       ['模型、策略与产品', '锁定', '资格通过不等于 Alpha；目前仍没有预测模型、策略表达、个股候选权限或期权绩效主张。', 'locked'],
     ],
     foundation: '研究基础快照', foundationNote: '以下是已经在戴尔完成核验并版本化的工程证据；每一项同时标明可用范围与证据边界。', foundationBadge: '证据核对 · 2026-09-15',
@@ -228,8 +236,13 @@ const COPY = {
     factorRole: '角色', factorFormula: '精确公式', factorWindow: '点时数据窗口', factorExpectation: '登记关系',
     factorCutoffValue: '当日收盘数据完成 → 最早下一交易日开盘执行', factorMissingValue: '明确标为不可用 · 禁止静默补零',
     factorVerdict: 'V2 获得了什么资格', factorVerdictValue: '8 / 8 项可进入协议审查', factorVerdictBody: '4项候选 Alpha 测量、1项形态条件、1项适用性输入和2项风险护栏均通过覆盖、时间分布、取值、并列与冗余门槛。它们只是等待登记结果检验的测量，并非已获准因子。',
-    factorNext: '下一项有限动作', factorNextValue: '登记有限的开发期筛选', factorNextBody: '在读取开发期结果前，锁定精确总体、标签、试验家族、成本、稳定性检验、多重校正、因子上限与停止规则。验证集、留出集、模型构建和个股候选排名继续关闭。',
+    factorNext: '下一项有限动作', factorNextValue: '精确实现筛选 · 然后重放', factorNextBody: '有限协议已经登记。不得修改公式或门槛，只实现其中6项试验，再保留一份开发期报告和一次精确重放。验证集、留出集、模型构建和个股候选排名继续关闭。',
     factorLimits: '资格诊断边界', factorLimitsBody: '成员资格为事后重建而非当时实录；历史行业分类和充分的市场状态多样性尚未证明；日线不能观察点差或带方向订单流；即使重建数据通过资格，拆股空白是否中性仍作为来源限制公开保留。',
+    screeningV2: '已登记开发期筛选 · 因子目录 V2', screeningV2Note: '读取结果的问题现在已经有限且可机器核验。登记只授权精确实现筛选，不代表模型或策略成立。', screeningV2Badge: '已登记 · 结果未读取',
+    screeningV2Stats: ['正式试验', '累计试验', '开发期交易日', '声明路径', '主要 / 衰减周期'],
+    screeningV2State: '当前证据状态', screeningV2StateValue: '结果读取次数 0', screeningV2StateBody: '已登记4项 Alpha 与2项风险护栏试验；条件因子与 Amihud 适用性输入不消耗任何独立结果试验。',
+    screeningV2Selection: '晋级边界', screeningV2SelectionValue: '最多2项 Alpha + 1项风险护栏', screeningV2SelectionBody: '每个晋级项都必须通过独立与增量证据、时间稳定性、集中度、单调性、衰减和 Holm 门槛；至少1项 Alpha 存活，才可提出模型构建。',
+    screeningV2Inspect: '展开审阅冻结的6项试验协议与累计账本', screeningV2Protocol: '冻结评估规则', screeningV2ProtocolBody: '主要股票结果3个交易日 · 1/5日衰减 · 同日秩 · 10,000次五日循环区块自助法 · V1门槛保持不变 · 4项Alpha与2项风险分别做Holm校正 · 单边0/10/25/50 bps成本诊断。', screeningV2Limits: '仍保持关闭的部分', screeningV2LimitsBody: '历史行业中性化和充分的市场状态多样性仍不可用。筛选仅属于事后重建开发期选择证据；验证集、留出集、模型、策略、个股候选、期权与交易继续锁定。',
     factorScreen: '历史开发期筛选 · 因子目录 V1', factorScreenNote: '这是保留的失败研究，不是当前项目。有限协议在读取结果前已经提交，并在同一开发样本上完整执行两次；没有候选 Alpha 通过。', factorScreenBadge: '失败留档 · 精确重放',
     factorScreenStats: ['正式假设', '信号交易日', '观察数', '前瞻标签', '入选 Alpha / 风险'],
     factorScreenOutcome: '真实结论', factorScreenOutcomeBody: '没有候选 Alpha 通过冻结门槛。因此因子目录 V1 在没有预测模型的状态下关闭，也不得改变个股候选排名。',
@@ -261,7 +274,7 @@ const COPY = {
     lifecycle: '三层晋级路径', stages: ['因子发现', '模型构建', '策略表达', '验证', '封存留出集', '影子运行', '正式激活'],
     current: '当前', locked: '锁定', blocked: '受证据阻塞',
     results: '当前研究账本', resultsNote: '失败结果继续保留；不使用合成替代，也不暗示存在有效绩效',
-    resultCards: [['因子目录 V2', '资格通过 · 下一步筛选设计'], ['因子筛选 V1', '已关闭 · 无候选 Alpha'], ['回撤研究项目', '已关闭 · 无稳定选择'], ['已激活模型', '无']],
+    resultCards: [['因子目录 V2', '筛选已登记 · 结果未读取'], ['因子筛选 V1', '已关闭 · 无候选 Alpha'], ['回撤研究项目', '已关闭 · 无稳定选择'], ['已激活模型', '无']],
     interpret: '未来证据如何呈现', interpretBody: '信号研究将展示净期望、不确定性、成本、样本覆盖、胜率/盈亏比/PF、MFE/MAE、敏感性、集中度与反面证据，不会压缩成一个总分。',
     optionBoundary: '股票证据不等于期权表现', optionBoundaryBody: '期权需要独立表达层，并使用当时的报价、IV、Greeks、点差、OI、到期日与事件风险。',
   },
@@ -269,16 +282,17 @@ const COPY = {
     eyebrow: 'Investigación de factores, modelos y estrategias · registro gobernado',
     title: 'Laboratorio de investigación cuantitativa',
     subtitle: 'El registro autoritativo de qué se mide, qué se modela, cómo se expresa una estrategia y en qué capa falla la evidencia.',
-    status: 'DESCUBRIMIENTO DE FACTORES V2', statusValue: 'CALIFICADO · DISEÑO DEL FILTRO ABIERTO',
-    statusNote: 'La evidencia de splits de cinco años reparó el límite de cobertura sin cambiar fórmulas ni filtros. Dos ejecuciones sin resultados, idénticas byte a byte, alcanzaron el 98,59 %. Los ocho factores pueden pasar a revisión del protocolo; ninguno es aún predictivo ni está admitido.',
+    status: 'DESCUBRIMIENTO DE FACTORES V2', statusValue: 'FILTRO REGISTRADO · RESULTADOS SIN CONSULTAR',
+    statusNote: 'La evidencia de splits produjo una calificación del 98,59 % reproducida byte a byte. Seis pruebas finitas de Desarrollo ya están congeladas y añadidas al registro acumulativo antes de consultar resultados. Ningún factor es aún predictivo ni está admitido.',
     coverage: 'Estado de la evidencia', coverageNote: 'La integridad del método y la eficacia del modelo son cuestiones distintas.',
     coverageBoundary: 'Publicar un método no convierte la estrategia en validada, adecuada para el mercado actual ni predictiva de rentabilidades de opciones.',
     readiness: 'Escalera de evidencia', readinessItems: [
       ['Arquitectura de tres capas', 'ACEPTADA', 'Descubrimiento de factores, Construcción del modelo y Expresión de estrategia tienen límites de versión y evidencia separados.', 'met'],
-      ['Registro acumulativo de investigación', 'ACTUALIZADO', 'Los fallos de V1 y su única salvaguarda conservada siguen contabilizados; V2 declara que su diseño se adapta a esa evidencia ya consumida.', 'met'],
+      ['Registro acumulativo de investigación', 'REGISTRADO · 14 PRUEBAS', 'Las ocho pruebas consumidas de V1 permanecen intactas; se añaden cuatro pruebas Alpha y dos de riesgo V2 sin consultar resultados.', 'met'],
       ['Catálogo de factores V2', 'REGISTRADO', 'Ocho definiciones exactas cubren continuación, reversión, momento del retorno, defensa, aplicabilidad de liquidez y riesgo bajista.', 'met'],
       ['Calificación de datos V2', 'SUPERADA', 'El informe y la reproducción son idénticos byte a byte: 98,59 % de vectores completos, 267 sesiones aptas y los ocho factores superan los filtros congelados; no hubo conflictos con la evidencia canónica previa.', 'met'],
-      ['Diseño de la selección en Desarrollo', 'ACTUAL', 'Congelar antes de consultar resultados un conjunto finito de hipótesis de Alpha y riesgo, etiquetas, costes, pruebas de estabilidad, multiplicidad, límites y reglas de parada.', 'active'],
+      ['Selección en Desarrollo', 'REGISTRADA', 'Se congelaron seis pruebas, etiquetas, filtros sin cambios, inferencia por bloques, familias de Holm, costes, límites de promoción y una regla de un informe y una reproducción.', 'met'],
+      ['Implementación del filtro', 'ACTUAL', 'Implementar exactamente el protocolo congelado, conservar cada exclusión y producir un único informe inmutable de Desarrollo y una reproducción exacta.', 'active'],
       ['Modelo, estrategia y Producto', 'BLOQUEADOS', 'Superar la calificación no demuestra Alpha. Aún no existe modelo predictivo, expresión de estrategia, autoridad sobre Candidatos ni afirmación sobre opciones.', 'locked'],
     ],
     foundation: 'Resumen de la base de investigación', foundationNote: 'Evidencia verificada y versionada que ya existe en Dell. Cada punto indica tanto su utilidad como su límite.', foundationBadge: 'EVIDENCIA REVISADA · 15 SEP 2026',
@@ -300,8 +314,13 @@ const COPY = {
     factorRole: 'Función', factorFormula: 'Fórmula exacta', factorWindow: 'Ventana point-in-time', factorExpectation: 'Relación registrada',
     factorCutoffValue: 'cierre completo de la sesión → primera ejecución en la apertura siguiente', factorMissingValue: 'ausencia explícita · nunca se rellena con cero',
     factorVerdict: 'Qué habilitó V2', factorVerdictValue: '8 / 8 aptos para revisar el protocolo', factorVerdictBody: 'Las cuatro medidas candidatas de Alpha, un condicionante, una variable de aplicabilidad y dos salvaguardas superaron cobertura, cronología, variación, empates y redundancia. Son mediciones pendientes de una prueba registrada, no factores admitidos.',
-    factorNext: 'Siguiente acción acotada', factorNextValue: 'REGISTRAR UNA SELECCIÓN FINITA EN DESARROLLO', factorNextBody: 'Bloquear la cohorte, etiquetas, familias de pruebas, costes, estabilidad, corrección por multiplicidad, límite de factores y regla de parada antes de consultar resultados de Desarrollo. Validación, Holdout, modelo y Candidatos siguen cerrados.',
+    factorNext: 'Siguiente acción acotada', factorNextValue: 'IMPLEMENTAR EL FILTRO EXACTO · DESPUÉS REPRODUCIR', factorNextBody: 'El protocolo finito ya está registrado. Se implementarán sus seis pruebas sin modificar fórmulas ni filtros, seguidas de un informe de Desarrollo y una reproducción exacta. Validación, Holdout, modelo y Candidatos siguen cerrados.',
     factorLimits: 'Límites de la calificación', factorLimitsBody: 'La composición está reconstruida y no registrada tal como se operó; la clasificación histórica y una diversidad amplia de regímenes no están demostradas; las barras diarias no observan diferenciales ni flujo firmado; la neutralidad de ausencias de splits sigue declarada como limitación incluso tras la calificación.',
+    screeningV2: 'Selección registrada en Desarrollo · Catálogo V2', screeningV2Note: 'La pregunta que consultará resultados ya es finita y verificable por máquina. El registro autoriza implementar exactamente la selección, no un modelo ni una estrategia.', screeningV2Badge: 'REGISTRADA · RESULTADOS SIN CONSULTAR',
+    screeningV2Stats: ['Pruebas formales', 'Pruebas acumuladas', 'Sesiones de Desarrollo', 'Trayectorias declaradas', 'Horizonte principal / decaimiento'],
+    screeningV2State: 'Estado actual de la evidencia', screeningV2StateValue: '0 resultados consultados', screeningV2StateBody: 'Hay cuatro pruebas Alpha y dos salvaguardas de riesgo registradas. El condicionante y la variable Amihud de aplicabilidad no consumen pruebas independientes.',
+    screeningV2Selection: 'Límite de promoción', screeningV2SelectionValue: '≤2 Alpha + ≤1 salvaguarda', screeningV2SelectionBody: 'Cada superviviente debe superar evidencia independiente e incremental, cronología, concentración, monotonicidad, decaimiento y Holm. Se exige al menos un Alpha antes de proponer Construcción del modelo.',
+    screeningV2Inspect: 'Examinar el protocolo congelado de seis pruebas y el registro acumulativo', screeningV2Protocol: 'Evaluación congelada', screeningV2ProtocolBody: 'Resultado principal a 3 sesiones · decaimiento a 1/5 · rangos por sesión · 10.000 réplicas bootstrap con bloques circulares de cinco sesiones · filtros V1 sin cambios · Holm en familias de 4 Alpha y 2 riesgos · diagnósticos de 0/10/25/50 pb por lado.', screeningV2Limits: 'Qué permanece cerrado', screeningV2LimitsBody: 'No se dispone de neutralización sectorial histórica ni de diversidad amplia de regímenes. La selección solo aporta evidencia de Desarrollo reconstruida; Validación, Holdout, modelo, estrategia, Candidatos, opciones y negociación siguen bloqueados.',
     factorScreen: 'Selección histórica en Desarrollo · Catálogo V1', factorScreenNote: 'Investigación fallida conservada, no la campaña actual. El protocolo finito se confirmó antes de consultar resultados y se ejecutó dos veces sobre la misma cohorte; ningún candidato de Alpha superó los filtros.', factorScreenBadge: 'FALLO CONSERVADO · REPRODUCCIÓN EXACTA',
     factorScreenStats: ['Hipótesis formales', 'Sesiones de señal', 'Observaciones', 'Etiquetas futuras', 'Alpha / riesgo seleccionados'],
     factorScreenOutcome: 'Resultado sin adornos', factorScreenOutcomeBody: 'Ningún candidato de Alpha superó los filtros congelados. El Catálogo V1 se cierra sin modelo predictivo y no puede modificar la clasificación de acciones.',
@@ -333,7 +352,7 @@ const COPY = {
     lifecycle: 'Ruta de promoción de tres capas', stages: ['Descubrimiento de factores', 'Construcción del modelo', 'Expresión de estrategia', 'Validación', 'Holdout sellado', 'Sombra', 'Activación'],
     current: 'Actual', locked: 'Bloqueado', blocked: 'Bloqueado por la evidencia',
     results: 'Registro de investigación actual', resultsNote: 'Los fallos siguen visibles; sin sustitutos sintéticos ni rendimiento activo implícito',
-    resultCards: [['Catálogo de factores V2', 'Calificado · sigue el diseño del filtro'], ['Selección de factores V1', 'Cerrada · sin candidato de Alpha'], ['Programa Pullback', 'Cerrado · sin selección estable'], ['Modelos activos', 'Ninguno']],
+    resultCards: [['Catálogo de factores V2', 'Filtro registrado · resultados sin consultar'], ['Selección de factores V1', 'Cerrada · sin candidato de Alpha'], ['Programa Pullback', 'Cerrado · sin selección estable'], ['Modelos activos', 'Ninguno']],
     interpret: 'Cómo se presentará la evidencia futura', interpretBody: 'La investigación de señales mostrará expectativa neta, incertidumbre, costes, cobertura de muestra, tasa de aciertos/payoff/PF, MFE/MAE, sensibilidad, concentración y evidencia contraria. No se reducirá a una sola puntuación.',
     optionBoundary: 'La evidencia de una acción no es rendimiento de opciones', optionBoundaryBody: 'Las opciones requieren una capa de expresión independiente con cotizaciones contemporáneas, IV, griegas, diferenciales, interés abierto, vencimiento y riesgo de eventos.',
   },
@@ -364,6 +383,13 @@ export function QuantResearchLabPage(): JSX.Element {
     `${decimalFormat.format(factorQualification.coverage_percent)}%`,
     numberFormat.format(factorQualification.pairwise_correlation_count),
     numberFormat.format(factorQualification.near_duplicate_group_count),
+  ];
+  const factorScreeningV2Stats = [
+    numberFormat.format(factorScreeningV2.formal_trial_count),
+    numberFormat.format(factorScreeningV2.cumulative_trial_count),
+    numberFormat.format(factorScreeningV2.development_session_count),
+    numberFormat.format(factorScreeningV2.development_declared_path_count),
+    `${factorScreeningV2.primary_horizon_sessions} / ${factorScreeningV2.decay_horizon_sessions.join('·')}`,
   ];
   const factorScreenStats = [
     numberFormat.format(factorScreening.formal_hypothesis_count),
@@ -452,8 +478,34 @@ export function QuantResearchLabPage(): JSX.Element {
       <div className="research-factor-limit"><strong>{c.factorLimits}</strong><p>{c.factorLimitsBody}</p></div>
     </section>
 
+    <section className="research-card research-factor-qualification" aria-labelledby="research-factor-screening-v2-title">
+      <header><span>04</span><div><h2 id="research-factor-screening-v2-title">{c.screeningV2}</h2><p>{c.screeningV2Note}</p></div><b>{c.screeningV2Badge}</b></header>
+      <div className="research-factor-stats research-screen-stats">
+        {c.screeningV2Stats.map((label, index) => <article key={label}><span>{label}</span><strong>{factorScreeningV2Stats[index]}</strong></article>)}
+      </div>
+      <div className="research-screen-verdict">
+        <article className="retained"><span>{c.screeningV2State}</span><strong>{c.screeningV2StateValue}</strong><p>{c.screeningV2StateBody}</p></article>
+        <article className="retained"><span>{c.screeningV2Selection}</span><strong>{c.screeningV2SelectionValue}</strong><p>{c.screeningV2SelectionBody}</p></article>
+      </div>
+      <details className="research-factor-details research-screen-details">
+        <summary>{c.screeningV2Inspect}</summary>
+        <div className="research-screen-protocol">
+          <article><strong>{FACTOR_TAXONOMY[locale].candidate_alpha}</strong><ul className="research-record-list">{factorScreeningV2.alpha_factor_ids.map((factorId) => <li key={factorId}>{FACTOR_NAMES[locale][factorId]}</li>)}</ul></article>
+          <article><strong>{FACTOR_TAXONOMY[locale].risk_guard}</strong><ul className="research-record-list">{factorScreeningV2.risk_guard_factor_ids.map((factorId) => <li key={factorId}>{FACTOR_NAMES[locale][factorId]}</li>)}</ul></article>
+        </div>
+        <div className="research-screen-protocol"><article><strong>{c.screeningV2Protocol}</strong><p>{c.screeningV2ProtocolBody}</p></article><article><strong>{c.screeningV2Limits}</strong><p>{c.screeningV2LimitsBody}</p></article></div>
+        <dl className="research-factor-reproduction">
+          <div><dt>Development window</dt><dd>{factorScreeningV2.first_development_signal_session} → {factorScreeningV2.last_development_signal_session}</dd></div>
+          <div><dt>incremental control</dt><dd><code>{factorScreeningV2.incremental_baseline_factor_id}</code></dd></div>
+          <div><dt>protocol fingerprint</dt><dd><code>{factorScreeningV2.protocol_fingerprint}</code></dd></div>
+          <div><dt>prior ledger</dt><dd><code>{factorScreeningV2.prior_ledger_fingerprint}</code></dd></div>
+          <div><dt>registered ledger</dt><dd><code>{factorScreeningV2.registered_ledger_fingerprint}</code></dd></div>
+        </dl>
+      </details>
+    </section>
+
     <section className="research-card research-factor-screening" aria-labelledby="research-factor-screening-title">
-      <header><span>04</span><div><h2 id="research-factor-screening-title">{c.factorScreen}</h2><p>{c.factorScreenNote}</p></div><b>{c.factorScreenBadge}</b></header>
+      <header><span>05</span><div><h2 id="research-factor-screening-title">{c.factorScreen}</h2><p>{c.factorScreenNote}</p></div><b>{c.factorScreenBadge}</b></header>
       <div className="research-factor-stats research-screen-stats">
         {c.factorScreenStats.map((label, index) => <article key={label}><span>{label}</span><strong>{factorScreenStats[index]}</strong></article>)}
       </div>
@@ -487,7 +539,7 @@ export function QuantResearchLabPage(): JSX.Element {
     </section>
 
     <section className="research-card research-engineering-evidence" aria-labelledby="research-engineering-title">
-      <header><span>05</span><div><h2 id="research-engineering-title">{c.engineering}</h2><p>{c.engineeringNote}</p></div><b>{c.engineeringBadge}</b></header>
+      <header><span>06</span><div><h2 id="research-engineering-title">{c.engineering}</h2><p>{c.engineeringNote}</p></div><b>{c.engineeringBadge}</b></header>
       <ol className="research-engineering-rail">{c.engineeringStages.map((stage, index) => <li className={index < 3 ? 'done' : 'blocked'} key={stage}><i>{index < 3 ? '✓' : '!'}</i><strong>{stage}</strong><small>{index < 3 ? c.verified : c.blockedState}</small></li>)}</ol>
       <div className="research-engineering-stats">
         {[[c.declaredSessions, engineering.session_count], [c.completeSessions, engineering.complete_feature_session_count], [c.declaredPaths, engineering.expected_path_count], [c.computablePaths, engineering.complete_observation_count], [c.excludedPaths, engineering.excluded_path_count]].map(([label, value]) => <article key={label}><span>{label}</span><strong>{numberFormat.format(Number(value))}</strong></article>)}
@@ -500,7 +552,7 @@ export function QuantResearchLabPage(): JSX.Element {
     <section className="research-boundary-grid"><article><span>{c.owner}</span><strong>{c.ownerValue}</strong></article><article><span>{c.boundary}</span><p>{c.boundaryBody}</p></article></section>
 
     <section className="research-card research-model-registry" aria-labelledby="research-model-title">
-      <header><span>06</span><div><h2 id="research-model-title">{c.registry}</h2><p>{c.featured}</p></div></header>
+      <header><span>07</span><div><h2 id="research-model-title">{c.registry}</h2><p>{c.featured}</p></div></header>
       <article className="research-model-summary">
         <div className="research-model-heading"><div><span>{modelRecord.model_id}</span><h3>{modelName}</h3><p>{modelRecord.hypothesis}</p></div><div className="research-model-badges"><b>{c.methodOnly}</b><b>{c.noCandidate}</b><b>{c.notAssessed}</b></div></div>
         <dl className="research-model-facts">
@@ -545,9 +597,9 @@ export function QuantResearchLabPage(): JSX.Element {
       </details>
     </section>
 
-    <section className="research-card research-lifecycle"><header><span>07</span><h2>{c.lifecycle}</h2></header><ol>{c.stages.map((stage, index) => <li className={index === 0 ? 'active' : 'locked'} key={stage}><i>{index + 1}</i><strong>{stage}</strong><small>{index === 0 ? c.current : c.locked}</small></li>)}</ol></section>
+    <section className="research-card research-lifecycle"><header><span>08</span><h2>{c.lifecycle}</h2></header><ol>{c.stages.map((stage, index) => <li className={index === 0 ? 'active' : 'locked'} key={stage}><i>{index + 1}</i><strong>{stage}</strong><small>{index === 0 ? c.current : c.locked}</small></li>)}</ol></section>
 
-    <section className="research-card research-results"><header><span>08</span><div><h2>{c.results}</h2><p>{c.resultsNote}</p></div></header><div className="research-result-grid">{c.resultCards.map(([name, state]) => <article key={name}><b aria-hidden="true">—</b><strong>{name}</strong><span>{state}</span></article>)}</div></section>
+    <section className="research-card research-results"><header><span>09</span><div><h2>{c.results}</h2><p>{c.resultsNote}</p></div></header><div className="research-result-grid">{c.resultCards.map(([name, state]) => <article key={name}><b aria-hidden="true">—</b><strong>{name}</strong><span>{state}</span></article>)}</div></section>
 
     <section className="research-boundary-grid research-footer-notes"><article><span>{c.interpret}</span><p>{c.interpretBody}</p></article><article><span>{c.optionBoundary}</span><p>{c.optionBoundaryBody}</p></article></section>
   </main>;

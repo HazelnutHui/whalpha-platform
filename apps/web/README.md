@@ -16,8 +16,9 @@ model-driven Candidate ranking as a downstream activation, governed research
 automation as a planned extension of traditional quantitative discipline, and
 the three established market-context workspaces as free supporting tools. Its
 current dossier identifies Factor Discovery V2, the byte-identical 98.59%
-data-qualification pass, zero admitted Alpha factors, and the finite
-Development-screen design as the next boundary; V1 and Strong-Leader Pullback
+data-qualification pass, six registered Development trials, a cumulative
+14-trial ledger, zero read V2 outcomes, and exact screen implementation as the
+next boundary; V1 and Strong-Leader Pullback
 remain historical failed research. The first viewport keeps account/password sign-in as the
 primary entry, places equal-capability guest access immediately below it, and
 uses a persistent continuation cue to expose the research narrative below.
@@ -28,7 +29,7 @@ lifecycle references, and point-in-time fundamental pilot without combining
 them into a misleading readiness score. Factor Discovery V2 now leads the
 page: all eight exact formulas, roles, the report/replay identity, 431,249 of
 437,402 complete vectors, the split-evidence lineage, and the next bounded
-screen-design step are visible without any outcome claim. V1 screening and the Pullback
+six-trial screen are visible without any outcome claim. V1 screening and the Pullback
 method remain explicitly historical. The displayed 95.38% lower on the page is
 the old Pullback method-computability coverage, not a hit rate, prediction
 accuracy, or return.
@@ -102,9 +103,10 @@ guide.
 - Language-neutral, risk-mode-specific Stock Candidate ranking, entry-location
   review, strategy channels, cross-channel decision desk, price-path/level
   context, contribution ledgers, and evidence drawer
-- Trilingual Quant Research Lab foundation, Factor Catalog V2 qualification,
+- Trilingual Quant Research Lab foundation, Factor Catalog V2 qualification
+  and registered six-trial Development screen,
   historical V1 Development screening, and retained-method workspace. The page
-  exposes the exactly replayed V2 data rejection and its source boundary, all
+  exposes the exactly replayed V2 data qualification and its source boundary, all
   eight V2 definitions, the historical no-Alpha V1 result and retained risk
   guard, protocol identities, limitations, and continuing model/Product lock
   without presenting a score as validated performance
