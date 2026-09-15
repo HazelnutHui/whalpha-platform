@@ -19,6 +19,11 @@ and dated [audits](../audits/). Current capability and next work belong in
 - Preserved the model, strategy, Validation, Holdout, Candidate, option, and
   Production authority locks. Market analytics and Baseline V1 calculations
   are unchanged.
+- Deployed OCI release `2026-09-15T142104Z-99b4467c0379` from source
+  `99b4467c0379cb67036b574f7ef8ace85c179c53`; independent postflight verified
+  the exact release, guest flow, protected routes, equal capability, services,
+  listeners, and zero staging/failed residue. Credential login and final visual
+  appearance remain manual checks.
 
 ## 2026-09-15 — Reject V2 at the long-window split-evidence gate
 

@@ -1,8 +1,8 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-15T06:31:47Z
+Operational state verified at: 2026-09-15T14:19:33Z
 
-Deployment state verified at: 2026-09-15T11:53:28Z
+Deployment state verified at: 2026-09-15T14:22:24Z
 
 Repository context updated at: 2026-09-15 UTC
 
@@ -20,8 +20,8 @@ ADRs, and dated audits.
 | Branch | `main`; verify live HEAD before mutation |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Active OCI release | `2026-09-15T115210Z-bb478169d42c` |
-| Deployed source | `bb478169d42c1784f4c1ff3f05302f6dc0644f3e` |
+| Active OCI release | `2026-09-15T142104Z-99b4467c0379` |
+| Deployed source | `99b4467c0379cb67036b574f7ef8ace85c179c53` |
 
 Dell owns code, canonical data, governance, and heavy computation. OCI is the
 bounded public-serving tier. A newer clean repository commit does not imply a
@@ -46,12 +46,14 @@ network-disabled reread. Run project Python through
 
 The current release passed independent release, source, bundle, checksum,
 service, protected-route, guest-flow, Candidate-route, logout, and residue
-checks. Public landing content exposes the closed Factor Discovery V1 state;
-the protected Lab exposes the replayed qualification report, all 12 exact
-formulas, all eight Development decisions, the no-Alpha verdict, the retained
-risk guard, protocol/report identities, limitations, and its locked authority
-boundary. An unauthenticated Dashboard request redirects to Session entry.
-Password login and final visual appearance remain manual checks.
+checks. Public landing content and the protected Lab now expose Factor
+Discovery V2 as current: eight exact definitions, 266,335 / 437,402 complete
+vectors, 60.89% coverage, the exactly replayed data rejection, zero admitted
+Alpha factors, the split-evidence boundary, and the unchanged-protocol repair.
+V1 screening and Strong-Leader Pullback remain historical failed research; all
+model, strategy, Validation, Holdout, Candidate, and option-performance
+authority stays locked. An unauthenticated Dashboard request redirects to
+Session entry. Password login and final visual appearance remain manual checks.
 Production Market Intelligence still consumes only 26 sessions and reports
 `degraded_short_history`; canonical history is deeper.
 
