@@ -77,6 +77,7 @@ or dated [audits](audits/) when reproducing that program.
 - [Infrastructure](operations/infrastructure.md)
 - [Daily EOD Automation](operations/daily-eod-automation.md)
 - [Five-Year EOD and Identity Backfill](operations/five-year-eod-identity-backfill.md)
+- [Quant Research Factor Screening](operations/quant-research-factor-screening.md)
 - [Market Intelligence Publication](operations/market-intelligence-publication.md)
 - [Dashboard Snapshot Publication](operations/dashboard-snapshot-publication.md)
 - [OCI Dashboard Deployment](operations/oci-private-dashboard-deployment.md)
