@@ -95,6 +95,7 @@ The complete registries remain available through the
 - [Strong-Leader Pullback Method Diagnostics](operations/strong-leader-pullback-method-diagnostics.md)
 - [Strong-Leader Pullback Research Admission V2](operations/strong-leader-pullback-research-admission-v2.md)
 - [Strong-Leader Pullback Reconstructed Development Dataset](operations/strong-leader-pullback-reconstructed-development-dataset.md)
+- [Strong-Leader Pullback Reconstructed Development Statistics](operations/strong-leader-pullback-reconstructed-development-statistics.md)
 - [Terminal Reference SEC Source](operations/strong-leader-pullback-terminal-reference-sec-source.md)
 - [Market Intelligence Publication](operations/market-intelligence-publication.md)
 - [Dashboard Snapshot Publication](operations/dashboard-snapshot-publication.md)

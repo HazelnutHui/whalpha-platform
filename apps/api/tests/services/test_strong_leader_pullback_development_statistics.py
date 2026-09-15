@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from datetime import date, datetime, timezone
 from decimal import Decimal
+from types import SimpleNamespace
 from uuid import UUID
 
 import pytest
@@ -13,6 +15,11 @@ from tip_api.contracts.analytics.v1 import (
     DevelopmentEndpointScenario,
     DevelopmentSelectionStatus,
     StrategyMembershipMode,
+)
+from tip_api.persistence.strong_leader_pullback_development_statistics import (
+    StrongLeaderPullbackDevelopmentStatisticsPersistenceError,
+    read_strong_leader_pullback_development_statistics,
+    write_strong_leader_pullback_development_statistics,
 )
 from tip_api.services.candidate_strategy_research_execution import (
     build_strong_leader_pullback_observation,
@@ -247,3 +254,108 @@ def test_disposition_contract_rejects_silent_omission() -> None:
             unexecutable_no_next_open_count=0,
             numeric_count=1,
         )
+
+
+def test_owner_only_statistics_round_trip_and_immutable_replay(
+    tmp_path, complete_report
+) -> None:
+    custody = tmp_path / "custody"
+    custody.mkdir(mode=0o700)
+    target = custody / "report=fixture"
+
+    first = write_strong_leader_pullback_development_statistics(
+        output_root=target,
+        output_custody_root=custody,
+        report=complete_report,
+    )
+    second = write_strong_leader_pullback_development_statistics(
+        output_root=target,
+        output_custody_root=custody,
+        report=complete_report,
+    )
+
+    assert first.status == "published"
+    assert second.status == "already_present"
+    assert second.report == complete_report
+    assert {item.stat().st_mode & 0o777 for item in target.iterdir()} == {0o400}
+
+
+def test_statistics_reader_rejects_custody_tampering(
+    tmp_path, complete_report
+) -> None:
+    custody = tmp_path / "custody"
+    custody.mkdir(mode=0o700)
+    target = custody / "report=fixture"
+    write_strong_leader_pullback_development_statistics(
+        output_root=target,
+        output_custody_root=custody,
+        report=complete_report,
+    )
+    (target / "report.json").chmod(0o600)
+
+    with pytest.raises(
+        StrongLeaderPullbackDevelopmentStatisticsPersistenceError,
+        match="custody",
+    ):
+        read_strong_leader_pullback_development_statistics(
+            output_root=target,
+            output_custody_root=custody,
+        )
+
+
+def test_statistics_cli_retains_only_bounded_summary(
+    tmp_path, complete_report, monkeypatch, capsys
+) -> None:
+    from tip_api.services import strong_leader_pullback_development_statistics_cli
+
+    source = SimpleNamespace(
+        manifest=SimpleNamespace(
+            validation_observation_count=0,
+            validation_label_count=0,
+            holdout_observation_count=0,
+            holdout_label_count=0,
+            development_only=True,
+            logical_fingerprint="c" * 64,
+        ),
+        observations=(),
+        labels=(),
+        manifest_sha256="b" * 64,
+    )
+    monkeypatch.setattr(
+        strong_leader_pullback_development_statistics_cli,
+        "read_strong_leader_pullback_development_dataset",
+        lambda **_kwargs: source,
+    )
+    monkeypatch.setattr(
+        strong_leader_pullback_development_statistics_cli,
+        "evaluate_strong_leader_pullback_development_statistics",
+        lambda **_kwargs: complete_report,
+    )
+    custody = tmp_path / "statistics"
+    custody.mkdir(mode=0o700)
+    target = custody / "report=fixture"
+
+    status = strong_leader_pullback_development_statistics_cli.main(
+        [
+            "--development-dataset-root",
+            str(tmp_path / "source"),
+            "--development-dataset-custody-root",
+            str(tmp_path),
+            "--output-root",
+            str(target),
+            "--output-custody-root",
+            str(custody),
+            "--created-at",
+            "2026-09-15T07:00:00Z",
+            "--implementation-revision",
+            "d" * 40,
+        ]
+    )
+    output = json.loads(capsys.readouterr().out)
+
+    assert status == 0
+    assert output["status"] == "published"
+    assert output["summary_count"] == 216
+    assert "summaries" not in output
+    assert output["validation_transition_authorized"] is False
+    assert output["publication_authorized"] is False
