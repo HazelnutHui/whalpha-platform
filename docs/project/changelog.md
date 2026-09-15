@@ -6,6 +6,22 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Freeze the first development-only factor screen
+
+- Accepted ADR 0276 and registered eight finite outcome-reading hypotheses:
+  five candidate-Alpha factors against 3-session SPY-relative return and three
+  risk guards against 3-session maximum adverse excursion.
+- Bound the screen to 106 complete Development sessions and 167,860 expected
+  paths from the independently replayed Factor Catalog V1 qualification; the
+  four setup conditioners remain outcome-unscreened.
+- Froze session-balanced rank and partial-rank evidence, deterministic block
+  inference, Holm families, chronological and decay gates, cost diagnostics,
+  related-group limits, a maximum 2-Alpha/1-risk candidate set, and a one-
+  report/one-replay stopping rule before reading any new outcome.
+- Prohibited reuse of Strong-Leader Pullback results and preserved Validation,
+  Holdout, model, strategy, Candidate, deployment, broker, and Production
+  boundaries.
+
 ## 2026-09-15 — Qualify the first factor catalog without outcomes
 
 - Implemented the immutable 12-factor catalog, deterministic point-in-time
@@ -17,7 +33,7 @@ and dated [audits](../audits/). Current capability and next work belong in
   vectors and 18,646 explicit split-evidence quarantines. All 66 factor pairs
   were checked; none met the frozen near-duplicate rule.
 - Independently replayed the complete cohort to logical fingerprint
-  `fb92e95acb146af66fb4d9e286c96852374a51884936c4accacdab02`; the immutable
+  `fb92e95acb146af66fb4d9e286c96852374a51884936f5d69536c4accacdab02`; the immutable
   report SHA-256 remained
   `3767c39e327e8e3959d184ae8a16d2c5be3e1425fda416093b6aeefc51485e5e`.
 - Preserved zero forward outcomes, zero performance metrics, zero factor

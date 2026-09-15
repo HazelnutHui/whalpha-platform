@@ -26,7 +26,9 @@ ADRs, and audits.
   Construction -> Strategy Expression the durable path. The first 12-factor
   catalog is one bounded outcome-blind batch, not a permanent factor universe
   or a promised next model. Its deterministic qualification report and exact
-  replay are complete; no factor has been admitted and outcomes remain closed.
+  replay are complete. ADR 0276 has frozen the eight-hypothesis Development
+  screen before results; implementation has not yet read an outcome and no
+  factor has been admitted.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -219,8 +221,10 @@ measured budget breach.
 6. Preserve the completed ADR 0275 factor-qualification report and exact
    replay without treating coverage or low redundancy as Alpha evidence.
 7. Freeze the bounded factor-screening protocol before reading any new outcome
-   evidence. Let admitted factor evidence determine whether any model should be
-   constructed; do not preselect Momentum Breakout or another named strategy.
+   evidence. **Complete under ADR 0276.** Implement and execute only that
+   frozen Development screen and exact replay. Let admitted factor evidence
+   determine whether any model should be constructed; do not preselect Momentum
+   Breakout or another named strategy.
 8. Keep Factor Discovery, Model Construction, and Strategy Expression as
    separate versioned records; lock the complete lineage before Validation.
 

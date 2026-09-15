@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0276](0276-freeze-factor-catalog-v1-development-screening-protocol.md):
+  freezes the first finite, development-only factor outcome screen, its eight
+  formal hypotheses, role-specific labels, multiplicity, stability, cap, and
+  one-report stopping rule before any new result is read.
 - [ADR 0275](0275-freeze-outcome-blind-factor-qualification-protocol.md):
   freezes the first zero-outcome factor coverage, distribution, concentration,
   correlation, and near-duplicate report before real values are inspected.

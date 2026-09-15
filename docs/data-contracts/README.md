@@ -127,6 +127,7 @@ see [ADR 0274](../decisions/0274-adopt-factor-model-strategy-three-layer-researc
 - [Strong-Leader Pullback Reconstructed Development Statistics V1](strong-leader-pullback-reconstructed-development-statistics-v1.md)
 - [Strong-Leader Pullback Reconstructed Replacement Selection V1](strong-leader-pullback-reconstructed-replacement-selection-v1.md)
 - [Quant Research Factor Catalog V1](quant-research-factor-catalog-v1.md)
+- [Quant Research Factor Screening V1](quant-research-factor-screening-v1.md)
 - `quant-research-factor-value/1.0`, `quant-research-factor-observation/1.0`,
   and `quant-research-factor-diagnostics/1.0` are the typed implementation and
   private qualification-report contracts for that catalog. Their frozen

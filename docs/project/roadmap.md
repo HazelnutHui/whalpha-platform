@@ -76,6 +76,11 @@ Sequence:
    labels, costs, related-hypothesis groups, multiplicity, stability tests,
    selection cap, and stopping rule.
 
+Both entry review and the before-outcomes protocol are complete under ADR 0276.
+The active work is to implement the frozen eight-hypothesis screen, run it once
+on Development, and independently replay the exact report. No rule may be
+changed after results are opened.
+
 Exit: either a factor batch is ready for registered development screening or
 it is rejected/data-blocked with exact reasons. No model is assumed.
 

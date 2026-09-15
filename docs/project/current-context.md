@@ -122,14 +122,18 @@ It contains 418,756 complete 12-factor vectors across 255 eligible sessions,
 near-duplicate rule. Report SHA-256 is
 `3767c39e327e8e3959d184ae8a16d2c5be3e1425fda416093b6aeefc51485e5e`;
 logical fingerprint is
-`fb92e95acb146af66fb4d9e286c96852374a51884936c4accacdab02`.
+`fb92e95acb146af66fb4d9e286c96852374a51884936f5d69536c4accacdab02`.
 
-No future outcome or performance metric was read and no factor was admitted.
-The next research action is a separate registered screening protocol that must
-freeze labels, cohort, trial count, related-hypothesis groups, multiplicity,
-stability gates, costs, selection cap, and stopping rules before any new
-outcome is read. Model Construction and Strategy Expression remain locked
-until their preceding evidence qualifies.
+No future outcome or performance metric has yet been read and no factor is
+admitted. ADR 0276 now freezes the separate screen before outcome access: 106
+complete Development sessions, 167,860 expected paths, five Alpha and three
+risk-guard hypotheses, role-specific 3-session labels, 1/5-session decay,
+Holm control, chronological stability, cost diagnostics, and a maximum two-
+Alpha/one-risk candidate set. Its logical fingerprint is
+`222b14dd358f5d4e6e260c77226b11f3ac2130f8850f96abe5ae5d48a07a8a60`.
+The next action is implementation and one exact replay of that frozen screen.
+Model Construction and Strategy Expression remain locked until the result
+qualifies.
 
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility
