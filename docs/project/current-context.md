@@ -49,8 +49,12 @@ service, protected-route, guest-flow, Candidate-route, logout, and residue
 checks. Public landing content and the protected Lab now expose Factor
 Discovery V2 as current: eight exact definitions, 431,249 / 437,402 complete
 vectors, 98.59% coverage, the byte-identical qualification pass, six registered
-Development trials, all 14 cumulative trials, and zero read V2 outcomes. Exact
-screen implementation and one replay are the next boundary.
+Development trials, all 14 cumulative trials, and zero read V2 outcomes. ADR
+0282 and the committed Dell-only implementation separately bind the
+qualification-bound factor replay to canonical-only controls and labels. The
+exact frozen V1 diagnostics, rather than all 118 raw Development sessions,
+reconstruct the 106-session cohort. This implementation is not a Production
+deployment. One formal report and one exact replay are the next boundary.
 V1 screening and Strong-Leader Pullback remain historical failed research; all
 model, strategy, Validation, Holdout, Candidate, and option-performance
 authority stays locked. An unauthenticated Dashboard request redirects to
@@ -68,7 +72,7 @@ Production Market Intelligence still consumes only 26 sessions and reports
 | Membership | 3 signal-eligible plus 1,250 reconstructed research-only sessions; combined 1,253 / 1,255 |
 | Corporate actions | 4,643 first-program exposures; 4,623 exact event-date assignments; 20 unassigned |
 | Adjustment | 101,321 sparse split-only rows; 98,291 clear; 3,030 quarantined; neutral omitted rows and total-return coverage unproven |
-| V2 split extension | private qualification-only candidate: 6,491 source rows; 2,248 resolved event groups; 4,238 unresolved; 305 possible-impact instruments; zero canonical-overlap conflicts |
+| V2 split extension | private qualification-bound factor reconstruction only: 6,491 source rows; 2,248 resolved event groups; 4,238 unresolved; 305 possible-impact instruments; zero canonical-overlap conflicts; never used for controls or labels |
 | Lifecycle / terminal | 219 exact + 83 finite-interval references of 302 five-session paths; zero unbounded |
 | Historical classification | complete point-in-time family absent |
 | SEC fundamentals | four registered cutoff-aware queries and four strict as-operated projection sessions; engineering evidence only |
@@ -197,8 +201,11 @@ conditioner and applicability input have zero standalone outcome trials.
 Cumulative ledger V2 preserves all eight V1 trials and appends the six unread
 V2 trials for 14 total; its logical fingerprint is
 `cdc07a2194540b94dbba6bfee673a720ce232dc1d939f8b2c7496dda628946e9`.
-No V2 outcome has been read. The next action is exact implementation and test of
-this frozen Development screen; Validation and Holdout remain closed.
+ADR 0282 now binds an exact qualification-evidence replay for factor inputs,
+canonical-only control and label evidence, three ordered input-collection
+fingerprints, and a clean committed implementation revision. No V2 outcome has
+been read. The next action is the single formal Development report and its one
+exact replay; Validation and Holdout remain closed.
 
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility

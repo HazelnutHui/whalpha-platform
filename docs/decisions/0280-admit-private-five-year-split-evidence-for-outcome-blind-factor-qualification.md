@@ -8,6 +8,14 @@ Accepted
 
 2026-09-15
 
+## Narrow extension
+
+[ADR 0282](0282-separate-v2-factor-control-and-label-evidence-sources.md)
+later permits the exact qualification-bound evidence to be replayed only when
+reconstructing those same V2 factor observations for the frozen Development
+screen. Controls and future labels remain canonical-only; every other boundary
+in this decision remains unchanged.
+
 ## Context
 
 Factor Catalog V2 failed its first outcome-blind qualification because the

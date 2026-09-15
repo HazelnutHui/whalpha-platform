@@ -6,6 +6,29 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Implement the frozen Factor Discovery V2 screen
+
+- Accepted ADR 0282 before any V2 outcome access, narrowly permitting the
+  qualification-bound private split extension to reproduce factor inputs while
+  requiring canonical split evidence for the nuisance control and all future
+  labels.
+- Added deterministic V2 observation, control, label, statistics, decision,
+  report, and immutable owner-only custody contracts plus a network-disabled
+  Dell runner.
+- Bound the exact ordered observation, control, and label collections in the
+  report, retained the full four-Alpha/two-risk Holm family even when a trial is
+  nonnumeric, and prohibited a risk guard from entering the candidate set
+  without at least one surviving candidate Alpha.
+- Bound the 106-session / 167,860-path population to the exact frozen V1
+  complete-factor diagnostics; the broader 118-session raw Development range
+  cannot silently enter the V2 screen, and the V1 diagnostics Membership
+  fingerprint remains distinct from V2's qualification-population identity.
+- Required a clean repository at the exact committed implementation revision
+  and retained explicit stable-ID missingness, terminal intervals, source
+  lineages, fixed costs, and zero Validation/Holdout/Product authority.
+- V2 outcomes remain unread. One immutable Development report and one exact
+  replay are the next boundary.
+
 ## 2026-09-15 — Freeze the finite Factor Discovery V2 screen before outcomes
 
 - Accepted ADR 0281 and implemented protocol

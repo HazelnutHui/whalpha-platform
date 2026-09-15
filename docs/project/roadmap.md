@@ -113,8 +113,12 @@ Sequence:
 5. ~~freeze the new cohort, labels, related-hypothesis groups, multiplicity,
    stability, cost, selection, and stop rules;~~ ADR 0281 registers six V2
    trials, carries all 14 cumulative trials in ledger V2, and leaves every V2
-   outcome unread; and
-6. execute one Development report and one exact replay, then accept rejection
+   outcome unread;
+6. ~~implement the exact screen and separate qualification-bound factor
+   evidence from canonical-only controls and labels;~~ complete under ADR 0282,
+   including immutable input-collection fingerprints and clean-revision
+   enforcement; and
+7. execute one Development report and one exact replay, then accept rejection
    if no candidate Alpha survives.
 
 Potential territories include market- and ETF-relative residual strength,

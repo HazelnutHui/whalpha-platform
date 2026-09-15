@@ -11,6 +11,12 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0282](0282-separate-v2-factor-control-and-label-evidence-sources.md):
+  permits exact replay of qualification-bound private split evidence only for
+  V2 factor observations while keeping controls and future labels canonical.
+- [ADR 0281](0281-freeze-factor-catalog-v2-development-screening-protocol.md):
+  freezes six Development trials, their endpoints, inference, multiplicity,
+  gates, selection cap, and one-report stopping rule before outcomes.
 - [ADR 0280](0280-admit-private-five-year-split-evidence-for-outcome-blind-factor-qualification.md):
   admits a formally reread, canonical-reconciled five-year split extension
   only for the frozen zero-outcome V2 qualification repair.

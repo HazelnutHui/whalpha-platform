@@ -35,9 +35,13 @@ ADRs, and audits.
   evidence repaired the proved source boundary without changing formulas,
   population, or gates. Qualification and its byte-identical replay now pass at
   98.59% coverage. ADR 0281 now freezes six Development trials and ledger V2
-  carries all 14 cumulative trials before outcomes. No V2 factor is admitted;
-  the registered screen is the next executable boundary and outcomes remain
-  unread.
+  carries all 14 cumulative trials before outcomes. ADR 0282 separates the
+  qualification-bound factor evidence from canonical-only control and label
+  evidence; the deterministic runner, result contracts, immutable custody, and
+  tests are implemented. Exact frozen V1 diagnostics reconstruct the
+  106-session cohort and prevent all 118 raw Development sessions from entering
+  it. No V2 factor is admitted; the single formal report
+  and exact replay are the next executable boundary and outcomes remain unread.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -63,9 +67,9 @@ website shows all eight exact V2 definitions, the 431,249 /
 437,402 complete-vector result, 98.59% coverage, byte-identical replay, and zero
 admitted Alpha factors. The Development screen is registered before outcome
 access: four Alpha and two risk-guard trials, 14 cumulative trials, 106
-declared Development sessions,
-167,860 declared paths, and zero read V2 outcomes. Exact implementation and one
-replay are next. V1 screening and the Pullback program remain visible as
+declared Development sessions, 167,860 declared paths, and zero read V2
+outcomes. The implementation is ready for the single formal report and exact
+replay. V1 screening and the Pullback program remain visible as
 historical failed research. The public landing dossier carries the same
 registered/no-model state. This
 presentation changes no market analytics, Baseline Candidate calculation,
@@ -89,7 +93,7 @@ history is much deeper.
 | Membership | combined 1,253 / 1,255 sessions | reconstructed history is not `as_operated` |
 | Corporate actions | 4,643 first-strategy exposures; 20 unassigned | absence neutrality unproven |
 | Adjustment | 101,321 sparse split-only rows | no neutral-row or total-return authority |
-| V2 private split extension | 6,491 source rows; 2,248 resolved event groups; zero canonical-overlap conflicts | qualification-only reconstructed evidence; 4,238 unresolved rows retained |
+| V2 private split extension | 6,491 source rows; 2,248 resolved event groups; zero canonical-overlap conflicts | qualification-bound factor reconstruction only; never control or label evidence; 4,238 unresolved rows retained |
 | Lifecycle/terminal | 219 exact + 83 finite-interval references of 302 | zero unbounded paths; references are not outcomes |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | four registered query paths; four strict sessions | engineering evidence only |
@@ -258,8 +262,14 @@ the six V2 trials as `registered_pending_development_screen`, for 14 total
 trials under logical fingerprint
 `cdc07a2194540b94dbba6bfee673a720ce232dc1d939f8b2c7496dda628946e9`.
 All V2 result identities and outcome-access dates remain empty. Implementation
-and one exact replay of the frozen screen are next; Model Construction stays
-locked unless at least one Alpha factor survives every gate.
+is now bound by ADR 0282: factor observations must exactly replay the admitted
+qualification evidence, while the nuisance control and all future labels use
+canonical split evidence only. The report records separate source and exact
+input-collection fingerprints plus the V1 cohort-diagnostics logical and
+physical identity, accepts no selected risk guard without a surviving Alpha,
+and requires a clean committed revision. One formal report and
+one exact replay are next; Model Construction stays locked unless at least one
+Alpha factor survives every gate.
 
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
@@ -312,10 +322,10 @@ measured budget breach.
    gates, treat the retained risk guard as Alpha, or construct a model from a
    batch with zero admitted candidate Alpha.
 8. Preserve the completed V1 ledger, registered V2 catalog, qualification pass,
-   frozen ADR 0281 screen, and preregistered ledger V2. Implement exactly six
-   Development trials, retain all exclusions, then write one immutable report
-   and one exact replay. Do not alter gates, open Validation/Holdout, or
-   preselect Momentum Breakout or another named strategy.
+   frozen ADR 0281 screen, ADR 0282 evidence separation, and preregistered
+   ledger V2. Execute the committed six-trial implementation once, retain all
+   exclusions, then perform its one exact replay. Do not alter gates, open
+   Validation/Holdout, or preselect Momentum Breakout or another named strategy.
 9. Keep Factor Discovery, Model Construction, and Strategy Expression as
    separate versioned records; lock the complete lineage before Validation.
 
