@@ -104,10 +104,13 @@ Sequence:
    and risk-guard hypotheses before calculations.~~ The V2 catalog fixes four
    candidate Alpha, one conditioner, one applicability input, and two risk
    guards; no outcome trial is authorized yet;
-4. ~~freeze coverage, timing, missingness, redundancy, isolation, and exact
-   replay rules with zero new outcome access;~~ ADR 0279 and the typed V2
-   qualification runner are complete; the first real outcome-free report and
-   its exact replay remain next;
+4. ~~freeze and execute coverage, timing, missingness, redundancy, isolation,
+   and exact replay with zero new outcome access;~~ ADR 0279 and two byte-
+   identical runs are complete. Status is `rejected_data_or_implementation`
+   because the registered 127-session window begins before canonical split
+   evidence. Extend the already retained historical split source through a
+   separately reviewed action/adjustment version, then rerun the unchanged
+   qualification protocol;
 5. freeze the new cohort, labels, related-hypothesis groups, multiplicity,
    stability, cost, selection, and stop rules; and
 6. execute one Development report and one exact replay, then accept rejection

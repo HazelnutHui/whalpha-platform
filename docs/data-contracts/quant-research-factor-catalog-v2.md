@@ -65,6 +65,12 @@ return is read, a separate sequence must:
 5. freeze cohort, labels, multiplicity, stability, cost, selection, and stop
    rules.
 
+The first qualification and exact replay are recorded in the
+[V2 qualification audit](../audits/quant-research-factor-qualification-v2-2026-09-15.md).
+They reject the current source boundary because split evidence does not cover
+the 127-session warm-up interval. This is not an Alpha result and does not
+authorize formula or threshold changes.
+
 ## Interpretation limits
 
 Research citations motivate the mechanisms but do not validate these exact

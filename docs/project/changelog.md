@@ -6,6 +6,23 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Reject V2 at the long-window split-evidence gate
+
+- Executed the frozen outcome-blind V2 qualification and one complete replay;
+  canonical report bytes, logical fingerprint `bed79513...c0380ef`, and
+  SHA-256 `a95f2ff9...9a1d79` matched exactly.
+- Accounted for all 287 signal sessions and 437,402 paths. Only 266,335 paths
+  have complete eight-factor vectors; no candidate Alpha qualifies.
+- Traced the dominant 167,294-path failure to the proved split action and
+  adjustment start of 2025-06-23 versus the required 2024-12-17 factor-source
+  start. Formula variation, ties, and frozen redundancy rules are not the
+  blocker.
+- Preserved the gates and formulas unchanged. The next bounded action is to
+  extend already retained five-year split evidence through a new reviewed
+  action/adjustment version, then rerun the same protocol.
+- Read zero outcomes and made zero network, canonical-data, Production,
+  Candidate, Validation, or Holdout changes.
+
 ## 2026-09-15 — Freeze Factor Catalog V2 outcome-blind qualification
 
 - Accepted ADR 0279 and froze the V2 coverage, missingness, distribution,

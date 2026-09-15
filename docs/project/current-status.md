@@ -30,7 +30,10 @@ ADRs, and audits.
   separately registered discovery campaign is next. ADR 0277 now retains all
   eight consumed trials in a machine-verifiable cumulative ledger before that
   adaptive campaign is designed. ADR 0278 has registered its eight exact V2
-  definitions with zero outcome access; outcome-blind qualification is next.
+  definitions with zero outcome access. ADR 0279 qualification and exact replay
+  now reject the current data boundary because its 127-session input begins
+  before canonical split evidence; no V2 factor is admitted and outcomes remain
+  unread.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -212,8 +215,18 @@ fingerprint
 `b74214155cc148d1e0d37c530ab4fea2f385af1a81237b901eec45e1fee2eb0b`.
 Its implementation fingerprints the population independently from the closed
 Pullback strategy, quarantines stock defects by stable ID, closes sessions for
-SPY defects, and requires one exact replay. The first real V2 qualification
-report is not yet complete.
+SPY defects, and requires one exact replay. The real report and replay are now
+byte-identical at logical fingerprint
+`bed79513febf21dcf585a2e953c43fb66cb02824cd509800da39af452c0380ef`
+and SHA-256
+`a95f2ff95ee7d2083602568c457a929d33c3636794d0e991310bd042239a1d79`.
+Status is `rejected_data_or_implementation`: all eight factors have 60.8902%
+availability and only 17 eligible sessions in the first chronological half
+because the source window begins on 2024-12-17 but canonical split action and
+adjustment evidence begin on 2025-06-23. Distinct-value, tie, and redundancy
+gates are not the blocker. Zero candidate Alpha factors are qualified, and
+outcome screening remains prohibited pending a versioned historical split-
+evidence extension and unchanged-protocol requalification.
 
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,

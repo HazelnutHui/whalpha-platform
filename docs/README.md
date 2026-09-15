@@ -56,6 +56,7 @@ Read this bounded set before new Lab research:
 - [ADR 0278: register Factor Catalog V2 without outcomes](decisions/0278-register-factor-catalog-v2-without-outcomes.md)
 - [Factor Catalog V2 qualification contract](data-contracts/quant-research-factor-qualification-v2.md)
 - [ADR 0279: freeze V2 outcome-blind qualification](decisions/0279-freeze-factor-catalog-v2-outcome-blind-qualification.md)
+- [Factor Catalog V2 qualification result audit](audits/quant-research-factor-qualification-v2-2026-09-15.md)
 - [Factor Screening V1 UI deployment audit](audits/quant-research-factor-screening-ui-deployment-2026-09-15.md)
 - [Factor Qualification UI deployment audit](audits/quant-research-factor-qualification-ui-deployment-2026-09-15.md)
 - [ADR 0276: frozen Development screening protocol](decisions/0276-freeze-factor-catalog-v1-development-screening-protocol.md)

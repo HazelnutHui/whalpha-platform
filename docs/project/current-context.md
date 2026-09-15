@@ -168,9 +168,17 @@ return has been used for selection. ADR 0279 now freezes the independent V2
 outcome-blind qualification protocol at logical fingerprint
 `b74214155cc148d1e0d37c530ab4fea2f385af1a81237b901eec45e1fee2eb0b`.
 It uses per-stable-ID stock quarantine, complete-session SPY failure, fixed
-within-group redundancy priority, and one exact replay. The first real report
-has not yet run; no V2 factor has been admitted or registered for an outcome
-screen.
+within-group redundancy priority, and one exact replay. The first report and
+replay are byte-identical at logical fingerprint
+`bed79513febf21dcf585a2e953c43fb66cb02824cd509800da39af452c0380ef`
+and SHA-256
+`a95f2ff95ee7d2083602568c457a929d33c3636794d0e991310bd042239a1d79`.
+Status is `rejected_data_or_implementation`: canonical split action and
+adjustment evidence start on 2025-06-23, but the 127-session V2 source interval
+starts on 2024-12-17. This closes 167,294 early benchmark-dependent paths and
+leaves 266,335 / 437,402 complete vectors. No V2 factor is admitted or
+registered for an outcome screen. The next action is a versioned extension
+from retained five-year split evidence, not a gate or formula change.
 
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility
