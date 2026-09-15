@@ -22,6 +22,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--resolution-shadow", required=True, type=Path)
     parser.add_argument("--resolution-shadow-custody-root", type=Path)
     parser.add_argument("--output-root", required=True, type=Path)
+    parser.add_argument("--output-custody-root", type=Path)
     parser.add_argument("--basis-session", required=True, type=date.fromisoformat)
     parser.add_argument(
         "--calculated-at",
@@ -40,6 +41,7 @@ def main(argv: list[str] | None = None) -> int:
             resolution_shadow_output_root=args.resolution_shadow,
             resolution_shadow_custody_root=args.resolution_shadow_custody_root,
             output_root=args.output_root,
+            output_custody_root=args.output_custody_root,
             basis_session=args.basis_session,
             calculated_at=args.calculated_at,
         )

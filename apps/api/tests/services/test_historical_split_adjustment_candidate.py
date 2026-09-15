@@ -205,6 +205,29 @@ def test_exact_rerun_is_idempotent(monkeypatch, tmp_path: Path) -> None:
     assert second.status == "already_present"
 
 
+def test_persistent_candidate_requires_exact_owner_only_custody(
+    monkeypatch, tmp_path: Path
+) -> None:
+    inputs = _patch_inputs(monkeypatch, tmp_path)
+    custody = tmp_path / "private-custody"
+    custody.mkdir(mode=0o700)
+    inputs["output_custody_root"] = custody
+    inputs["output_root"] = custody / "build=v1"
+
+    result = build_historical_split_adjustment_candidate(**inputs)  # type: ignore[arg-type]
+    reread = read_historical_split_adjustment_candidate(
+        output_root=result.output_root,
+        output_custody_root=custody,
+    )
+
+    assert reread.candidate == result.candidate
+    with pytest.raises(HistoricalSplitAdjustmentCandidateError, match="custody"):
+        read_historical_split_adjustment_candidate(
+            output_root=result.output_root,
+            output_custody_root=tmp_path,
+        )
+
+
 def test_legacy_single_identity_candidate_remains_readable(
     monkeypatch, tmp_path: Path
 ) -> None:

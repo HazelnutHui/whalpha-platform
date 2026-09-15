@@ -59,11 +59,17 @@ scripts/dev/run-project-python.sh \
   --execute
 ```
 
+A durable private review artifact may instead use an absent direct child of
+one exact owner-only custody directory, passed as `--output-root` together
+with `--output-custody-root`. The same formal reader, file-mode, symlink,
+fingerprint, and exact-existing checks apply. Persistent private custody still
+does not publish to canonical `/data` or authorize an Adjustment Ledger.
+
 Contract 1.1 binds the composite Identity Resolver evidence through the
 shadow's `identity_binding_fingerprint`; legacy single-evidence 1.0 candidates
 remain readable. The output groups only resolved split-like rows by stable
 `instrument_id` and event date, composes known ratios, and separately projects
 possible impacts of unresolved tickers without assigning those events. It
-remains owner-only, temporary, outcome-reconciliation evidence with no
+remains owner-only, private outcome-reconciliation evidence with no
 canonical write, Adjustment Ledger status, research-input authority, or
 neutral-absence claim.

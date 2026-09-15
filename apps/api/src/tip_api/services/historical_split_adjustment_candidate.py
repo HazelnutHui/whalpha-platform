@@ -360,6 +360,7 @@ def build_historical_split_adjustment_candidate(
     resolution_shadow_output_root: Path,
     resolution_shadow_custody_root: Path | None = None,
     output_root: Path,
+    output_custody_root: Path | None = None,
     basis_session: date,
     calculated_at: datetime,
 ) -> HistoricalSplitAdjustmentCandidateResult:
@@ -367,7 +368,9 @@ def build_historical_split_adjustment_candidate(
 
     with _network_prohibited():
         root = _validated_data_root(data_root)
-        target = _validated_output_target(output_root)
+        target = _validated_output_target(
+            output_root, approved_custody_root=output_custody_root
+        )
         calculated_at = normalize_utc_datetime(calculated_at)
         shadow = read_historical_corporate_action_resolution_shadow(
             output_root=resolution_shadow_output_root,
@@ -471,7 +474,9 @@ def build_historical_split_adjustment_candidate(
         candidate = HistoricalSplitAdjustmentCandidateV1.model_validate(
             {**values, "logical_fingerprint": _fingerprint(values)}
         )
-        existing = _read_if_present(target)
+        existing = _read_if_present(
+            target, output_custody_root=output_custody_root
+        )
         if existing is not None:
             if existing.candidate != candidate:
                 raise HistoricalSplitAdjustmentCandidateError(
@@ -501,7 +506,10 @@ def build_historical_split_adjustment_candidate(
                     child.unlink()
                 staging.rmdir()
             raise
-        reread = read_historical_split_adjustment_candidate(output_root=target)
+        reread = read_historical_split_adjustment_candidate(
+            output_root=target,
+            output_custody_root=output_custody_root,
+        )
         if reread.candidate != candidate:
             raise HistoricalSplitAdjustmentCandidateError(
                 "split-adjustment candidate formal reread differs"
@@ -515,9 +523,13 @@ def build_historical_split_adjustment_candidate(
 
 
 def read_historical_split_adjustment_candidate(
-    *, output_root: Path
+    *,
+    output_root: Path,
+    output_custody_root: Path | None = None,
 ) -> HistoricalSplitAdjustmentCandidateResult:
-    root = _validated_completed_output(output_root)
+    root = _validated_completed_output(
+        output_root, approved_custody_root=output_custody_root
+    )
     entries = tuple(root.iterdir())
     if len(entries) != 1 or entries[0].name != FILE_NAME:
         raise HistoricalSplitAdjustmentCandidateError(
@@ -676,10 +688,15 @@ def _unresolved_action_fingerprint_row(
 
 def _read_if_present(
     target: Path,
+    *,
+    output_custody_root: Path | None = None,
 ) -> HistoricalSplitAdjustmentCandidateResult | None:
     if not target.exists() and not target.is_symlink():
         return None
-    return read_historical_split_adjustment_candidate(output_root=target)
+    return read_historical_split_adjustment_candidate(
+        output_root=target,
+        output_custody_root=output_custody_root,
+    )
 
 
 def _validated_data_root(path: Path) -> Path:
@@ -695,8 +712,34 @@ def _validated_data_root(path: Path) -> Path:
     return resolved
 
 
-def _validated_output_target(path: Path) -> Path:
+def _validated_output_target(
+    path: Path,
+    *,
+    approved_custody_root: Path | None = None,
+) -> Path:
     target = path.absolute()
+    if approved_custody_root is not None:
+        root = approved_custody_root.absolute()
+        if (
+            root.is_symlink()
+            or not root.is_dir()
+            or root.resolve(strict=True) != root
+            or stat.S_IMODE(root.stat().st_mode) != 0o700
+            or target.parent != root
+        ):
+            raise HistoricalSplitAdjustmentCandidateError(
+                "persistent split-adjustment candidate custody boundary differs"
+            )
+        if target.exists() or target.is_symlink():
+            if (
+                target.is_symlink()
+                or not target.is_dir()
+                or target.resolve(strict=True) != target
+            ):
+                raise HistoricalSplitAdjustmentCandidateError(
+                    "persistent split-adjustment candidate target is unsafe"
+                )
+        return target
     tmp = Path("/tmp").resolve(strict=True)
     if target == tmp or tmp not in target.parents:
         raise HistoricalSplitAdjustmentCandidateError(
@@ -715,8 +758,14 @@ def _validated_output_target(path: Path) -> Path:
     return target
 
 
-def _validated_completed_output(path: Path) -> Path:
-    root = _validated_output_target(path)
+def _validated_completed_output(
+    path: Path,
+    *,
+    approved_custody_root: Path | None = None,
+) -> Path:
+    root = _validated_output_target(
+        path, approved_custody_root=approved_custody_root
+    )
     if (
         root.is_symlink()
         or not root.is_dir()
