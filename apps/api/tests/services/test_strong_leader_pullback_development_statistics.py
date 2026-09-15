@@ -11,10 +11,12 @@ import pytest
 
 from tip_api.contracts.analytics.v1 import (
     DEVELOPMENT_STATISTICS_POLICY_FINGERPRINT,
+    REPLACEMENT_SELECTION_POLICY_FINGERPRINT,
     DevelopmentDispositionCountsV1,
     DevelopmentEndpointScenario,
     DevelopmentSelectionStatus,
     StrategyMembershipMode,
+    strong_leader_pullback_replacement_selection_protocol_v1,
 )
 from tip_api.persistence.strong_leader_pullback_development_statistics import (
     StrongLeaderPullbackDevelopmentStatisticsPersistenceError,
@@ -157,6 +159,23 @@ def test_policy_is_frozen_before_real_result_evaluation() -> None:
     assert DEVELOPMENT_STATISTICS_POLICY_FINGERPRINT == (
         "a420675be6c7eb580bc95906f4ef0588eccee0d9640047a57d459423e5708f37"
     )
+
+
+def test_replacement_protocol_is_frozen_without_outcome_design_values() -> None:
+    protocol = strong_leader_pullback_replacement_selection_protocol_v1()
+
+    assert REPLACEMENT_SELECTION_POLICY_FINGERPRINT == (
+        "9fa09e0b627aed2c1bb1f108eec2d73bfeb3a5407b3c0850b3605b23ef0991f9"
+    )
+    assert protocol.logical_fingerprint == (
+        "65e2258153e6f5462a440662826a2a20594d9a889aaaa0761b71531251e07a0d"
+    )
+    assert protocol.outcome_values_used_in_design is False
+    assert protocol.prior_protocol_trials == 1
+    assert protocol.total_protocol_trials == 2
+    assert protocol.replacement_run_budget == 1
+    assert protocol.validation_data_accessed is False
+    assert protocol.holdout_data_accessed is False
 
 
 def test_complete_exact_matrix_locks_one_stable_parameter(complete_report) -> None:

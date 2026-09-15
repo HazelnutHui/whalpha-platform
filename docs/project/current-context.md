@@ -222,6 +222,13 @@ floor. No endpoint winner or parameter lock exists. A zero-network replay
 returned `already_present`. See the
 [formal statistics review](../audits/strong-leader-pullback-reconstructed-development-statistics-2026-09-15.md).
 
+ADR 0272 registers one and only one coverage-corrected replacement selection
+attempt. It retains all 24 combinations, treats sparse Regime slices as
+inconclusive rather than a global selection veto, adds fixed economic and
+stability gates, and records two total protocol trials. Policy fingerprint:
+`9fa09e0b627aed2c1bb1f108eec2d73bfeb3a5407b3c0850b3605b23ef0991f9`.
+No replacement result exists yet.
+
 The original five-document and exact two-document supplemental SEC packages
 are retained in owner-only custody. The supplement used two requests, zero
 retries, and 5,064,066 bytes; manifest SHA-256
@@ -247,7 +254,8 @@ No current document authorizes another live SEC acquisition, `/data` mutation,
 validation or holdout access, model activation, publication, deployment,
 scheduler mutation, order execution, or destructive cleanup. The admitted
 development-only statistics stage is complete and inconclusive; V1 cannot be
-retuned, and no later stage is open.
+retuned. Only the single registered replacement-selection run is next; no
+Validation or later stage is open.
 
 ## Cross-device continuity
 

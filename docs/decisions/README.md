@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0272](0272-register-one-coverage-corrected-replacement-selection-protocol.md):
+  preserves the inconclusive V1 result and registers one count-informed,
+  outcome-unread replacement selection attempt with tighter later multiplicity.
 - [ADR 0271](0271-freeze-reconstructed-development-statistics-before-reading-results.md):
   freezes interval-adverse development statistics and one-lock selection before
   any aggregate real result is inspected.

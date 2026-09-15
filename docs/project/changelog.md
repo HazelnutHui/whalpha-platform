@@ -6,6 +6,20 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Register one bounded replacement selection attempt
+
+- Accepted ADR 0272 after reviewing only V1 coverage, disposition, and
+  selection-state fields, without using development return values in the new
+  design.
+- Preserved the V1 result and all 24 parameter values while making evidence
+  eligibility per combination and sparse Regime inference explicitly
+  inconclusive rather than a global selection veto.
+- Added fixed 25-bps economic, chronological-half, positive-session,
+  concentration, and endpoint-stability gates, one replacement-run budget,
+  and a two-protocol trial ledger.
+- Tightened future Validation family-wise alpha to 0.05. Validation, Holdout,
+  Candidate activation, publication, deployment, and Production remain closed.
+
 ## 2026-09-15 — Complete the first real development comparison without forcing a winner
 
 - Froze the reconstructed development-statistics policy before reading real

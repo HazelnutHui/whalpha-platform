@@ -133,23 +133,24 @@ tradable portfolio construction.
 Exit criterion passed: a reproducible inconclusive result exists. It does not
 change Stock Candidates.
 
-## Current gated phase — Register a replacement experiment
+## Current gated phase — Execute the one replacement selection
 
-Use the V1 coverage result, not its return values, to decide whether a new
-Strong-Leader Pullback version can answer a narrower and statistically
-identified question. Before any new outcome calculation:
+ADR 0272 and its machine contract have completed the before-results
+registration using only the V1 coverage result, not its return values. The
+single allowed execution must now:
 
-1. define whether Regime is a primary eligibility gate or a prespecified
-   descriptive/interaction analysis;
-2. set feasible evidence floors from outcome-blind cohort counts;
-3. preserve the untouched chronological Validation and Holdout partitions;
-4. register a new immutable experiment, parameter budget, multiplicity rule,
-   cost views, rejection gates, and implementation fingerprint; and
-5. run development once, advancing only if one lock survives every new gate.
+1. formally reread the immutable V1 development report and exact policy
+   registration;
+2. evaluate all 24 combinations while selecting only from the common eligible
+   set across all endpoint scenarios;
+3. apply every cost, chronological-half, positive-session, concentration, and
+   endpoint-stability gate;
+4. retain one immutable result and independently replay it; and
+5. advance only if one lock survives every gate.
 
-If no defensible replacement can be registered without outcome-driven tuning,
-record the strategy family as inconclusive and advance to the next independent
-hypothesis instead.
+If the single replacement produces no lock, record the strategy family as
+inconclusive and advance to the next independent hypothesis instead of
+creating another rule variation over the same development set.
 
 ## Then — Generalize the bounded AI research factory
 

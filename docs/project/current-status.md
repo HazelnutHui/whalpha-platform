@@ -136,6 +136,13 @@ the main inference floors, but only one met the per-Regime observation floor.
 No endpoint winner, parameter lock, Validation transition, performance claim,
 or Candidate authority exists. V1 is stopped without retuning.
 
+ADR 0272 now freezes a single replacement selection attempt using the same
+24 combinations and immutable development report. It changes no formula or
+parameter value. Per-combination evidence eligibility replaces the V1 global
+Regime veto; sparse Regime cells remain explicitly inconclusive. Fixed cost,
+chronological-half, positive-session, concentration, endpoint-stability, and
+two-trial multiplicity controls apply before any possible lock. It has not run.
+
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
 gates, and research-authority flags. The outcome-free input contract and
@@ -179,8 +186,9 @@ measured budget breach.
 4. Preserve the completed V1 result as
    `development_inconclusive_no_parameter_lock`; its exact replay matched and
    it cannot be retuned.
-5. Design any replacement as a new preregistered version using only the proven
-   coverage failure; Validation and Holdout remain untouched and closed.
+5. Execute the single ADR 0272 replacement selection exactly once. Failure
+   retires this attempt; a lock still requires separate review before
+   Validation, while Holdout remains untouched and closed.
 
 Do not project current Membership or taxonomy backward, infer lifecycle from
 ticker patterns, call price/volume fund flow, call stock outcomes option
