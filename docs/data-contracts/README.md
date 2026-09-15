@@ -118,6 +118,7 @@ adjustment evidence remains explicit.
 - [Strong-Leader Pullback Research Admission V2](strong-leader-pullback-research-admission-v2.md)
 - [Strong-Leader Pullback Terminal Reference Bounds V1](strong-leader-pullback-terminal-reference-bounds-v1.md)
 - [Strong-Leader Pullback Reconstructed Development Dataset V1](strong-leader-pullback-reconstructed-development-dataset-v1.md)
+- [Strong-Leader Pullback Reconstructed Development Statistics V1](strong-leader-pullback-reconstructed-development-statistics-v1.md)
 - [Candidate Strategy Research Execution V1](candidate-strategy-research-execution-v1.md)
 - [Candidate Strategy Research Statistics V1](candidate-strategy-research-statistics-v1.md)
 - [Candidate Strategy Holdout Custody V1](candidate-strategy-holdout-custody-v1.md)

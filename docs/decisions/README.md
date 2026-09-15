@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0271](0271-freeze-reconstructed-development-statistics-before-reading-results.md):
+  freezes interval-adverse development statistics and one-lock selection before
+  any aggregate real result is inspected.
 - [ADR 0270](0270-materialize-reconstructed-development-labels-without-opening-evaluation.md):
   materializes isolated reconstructed-development labels while keeping
   validation, holdout, performance claims, Candidate, and Production closed.

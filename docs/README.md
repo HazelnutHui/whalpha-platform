@@ -54,6 +54,7 @@ Read this bounded set before Strong-Leader Pullback or Lab work:
 - [Reconstructed research admission](data-contracts/strong-leader-pullback-research-admission-v2.md)
 - [Terminal reference bounds](data-contracts/strong-leader-pullback-terminal-reference-bounds-v1.md)
 - [Reconstructed development dataset](data-contracts/strong-leader-pullback-reconstructed-development-dataset-v1.md)
+- [Reconstructed development statistics](data-contracts/strong-leader-pullback-reconstructed-development-statistics-v1.md)
 - [Current terminal-bounds review](audits/strong-leader-pullback-terminal-reference-final-review-2026-09-15.md)
 - [Current reconstructed admission review](audits/strong-leader-pullback-research-admission-v2-final-review-2026-09-15.md)
 - [Current reconstructed development dataset audit](audits/strong-leader-pullback-reconstructed-development-dataset-2026-09-15.md)
@@ -67,6 +68,7 @@ Read this bounded set before Strong-Leader Pullback or Lab work:
 - [ADR 0268: adversarial missingness bounds](decisions/0268-admit-reconstructed-research-only-with-adversarial-missingness-bounds.md)
 - [ADR 0269: frozen terminal gross-value intervals](decisions/0269-bound-reconstructed-terminal-references-with-frozen-gross-value-intervals.md)
 - [ADR 0270: isolated reconstructed development labels](decisions/0270-materialize-reconstructed-development-labels-without-opening-evaluation.md)
+- [ADR 0271: freeze reconstructed development statistics](decisions/0271-freeze-reconstructed-development-statistics-before-reading-results.md)
 
 The complete registries remain available through the
 [data-contract index](data-contracts/README.md) and
