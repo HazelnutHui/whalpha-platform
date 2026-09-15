@@ -144,6 +144,9 @@ see [ADR 0274](../decisions/0274-adopt-factor-model-strategy-three-layer-researc
 - [Quant Research Reusable Artifact Registry V1](quant-research-reusable-artifact-registry-v1.md)
   defines exact content-addressed reuse and separate outcome-blind versus
   outcome-bearing custody for the next campaign's common research panels.
+- [Quant Research Market-State Vector V1](quant-research-market-state-vector-v1.md)
+  separates exact benchmark state from reconstructed cross-sectional state
+  before the third finite campaign selects any threshold or interaction.
 - [Quant Research Factor Screening V1](quant-research-factor-screening-v1.md)
   freezes the first Development screen; its completed no-Alpha result and exact
   replay are recorded in the [screening audit](../audits/quant-research-factor-screening-2026-09-15.md).

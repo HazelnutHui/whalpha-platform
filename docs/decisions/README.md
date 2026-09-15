@@ -357,6 +357,9 @@ accepted ADR was deployed unless current operational evidence says so.
 - [ADR 0268](0268-admit-reconstructed-research-only-with-adversarial-missingness-bounds.md):
   permit a separately disclosed research lane only when missing terminal
   labels are bounded adversarially before outcomes.
+- [ADR 0286](0286-separate-point-in-time-market-state-inputs-before-campaign-three.md):
+  separates raw benchmark and reconstructed cross-sectional market-state
+  evidence before Campaign Three registers any interaction or outcome access.
 ## Data-governance decisions
 
 - ADRs 0011–0048 establish EOD, Identity, stable-ID, security classification,
