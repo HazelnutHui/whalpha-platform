@@ -117,6 +117,8 @@ describe('strategy-channel workspace', () => {
   it('keeps the strategy payload lazy and presents same-channel reasons separately from trade decisions', async () => {
     render(<I18nProvider><OpportunityCandidatesPage /></I18nProvider>);
     await screen.findByRole('button', { name: 'Strategy channels' });
+    expect(screen.getByText('No qualified quantitative model is connected')).toBeInTheDocument();
+    expect(screen.getByText(/have no investment-reference value/)).toBeInTheDocument();
     expect(getCandidateStrategies).not.toHaveBeenCalled();
 
     fireEvent.click(screen.getByRole('button', { name: 'Strategy channels' }));
@@ -174,6 +176,8 @@ describe('strategy-channel workspace', () => {
   it('renders the decision desk in Chinese without changing its evidence scope', async () => {
     window.history.replaceState({}, '', '/dashboard/?view=candidates&lang=zh');
     render(<I18nProvider><OpportunityCandidatesPage /></I18nProvider>);
+    expect(await screen.findByText('尚未接入任何合格量化模型')).toBeInTheDocument();
+    expect(screen.getByText(/没有投资参考价值/)).toBeInTheDocument();
     fireEvent.click(await screen.findByRole('button', { name: '策略通道' }));
     expect(await screen.findByRole('heading', { name: '今日跨策略决策台' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '研究优先级与追高风险图' })).toBeInTheDocument();

@@ -655,6 +655,11 @@ h2 {
   font-weight: 650;
 }
 
+.candidate-preview-notice {
+  margin-top: 19px;
+  border-left: 3px solid #d5a34f;
+}
+
 .candidate-hero-facts span,
 .candidate-summary > div span,
 .candidate-facts span {
