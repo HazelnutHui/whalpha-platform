@@ -21,8 +21,12 @@ and dated [audits](../audits/). Current capability and next work belong in
   separated, ordinary agent work consumes compact summaries, and the Lab
   publishes reviewed milestones rather than process chatter.
 - Updated the authoritative status, roadmap, audit trail, trilingual Lab source,
-  and tests to the same closed V2 state. This source milestone is not a claim
-  that the Production release has already changed.
+  and tests to the same closed V2 state.
+- Aligned the trilingual public-entry dossier with the protected Lab and
+  deployed release `2026-09-15T215904Z-286334f` from source `286334f256d5`.
+  Independent postflight matched source, bundle, checksums, guest/protected
+  routes, services, listener boundary, and zero staging/failed-release residue;
+  password login and final appearance remain manual checks.
 
 ## 2026-09-15 — Implement the frozen Factor Discovery V2 screen
 

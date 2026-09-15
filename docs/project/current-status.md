@@ -10,7 +10,7 @@ ADRs, and audits.
 ## Overall verdict
 
 - **Production:** live and serving the verified trilingual V2 qualification
-  pass, registered six-trial Development screen, and three-layer research UI to
+  pass, completed six-trial Development result, and three-layer research UI to
   equal guest/credential flows; underlying data is stale by one completed
   session at the 2026-09-15 deployment review.
 - **Five-year source depth:** EOD price and stable Identity complete.
@@ -64,14 +64,13 @@ same data and capability. Snapshot/API failure closes without synthetic
 Production data.
 
 The Lab presents the Factor Discovery -> Model Construction -> Strategy
-Expression architecture. Dell source now shows Factor Catalog V2 as a closed
+Expression architecture. Production now shows Factor Catalog V2 as a closed
 campaign: all eight definitions and their 98.59% outcome-blind qualification,
 the six-trial Development result, four rejected Alpha trials, two
 qualified-but-unselected risk guards, exact replay identities, 14 cumulative
 trials, and zero model inputs. V1 screening and the Pullback program remain
-visible as historical failed research. The current live release still shows
-the prior registered/no-outcome state until the reviewed source change is
-separately deployed. Neither presentation changes market analytics, Baseline
+visible as historical failed research. The public entry dossier carries the
+same result in all three languages. This changes no market analytics, Baseline
 Candidate calculation, model authority, or Candidate activation.
 
 The current Candidate score, Entry Geometry, and technical Strategy Channels

@@ -1,8 +1,8 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-15T17:09:12Z
+Operational state verified at: 2026-09-15T22:00:06Z
 
-Deployment state verified at: 2026-09-15T17:09:12Z
+Deployment state verified at: 2026-09-15T22:00:06Z
 
 Repository context updated at: 2026-09-15 UTC
 
@@ -20,8 +20,8 @@ ADRs, and dated audits.
 | Branch | `main`; verify live HEAD before mutation |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Active OCI release | `2026-09-15T170757Z-d774d87f37a2` |
-| Deployed source | `d774d87f37a20c402bf57d31f0d82acc105ef1ec` |
+| Active OCI release | `2026-09-15T215904Z-286334f` |
+| Deployed source | `286334f256d52675fd0cffa6432e3cffcbff8f12` |
 
 Dell owns code, canonical data, governance, and heavy computation. OCI is the
 bounded public-serving tier. A newer clean repository commit does not imply a
@@ -46,12 +46,10 @@ network-disabled reread. Run project Python through
 
 The current release passed independent release, source, bundle, checksum,
 service, protected-route, guest-flow, Candidate-route, logout, and residue
-checks. It still exposes the registered, outcome-unread V2 screen. Dell source
-has since completed the single formal V2 Development report and one exact
-replay: four candidate-Alpha trials failed, two risk guards qualified as risk
-evidence but were not selected, and no model opened. The reviewed Product
-projection for that result is implemented but not yet deployed; repository
-state must not be confused with the live release above. V1 screening and
+checks. The public entry dossier and protected Lab now expose the completed V2
+Development result: four candidate-Alpha trials failed, two risk guards
+qualified as risk evidence but were not selected, the exact replay matched,
+and no model opened. English, Chinese, and Spanish agree on that state. V1 screening and
 Strong-Leader Pullback remain historical failed research; all model, strategy,
 Validation, Holdout, Candidate, and option-performance authority stays locked.
 An unauthenticated Dashboard request redirects to Session entry. Password
@@ -218,7 +216,8 @@ ADR 0283 now requires content-addressed reuse of expensive deterministic
 research panels, separated feature/label custody, compact machine summaries,
 and atomic milestone synchronization across contracts, ledgers, status,
 audits, the trilingual Lab projection, and tests. Production deployment remains
-a separate guarded state.
+a separately verified state. The current source milestone is deployed in the
+release identified above.
 
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility
