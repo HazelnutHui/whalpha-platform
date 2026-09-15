@@ -53,15 +53,15 @@ presentation layers. Guest and credential Sessions intentionally receive the
 same data and capability. Snapshot/API failure closes without synthetic
 Production data.
 
-The deployed Lab presents the Factor Discovery -> Model Construction ->
-Strategy Expression architecture, the first 12-definition catalog, its
-outcome-blind qualification, all formulas and timing rules, all eight
-Development decisions, the failed Alpha screen, retained risk guard, exact
-evidence identities, limitations, continuing model/Product lock, the retained
-Pullback rejection, and a dated research-foundation snapshot. The public
-landing page carries the same no-Alpha/no-model state. The deployment changed
-no market analytics, Baseline Candidate calculation, model authority, or
-research result.
+The Lab presents the Factor Discovery -> Model Construction -> Strategy
+Expression architecture with Factor Catalog V2 as the current campaign. It
+shows all eight exact V2 definitions, the 266,335 / 437,402 complete-vector
+result, 60.89% coverage, exact replay, zero admitted Alpha factors, the proved
+split-source boundary, and the unchanged-protocol repair. V1 screening and the
+Pullback program remain visible as historical failed research. The public
+landing dossier carries the same V2 data-blocked/no-model state. This
+presentation changes no market analytics, Baseline Candidate calculation,
+model authority, or research result.
 
 The current Candidate score, Entry Geometry, and technical Strategy Channels
 remain visible, transparent, unvalidated **Baseline V1**. They are not expected-

@@ -1,0 +1,98 @@
+{
+  "contract_version": "quant-research-factor-qualification-report/2.0",
+  "status": "rejected_data_or_implementation",
+  "factor_count": 8,
+  "candidate_alpha_count": 4,
+  "eligible_candidate_alpha_count": 0,
+  "complete_factor_vector_count": 266335,
+  "incomplete_factor_vector_count": 171067,
+  "expected_path_count": 437402,
+  "coverage_percent": 60.89021084,
+  "eligible_session_count": 161,
+  "first_half_eligible_session_count": 17,
+  "second_half_eligible_session_count": 144,
+  "pairwise_correlation_count": 28,
+  "near_duplicate_group_count": 0,
+  "maximum_absolute_weighted_same_session_spearman": 0.8995860179,
+  "first_source_session": "2024-12-17",
+  "first_session": "2025-06-23",
+  "last_session": "2026-08-12",
+  "catalog_fingerprint": "6620000334a0a8bd23103341dfc1958d57c712a063dff0a39e23ffc82d51bed5",
+  "protocol_fingerprint": "b74214155cc148d1e0d37c530ab4fea2f385af1a81237b901eec45e1fee2eb0b",
+  "report_logical_fingerprint": "bed79513febf21dcf585a2e953c43fb66cb02824cd509800da39af452c0380ef",
+  "report_sha256": "a95f2ff95ee7d2083602568c457a929d33c3636794d0e991310bd042239a1d79",
+  "definitions": [
+    {
+      "factor_id": "medium_term_relative_momentum_126s_skip5",
+      "family": "medium_horizon_continuation",
+      "role": "candidate_alpha",
+      "expected_relationship": "positive_monotonic",
+      "exact_formula": "ln(C[t-5]/C[t-126]) - ln(B[t-5]/B[t-126])",
+      "source_fields": ["close", "spy_close"],
+      "source_window": "t-126_through_t-5"
+    },
+    {
+      "factor_id": "short_term_relative_reversal_5s",
+      "family": "short_horizon_reversal",
+      "role": "candidate_alpha",
+      "expected_relationship": "positive_monotonic",
+      "exact_formula": "-[ln(C[t]/C[t-5]) - ln(B[t]/B[t-5])]",
+      "source_fields": ["close", "spy_close"],
+      "source_window": "t-5_through_t"
+    },
+    {
+      "factor_id": "intraday_relative_pressure_reversal_5s",
+      "family": "return_timing",
+      "role": "candidate_alpha",
+      "expected_relationship": "positive_monotonic",
+      "exact_formula": "-sum([ln(C[i]/O[i])-ln(Bc[i]/Bo[i])],i=t-4..t)",
+      "source_fields": ["open", "close", "spy_open", "spy_close"],
+      "source_window": "five_signal_inclusive_intraday_sessions_t-4_through_t"
+    },
+    {
+      "factor_id": "overnight_relative_persistence_5s",
+      "family": "return_timing",
+      "role": "candidate_alpha",
+      "expected_relationship": "positive_monotonic",
+      "exact_formula": "sum([ln(O[i]/C[i-1])-ln(Bo[i]/Bc[i-1])],i=t-4..t)",
+      "source_fields": ["open", "close", "spy_open", "spy_close"],
+      "source_window": "five_signal_inclusive_overnight_sessions_t-4_through_t"
+    },
+    {
+      "factor_id": "down_market_relative_resilience_60s",
+      "family": "market_state",
+      "role": "setup_conditioner",
+      "expected_relationship": "no_standalone_alpha_claim",
+      "exact_formula": "mean(ln(C[i]/C[i-1])-ln(B[i]/B[i-1]) | benchmark_return[i]<0,i=t-59..t)",
+      "source_fields": ["close", "spy_close"],
+      "source_window": "sixty_returns_t-59_through_t_conditioned_on_negative_spy_return"
+    },
+    {
+      "factor_id": "amihud_illiquidity_20s",
+      "family": "liquidity_capacity",
+      "role": "applicability_input",
+      "expected_relationship": "no_standalone_alpha_claim",
+      "exact_formula": "1e6*mean(abs(ln(C[i]/C[i-1]))/(C[i]*V[i]),i=t-19..t)",
+      "source_fields": ["close", "volume"],
+      "source_window": "twenty_returns_and_signal_session_dollar_volume_t-19_through_t"
+    },
+    {
+      "factor_id": "single_index_residual_volatility_60s",
+      "family": "downside_risk",
+      "role": "risk_guard",
+      "expected_relationship": "negative_monotonic",
+      "exact_formula": "sqrt(252)*sample_sd(rs[i]-alpha-beta*rb[i],i=t-59..t),OLS_with_intercept",
+      "source_fields": ["close", "spy_close"],
+      "source_window": "sixty_daily_returns_t-59_through_t"
+    },
+    {
+      "factor_id": "relative_downside_semideviation_60s",
+      "family": "downside_risk",
+      "role": "risk_guard",
+      "expected_relationship": "negative_monotonic",
+      "exact_formula": "sqrt(252)*sqrt(mean(min(ln(C[i]/C[i-1])-ln(B[i]/B[i-1]),0)^2,i=t-59..t))",
+      "source_fields": ["close", "spy_close"],
+      "source_window": "sixty_daily_returns_t-59_through_t"
+    }
+  ]
+}

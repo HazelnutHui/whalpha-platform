@@ -6,6 +6,20 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Synchronize the website with Factor Discovery V2
+
+- Replaced the website's stale V1-as-current research presentation with the
+  real Factor Catalog V2 qualification state in English, Chinese, and Spanish.
+- Exposed all eight V2 definitions and formulas, exact report/protocol
+  identities, 266,335 / 437,402 complete vectors, 60.89% coverage, zero
+  admitted Alpha factors, the split-evidence boundary, and the unchanged-
+  protocol repair path.
+- Retained V1 screening and Strong-Leader Pullback as historical failed
+  research rather than deleting or relabeling their evidence.
+- Preserved the model, strategy, Validation, Holdout, Candidate, option, and
+  Production authority locks. Market analytics and Baseline V1 calculations
+  are unchanged.
+
 ## 2026-09-15 — Reject V2 at the long-window split-evidence gate
 
 - Executed the frozen outcome-blind V2 qualification and one complete replay;

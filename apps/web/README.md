@@ -15,20 +15,23 @@ features. It presents Quant Research Lab as factor/model/expression authority,
 model-driven Candidate ranking as a downstream activation, governed research
 automation as a planned extension of traditional quantitative discipline, and
 the three established market-context workspaces as free supporting tools. Its
-current Strong-Leader Pullback record explicitly shows data construction,
-unpublished out-of-sample evidence, and inactive Candidate authority before
-any performance claim. The first viewport keeps account/password sign-in as
-the primary entry, places equal-capability guest access immediately below it,
-and uses a persistent continuation cue to expose the research narrative below.
+current dossier identifies Factor Discovery V2, the exactly replayed 60.89%
+data-qualification rejection, zero admitted Alpha factors, and the unchanged-
+protocol split-evidence repair; V1 and Strong-Leader Pullback remain historical
+failed research. The first viewport keeps account/password sign-in as the
+primary entry, places equal-capability guest access immediately below it, and
+uses a persistent continuation cue to expose the research narrative below.
 
 Inside the Lab, a trilingual research-foundation snapshot shows the verified
 five-year price/identity depth, reconstructed Membership, action assignments,
 lifecycle references, and point-in-time fundamental pilot without combining
-them into a misleading readiness score. An evidence ladder then separates the
-frozen method, deterministic implementation, replayed reconstructed-population
-diagnostics, formal performance-data admission, and result/Candidate
-authority. The displayed 95.38% is explicitly method-computability coverage,
-not a hit rate, prediction accuracy, or return.
+them into a misleading readiness score. Factor Discovery V2 now leads the
+page: all eight exact formulas, roles, the report/replay identity, 266,335 of
+437,402 complete vectors, the split-evidence boundary, and the next bounded
+repair are visible without any outcome claim. V1 screening and the Pullback
+method remain explicitly historical. The displayed 95.38% lower on the page is
+the old Pullback method-computability coverage, not a hit rate, prediction
+accuracy, or return.
 
 The active Dashboard uses Activation V2 Primary/Secondary Universes. Provider
 security form remains provisional and does not establish issuer structure or
@@ -99,11 +102,12 @@ guide.
 - Language-neutral, risk-mode-specific Stock Candidate ranking, entry-location
   review, strategy channels, cross-channel decision desk, price-path/level
   context, contribution ledgers, and evidence drawer
-- Trilingual Quant Research Lab foundation, factor qualification, Development
-  screening, and retained-method workspace. The page exposes the exactly
-  replayed no-Alpha Factor Catalog V1 result, its one retained risk guard,
-  protocol identities, limitations, and continuing model/Product lock without
-  presenting a score as validated performance
+- Trilingual Quant Research Lab foundation, Factor Catalog V2 qualification,
+  historical V1 Development screening, and retained-method workspace. The page
+  exposes the exactly replayed V2 data rejection and its source boundary, all
+  eight V2 definitions, the historical no-Alpha V1 result and retained risk
+  guard, protocol identities, limitations, and continuing model/Product lock
+  without presenting a score as validated performance
 - Logout in snapshot mode
 - loading, error, empty, and retry states
 
