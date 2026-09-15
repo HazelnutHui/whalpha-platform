@@ -127,6 +127,8 @@ see [ADR 0274](../decisions/0274-adopt-factor-model-strategy-three-layer-researc
 - [Strong-Leader Pullback Reconstructed Development Statistics V1](strong-leader-pullback-reconstructed-development-statistics-v1.md)
 - [Strong-Leader Pullback Reconstructed Replacement Selection V1](strong-leader-pullback-reconstructed-replacement-selection-v1.md)
 - [Quant Research Factor Catalog V1](quant-research-factor-catalog-v1.md)
+- [Quant Research Discovery Trial Ledger V1](quant-research-discovery-trial-ledger-v1.md)
+  retains every consumed factor-screen trial before a later adaptive campaign.
 - [Quant Research Factor Screening V1](quant-research-factor-screening-v1.md)
   freezes the first Development screen; its completed no-Alpha result and exact
   replay are recorded in the [screening audit](../audits/quant-research-factor-screening-2026-09-15.md).

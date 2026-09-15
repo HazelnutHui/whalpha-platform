@@ -93,8 +93,9 @@ the same five failed definitions into an unlimited parameter search.
 
 Sequence:
 
-1. reconcile the cumulative factor/interaction trial ledger, including every
-   V1 failure and the retained risk guard;
+1. ~~Reconcile the cumulative factor/interaction trial ledger, including every
+   V1 failure and the retained risk guard.~~ Complete under ADR 0277; the first
+   immutable version carries eight consumed trials and zero admitted Alpha;
 2. define a small number of economically distinct territories using only data
    with declared point-in-time availability;
 3. separate standalone Alpha, setup-conditioner interactions, applicability,

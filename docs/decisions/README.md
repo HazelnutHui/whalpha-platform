@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0277](0277-establish-cumulative-factor-discovery-trial-accounting.md):
+  makes consumed factor-screen trials cumulative and machine-verifiable before
+  any adaptive successor campaign reads Development outcomes.
 - [ADR 0276](0276-freeze-factor-catalog-v1-development-screening-protocol.md):
   freezes the first finite, development-only factor outcome screen, its eight
   formal hypotheses, role-specific labels, multiplicity, stability, cap, and

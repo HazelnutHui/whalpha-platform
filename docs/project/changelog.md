@@ -6,6 +6,21 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Make factor-discovery trial history cumulative
+
+- Accepted ADR 0277 and implemented the immutable
+  `quant-research-discovery-trial-ledger/1.0` contract.
+- Bound every consumed Factor Discovery V1 hypothesis to its factor identity,
+  role, target, related family, result report, and disposition: five failed
+  candidate-Alpha trials, two failed risk guards, and one retained risk guard.
+- Recorded that later campaign design is adaptive to consumed Development
+  evidence. Within-campaign adjusted statistics remain selection evidence and
+  cannot be represented as globally independent Alpha discovery.
+- Required every new factor or conditioner-interaction campaign to carry all
+  prior entries forward in a new ledger version before outcome access.
+- Preserved zero Model Construction, Strategy Expression, Validation, Holdout,
+  Candidate, publication, broker, or execution authority.
+
 ## 2026-09-15 — Close Factor Catalog V1 without a candidate Alpha
 
 - Executed the single frozen ADR 0276 Development screen over 106 signal

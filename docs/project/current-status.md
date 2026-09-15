@@ -27,7 +27,9 @@ ADRs, and audits.
   catalog completed its frozen eight-hypothesis Development screen and one
   exact replay. All five candidate-Alpha factors failed; one risk guard passed.
   The batch is `closed_no_candidate_alpha`, so no model was constructed and a
-  separately registered discovery campaign is next.
+  separately registered discovery campaign is next. ADR 0277 now retains all
+  eight consumed trials in a machine-verifiable cumulative ledger before that
+  adaptive campaign is designed.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -187,6 +189,14 @@ The terminal status is `closed_no_candidate_alpha`; Factor Catalog V1 cannot be
 retuned. No model, strategy expression, Validation, Holdout, performance
 claim, Candidate activation, publication, or trading authority was granted.
 
+The cumulative discovery ledger now records all five failed Alpha trials, two
+failed risk guards, and the one retained risk guard under logical fingerprint
+`502834abe5bfc171f80206138b36c8bf973c9fcc84078592b8dc92ccd5bee368`.
+Its next version must carry those records forward and preregister all new
+factor or interaction trials before any further Development outcome is read.
+Campaign-level adjusted statistics remain selection evidence rather than a
+globally independent Alpha claim.
+
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
 gates, and research-authority flags. The outcome-free input contract and
@@ -237,9 +247,10 @@ measured budget breach.
 7. Preserve the completed ADR 0276 screen and exact replay. Do not revise its
    gates, treat the retained risk guard as Alpha, or construct a model from a
    batch with zero admitted candidate Alpha.
-8. Register a separate finite Factor Discovery campaign and cumulative trial
-   ledger before any further outcome read; do not preselect Momentum Breakout
-   or another named strategy.
+8. Preserve the completed cumulative V1 trial ledger and register a separate
+   finite Factor Discovery campaign by appending a new ledger version before
+   any further outcome read; do not preselect Momentum Breakout or another
+   named strategy.
 9. Keep Factor Discovery, Model Construction, and Strategy Expression as
    separate versioned records; lock the complete lineage before Validation.
 

@@ -147,6 +147,16 @@ untouched. Factor Catalog V1 is closed without retuning. The next research
 action is a separately registered finite Factor Discovery campaign; Model
 Construction and Strategy Expression remain locked.
 
+ADR 0277 now binds all eight consumed factor-screen trials in cumulative
+machine-verifiable ledger version
+`whalpha.quant-research.discovery-trial-ledger/1.0.0`; its logical fingerprint
+is `502834abe5bfc171f80206138b36c8bf973c9fcc84078592b8dc92ccd5bee368`.
+It records five failed candidate-Alpha trials, two failed risk guards, one
+retained risk guard, and zero outcome-tested conditioner interactions. A next
+campaign must append its hypotheses in a new ledger version before any new
+outcome access and must disclose that its design is adaptive to consumed V1
+Development evidence.
+
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility
 behavior. They are not expected-return models and do not define the future
