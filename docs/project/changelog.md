@@ -31,6 +31,11 @@ and dated [audits](../audits/). Current capability and next work belong in
   the SKX file omitted mixed-election cash. Two free SEC supplemental files,
   rather than LSEG, are the minimal correction. No bound, outcome, or parameter
   was opened.
+- Added and tested a strict two-document supplemental planner and acquisition
+  wrapper, then published and formally reread the owner-only plan against the
+  retained SEC Submissions archive. Planning used zero network requests,
+  credential reads, document writes, outcomes, or Production authority; live
+  acquisition remains separate.
 - The current V2 review recognizes 274 complete feature sessions but remains
   blocked solely on those five source cases. No outcome or parameter was
   opened.

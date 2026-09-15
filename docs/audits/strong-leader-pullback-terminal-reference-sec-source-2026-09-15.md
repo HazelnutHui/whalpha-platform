@@ -59,6 +59,13 @@ free official supplemental candidates:
   `0001104659-25-074187`, accepted 2025-08-05T16:13:28Z, primary document
   `tm2516935-12_defm14c.htm`.
 
-These candidates have not been frozen into a new plan or acquired. The
-immutable five-document source remains retained as valid partial evidence.
-LSEG is not required for this correction.
+These candidates are now frozen in owner-only supplemental plan
+`plan=20260915-v1`, bound to implementation revision
+`661fcf12a82694215148b03f683b71ae6aa32d84`, report SHA-256
+`097701d9e9bd76a889418f4e946402e8394d17ed24aac3005e628e628d43e3a7`,
+and logical fingerprint
+`20b7a0fd0278b14797fd9e60d871075dfa6fb8dd6ce8640d4f1fad5818040fa6`.
+Formal reread produced identical evidence with zero network, credential, or
+document writes. The two documents have not been acquired. The immutable
+five-document source remains retained as valid partial evidence, and LSEG is
+not required for this correction.

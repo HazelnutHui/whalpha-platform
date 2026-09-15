@@ -51,3 +51,9 @@ prove its named field. Missing evidence must remain unresolved and be supplied
 through a separately frozen supplemental plan; it cannot be repaired by
 editing retained content, weakening match rules, or silently substituting a
 different URL.
+
+The supplemental plan contract
+`strong-leader-pullback-terminal-reference-sec-supplement-plan/1.0` contains
+exactly two requests. It exists only to supply the three unresolved REVG/SKX
+fields from the immutable initial batch and carries the same zero-outcome,
+zero-parameter, zero-canonical-write, and zero-Production authority.

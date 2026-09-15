@@ -23,7 +23,8 @@ ADRs, and audits.
 - **External source:** no commercial lifecycle source is selected or required
   for the current bounded step. The frozen five-document free official SEC
   batch is retained and hash-verified; it supports 8 of 11 preregistered facts.
-  Two exact free SEC supplemental files are still needed.
+  The exact two-file free SEC supplement is frozen and metadata-verified but
+  not acquired.
 - **Automation:** guarded manual daily operation works; unattended write-
   capable operation is not active.
 
@@ -152,8 +153,8 @@ measured budget breach.
    preregistered version.
 2. Preserve Baseline V1, reconstructed Membership, and all unresolved evidence
    states without silent inference.
-3. Preserve the verified five-document SEC source, freeze and acquire only the
-   two metadata-verified supplemental SEC documents for REVG and SKX, and then
+3. Preserve the verified five-document SEC source and acquire only the frozen
+   two-document supplement for REVG and SKX after separate authorization, then
    adjudicate all named fields; do not build a general adapter or reopen the 13
    cases whose finite intervals already reconcile.
 4. Rerun reconstructed-research V2. Only a positive decision may open

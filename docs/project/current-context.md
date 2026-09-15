@@ -205,7 +205,13 @@ Formal reread used zero requests. Outcome-blind review matched 8 of 11 frozen
 facts: REVG's selected completion release omits both consideration values and
 SKX's selected 10-K omits the mixed-election cash value. No bound or admission
 state changed. Two free SEC supplemental candidates are metadata-verified but
-not yet frozen or acquired; see the
+not yet acquired. Their owner-only plan `plan=20260915-v1` is bound to revision
+`661fcf12a82694215148b03f683b71ae6aa32d84`, report SHA-256
+`097701d9e9bd76a889418f4e946402e8394d17ed24aac3005e628e628d43e3a7`,
+and logical fingerprint
+`20b7a0fd0278b14797fd9e60d871075dfa6fb8dd6ce8640d4f1fad5818040fa6`.
+It was formally reread with zero requests, credential reads, or document
+writes. See the
 [dated audit](../audits/strong-leader-pullback-terminal-reference-sec-source-2026-09-15.md).
 
 ## Automation and boundaries

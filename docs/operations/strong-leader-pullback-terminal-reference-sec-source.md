@@ -62,6 +62,38 @@ and rerun Research Admission V2. No `/data`, Snapshot, publication, deployment,
 scheduler, Candidate, validation, or holdout action belongs to this operation.
 
 The initial review identified exactly two supplemental free SEC documents as
-the minimal correction. Their metadata is recorded in the dated
+the minimal correction. Their metadata and frozen plan are recorded in the dated
 [source review](../audits/strong-leader-pullback-terminal-reference-sec-source-2026-09-15.md),
 but they are not authorized or acquired by this runbook.
+
+## 4. Supplemental plan
+
+The zero-network supplemental plan is retained at
+`historical-evidence/strong-leader-pullback-terminal-reference-sec-supplement-plan/plan=20260915-v1`.
+It allows exactly one REVG document and one SKX document. Reproduce its formal
+reread from a clean tree with:
+
+```bash
+scripts/admin/plan-strong-leader-pullback-terminal-reference-sec-supplement.sh \
+  --submissions-package /home/hui/.local/state/trading-intelligence-platform/historical-source/sec-submissions/snapshot=2026-09-10 \
+  --submissions-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-source/sec-submissions \
+  --output-root /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-reference-sec-supplement-plan/plan=20260915-v1 \
+  --output-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-reference-sec-supplement-plan \
+  --planned-at 2026-09-15T02:14:15Z \
+  --execute
+```
+
+After separate explicit authority, acquire only that plan with:
+
+```bash
+scripts/admin/acquire-strong-leader-pullback-terminal-reference-sec-supplement.sh \
+  --plan /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-reference-sec-supplement-plan/plan=20260915-v1 \
+  --plan-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-evidence/strong-leader-pullback-terminal-reference-sec-supplement-plan \
+  --output-root /home/hui/.local/state/trading-intelligence-platform/historical-source/strong-leader-pullback-terminal-reference-sec-supplement-content/source=20260915-v1 \
+  --output-custody-root /home/hui/.local/state/trading-intelligence-platform/historical-source/strong-leader-pullback-terminal-reference-sec-supplement-content \
+  --execute
+```
+
+This command cannot fetch a third URL and inherits the same SEC rate, retry,
+size, hash, atomic-custody, and no-credential-retention boundaries as the
+initial source operation.

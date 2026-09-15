@@ -100,10 +100,10 @@ unchanged capability.
 
 The five-document plan and source are now retained and hash-verified. Its
 outcome-blind field review matched eight of eleven facts; the selected REVG
-and SKX documents omit three terms. The next bounded work is to freeze a
-two-document supplemental SEC plan, acquire it only with separate authority,
-adjudicate all named fields without outcomes, rebuild all 18 bounds, and rerun
-the V2 gate.
+and SKX documents omit three terms. The exact two-document supplemental SEC
+plan is now frozen and formally reread with zero requests. The next bounded
+work is to acquire it only with separate authority, adjudicate all named fields
+without outcomes, rebuild all 18 bounds, and rerun the V2 gate.
 
 Exit criterion: one immutable V2 admission report identifies every complete
 feature session and every exact or interval-censored terminal path with no
