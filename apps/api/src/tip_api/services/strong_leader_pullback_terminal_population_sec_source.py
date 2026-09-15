@@ -14,7 +14,14 @@ from pathlib import Path
 from typing import Callable, Literal, Protocol
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, SecretStr, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    SecretStr,
+    field_validator,
+    model_validator,
+)
 
 from tip_api.contracts.common import normalize_utc_datetime
 from tip_api.providers.sec.config import SecProviderConfig
@@ -185,6 +192,12 @@ class _DocumentTransport(Protocol):
     ) -> SecDownloadResult: ...
 
 
+class _PlanReader(Protocol):
+    def __call__(
+        self, *, output_root: Path, output_custody_root: Path
+    ) -> object: ...
+
+
 TransportFactory = Callable[[SecRateLimiter], _DocumentTransport]
 Clock = Callable[[], datetime]
 
@@ -199,6 +212,7 @@ def acquire_strong_leader_pullback_terminal_population_sec_source(
     implementation_revision: str,
     transport_factory: TransportFactory | None = None,
     clock: Clock | None = None,
+    plan_reader: _PlanReader | None = None,
 ) -> StrongLeaderPullbackTerminalPopulationSecSourceResult:
     """Acquire the complete small plan into one atomic source package."""
 
@@ -206,7 +220,11 @@ def acquire_strong_leader_pullback_terminal_population_sec_source(
         raise StrongLeaderPullbackTerminalPopulationSecSourceError(
             "terminal-population SEC source revision is invalid"
         )
-    plan = plan_source.read_strong_leader_pullback_terminal_population_sec_source_plan(
+    reader = (
+        plan_reader
+        or plan_source.read_strong_leader_pullback_terminal_population_sec_source_plan
+    )
+    plan = reader(
         output_root=plan_root, output_custody_root=plan_custody_root
     )
     if (
@@ -235,6 +253,7 @@ def acquire_strong_leader_pullback_terminal_population_sec_source(
             plan_custody_root=plan_custody_root,
             output_root=target,
             output_custody_root=output_custody_root,
+            plan_reader=reader,
         )
         return StrongLeaderPullbackTerminalPopulationSecSourceResult(
             output_root=target,
@@ -260,6 +279,9 @@ def acquire_strong_leader_pullback_terminal_population_sec_source(
                 implementation_revision=implementation_revision,
                 transport=factory(limiter),
                 observed_at=now(),
+                maximum_retries_per_request=(
+                    plan.report.maximum_retries_per_request
+                ),
             )
             artifacts.append(artifact)
             network_count += 1 + artifact.retry_count
@@ -290,6 +312,7 @@ def acquire_strong_leader_pullback_terminal_population_sec_source(
         plan_custody_root=plan_custody_root,
         output_root=target,
         output_custody_root=output_custody_root,
+        plan_reader=reader,
     )
     return StrongLeaderPullbackTerminalPopulationSecSourceResult(
         output_root=target,
@@ -308,10 +331,15 @@ def read_strong_leader_pullback_terminal_population_sec_source(
     plan_custody_root: Path,
     output_root: Path,
     output_custody_root: Path,
+    plan_reader: _PlanReader | None = None,
 ) -> StrongLeaderPullbackTerminalPopulationSecSourceResult:
     """Formally reread a complete source package and every retained document."""
 
-    plan = plan_source.read_strong_leader_pullback_terminal_population_sec_source_plan(
+    reader = (
+        plan_reader
+        or plan_source.read_strong_leader_pullback_terminal_population_sec_source_plan
+    )
+    plan = reader(
         output_root=plan_root, output_custody_root=plan_custody_root
     )
     root = _validated_completed_output(output_root, output_custody_root)
@@ -329,8 +357,9 @@ def read_strong_leader_pullback_terminal_population_sec_source(
     )
     raw = manifest_path.read_bytes()
     try:
-        manifest = StrongLeaderPullbackTerminalPopulationSecSourceManifestV1.model_validate_json(
-            raw
+        manifest = (
+            StrongLeaderPullbackTerminalPopulationSecSourceManifestV1
+            .model_validate_json(raw)
         )
     except Exception as exc:
         raise StrongLeaderPullbackTerminalPopulationSecSourceError(
@@ -378,7 +407,7 @@ def _default_transport_factory(config: SecProviderConfig) -> TransportFactory:
 def _download_item(
     *, staging: Path, item: object, config: SecProviderConfig,
     implementation_revision: str, transport: _DocumentTransport,
-    observed_at: datetime,
+    observed_at: datetime, maximum_retries_per_request: int,
 ) -> TerminalPopulationSecDocumentArtifactV1:
     request_root = staging / f"request={item.request_sequence:06d}"
     request_root.mkdir(mode=0o700)
@@ -395,7 +424,7 @@ def _download_item(
         or result.byte_count < 1
         or result.byte_count > item.maximum_response_bytes
         or result.content_type not in source_base._ALLOWED_CONTENT_TYPES
-        or result.retry_count > plan_source.MAXIMUM_RETRIES_PER_REQUEST
+        or result.retry_count > maximum_retries_per_request
         or document_path.stat().st_size != result.byte_count
         or source_base._sha256_file(document_path) != result.sha256
     ):
@@ -459,7 +488,7 @@ def _read_artifact_directory(
     document_path = directory / DOCUMENT_FILE
     source_base._require_regular_file(artifact_path, 0o400, MAXIMUM_ARTIFACT_BYTES)
     source_base._require_regular_file(
-        document_path, 0o400, plan_source.MAXIMUM_DOCUMENT_BYTES
+        document_path, 0o400, item.maximum_response_bytes
     )
     try:
         artifact = TerminalPopulationSecDocumentArtifactV1.model_validate_json(
@@ -514,8 +543,9 @@ def _build_manifest(
             tuple(item.model_dump(mode="json") for item in artifacts)
         ),
     }
-    provisional = StrongLeaderPullbackTerminalPopulationSecSourceManifestV1.model_construct(
-        **values, logical_fingerprint="0" * 64
+    provisional = (
+        StrongLeaderPullbackTerminalPopulationSecSourceManifestV1
+        .model_construct(**values, logical_fingerprint="0" * 64)
     )
     return StrongLeaderPullbackTerminalPopulationSecSourceManifestV1.model_validate(
         {

@@ -30,3 +30,18 @@ paths separately. The contract contains zero outcome, performance, parameter
 selection, external request, canonical write, or Production authority. A
 complete bounds report still does not itself create a return label; it only
 satisfies one input gate for reconstructed development admission.
+
+## Official source plan
+
+`strong-leader-pullback-terminal-reference-sec-plan/1.0` freezes exactly five
+SEC documents for LNW, MTSR, REVG, SAND, and SKX. Each request binds the target
+stable ID separately from the source filer CIK, source-party role, accession,
+form, filing and acceptance timestamps, submissions-index primary document,
+requested exhibit, missing evidence role, and intended interval policy.
+
+The plan is constructed only after a formal zero-network reread of the retained
+SEC Submissions archive proves each accession's filing metadata. It contains
+zero requests, credential reads, source content, adjudications, outcomes,
+parameters, canonical writes, or Production authority. The acquisition wrapper
+then reuses the existing bounded SEC transport and atomic owner-only custody;
+it cannot add a sixth URL or convert downloaded text into a fact.
