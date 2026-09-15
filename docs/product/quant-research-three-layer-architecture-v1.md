@@ -225,11 +225,16 @@ authority.
 - Quant Research Factor Catalog V1 is the first bounded discovery batch. Its
   12 factors are not the permanent feature universe or a promised model. Its
   outcome-blind value, coverage, distribution, concentration, redundancy, and
-  exact-replay report is complete under ADR 0275; no factor has been admitted.
+  exact-replay report is complete under ADR 0275. Its frozen Development screen
+  then rejected all five candidate-Alpha factors and retained one risk guard;
+  the batch is closed without a model.
+- ADR 0277 binds all eight consumed V1 trials in a cumulative ledger. ADR 0278
+  registers a separate eight-definition Factor Catalog V2 with zero outcome
+  access. Its outcome-blind qualification is the current research gate.
 - The current six Strategy Channels and Candidate score remain frozen,
   unvalidated Baseline V1 compatibility surfaces until separately replaced.
 - No three-layer model or strategy expression is active in Stock Candidates.
-- The next research gate is a separate before-outcomes screening protocol;
-  Model Construction and Strategy Expression remain locked.
+- Model Construction and Strategy Expression remain locked until a separately
+  screened catalog admits at least one candidate Alpha.
 - Validation, Holdout, publication, broker, and execution
   authority are unchanged.

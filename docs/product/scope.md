@@ -15,8 +15,9 @@
   validation, failure, and lifecycle authority;
 - implement the three-layer research structure defined by ADR 0274 rather than
   extending a fixed queue of named strategies;
-- qualify the first bounded Factor Catalog V1 without outcomes, then freeze a
-  separate screening protocol before any new development return is read;
+- qualify each bounded Factor Discovery catalog without outcomes, then append
+  cumulative trials and freeze a separate screening protocol before any new
+  Development return is read;
 - improve only data families tied to a named research requirement and frozen
   acceptance test;
 - keep each factor batch, model campaign, and expression campaign finite and
@@ -30,7 +31,7 @@
 - later redesign Candidate presentation around the exact activated model,
   current-market applicability, entry readiness, and invalidation.
 
-The current heuristic Candidate score and three technical Strategy Channels
+The current heuristic Candidate score and six technical Strategy Channels
 remain visible Production facts but are frozen as unvalidated `Baseline V1`.
 They are not the target model architecture and must not be tuned directly.
 

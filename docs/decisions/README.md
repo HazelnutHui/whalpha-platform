@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0278](0278-register-factor-catalog-v2-without-outcomes.md): registers a
+  finite adaptive V2 catalog across continuation, reversal, return timing,
+  defensive applicability, liquidity, and downside risk without reading
+  outcomes.
 - [ADR 0277](0277-establish-cumulative-factor-discovery-trial-accounting.md):
   makes consumed factor-screen trials cumulative and machine-verifiable before
   any adaptive successor campaign reads Development outcomes.

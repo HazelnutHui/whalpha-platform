@@ -52,6 +52,8 @@ Read this bounded set before new Lab research:
 - [Factor Screening V1 result audit](audits/quant-research-factor-screening-2026-09-15.md)
 - [Cumulative Factor Discovery Trial Ledger V1](data-contracts/quant-research-discovery-trial-ledger-v1.md)
 - [ADR 0277: cumulative factor trial accounting](decisions/0277-establish-cumulative-factor-discovery-trial-accounting.md)
+- [Outcome-blind Factor Catalog V2](data-contracts/quant-research-factor-catalog-v2.md)
+- [ADR 0278: register Factor Catalog V2 without outcomes](decisions/0278-register-factor-catalog-v2-without-outcomes.md)
 - [Factor Screening V1 UI deployment audit](audits/quant-research-factor-screening-ui-deployment-2026-09-15.md)
 - [Factor Qualification UI deployment audit](audits/quant-research-factor-qualification-ui-deployment-2026-09-15.md)
 - [ADR 0276: frozen Development screening protocol](decisions/0276-freeze-factor-catalog-v1-development-screening-protocol.md)

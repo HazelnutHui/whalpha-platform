@@ -96,10 +96,14 @@ Sequence:
 1. ~~Reconcile the cumulative factor/interaction trial ledger, including every
    V1 failure and the retained risk guard.~~ Complete under ADR 0277; the first
    immutable version carries eight consumed trials and zero admitted Alpha;
-2. define a small number of economically distinct territories using only data
-   with declared point-in-time availability;
-3. separate standalone Alpha, setup-conditioner interactions, applicability,
-   and risk-guard hypotheses before calculations;
+2. ~~Define a small number of economically distinct territories using only
+   data with declared point-in-time availability.~~ Factor Catalog V2 now
+   registers continuation, reversal, return timing, defensive state,
+   liquidity, and downside-risk measurements under ADR 0278;
+3. ~~Separate standalone Alpha, setup-conditioner interactions, applicability,
+   and risk-guard hypotheses before calculations.~~ The V2 catalog fixes four
+   candidate Alpha, one conditioner, one applicability input, and two risk
+   guards; no outcome trial is authorized yet;
 4. qualify coverage, timing, missingness, redundancy, and implementation with
    zero new outcome access;
 5. freeze the new cohort, labels, related-hypothesis groups, multiplicity,

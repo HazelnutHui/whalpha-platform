@@ -166,10 +166,14 @@ missingness, distribution, concentration, correlation, and exact-replay report
 are complete under ADR 0275. The report covers 418,756 complete factor vectors
 across 255 eligible sessions, retains 18,646 explicit quarantines, and finds no
 pair meeting the frozen near-duplicate rule. These are calculation-quality
-facts, not Alpha evidence. The next permitted work is to freeze a separate
-before-outcomes screening protocol.
+facts, not Alpha evidence. Its later frozen Development screen rejected every
+candidate-Alpha factor and retained only one risk guard, so V1 is closed
+without a model. ADR 0277 preserves all eight consumed trials. ADR 0278 now
+registers a separate eight-definition V2 catalog with zero outcome access; its
+outcome-blind qualification is the current gate.
 
-No factor has been admitted. No factor return, selected threshold, model weight, three-layer model,
+No candidate-Alpha factor has been admitted. No selected threshold, model
+weight, three-layer model,
 strategy expression, Lab performance publication, or active Candidate model
 currently exists.
 
