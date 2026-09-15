@@ -53,6 +53,7 @@ Read this bounded set before Strong-Leader Pullback or Lab work:
 - [Provider-neutral source result](data-contracts/strong-leader-pullback-source-acceptance-result-v1.md)
 - [Reconstructed research admission](data-contracts/strong-leader-pullback-research-admission-v2.md)
 - [Terminal reference bounds](data-contracts/strong-leader-pullback-terminal-reference-bounds-v1.md)
+- [Reconstructed development dataset](data-contracts/strong-leader-pullback-reconstructed-development-dataset-v1.md)
 - [Current terminal-bounds review](audits/strong-leader-pullback-terminal-reference-final-review-2026-09-15.md)
 - [Current reconstructed admission review](audits/strong-leader-pullback-research-admission-v2-final-review-2026-09-15.md)
 - [Current launch audit](audits/strong-leader-pullback-method-engineering-launch-review-2026-09-14.md)
@@ -64,6 +65,7 @@ Read this bounded set before Strong-Leader Pullback or Lab work:
 - [ADR 0267: provider-neutral evidence acceptance](decisions/0267-freeze-provider-neutral-performance-evidence-acceptance.md)
 - [ADR 0268: adversarial missingness bounds](decisions/0268-admit-reconstructed-research-only-with-adversarial-missingness-bounds.md)
 - [ADR 0269: frozen terminal gross-value intervals](decisions/0269-bound-reconstructed-terminal-references-with-frozen-gross-value-intervals.md)
+- [ADR 0270: isolated reconstructed development labels](decisions/0270-materialize-reconstructed-development-labels-without-opening-evaluation.md)
 
 The complete registries remain available through the
 [data-contract index](data-contracts/README.md) and
@@ -89,6 +91,7 @@ The complete registries remain available through the
 - [Strong-Leader Pullback Method Launch Review](operations/strong-leader-pullback-method-engineering-launch-review.md)
 - [Strong-Leader Pullback Method Diagnostics](operations/strong-leader-pullback-method-diagnostics.md)
 - [Strong-Leader Pullback Research Admission V2](operations/strong-leader-pullback-research-admission-v2.md)
+- [Strong-Leader Pullback Reconstructed Development Dataset](operations/strong-leader-pullback-reconstructed-development-dataset.md)
 - [Terminal Reference SEC Source](operations/strong-leader-pullback-terminal-reference-sec-source.md)
 - [Market Intelligence Publication](operations/market-intelligence-publication.md)
 - [Dashboard Snapshot Publication](operations/dashboard-snapshot-publication.md)

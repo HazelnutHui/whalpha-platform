@@ -19,12 +19,14 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from tip_api.contracts.analytics.v1 import (
+    CandidateStrategyChronologicalPlanV1,
     RegimeState,
     RegimeStateAvailability,
     StrategyMembershipMode,
     StrongLeaderPullbackDiagnosticExcludedPathV1,
     StrongLeaderPullbackDiagnosticUnavailableFeatureV1,
     StrongLeaderPullbackMethodDiagnosticsV1,
+    StrongLeaderPullbackObservationV1,
 )
 from tip_api.contracts.analytics.v1.candidate_strategy_development_coverage import (
     STRONG_LEADER_PULLBACK_CENSUS_FIRST_SESSION,
@@ -123,6 +125,19 @@ class _SessionFeatureBatch:
     unavailable_reason_codes: tuple[str, ...] = ()
 
 
+@dataclass(frozen=True, slots=True)
+class StrongLeaderPullbackReconstructedPopulation:
+    """Formally reproduced outcome-free observations and their source bindings."""
+
+    plan: CandidateStrategyChronologicalPlanV1
+    observations: tuple[StrongLeaderPullbackObservationV1, ...]
+    excluded_paths: tuple[StrongLeaderPullbackDiagnosticExcludedPathV1, ...]
+    report: StrongLeaderPullbackMethodDiagnosticsV1
+    source_eod_fingerprint: str
+    source_adjustment_fingerprint: str
+    split_basis_session: date
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description=(
@@ -212,7 +227,7 @@ def run_strong_leader_pullback_diagnostics(
     output_custody_root: Path,
 ) -> tuple[Path, StrongLeaderPullbackMethodDiagnosticsV1]:
     with _network_disabled():
-        return _run_strong_leader_pullback_diagnostics(
+        population = _load_strong_leader_pullback_reconstructed_population(
             data_root=data_root,
             membership_shadow_root=membership_shadow_root,
             development_census_root=development_census_root,
@@ -222,12 +237,16 @@ def run_strong_leader_pullback_diagnostics(
             ),
             method_launch_root=method_launch_root,
             method_launch_custody_root=method_launch_custody_root,
+        )
+        report_path = write_strong_leader_pullback_diagnostics(
             output_root=output_root,
             output_custody_root=output_custody_root,
+            report=population.report,
         )
+        return report_path, population.report
 
 
-def _run_strong_leader_pullback_diagnostics(
+def load_strong_leader_pullback_reconstructed_population(
     *,
     data_root: Path,
     membership_shadow_root: Path,
@@ -236,9 +255,31 @@ def _run_strong_leader_pullback_diagnostics(
     split_adjustment_publication_root: Path,
     method_launch_root: Path,
     method_launch_custody_root: Path,
-    output_root: Path,
-    output_custody_root: Path,
-) -> tuple[Path, StrongLeaderPullbackMethodDiagnosticsV1]:
+) -> StrongLeaderPullbackReconstructedPopulation:
+    """Reproduce the admitted feature population without writing a report."""
+
+    with _network_disabled():
+        return _load_strong_leader_pullback_reconstructed_population(
+            data_root=data_root,
+            membership_shadow_root=membership_shadow_root,
+            development_census_root=development_census_root,
+            split_action_publication_root=split_action_publication_root,
+            split_adjustment_publication_root=split_adjustment_publication_root,
+            method_launch_root=method_launch_root,
+            method_launch_custody_root=method_launch_custody_root,
+        )
+
+
+def _load_strong_leader_pullback_reconstructed_population(
+    *,
+    data_root: Path,
+    membership_shadow_root: Path,
+    development_census_root: Path,
+    split_action_publication_root: Path,
+    split_adjustment_publication_root: Path,
+    method_launch_root: Path,
+    method_launch_custody_root: Path,
+) -> StrongLeaderPullbackReconstructedPopulation:
     canonical_root = _validated_data_root(data_root)
     shadow_root = _validated_shadow_root(membership_shadow_root)
     launch = read_strong_leader_pullback_method_engineering_launch_review(
@@ -497,12 +538,24 @@ def _run_strong_leader_pullback_diagnostics(
         excluded_paths=ordered_exclusions,
         known_split_adjustment_applied_path_count=known_split_count,
     )
-    report_path = write_strong_leader_pullback_diagnostics(
-        output_root=output_root,
-        output_custody_root=output_custody_root,
-        report=report,
+    eod_evidence = next(
+        item for item in census.dataset_evidence if item.family == "eod_price_bar"
     )
-    return report_path, report
+    if eod_evidence.logical_fingerprint is None:
+        raise StrongLeaderPullbackDiagnosticsCliError(
+            "diagnostic EOD evidence lacks a logical fingerprint"
+        )
+    return StrongLeaderPullbackReconstructedPopulation(
+        plan=plan,
+        observations=ordered_observations,
+        excluded_paths=ordered_exclusions,
+        report=report,
+        source_eod_fingerprint=eod_evidence.logical_fingerprint,
+        source_adjustment_fingerprint=(
+            adjustment_source.publication.logical_fingerprint
+        ),
+        split_basis_session=adjustment_source.publication.basis_session,
+    )
 
 
 def _build_session_batch(

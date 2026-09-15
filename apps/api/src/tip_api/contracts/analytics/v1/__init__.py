@@ -275,6 +275,17 @@ from .candidate_strategy_research_execution import (
     StrongLeaderPullbackParameterCombinationV1,
     research_execution_fingerprint,
 )
+from .strong_leader_pullback_development_dataset import (
+    DEVELOPMENT_DATASET_CONTRACT_VERSION,
+    DEVELOPMENT_LABEL_CONTRACT_VERSION,
+    TERMINAL_REFERENCE_LEDGER_VERSION,
+    ReconstructedDevelopmentLabelState,
+    StrongLeaderPullbackReconstructedDevelopmentLabelV1,
+    StrongLeaderPullbackReconstructedDevelopmentManifestV1,
+    StrongLeaderPullbackTerminalReferenceLedgerEntryV1,
+    TerminalReferenceLedgerState,
+    development_dataset_fingerprint,
+)
 from .strong_leader_pullback_method import (
     STRONG_LEADER_PULLBACK_FORMAL_DATA_GATE_STATUS,
     STRONG_LEADER_PULLBACK_INPUT_CALCULATION_VERSION,
@@ -597,6 +608,15 @@ __all__ = [
     "StrongLeaderPullbackObservationV1",
     "StrongLeaderPullbackParameterCombinationV1",
     "research_execution_fingerprint",
+    "DEVELOPMENT_DATASET_CONTRACT_VERSION",
+    "DEVELOPMENT_LABEL_CONTRACT_VERSION",
+    "TERMINAL_REFERENCE_LEDGER_VERSION",
+    "ReconstructedDevelopmentLabelState",
+    "StrongLeaderPullbackReconstructedDevelopmentLabelV1",
+    "StrongLeaderPullbackReconstructedDevelopmentManifestV1",
+    "StrongLeaderPullbackTerminalReferenceLedgerEntryV1",
+    "TerminalReferenceLedgerState",
+    "development_dataset_fingerprint",
     "STRONG_LEADER_PULLBACK_FORMAL_DATA_GATE_STATUS",
     "STRONG_LEADER_PULLBACK_INPUT_CALCULATION_VERSION",
     "STRONG_LEADER_PULLBACK_INPUT_FEATURE_FINGERPRINT",

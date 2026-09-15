@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0270](0270-materialize-reconstructed-development-labels-without-opening-evaluation.md):
+  materializes isolated reconstructed-development labels while keeping
+  validation, holdout, performance claims, Candidate, and Production closed.
 - [ADR 0269](0269-bound-reconstructed-terminal-references-with-frozen-gross-value-intervals.md):
   freezes conservative gross-value intervals and adverse endpoint evaluation
   for the residual terminal population without point-imputing holder outcomes.
