@@ -18,8 +18,13 @@ and dated [audits](../audits/). Current capability and next work belong in
   frozen compatibility evidence rather than rewriting historical records.
 - Slimmed default documentation recovery so the completed Pullback artifact
   chain remains searchable but no longer dominates new research work.
-- No data, outcome, Validation, Holdout, Candidate, publication, deployment, or
-  Production state changed.
+- Deployed UI-only OCI release `2026-09-15T083410Z-45b1d4dfedca` from source
+  `45b1d4dfedcaffc92e2a11f21ecf208409347199`, reusing the immutable 2026-09-11
+  Snapshot and Market Intelligence publication. Independent postflight proved
+  checksums, services, protected routes, equal guest capability, and zero
+  staging/failed residue.
+- No data, outcome, Validation, Holdout, Candidate calculation, market
+  publication, or research authority changed.
 
 ## 2026-09-15 — Separate governed factor discovery from strategy construction
 

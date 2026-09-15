@@ -87,5 +87,22 @@ Pre-deployment verification:
 - no backend source, canonical data, Validation, Holdout, model activation, or
   market publication was changed.
 
-Production release identity and postflight evidence are appended only after
-the deployment completes.
+Deployment completed as a UI-only release:
+
+- release: `2026-09-15T083410Z-45b1d4dfedca`;
+- deployed source: `45b1d4dfedcaffc92e2a11f21ecf208409347199`;
+- bundle: 63 checksum-bound files, reusing Snapshot
+  `2026-09-11T211340Z-26cab64fabda` and Market Intelligence
+  `2026-09-11T205429Z-26cab64fabda`;
+- remote dry-run passed before Apply;
+- Apply completed and an independent postflight at 2026-09-15T08:35:17Z
+  matched release, source, manifest, checksums, Nginx, localhost-only Auth,
+  protected routes, guest Session, and equal guest/credential route policy;
+- zero staging releases, failed releases, failed system units, or unexpected
+  private listeners remained; and
+- the public landing returned the new Factor Discovery/three-layer copy, while
+  an unauthenticated Dashboard request redirected to Session entry.
+
+Credential login and final visual appearance remain manual user checks. The
+deployment changed no Snapshot, analytics, Candidate calculation, canonical
+data, Validation, Holdout, model authority, scheduler, or execution state.

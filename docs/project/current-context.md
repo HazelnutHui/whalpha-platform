@@ -2,7 +2,7 @@
 
 Operational state verified at: 2026-09-15T06:31:47Z
 
-Deployment state verified at: 2026-09-14T23:44:48Z
+Deployment state verified at: 2026-09-15T08:35:17Z
 
 Repository context updated at: 2026-09-15 UTC
 
@@ -20,8 +20,8 @@ ADRs, and dated audits.
 | Branch | `main`; verify live HEAD before mutation |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Active OCI release | `2026-09-14T234322Z-70438696e33c` |
-| Deployed source | `70438696e33c9d7a3302a272ff13846a5f38b249` |
+| Active OCI release | `2026-09-15T083410Z-45b1d4dfedca` |
+| Deployed source | `45b1d4dfedcaffc92e2a11f21ecf208409347199` |
 
 Dell owns code, canonical data, governance, and heavy computation. OCI is the
 bounded public-serving tier. A newer clean repository commit does not imply a
@@ -46,7 +46,9 @@ network-disabled reread. Run project Python through
 
 The current release passed independent release, source, bundle, checksum,
 service, protected-route, guest-flow, Candidate-route, logout, and residue
-checks. Password login and final visual appearance remain manual checks.
+checks. Public landing content independently exposes the new Factor Discovery
+direction; an unauthenticated Dashboard request redirects to Session entry.
+Password login and final visual appearance remain manual checks.
 Production Market Intelligence still consumes only 26 sessions and reports
 `degraded_short_history`; canonical history is deeper.
 
@@ -137,8 +139,8 @@ guarded manual daily chain works end to end.
 There is no standing authority for provider acquisition, `/data` mutation,
 Validation or Holdout access, model activation, publication, deployment,
 scheduler mutation, order execution, or destructive cleanup. A user may grant
-scoped authority for a specific action. The current website synchronization
-does not change data or research authority.
+scoped authority for a specific action. The completed website synchronization
+changed presentation only; it did not change data or research authority.
 
 ## Cross-device continuity
 
