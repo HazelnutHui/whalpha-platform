@@ -133,11 +133,10 @@ tradable portfolio construction.
 Exit criterion passed: a reproducible inconclusive result exists. It does not
 change Stock Candidates.
 
-## Current gated phase — Execute the one replacement selection
+## Completed phase — Execute the one replacement selection
 
-ADR 0272 and its machine contract have completed the before-results
-registration using only the V1 coverage result, not its return values. The
-single allowed execution must now:
+ADR 0272 and its machine contract completed the before-results registration
+using only the V1 coverage result, not its return values. The single execution:
 
 1. formally reread the immutable V1 development report and exact policy
    registration;
@@ -146,11 +145,30 @@ single allowed execution must now:
 3. apply every cost, chronological-half, positive-session, concentration, and
    endpoint-stability gate;
 4. retain one immutable result and independently replay it; and
-5. advance only if one lock survives every gate.
+5. allowed advancement only if one lock survived every gate.
 
-If the single replacement produces no lock, record the strategy family as
-inconclusive and advance to the next independent hypothesis instead of
-creating another rule variation over the same development set.
+The single replacement produced no lock. Twenty-three combinations were
+commonly eligible, but endpoint worlds selected different winners. The exact
+result replayed successfully and the family is closed without Validation or
+Holdout access.
+
+## Current gated phase — Register the next independent strategy
+
+Begin with Momentum Breakout unless an outcome-blind comparison of independent
+hypotheses selects a more useful family. Before reading any new outcome:
+
+1. define the economic mechanism, target population, benchmark, signal,
+   invalidation, holding horizon, and explicit non-claims;
+2. bind point-in-time inputs and data limitations to the admitted research
+   foundation;
+3. register a finite parameter family, costs, multiplicity, stability checks,
+   and development/Validation/Holdout boundaries; and
+4. implement outcome-free diagnostics before opening development labels.
+
+The rejected Pullback outcomes cannot be reused to tune this independent
+family, and no new strategy may enter Stock Candidates before completing its
+own locked Validation, single Holdout, publication, shadow, and activation
+reviews.
 
 ## Then — Generalize the bounded AI research factory
 

@@ -60,6 +60,7 @@ Read this bounded set before Strong-Leader Pullback or Lab work:
 - [Current reconstructed admission review](audits/strong-leader-pullback-research-admission-v2-final-review-2026-09-15.md)
 - [Current reconstructed development dataset audit](audits/strong-leader-pullback-reconstructed-development-dataset-2026-09-15.md)
 - [Current reconstructed development statistics review](audits/strong-leader-pullback-reconstructed-development-statistics-2026-09-15.md)
+- [Current replacement-selection review](audits/strong-leader-pullback-reconstructed-replacement-selection-2026-09-15.md)
 - [Current launch audit](audits/strong-leader-pullback-method-engineering-launch-review-2026-09-14.md)
 - [Current diagnostics audit](audits/strong-leader-pullback-method-diagnostics-2026-09-14.md)
 - [ADR 0194: bounded AI-assisted research](decisions/0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md)

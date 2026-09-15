@@ -6,6 +6,23 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Reject the Strong-Leader Pullback replacement on endpoint instability
+
+- Executed the single ADR 0272 replacement attempt against the exact immutable
+  V1 report and retained 24 eligibility decisions under owner-only custody.
+- Twenty-three combinations met the common evidence floor, but the Upper
+  endpoint world selected a different winner from the Lower and
+  contrast-adverse worlds. The frozen endpoint-stability gate therefore
+  rejected the family before winner-specific robustness tests.
+- Exact replay returned the same report SHA-256
+  `070f7d8c6e29ad1e5e4c04d02ec3b19c1d0e7720c369d5ffdd991195186184b2`
+  and logical fingerprint
+  `086675c82efb4453f9bc71e88ad65fc0f64c411569313cd6ac3795ee0a6baaec`.
+- No parameter lock, Validation or Holdout access, performance claim,
+  Candidate authority, publication, deployment, canonical-data write, or
+  Production write occurred. This family cannot receive another protocol
+  variation over the same development outcome.
+
 ## 2026-09-15 — Implement the one-run replacement selector
 
 - Implemented the frozen ADR 0272 eligibility, endpoint-stability, economic,

@@ -76,7 +76,7 @@ acquisition gap.
 | Historical Coverage | final pre-research review V2 is `rejected_data_blocked`; no research-ready manifest exists |
 | Method engineering | launch review V1 is `ready_for_outcome_blind_method_engineering` over 287 sessions / 437,402 paths |
 | Reconstructed development labels | owner-only Dell package over 105 development sessions / 166,313 observations / 498,939 labels; validation and holdout labels remain zero |
-| Reconstructed development statistics | 24 × 3 × 3 = 216 summaries; V1 is `inconclusive_evidence_floor`, no parameter lock, Validation remains closed |
+| Reconstructed development selection | 24 × 3 × 3 = 216 V1 summaries; V1 is `inconclusive_evidence_floor`, V2 is `rejected_endpoint_instability`, no parameter lock, Validation remains closed |
 
 Canonical inventory: 21,025 files / 7,397,444,417 bytes, zero symlinks, zero
 publication residue; fingerprint
@@ -222,14 +222,16 @@ floor. No endpoint winner or parameter lock exists. A zero-network replay
 returned `already_present`. See the
 [formal statistics review](../audits/strong-leader-pullback-reconstructed-development-statistics-2026-09-15.md).
 
-ADR 0272 registers one and only one coverage-corrected replacement selection
-attempt. It retains all 24 combinations, treats sparse Regime slices as
-inconclusive rather than a global selection veto, adds fixed economic and
-stability gates, and records two total protocol trials. Policy fingerprint:
-`9fa09e0b627aed2c1bb1f108eec2d73bfeb3a5407b3c0850b3605b23ef0991f9`.
-No replacement result exists yet.
-The zero-network selector and immutable single-version custody passed the full
-2,904-test backend suite and are ready for the fixed real run.
+The single ADR 0272 replacement attempt is complete. Twenty-three of 24
+combinations met the common evidence floor, but the Upper endpoint world chose
+a different winner from the Lower and contrast-adverse worlds. The result is
+`rejected_endpoint_instability`; no parameter or Validation transition is
+locked. Report SHA-256:
+`070f7d8c6e29ad1e5e4c04d02ec3b19c1d0e7720c369d5ffdd991195186184b2`;
+logical fingerprint:
+`086675c82efb4453f9bc71e88ad65fc0f64c411569313cd6ac3795ee0a6baaec`.
+Exact replay matched. Strong-Leader Pullback cannot receive another selection
+variation over these outcomes; the next strategy must be independent.
 
 The original five-document and exact two-document supplemental SEC packages
 are retained in owner-only custody. The supplement used two requests, zero
@@ -254,10 +256,10 @@ unconfigured. The guarded manual chain works end to end.
 
 No current document authorizes another live SEC acquisition, `/data` mutation,
 validation or holdout access, model activation, publication, deployment,
-scheduler mutation, order execution, or destructive cleanup. The admitted
-development-only statistics stage is complete and inconclusive; V1 cannot be
-retuned. Only the single registered replacement-selection run is next; no
-Validation or later stage is open.
+scheduler mutation, order execution, or destructive cleanup. The development-
+only statistics and single replacement stages are complete. V1 cannot be
+retuned and V2 was rejected on endpoint instability. The next strategy must be
+independently preregistered; no Validation or later stage is open.
 
 ## Cross-device continuity
 

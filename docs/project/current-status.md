@@ -136,15 +136,18 @@ the main inference floors, but only one met the per-Regime observation floor.
 No endpoint winner, parameter lock, Validation transition, performance claim,
 or Candidate authority exists. V1 is stopped without retuning.
 
-ADR 0272 now freezes a single replacement selection attempt using the same
-24 combinations and immutable development report. It changes no formula or
-parameter value. Per-combination evidence eligibility replaces the V1 global
-Regime veto; sparse Regime cells remain explicitly inconclusive. Fixed cost,
-chronological-half, positive-session, concentration, endpoint-stability, and
-two-trial multiplicity controls apply before any possible lock. It has not run.
-The zero-network selector, status-reconciling result contract, and single-
-version owner-only custody are implemented and passed the complete 2,904-test
-backend suite; the fixed real run remains the next gated action.
+The single ADR 0272 replacement selection has completed. Twenty-three of 24
+combinations met the common evidence floor, but the Upper endpoint world chose
+a different winner from the Lower and contrast-adverse worlds. The terminal
+status is `rejected_endpoint_instability`; no provisional winner, robustness-
+gate evaluation, parameter lock, or Validation transition exists. Exact replay
+matched report SHA-256
+`070f7d8c6e29ad1e5e4c04d02ec3b19c1d0e7720c369d5ffdd991195186184b2`
+and logical fingerprint
+`086675c82efb4453f9bc71e88ad65fc0f64c411569313cd6ac3795ee0a6baaec`.
+Strong-Leader Pullback cannot receive a third selection rule over the same
+development outcome; the next work is a genuinely independent strategy
+hypothesis.
 
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
@@ -189,9 +192,10 @@ measured budget breach.
 4. Preserve the completed V1 result as
    `development_inconclusive_no_parameter_lock`; its exact replay matched and
    it cannot be retuned.
-5. Execute the single ADR 0272 replacement selection exactly once. Failure
-   retires this attempt; a lock still requires separate review before
-   Validation, while Holdout remains untouched and closed.
+5. Preserve the completed ADR 0272 rejection and do not create V3 over the
+   same development result. Validation and Holdout remain untouched and closed.
+6. Register the next independent strategy hypothesis before reading any of its
+   outcome evidence; Momentum Breakout is the current first candidate.
 
 Do not project current Membership or taxonomy backward, infer lifecycle from
 ticker patterns, call price/volume fund flow, call stock outcomes option
