@@ -67,6 +67,7 @@ Production Market Intelligence still consumes only 26 sessions and reports
 | Membership | 3 signal-eligible plus 1,250 reconstructed research-only sessions; combined 1,253 / 1,255 |
 | Corporate actions | 4,643 first-program exposures; 4,623 exact event-date assignments; 20 unassigned |
 | Adjustment | 101,321 sparse split-only rows; 98,291 clear; 3,030 quarantined; neutral omitted rows and total-return coverage unproven |
+| V2 split extension | private qualification-only candidate: 6,491 source rows; 2,248 resolved event groups; 4,238 unresolved; 305 possible-impact instruments; zero canonical-overlap conflicts |
 | Lifecycle / terminal | 219 exact + 83 finite-interval references of 302 five-session paths; zero unbounded |
 | Historical classification | complete point-in-time family absent |
 | SEC fundamentals | four registered cutoff-aware queries and four strict as-operated projection sessions; engineering evidence only |
@@ -170,17 +171,22 @@ return has been used for selection. ADR 0279 now freezes the independent V2
 outcome-blind qualification protocol at logical fingerprint
 `b74214155cc148d1e0d37c530ab4fea2f385af1a81237b901eec45e1fee2eb0b`.
 It uses per-stable-ID stock quarantine, complete-session SPY failure, fixed
-within-group redundancy priority, and one exact replay. The first report and
-replay are byte-identical at logical fingerprint
-`bed79513febf21dcf585a2e953c43fb66cb02824cd509800da39af452c0380ef`
+within-group redundancy priority, and one exact replay. ADR 0280 admits a
+versioned owner-only five-year split candidate to this zero-outcome check only;
+the candidate fingerprint is
+`388c66e944975fc9d85170e4a3ef4d05e45963f33be792710a324eb621ba5ede`.
+Its overlap with prior canonical evidence has zero event and adjustment
+conflicts; unresolved source records remain quarantined.
+
+The repaired report and replay are byte-identical at logical fingerprint
+`f49b17d74b9ec0960278405475ec962361c8169bd071030deda7fa36557aee90`
 and SHA-256
-`a95f2ff95ee7d2083602568c457a929d33c3636794d0e991310bd042239a1d79`.
-Status is `rejected_data_or_implementation`: canonical split action and
-adjustment evidence start on 2025-06-23, but the 127-session V2 source interval
-starts on 2024-12-17. This closes 167,294 early benchmark-dependent paths and
-leaves 266,335 / 437,402 complete vectors. No V2 factor is admitted or
-registered for an outcome screen. The next action is a versioned extension
-from retained five-year split evidence, not a gate or formula change.
+`48b36f422e4a07e18de45e8b9a7bd8ea8d5469fc2961a84ab1037a554260999e`.
+Status is `ready_for_screening_protocol_review`: 431,249 / 437,402 complete
+vectors, 98.5933% coverage, and 267 eligible sessions split 123 / 144 across
+the frozen chronological halves. All eight definitions qualify for protocol
+review, but none is admitted as Alpha or registered for an outcome screen. The
+next action is to freeze one finite Development screen before opening outcomes.
 
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility

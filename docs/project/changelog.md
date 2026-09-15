@@ -6,6 +6,23 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Requalify Factor Catalog V2 with five-year split evidence
+
+- Persisted an owner-only, versioned split candidate from the retained Dell
+  source: 6,491 source rows, 2,248 resolved event groups, 4,238 unresolved
+  records, and 305 possible-impact instruments.
+- Added the ADR 0280 qualification-only adapter, preserving prior canonical
+  action/adjustment evidence and quarantining conflicts by stable ID. Real
+  overlap reconciliation found zero event or adjustment conflicts.
+- Ran the unchanged V2 qualification and a complete replay. Both are byte-
+  identical at SHA-256 `48b36f42...0999e`; coverage rose to 431,249 / 437,402
+  complete vectors (98.59%) across 267 eligible sessions split 123 / 144.
+- All eight definitions are eligible for screening-protocol review. This is a
+  data and implementation result only: no Alpha, model, strategy, Candidate,
+  Validation, Holdout, publication, or trading authority was granted.
+- Set finite Development-screen preregistration as the next research boundary;
+  outcomes remain unread.
+
 ## 2026-09-15 — Synchronize the website with Factor Discovery V2
 
 - Replaced the website's stale V1-as-current research presentation with the

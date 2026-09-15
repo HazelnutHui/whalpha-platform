@@ -53,6 +53,23 @@ complete. A later canonical publication still requires a separate exact Plan
 and Apply authorization if the project decides durable canonical promotion is
 necessary.
 
+## Execution evidence
+
+The owner-only candidate retained 6,491 source records, resolved 2,248 event
+groups, and kept 4,238 unresolved records plus 305 possible-impact instruments
+explicit. Reconciliation found zero event or adjustment conflicts against the
+prior canonical evidence.
+
+The unchanged qualification and its full replay are byte-identical at logical
+fingerprint
+`f49b17d74b9ec0960278405475ec962361c8169bd071030deda7fa36557aee90`
+and SHA-256
+`48b36f422e4a07e18de45e8b9a7bd8ea8d5469fc2961a84ab1037a554260999e`.
+They produce 431,249 complete and 6,153 incomplete vectors, 98.5933% coverage,
+and 267 eligible sessions split 123 / 144 across the frozen chronological
+halves. Status is `ready_for_screening_protocol_review`; no outcomes were read
+and no factor, model, strategy, Candidate, or Production authority was granted.
+
 ## Rejected alternatives
 
 - Lower the 90% availability gate or shorten the 127-session formulas.

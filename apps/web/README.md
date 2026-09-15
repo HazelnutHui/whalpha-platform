@@ -15,10 +15,10 @@ features. It presents Quant Research Lab as factor/model/expression authority,
 model-driven Candidate ranking as a downstream activation, governed research
 automation as a planned extension of traditional quantitative discipline, and
 the three established market-context workspaces as free supporting tools. Its
-current dossier identifies Factor Discovery V2, the exactly replayed 60.89%
-data-qualification rejection, zero admitted Alpha factors, and the unchanged-
-protocol split-evidence repair; V1 and Strong-Leader Pullback remain historical
-failed research. The first viewport keeps account/password sign-in as the
+current dossier identifies Factor Discovery V2, the byte-identical 98.59%
+data-qualification pass, zero admitted Alpha factors, and the finite
+Development-screen design as the next boundary; V1 and Strong-Leader Pullback
+remain historical failed research. The first viewport keeps account/password sign-in as the
 primary entry, places equal-capability guest access immediately below it, and
 uses a persistent continuation cue to expose the research narrative below.
 
@@ -26,9 +26,9 @@ Inside the Lab, a trilingual research-foundation snapshot shows the verified
 five-year price/identity depth, reconstructed Membership, action assignments,
 lifecycle references, and point-in-time fundamental pilot without combining
 them into a misleading readiness score. Factor Discovery V2 now leads the
-page: all eight exact formulas, roles, the report/replay identity, 266,335 of
-437,402 complete vectors, the split-evidence boundary, and the next bounded
-repair are visible without any outcome claim. V1 screening and the Pullback
+page: all eight exact formulas, roles, the report/replay identity, 431,249 of
+437,402 complete vectors, the split-evidence lineage, and the next bounded
+screen-design step are visible without any outcome claim. V1 screening and the Pullback
 method remain explicitly historical. The displayed 95.38% lower on the page is
 the old Pullback method-computability coverage, not a hit rate, prediction
 accuracy, or return.

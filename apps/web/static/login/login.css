@@ -105,11 +105,14 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .dossier-title > span { display: grid; width: 48px; height: 48px; place-items: center; border: 1px solid var(--line-strong); border-radius: 50%; color: var(--cyan-soft); font-size: .72rem; }
 .dossier-state { gap: 10px; margin-top: 24px; padding: 12px 0 20px; border-bottom: 1px solid var(--line); color: var(--warning); font-size: .75rem; }
 .dossier-state i { width: 7px; height: 7px; border-radius: 50%; background: var(--warning); box-shadow: 0 0 0 5px rgba(239, 203, 123, .07); }
+.dossier-state[data-state="qualified"] { color: var(--positive); }
+.dossier-state[data-state="qualified"] i { background: var(--positive); box-shadow: 0 0 0 5px rgba(97, 214, 179, .07); }
 .dossier-ledger { margin: 9px 0 0; }
 .dossier-ledger > div { justify-content: space-between; gap: 20px; padding: 14px 0; border-bottom: 1px solid rgba(131, 176, 208, .1); }
 .dossier-ledger dt { color: var(--muted); font-size: .72rem; }
 .dossier-ledger dd { margin: 0; font-size: .69rem; font-weight: 730; letter-spacing: .04em; text-transform: uppercase; }
 .dossier-ledger dd[data-state="building"] { color: var(--warning); }
+.dossier-ledger dd[data-state="qualified"] { color: var(--positive); }
 .dossier-ledger dd[data-state="locked"] { color: var(--muted-strong); }
 .dossier-ledger dd[data-state="pending"] { color: var(--muted); }
 .dossier-foot { align-items: flex-end; justify-content: space-between; gap: 22px; margin-top: 25px; }
