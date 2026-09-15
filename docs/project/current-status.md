@@ -10,8 +10,9 @@ ADRs, and audits.
 ## Overall verdict
 
 - **Production:** live and serving the verified trilingual V2 qualification
-  pass and three-layer research UI to equal guest/credential flows; underlying
-  data is stale by one completed session at the 2026-09-15 deployment review.
+  pass, registered six-trial Development screen, and three-layer research UI to
+  equal guest/credential flows; underlying data is stale by one completed
+  session at the 2026-09-15 deployment review.
 - **Five-year source depth:** EOD price and stable Identity complete.
 - **Professional performance foundation:** the strict exact/as-operated gate
   remains `data_blocked`; reconstructed-research V2 is separately
@@ -59,11 +60,14 @@ Production data.
 The Lab presents the Factor Discovery -> Model Construction -> Strategy
 Expression architecture with Factor Catalog V2 as the current campaign. The
 website shows all eight exact V2 definitions, the 431,249 /
-437,402 complete-vector result, 98.59% coverage, byte-identical replay, zero
-admitted Alpha factors, and finite Development-screen design as the next
-boundary. V1 screening and the Pullback program remain visible as historical
-failed research. The public landing dossier carries the same qualified/no-model
-state. This
+437,402 complete-vector result, 98.59% coverage, byte-identical replay, and zero
+admitted Alpha factors. The Development screen is registered before outcome
+access: four Alpha and two risk-guard trials, 14 cumulative trials, 106
+declared Development sessions,
+167,860 declared paths, and zero read V2 outcomes. Exact implementation and one
+replay are next. V1 screening and the Pullback program remain visible as
+historical failed research. The public landing dossier carries the same
+registered/no-model state. This
 presentation changes no market analytics, Baseline Candidate calculation,
 model authority, or research result.
 

@@ -24,6 +24,13 @@ and dated [audits](../audits/). Current capability and next work belong in
 - Created cumulative ledger V2 at fingerprint `cdc07a21...946e9`, carrying all
   eight V1 trials and appending six V2 trials with unread outcomes, empty result
   identities, and no model or Candidate authority.
+- Published the registered protocol and cumulative trial state in English,
+  Chinese, and Spanish, then deployed OCI release
+  `2026-09-15T170757Z-d774d87f37a2` from source
+  `d774d87f37a20c402bf57d31f0d82acc105ef1ec`. Independent postflight matched
+  the release, source, bundle, checksums, guest/protected routes, services,
+  listener boundary, and zero residue; password login and final appearance
+  remain manual checks.
 
 ## 2026-09-15 — Requalify Factor Catalog V2 with five-year split evidence
 

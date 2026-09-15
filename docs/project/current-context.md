@@ -1,8 +1,8 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-15T16:44:25Z
+Operational state verified at: 2026-09-15T17:09:12Z
 
-Deployment state verified at: 2026-09-15T16:44:25Z
+Deployment state verified at: 2026-09-15T17:09:12Z
 
 Repository context updated at: 2026-09-15 UTC
 
@@ -20,8 +20,8 @@ ADRs, and dated audits.
 | Branch | `main`; verify live HEAD before mutation |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Active OCI release | `2026-09-15T164234Z-188c7ae00193` |
-| Deployed source | `188c7ae00193e75c0386515a48bda32faca94457` |
+| Active OCI release | `2026-09-15T170757Z-d774d87f37a2` |
+| Deployed source | `d774d87f37a20c402bf57d31f0d82acc105ef1ec` |
 
 Dell owns code, canonical data, governance, and heavy computation. OCI is the
 bounded public-serving tier. A newer clean repository commit does not imply a
@@ -48,8 +48,9 @@ The current release passed independent release, source, bundle, checksum,
 service, protected-route, guest-flow, Candidate-route, logout, and residue
 checks. Public landing content and the protected Lab now expose Factor
 Discovery V2 as current: eight exact definitions, 431,249 / 437,402 complete
-vectors, 98.59% coverage, the byte-identical qualification pass, zero admitted
-Alpha factors, and finite Development-screen registration as the next boundary.
+vectors, 98.59% coverage, the byte-identical qualification pass, six registered
+Development trials, all 14 cumulative trials, and zero read V2 outcomes. Exact
+screen implementation and one replay are the next boundary.
 V1 screening and Strong-Leader Pullback remain historical failed research; all
 model, strategy, Validation, Holdout, Candidate, and option-performance
 authority stays locked. An unauthenticated Dashboard request redirects to
