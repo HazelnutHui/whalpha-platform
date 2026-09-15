@@ -67,6 +67,11 @@ The first executable report may contain only:
 It contains no future return, IC, bucket performance, selected threshold,
 factor pass/fail claim, model weight, Candidate rank, or strategy result.
 
+The exact cohort, quantile, outlier, concentration, same-session Spearman, and
+near-duplicate rules for the first executable report are frozen by
+[ADR 0275](../decisions/0275-freeze-outcome-blind-factor-qualification-protocol.md).
+Those thresholds are descriptive trial-accounting rules, not Alpha gates.
+
 ## Transition boundary
 
 A separate protocol must be committed after the outcome-blind coverage report

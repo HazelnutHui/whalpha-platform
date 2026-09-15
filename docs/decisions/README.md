@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0275](0275-freeze-outcome-blind-factor-qualification-protocol.md):
+  freezes the first zero-outcome factor coverage, distribution, concentration,
+  correlation, and near-duplicate report before real values are inspected.
 - [ADR 0274](0274-adopt-factor-model-strategy-three-layer-research-architecture.md):
   makes Factor Discovery, Model Construction, and Strategy Expression the
   durable architecture; fixed strategy names are hypothesis tags rather than
