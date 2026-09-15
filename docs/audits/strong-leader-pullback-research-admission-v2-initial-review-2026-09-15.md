@@ -1,4 +1,11 @@
-# Strong-Leader Pullback Research Admission V2 — Initial Review
+# Strong-Leader Pullback Research Admission V2 — Initial Review (Superseded)
+
+This initial in-memory review is preserved as historical evidence but is not
+the current admission decision. Its original `274` complete-session count was
+an arithmetic error: it subtracted 13 exclusions from all 287 chronological
+sessions while omitting the 20 feature-window warm-up sessions. The formally
+observed count is 254. No outcome or parameter was opened under the mistaken
+count.
 
 ## Decision
 
@@ -6,7 +13,7 @@ The first outcome-blind V2 review is `blocked`. Its only unresolved gate is
 `finite_terminal_reference_intervals`.
 
 This is narrower than the earlier strict Historical Coverage rejection. The
-new review recognizes 274 complete feature cross-sections, exceeding the
+corrected review recognizes 254 complete feature cross-sections, exceeding the
 pre-registered 252-session floor, and accepts the retained split evidence only
 for frozen-vintage mechanical continuity under the ADR 0268 restrictions. It
 does not treat the data as observed `as_operated`.
@@ -16,7 +23,9 @@ does not treat the data as observed `as_operated`.
 | Boundary | Result |
 | --- | ---: |
 | Frozen signal sessions | 287 |
-| Complete feature cross-sections | 274 |
+| Feature-window warm-up sessions | 20 |
+| Sessions with rankable cross-sections | 267 |
+| Complete feature cross-sections | 254 |
 | Pre-outcome excluded sessions | 13 |
 | Declared paths | 437,402 |
 | Complete feature observations | 417,209 |
@@ -31,7 +40,7 @@ The 13 feature exclusions are 12 complete sessions / 18,646 paths whose
 Regime-bootstrap session / 1,547 paths. Partial cross-section ranks remain
 forbidden.
 
-The review binds:
+The superseded initial review bound:
 
 - method-diagnostic report SHA-256
   `8bcd602c64c7a1ab403a9c97bea21c8edb1758b60d46f879cf23b4bf7c015b36`;

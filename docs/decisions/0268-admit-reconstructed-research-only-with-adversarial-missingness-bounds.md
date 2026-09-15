@@ -5,12 +5,20 @@
 
 ## Context
 
-The first-strategy method diagnostic has 274 complete same-session feature
-cross-sections inside its frozen 287-session population, exceeding the
-pre-registered 252-session floor. Thirteen whole sessions remain excluded
-before outcomes: twelve because a 21-session input window intersects
-quarantined split evidence and one because the reconstructed Regime cannot be
-initialized. No partial cross-section was ranked.
+The first-strategy method diagnostic has 254 complete same-session feature
+cross-sections inside its frozen 287-session chronological population,
+exceeding the pre-registered 252-session floor. The first 20 sessions are
+feature-window warm-up and have no rankable cross-section. Of the remaining
+267 sessions, thirteen whole sessions are excluded before outcomes: twelve
+because a 21-session input window intersects quarantined split evidence and
+one because the reconstructed Regime cannot be initialized. No partial
+cross-section was ranked.
+
+This paragraph corrects the original `274` count, which subtracted only the 13
+exclusions from all 287 chronological sessions and therefore overlooked the
+20 warm-up sessions. The retained method diagnostic always reported 254
+observed session groups; no outcome or parameter was opened under the mistaken
+count.
 
 The prior admission gate nevertheless reports zero complete sessions because
 it requires every sparse adjustment omission, lifecycle field, and terminal

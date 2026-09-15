@@ -16,7 +16,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
-CONTRACT_VERSION = "strong-leader-pullback-research-admission/2.0"
+CONTRACT_VERSION = "strong-leader-pullback-research-admission/2.1"
 POLICY_VERSION = "strong-leader-pullback-missingness-policy/1.0"
 MINIMUM_COMPLETE_FEATURE_SESSIONS = 252
 _SHA256_PATTERN = r"^[0-9a-f]{64}$"
@@ -46,6 +46,8 @@ class ReconstructedFeatureEvidenceV1(_FrozenModel):
     diagnostics_report_sha256: str = Field(pattern=_SHA256_PATTERN)
     diagnostics_logical_fingerprint: str = Field(pattern=_SHA256_PATTERN)
     total_session_count: int = Field(ge=MINIMUM_COMPLETE_FEATURE_SESSIONS)
+    feature_window_warmup_session_count: int = Field(ge=0)
+    rankable_cross_section_session_count: int = Field(ge=0)
     complete_cross_section_session_count: int = Field(ge=0)
     excluded_session_count: int = Field(ge=0)
     expected_path_count: int = Field(ge=1)
@@ -66,8 +68,12 @@ class ReconstructedFeatureEvidenceV1(_FrozenModel):
         if reasons != tuple(sorted(set(reasons))):
             raise ValueError("feature exclusion reasons must be unique and sorted")
         if (
-            self.complete_cross_section_session_count + self.excluded_session_count
+            self.feature_window_warmup_session_count
+            + self.rankable_cross_section_session_count
             != self.total_session_count
+            or self.complete_cross_section_session_count
+            + self.excluded_session_count
+            != self.rankable_cross_section_session_count
             or self.complete_path_count + self.excluded_path_count
             != self.expected_path_count
             or sum(item.session_count for item in self.exclusions)
@@ -135,7 +141,7 @@ class ResearchControlEvidenceV1(_FrozenModel):
 
 class StrongLeaderPullbackResearchAdmissionV2(_FrozenModel):
     contract_version: Literal[
-        "strong-leader-pullback-research-admission/2.0"
+        "strong-leader-pullback-research-admission/2.1"
     ] = CONTRACT_VERSION
     policy_version: Literal[
         "strong-leader-pullback-missingness-policy/1.0"

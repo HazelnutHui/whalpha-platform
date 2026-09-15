@@ -11,7 +11,9 @@ def _features(**changes: object) -> service.ReconstructedFeatureEvidenceV1:
         "diagnostics_report_sha256": "1" * 64,
         "diagnostics_logical_fingerprint": "2" * 64,
         "total_session_count": 287,
-        "complete_cross_section_session_count": 274,
+        "feature_window_warmup_session_count": 20,
+        "rankable_cross_section_session_count": 267,
+        "complete_cross_section_session_count": 254,
         "excluded_session_count": 13,
         "expected_path_count": 437402,
         "complete_path_count": 417209,
@@ -96,7 +98,8 @@ def test_ready_lane_opens_only_reconstructed_development() -> None:
         (
             "features",
             {
-                "total_session_count": 264,
+                "total_session_count": 284,
+                "rankable_cross_section_session_count": 264,
                 "complete_cross_section_session_count": 251,
             },
             "minimum_complete_feature_sessions",

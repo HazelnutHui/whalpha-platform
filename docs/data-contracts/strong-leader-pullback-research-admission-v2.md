@@ -1,8 +1,15 @@
 # Strong-Leader Pullback Research Admission V2
 
-`strong-leader-pullback-research-admission/2.0` is an outcome-blind gate for a
+`strong-leader-pullback-research-admission/2.1` is an outcome-blind gate for a
 clearly labelled latest-vintage reconstructed research lane. It is not a
 claim that the historical population was observed live.
+
+Contract 2.1 makes the session denominator explicit: chronological sessions,
+feature-window warm-up sessions, sessions with a rankable cross-section, and
+complete admitted cross-sections are separate counts. The minimum gate applies
+only to the last count. This corrects the unused 2.0 draft's omission of the
+20-session feature warm-up from its reconciliation; no prior formal admission
+report used 2.0.
 
 The evaluator binds four independently fingerprinted inputs:
 

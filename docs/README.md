@@ -87,6 +87,7 @@ The complete registries remain available through the
 - [Five-Year EOD and Identity Backfill](operations/five-year-eod-identity-backfill.md)
 - [Strong-Leader Pullback Method Launch Review](operations/strong-leader-pullback-method-engineering-launch-review.md)
 - [Strong-Leader Pullback Method Diagnostics](operations/strong-leader-pullback-method-diagnostics.md)
+- [Strong-Leader Pullback Research Admission V2](operations/strong-leader-pullback-research-admission-v2.md)
 - [Terminal Reference SEC Source](operations/strong-leader-pullback-terminal-reference-sec-source.md)
 - [Market Intelligence Publication](operations/market-intelligence-publication.md)
 - [Dashboard Snapshot Publication](operations/dashboard-snapshot-publication.md)
