@@ -102,7 +102,7 @@ feature session and every exact or interval-censored terminal path with no
 hidden exclusion. Its positive result opens development only, not validation,
 holdout, performance claims, or Candidate activation.
 
-## Current gated phase — Real Strong-Leader Pullback study
+## Completed phase — Strong-Leader Pullback V1 development study
 
 The immutable development dataset was completed on 2026-09-15. It binds 105
 signal sessions, 166,313 observations, and 498,939 independent 1/3/5-session
@@ -111,25 +111,45 @@ An independent full reread matched its manifest and logical fingerprints; it
 contains zero validation or holdout labels and grants no performance or
 Candidate authority.
 
-The reconstructed V2 admission now permits the development comparison on Dell.
-Each later transition remains separately gated:
+The fixed 24-combination development comparison ran on Dell and was reproduced
+exactly. It ended `inconclusive_evidence_floor`: 23 combinations met the main
+inference floors, but only one met the registered per-Regime signal floor. No
+endpoint winner or parameter lock exists. Validation and Holdout were not
+accessed, and no Product authority changed.
+
+The completed sequence was:
 
 1. freeze the statistics, adverse-interval, missingness, cost, control,
    multiplicity, and specification-lock rules before reading aggregate returns;
-2. run all 24 preregistered development specifications and lock at most one;
-3. evaluate chronological validation with purge/embargo, session-balanced
-   inference, multiplicity control, and realistic cost sensitivity;
-4. consume the sealed holdout once only if validation gates pass;
-5. preserve rejection without retuning V1, or record validated research; and
-6. use prospective shadow before any activation review when appropriate.
+2. run all 24 preregistered development specifications and lock none when the
+   registered evidence floor failed; and
+3. retain and independently replay the complete result without changing V1.
 
 The first headline is an event-study result: net expectancy, signal-control
 contrast, uncertainty, sample/coverage, MFE/MAE, win/payoff/PF, cost
 sensitivity, and stability. AR, Sharpe, and MDD require a separately frozen
 tradable portfolio construction.
 
-Exit criterion: a reproducible real result or recorded failure exists. Neither
-automatically changes Stock Candidates.
+Exit criterion passed: a reproducible inconclusive result exists. It does not
+change Stock Candidates.
+
+## Current gated phase — Register a replacement experiment
+
+Use the V1 coverage result, not its return values, to decide whether a new
+Strong-Leader Pullback version can answer a narrower and statistically
+identified question. Before any new outcome calculation:
+
+1. define whether Regime is a primary eligibility gate or a prespecified
+   descriptive/interaction analysis;
+2. set feasible evidence floors from outcome-blind cohort counts;
+3. preserve the untouched chronological Validation and Holdout partitions;
+4. register a new immutable experiment, parameter budget, multiplicity rule,
+   cost views, rejection gates, and implementation fingerprint; and
+5. run development once, advancing only if one lock survives every new gate.
+
+If no defensible replacement can be registered without outcome-driven tuning,
+record the strategy family as inconclusive and advance to the next independent
+hypothesis instead.
 
 ## Then — Generalize the bounded AI research factory
 

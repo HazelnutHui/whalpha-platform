@@ -76,6 +76,7 @@ acquisition gap.
 | Historical Coverage | final pre-research review V2 is `rejected_data_blocked`; no research-ready manifest exists |
 | Method engineering | launch review V1 is `ready_for_outcome_blind_method_engineering` over 287 sessions / 437,402 paths |
 | Reconstructed development labels | owner-only Dell package over 105 development sessions / 166,313 observations / 498,939 labels; validation and holdout labels remain zero |
+| Reconstructed development statistics | 24 × 3 × 3 = 216 summaries; V1 is `inconclusive_evidence_floor`, no parameter lock, Validation remains closed |
 
 Canonical inventory: 21,025 files / 7,397,444,417 bytes, zero symlinks, zero
 publication residue; fingerprint
@@ -209,6 +210,18 @@ An independent full reread returned `already_present` with the same identities,
 counts, owner-only modes, and zero external or canonical writes. See the
 [dataset audit](../audits/strong-leader-pullback-reconstructed-development-dataset-2026-09-15.md).
 
+The fixed V1 development-statistics run is retained at
+`historical-evidence/strong-leader-pullback-reconstructed-development-statistics/report=20260915-v1`.
+Its report SHA-256 is
+`c29f04b5e6da95e2256c137f23d00898b313325ac09e982a991bb823ce0f7852`;
+logical fingerprint is
+`f0006fa38a7a729dca5b2cd34369e7c3bd2110aa17096bcd091d72875ce71f7f`.
+The result is `inconclusive_evidence_floor`: 23 of 24 primary combinations
+met general inference floors, but only one met the frozen reported-Regime
+floor. No endpoint winner or parameter lock exists. A zero-network replay
+returned `already_present`. See the
+[formal statistics review](../audits/strong-leader-pullback-reconstructed-development-statistics-2026-09-15.md).
+
 The original five-document and exact two-document supplemental SEC packages
 are retained in owner-only custody. The supplement used two requests, zero
 retries, and 5,064,066 bytes; manifest SHA-256
@@ -232,9 +245,9 @@ unconfigured. The guarded manual chain works end to end.
 
 No current document authorizes another live SEC acquisition, `/data` mutation,
 validation or holdout access, model activation, publication, deployment,
-scheduler mutation, order execution, or destructive cleanup. The V2 report
-authorizes the completed reconstructed development-label stage and the next
-development-only statistics and specification-lock stage on Dell.
+scheduler mutation, order execution, or destructive cleanup. The admitted
+development-only statistics stage is complete and inconclusive; V1 cannot be
+retuned, and no later stage is open.
 
 ## Cross-device continuity
 

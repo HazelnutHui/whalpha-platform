@@ -16,11 +16,11 @@ ADRs, and audits.
 - **Professional performance foundation:** the strict exact/as-operated gate
   remains `data_blocked`; reconstructed-research V2 is separately
   `ready_for_reconstructed_development`.
-- **First strategy:** its canonical method, derived Lab record, pure
-  signal/cohort engine, outcome-blind diagnostic pipeline, and immutable private
-  development-label dataset are implemented. Development-only statistics and
-  parameter selection are next; no validation, holdout access, performance
-  claim, or Candidate authority exists.
+- **First strategy:** its canonical method, derived Lab record, signal/cohort
+  engine, diagnostics, immutable development labels, and fixed 24-combination
+  development study are complete. V1 ended `inconclusive_evidence_floor` with
+  no parameter lock; Validation, Holdout, performance claims, and Candidate
+  authority remain closed.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -84,7 +84,9 @@ Strong-Leader Pullback V1 asks whether an orderly pullback and close-based
 recovery among existing relative leaders improves the next 1-, 3-, and
 5-session underlying-stock outcome. The hypothesis, 24-combination search
 budget, chronological split, purge/embargo, controls, costs, statistics, and
-single-use holdout mechanics are preregistered.
+single-use holdout mechanics remain frozen. Its strict exact/as-operated lane
+is still data-blocked; its separately admitted reconstructed development lane
+has completed one fixed comparison.
 
 The immutable launch review is
 `ready_for_outcome_blind_method_engineering` over 287 sessions and 437,402
@@ -126,6 +128,14 @@ logical fingerprint is
 An independent full reread passed. This opens no validation/holdout row and no
 published performance claim.
 
+The fixed development-statistics report contains all 216 registered summaries
+and is reproducible at report SHA-256
+`c29f04b5e6da95e2256c137f23d00898b313325ac09e982a991bb823ce0f7852`.
+Its status is `inconclusive_evidence_floor`: 23 of 24 primary combinations met
+the main inference floors, but only one met the per-Regime observation floor.
+No endpoint winner, parameter lock, Validation transition, performance claim,
+or Candidate authority exists. V1 is stopped without retuning.
+
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
 gates, and research-authority flags. The outcome-free input contract and
@@ -166,11 +176,11 @@ measured budget breach.
    states without silent inference.
 3. Treat the immutable raw development dataset as complete; do not rebuild it
    without a named defect or a registered new version.
-4. Freeze the real-statistics and specification-lock protocol before inspecting
-   aggregate outcomes, then evaluate only the 24 preregistered specifications
-   with every registered cost scenario and lock at most one.
-5. Preserve either later validation or failure without retuning V1; validation,
-   holdout, Candidate activation, and web performance remain separate gates.
+4. Preserve the completed V1 result as
+   `development_inconclusive_no_parameter_lock`; its exact replay matched and
+   it cannot be retuned.
+5. Design any replacement as a new preregistered version using only the proven
+   coverage failure; Validation and Holdout remain untouched and closed.
 
 Do not project current Membership or taxonomy backward, infer lifecycle from
 ticker patterns, call price/volume fund flow, call stock outcomes option

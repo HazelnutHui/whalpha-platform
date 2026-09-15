@@ -6,6 +6,25 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Complete the first real development comparison without forcing a winner
+
+- Froze the reconstructed development-statistics policy before reading real
+  aggregate outcomes and implemented its 24 × 3 × 3 bounded event-study
+  evaluator, immutable private custody, and zero-network runner.
+- Passed the complete 2,898-test backend suite, then retained 216 real
+  development summaries bound to implementation revision `0d2b464` and the
+  immutable 166,313-observation / 498,939-label source dataset.
+- The registered result is `inconclusive_evidence_floor`: 23 of 24 primary
+  combinations met the main inference floors, but only one met the frozen
+  reported-Regime floor. No endpoint winner or parameter lock exists.
+- Replayed the complete calculation to the same report SHA-256
+  `c29f04b5e6da95e2256c137f23d00898b313325ac09e982a991bb823ce0f7852`
+  and logical fingerprint
+  `f0006fa38a7a729dca5b2cd34369e7c3bd2110aa17096bcd091d72875ce71f7f`.
+- Stopped V1 without retuning. Validation, Holdout, performance claims,
+  Candidate activation, publication, deployment, and Production remain closed;
+  any replacement must be a new preregistered version.
+
 ## 2026-09-15 — Materialize isolated reconstructed development labels
 
 - Accepted ADR 0270 and implemented an immutable, owner-only Dell dataset that
