@@ -1,6 +1,6 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-15T00:15:24Z
+Operational state verified at: 2026-09-15T06:31:47Z
 
 Deployment state verified at: 2026-09-14T23:44:48Z
 
@@ -75,6 +75,7 @@ acquisition gap.
 | Fundamentals | cutoff-aware SEC engineering exists for four registered queries; only four sessions have strict as-operated next-open projection evidence |
 | Historical Coverage | final pre-research review V2 is `rejected_data_blocked`; no research-ready manifest exists |
 | Method engineering | launch review V1 is `ready_for_outcome_blind_method_engineering` over 287 sessions / 437,402 paths |
+| Reconstructed development labels | owner-only Dell package over 105 development sessions / 166,313 observations / 498,939 labels; validation and holdout labels remain zero |
 
 Canonical inventory: 21,025 files / 7,397,444,417 bytes, zero symlinks, zero
 publication residue; fingerprint
@@ -195,6 +196,19 @@ An exact zero-network replay returned `already_present`. It opens development
 labels and development-only selection, but not validation, holdout,
 performance claims, Candidate activation, publication, or Production.
 
+The first immutable reconstructed development dataset is retained at
+`historical-evidence/strong-leader-pullback-reconstructed-development-dataset/dataset=20260915-v1`.
+It contains 105 signal sessions, 166,313 complete observations, and exactly
+498,939 independent 1/3/5-session label rows: 498,580 observed exact, 90
+terminal exact, 44 terminal interval, 153 unavailable-evidence, and 72
+unexecutable rows. Validation and holdout labels are zero. Manifest SHA-256:
+`92e9f078db840d3d8e341b4e15757429e26ff4acbdb9564aebb387aa07a5a267`;
+logical fingerprint:
+`91300da44caf35f838912db3d4060a6bbc98aeea23f81845194e1302e11c43c4`.
+An independent full reread returned `already_present` with the same identities,
+counts, owner-only modes, and zero external or canonical writes. See the
+[dataset audit](../audits/strong-leader-pullback-reconstructed-development-dataset-2026-09-15.md).
+
 The original five-document and exact two-document supplemental SEC packages
 are retained in owner-only custody. The supplement used two requests, zero
 retries, and 5,064,066 bytes; manifest SHA-256
@@ -219,8 +233,8 @@ unconfigured. The guarded manual chain works end to end.
 No current document authorizes another live SEC acquisition, `/data` mutation,
 validation or holdout access, model activation, publication, deployment,
 scheduler mutation, order execution, or destructive cleanup. The V2 report
-does authorize the registered reconstructed development-label and
-development-only selection stages on Dell.
+authorizes the completed reconstructed development-label stage and the next
+development-only statistics and specification-lock stage on Dell.
 
 ## Cross-device continuity
 

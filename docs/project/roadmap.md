@@ -104,11 +104,19 @@ holdout, performance claims, or Candidate activation.
 
 ## Current gated phase — Real Strong-Leader Pullback study
 
-The reconstructed V2 admission now permits steps 1 and 2 on Dell. Each later
-transition remains separately gated:
+The immutable development dataset was completed on 2026-09-15. It binds 105
+signal sessions, 166,313 observations, and 498,939 independent 1/3/5-session
+labels while retaining exact, interval, unavailable, and unexecutable states.
+An independent full reread matched its manifest and logical fingerprints; it
+contains zero validation or holdout labels and grants no performance or
+Candidate authority.
 
-1. run the preregistered development stage on Dell;
-2. lock at most one specification within the 24-combination budget;
+The reconstructed V2 admission now permits the development comparison on Dell.
+Each later transition remains separately gated:
+
+1. freeze the statistics, adverse-interval, missingness, cost, control,
+   multiplicity, and specification-lock rules before reading aggregate returns;
+2. run all 24 preregistered development specifications and lock at most one;
 3. evaluate chronological validation with purge/embargo, session-balanced
    inference, multiplicity control, and realistic cost sensitivity;
 4. consume the sealed holdout once only if validation gates pass;

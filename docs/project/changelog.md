@@ -6,6 +6,28 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Materialize isolated reconstructed development labels
+
+- Accepted ADR 0270 and implemented an immutable, owner-only Dell dataset that
+  binds complete development observations to independent next-open 1/3/5-session
+  underlying-stock labels without opening validation or holdout.
+- Retained 105 signal sessions, 166,313 observations, and 498,939 label rows:
+  498,580 observed exact, 90 terminal exact, 44 terminal interval, 153
+  unavailable-evidence, and 72 unexecutable-no-next-open.
+- Fixed three real-source boundary defects before retention: non-clear split
+  adjustments now remain null, adjusted prices are frozen before return
+  calculation, and a missing next-session row without terminal evidence cannot
+  create a false terminal event or delayed entry.
+- Published manifest SHA-256
+  `92e9f078db840d3d8e341b4e15757429e26ff4acbdb9564aebb387aa07a5a267`
+  and logical fingerprint
+  `91300da44caf35f838912db3d4060a6bbc98aeea23f81845194e1302e11c43c4`;
+  an independent full reread returned `already_present` with identical counts.
+- Preserved owner-only immutable custody, zero staging residue, zero validation
+  and holdout labels, and zero network, canonical `/data`, Candidate,
+  publication, deployment, or Production writes. Aggregate return inspection
+  remains closed until the development-statistics protocol is frozen.
+
 ## 2026-09-15 — Bound reconstructed research without hiding missing outcomes
 
 - Accepted ADR 0268 and added a pure V2 research-admission evaluator that

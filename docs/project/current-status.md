@@ -17,10 +17,10 @@ ADRs, and audits.
   remains `data_blocked`; reconstructed-research V2 is separately
   `ready_for_reconstructed_development`.
 - **First strategy:** its canonical method, derived Lab record, pure
-  signal/cohort engine, and outcome-blind diagnostic pipeline are implemented.
-  The reconstructed private population is admitted for development-label
-  construction and development-only parameter selection; no real result,
-  validation, holdout access, performance claim, or Candidate authority exists.
+  signal/cohort engine, outcome-blind diagnostic pipeline, and immutable private
+  development-label dataset are implemented. Development-only statistics and
+  parameter selection are next; no validation, holdout access, performance
+  claim, or Candidate authority exists.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -70,6 +70,7 @@ history is much deeper.
 | Costs/liquidity | transparent fixed scenarios | no observed spread/impact calibration |
 | Historical Coverage | immutable strict review V2 | `rejected_data_blocked` |
 | Reconstructed research admission | 287 chronological; 20 warm-up; 267 rankable; 254 complete; 13 excluded | `ready_for_reconstructed_development` |
+| Reconstructed development labels | 105 sessions; 166,313 observations; 498,939 1/3/5-session rows | built and independently reread; development only |
 | Evaluation/holdout | fixed chronological mechanics and sealed controls | development open; validation and holdout closed |
 
 The five-year database is therefore a strong source and engineering foundation,
@@ -115,6 +116,16 @@ It opens only development-label construction and development-only parameter
 selection. Validation, holdout, performance claims, Candidate activation,
 publication, and Production remain closed.
 
+The immutable development package now contains 105 signal sessions, 166,313
+complete observations, and 498,939 label rows. State counts are 498,580
+observed exact, 90 terminal exact, 44 terminal interval, 153 unavailable, and
+72 unexecutable. Its manifest SHA-256 is
+`92e9f078db840d3d8e341b4e15757429e26ff4acbdb9564aebb387aa07a5a267`;
+logical fingerprint is
+`91300da44caf35f838912db3d4060a6bbc98aeea23f81845194e1302e11c43c4`.
+An independent full reread passed. This opens no validation/holdout row and no
+published performance claim.
+
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
 gates, and research-authority flags. The outcome-free input contract and
@@ -153,11 +164,11 @@ measured budget breach.
    preregistered version.
 2. Preserve Baseline V1, reconstructed Membership, and all unresolved evidence
    states without silent inference.
-3. Construct the immutable 1/3/5-session development-label dataset on Dell,
-   preserving exact and interval-censored rows separately and applying every
-   registered cost scenario.
-4. Evaluate only the 24 preregistered specifications on the development split
-   and lock at most one before any validation access.
+3. Treat the immutable raw development dataset as complete; do not rebuild it
+   without a named defect or a registered new version.
+4. Freeze the real-statistics and specification-lock protocol before inspecting
+   aggregate outcomes, then evaluate only the 24 preregistered specifications
+   with every registered cost scenario and lock at most one.
 5. Preserve either later validation or failure without retuning V1; validation,
    holdout, Candidate activation, and web performance remain separate gates.
 
