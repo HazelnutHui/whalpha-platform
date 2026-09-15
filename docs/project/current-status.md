@@ -48,11 +48,12 @@ Production data.
 
 The deployed Lab now presents the Factor Discovery -> Model Construction ->
 Strategy Expression architecture, its current locked stages, the first
-outcome-blind 12-definition catalog, the retained Pullback rejection, and a
-dated research-foundation snapshot without inventing a single completion
-percentage. The 2026-09-15 UI-only OCI release reused the immutable 2026-09-11
-Snapshot and Market Intelligence publication; it changed no analytics, model
-authority, or research-performance state.
+outcome-blind 12-definition catalog, the exact-replay qualification report,
+all 12 formulas and timing rules, its limitations, the retained Pullback
+rejection, and a dated research-foundation snapshot without inventing a single
+completion percentage. The latest 2026-09-15 UI-only OCI release reused the
+immutable 2026-09-11 Snapshot and Market Intelligence publication; it changed
+no analytics, model authority, or research-performance state.
 
 The current Candidate score, Entry Geometry, and technical Strategy Channels
 remain visible, transparent, unvalidated **Baseline V1**. They are not expected-

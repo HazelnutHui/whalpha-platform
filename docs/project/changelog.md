@@ -24,6 +24,11 @@ and dated [audits](../audits/). Current capability and next work belong in
   admissions, and zero model, strategy, Candidate, canonical-data, or
   Production authority. The next gate is a separate before-outcomes screening
   protocol.
+- Deployed UI-only OCI release `2026-09-15T101225Z-bfcd55bae038` from source
+  `bfcd55bae038313169d9b9bf88d9d8b59645f1ff`, reusing the immutable 2026-09-11
+  Snapshot and Market Intelligence publication. Independent postflight proved
+  exact checksums, services, protected routes, equal guest capability, and zero
+  staging or failed residue.
 
 ## 2026-09-15 — Adopt the three-layer quantitative-research architecture
 

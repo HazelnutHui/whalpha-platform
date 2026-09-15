@@ -48,6 +48,7 @@ Read this bounded set before new Lab research:
 - [Quant Research Lab product contract](product/quant-research-lab-v1.md)
 - [Outcome-blind Factor Catalog V1](data-contracts/quant-research-factor-catalog-v1.md)
 - [Outcome-blind Factor Qualification V1 audit](audits/quant-research-factor-qualification-2026-09-15.md)
+- [Factor Qualification UI deployment audit](audits/quant-research-factor-qualification-ui-deployment-2026-09-15.md)
 - [ADR 0275: frozen factor-qualification protocol](decisions/0275-freeze-outcome-blind-factor-qualification-protocol.md)
 - [ADR 0274: durable three-layer architecture](decisions/0274-adopt-factor-model-strategy-three-layer-research-architecture.md)
 - [ADR 0273: first governed factor batch](decisions/0273-separate-governed-factor-discovery-from-strategy-construction.md)

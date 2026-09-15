@@ -2,7 +2,7 @@
 
 Operational state verified at: 2026-09-15T06:31:47Z
 
-Deployment state verified at: 2026-09-15T08:35:17Z
+Deployment state verified at: 2026-09-15T10:16:13Z
 
 Repository context updated at: 2026-09-15 UTC
 
@@ -20,8 +20,8 @@ ADRs, and dated audits.
 | Branch | `main`; verify live HEAD before mutation |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Active OCI release | `2026-09-15T083410Z-45b1d4dfedca` |
-| Deployed source | `45b1d4dfedcaffc92e2a11f21ecf208409347199` |
+| Active OCI release | `2026-09-15T101225Z-bfcd55bae038` |
+| Deployed source | `bfcd55bae038313169d9b9bf88d9d8b59645f1ff` |
 
 Dell owns code, canonical data, governance, and heavy computation. OCI is the
 bounded public-serving tier. A newer clean repository commit does not imply a
@@ -46,8 +46,10 @@ network-disabled reread. Run project Python through
 
 The current release passed independent release, source, bundle, checksum,
 service, protected-route, guest-flow, Candidate-route, logout, and residue
-checks. Public landing content independently exposes the new Factor Discovery
-direction; an unauthenticated Dashboard request redirects to Session entry.
+checks. Public landing content independently exposes the Factor Discovery
+direction; the protected Lab now also exposes the replayed qualification
+report, all 12 exact formulas, and its locked authority boundary. An
+unauthenticated Dashboard request redirects to Session entry.
 Password login and final visual appearance remain manual checks.
 Production Market Intelligence still consumes only 26 sessions and reports
 `degraded_short_history`; canonical history is deeper.
