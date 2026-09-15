@@ -124,16 +124,27 @@ near-duplicate rule. Report SHA-256 is
 logical fingerprint is
 `fb92e95acb146af66fb4d9e286c96852374a51884936f5d69536c4accacdab02`.
 
-No future outcome or performance metric has yet been read and no factor is
-admitted. ADR 0276 now freezes the separate screen before outcome access: 106
-complete Development sessions, 167,860 expected paths, five Alpha and three
+ADR 0276 froze the separate screen before outcome access: 106 complete
+Development sessions, 167,860 observations, five candidate-Alpha and three
 risk-guard hypotheses, role-specific 3-session labels, 1/5-session decay,
 Holm control, chronological stability, cost diagnostics, and a maximum two-
 Alpha/one-risk candidate set. Its logical fingerprint is
 `222b14dd358f5d4e6e260c77226b11f3ac2130f8850f96abe5ae5d48a07a8a60`.
-The next action is implementation and one exact replay of that frozen screen.
-Model Construction and Strategy Expression remain locked until the result
-qualifies.
+
+The screen and one complete exact replay are now closed at
+`closed_no_candidate_alpha`. All five candidate-Alpha factors and two risk
+guards failed at least one frozen gate. `rolling_maximum_drawdown_10s` alone
+passed as a risk guard; it cannot support a predictive model by itself. The
+503,580 labels reconcile to 503,214 observed exact, 92 terminal exact, 46
+terminal interval, 156 unavailable, and 72 unexecutable rows. Report logical
+fingerprint is
+`5e40cd9ab11dd20a98aabdf0834dc3cfb5c5a173a94929eca73891db8f8f789a`;
+SHA-256 is
+`184bc3f92f97809fbc69ea13877857d78a81472d0fbd15fa48bbce0891c62704`.
+No prior strategy outcome was reused, and Validation and Holdout remain
+untouched. Factor Catalog V1 is closed without retuning. The next research
+action is a separately registered finite Factor Discovery campaign; Model
+Construction and Strategy Expression remain locked.
 
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility

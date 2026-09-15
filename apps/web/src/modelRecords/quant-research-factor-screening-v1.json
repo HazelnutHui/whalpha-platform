@@ -1,0 +1,127 @@
+{
+  "record_id": "whalpha.factor-screening.price-volume-v1",
+  "contract_version": "quant-research-factor-screening-report/1.0",
+  "protocol_version": "quant-research-factor-screening/1.0.0",
+  "status": "closed_no_candidate_alpha",
+  "created_at": "2026-09-15T10:54:21Z",
+  "first_signal_session": "2025-07-22",
+  "last_signal_session": "2026-01-07",
+  "signal_session_count": 106,
+  "observation_count": 167860,
+  "label_count": 503580,
+  "formal_hypothesis_count": 8,
+  "candidate_alpha_hypothesis_count": 5,
+  "risk_guard_hypothesis_count": 3,
+  "setup_conditioner_count": 4,
+  "selected_alpha_count": 0,
+  "selected_risk_guard_count": 1,
+  "selected_factor_ids": ["rolling_maximum_drawdown_10s"],
+  "label_state_counts": {
+    "observed_eod_exact": 503214,
+    "terminal_reference_exact": 92,
+    "terminal_reference_interval": 46,
+    "unavailable_evidence": 156,
+    "unexecutable_no_next_open": 72
+  },
+  "primary_horizon_sessions": 3,
+  "decay_horizon_sessions": [1, 5],
+  "bootstrap_replications": 10000,
+  "bootstrap_confidence_percent": 90,
+  "multiple_testing_method": "Holm family-wise error control",
+  "cost_scenarios_bps_per_side": [0, 10, 25, 50],
+  "protocol_fingerprint": "222b14dd358f5d4e6e260c77226b11f3ac2130f8850f96abe5ae5d48a07a8a60",
+  "report_logical_fingerprint": "5e40cd9ab11dd20a98aabdf0834dc3cfb5c5a173a94929eca73891db8f8f789a",
+  "report_sha256": "184bc3f92f97809fbc69ea13877857d78a81472d0fbd15fa48bbce0891c62704",
+  "implementation_revision": "bb8cd4888eaace1fb9fca8e9e2456e04c47e239e",
+  "exact_replay_verified": true,
+  "reason_codes": ["no_candidate_alpha_passed_frozen_screen"],
+  "limitation_codes": [
+    "fixed_costs_not_execution_calibrated",
+    "historical_classification_unavailable",
+    "historical_regime_diversity_not_proven",
+    "reconstructed_membership_not_as_operated",
+    "split_neutral_absence_unproven",
+    "temporal_coverage_limited_to_106_development_sessions"
+  ],
+  "development_only": true,
+  "prior_strategy_outcome_reused": false,
+  "model_construction_authorized": false,
+  "strategy_expression_authorized": false,
+  "validation_authorized": false,
+  "holdout_access_authorized": false,
+  "candidate_activation_authorized": false,
+  "decisions": [
+    {
+      "factor_id": "relative_return_spy_20s",
+      "role": "candidate_alpha",
+      "status": "rejected_screen",
+      "robust_effect": -0.0218325422,
+      "robust_lower_bound": -0.0513436642,
+      "holm_adjusted_p_value": 1.0,
+      "failed_gate_count": 9
+    },
+    {
+      "factor_id": "relative_return_acceleration_5_vs_prior15",
+      "role": "candidate_alpha",
+      "status": "rejected_screen",
+      "robust_effect": -0.0081549603,
+      "robust_lower_bound": -0.0381464357,
+      "holm_adjusted_p_value": 1.0,
+      "failed_gate_count": 9
+    },
+    {
+      "factor_id": "signed_path_efficiency_10s",
+      "role": "candidate_alpha",
+      "status": "rejected_screen",
+      "robust_effect": -0.0051578809,
+      "robust_lower_bound": -0.0326756667,
+      "holm_adjusted_p_value": 1.0,
+      "failed_gate_count": 10
+    },
+    {
+      "factor_id": "positive_session_share_10s",
+      "role": "candidate_alpha",
+      "status": "rejected_screen",
+      "robust_effect": -0.0046961168,
+      "robust_lower_bound": -0.0290831871,
+      "holm_adjusted_p_value": 1.0,
+      "failed_gate_count": 9
+    },
+    {
+      "factor_id": "largest_absolute_return_share_10s",
+      "role": "risk_guard",
+      "status": "rejected_screen",
+      "robust_effect": 0.0064858631,
+      "robust_lower_bound": -0.0078464251,
+      "holm_adjusted_p_value": 0.2291770823,
+      "failed_gate_count": 8
+    },
+    {
+      "factor_id": "close_location_value_1s",
+      "role": "candidate_alpha",
+      "status": "rejected_screen",
+      "robust_effect": -0.0055039274,
+      "robust_lower_bound": -0.0225644694,
+      "holm_adjusted_p_value": 1.0,
+      "failed_gate_count": 10
+    },
+    {
+      "factor_id": "absolute_overnight_gap_atr14",
+      "role": "risk_guard",
+      "status": "rejected_screen",
+      "robust_effect": 0.014667762,
+      "robust_lower_bound": -0.0016419859,
+      "holm_adjusted_p_value": 0.1525847416,
+      "failed_gate_count": 3
+    },
+    {
+      "factor_id": "rolling_maximum_drawdown_10s",
+      "role": "risk_guard",
+      "status": "selected_model_candidate",
+      "robust_effect": 0.2539649018,
+      "robust_lower_bound": 0.2322097656,
+      "holm_adjusted_p_value": 0.00029997,
+      "failed_gate_count": 0
+    }
+  ]
+}

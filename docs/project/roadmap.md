@@ -57,7 +57,7 @@ authority exists. Detailed evidence remains in the final audit and archive.
 This result is not retuned. Its reusable lesson is the governed rejection path,
 not its named setup.
 
-## Current gated phase — Factor Discovery V1
+## Completed factor campaign — Factor Discovery V1
 
 ADR 0273 provides the first bounded, outcome-blind catalog of 12 exact daily
 price/volume definitions. Under ADR 0274, this is one discovery version rather
@@ -76,15 +76,48 @@ Sequence:
    labels, costs, related-hypothesis groups, multiplicity, stability tests,
    selection cap, and stopping rule.
 
-Both entry review and the before-outcomes protocol are complete under ADR 0276.
-The active work is to implement the frozen eight-hypothesis screen, run it once
-on Development, and independently replay the exact report. No rule may be
-changed after results are opened.
+Both entry review and the before-outcomes protocol completed under ADR 0276.
+The frozen eight-hypothesis Development screen and one complete exact replay
+are also complete. All five candidate-Alpha factors failed; one risk guard
+passed. The terminal state is `closed_no_candidate_alpha`. V1 is retained
+without changed gates, post-hoc interactions, or retuning.
 
-Exit: either a factor batch is ready for registered development screening or
-it is rejected/data-blocked with exact reasons. No model is assumed.
+Exit: closed without a model. `rolling_maximum_drawdown_10s` remains risk
+evidence only and cannot independently open Model Construction.
 
-## Next gated phase — Model Construction
+## Current gated phase — Factor Discovery next campaign
+
+The next campaign must be a new, finite, preregistered discovery version. Its
+purpose is to broaden economically distinct Alpha hypotheses without turning
+the same five failed definitions into an unlimited parameter search.
+
+Sequence:
+
+1. reconcile the cumulative factor/interaction trial ledger, including every
+   V1 failure and the retained risk guard;
+2. define a small number of economically distinct territories using only data
+   with declared point-in-time availability;
+3. separate standalone Alpha, setup-conditioner interactions, applicability,
+   and risk-guard hypotheses before calculations;
+4. qualify coverage, timing, missingness, redundancy, and implementation with
+   zero new outcome access;
+5. freeze the new cohort, labels, related-hypothesis groups, multiplicity,
+   stability, cost, selection, and stop rules; and
+6. execute one Development report and one exact replay, then accept rejection
+   if no candidate Alpha survives.
+
+Potential territories include market- and ETF-relative residual strength,
+medium-term trend with short-term reversal, volatility compression/expansion,
+participation confirmation, defensive-market applicability, and later point-
+in-time fundamental or event evidence. They are research territories, not a
+promised fixed strategy menu. Historical sector-neutral work remains blocked
+until point-in-time classification has a named evidence source.
+
+Exit: either at least one non-redundant candidate-Alpha factor plus any useful
+risk/applicability evidence is eligible for a separately frozen Model
+Construction protocol, or the campaign closes with exact reasons.
+
+## Conditional next phase — Model Construction
 
 Only admitted factor evidence can open this phase.
 

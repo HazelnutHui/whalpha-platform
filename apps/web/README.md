@@ -99,11 +99,11 @@ guide.
 - Language-neutral, risk-mode-specific Stock Candidate ranking, entry-location
   review, strategy channels, cross-channel decision desk, price-path/level
   context, contribution ledgers, and evidence drawer
-- Trilingual Quant Research Lab foundation, readiness, and preregistered-method
-  workspace;
-  price depth has passed the length floor while the page keeps point-in-time
-  membership, lifecycle, actions/adjustment, costs, and evaluation gates
-  separately blocked and all real result areas locked
+- Trilingual Quant Research Lab foundation, factor qualification, Development
+  screening, and retained-method workspace. The page exposes the exactly
+  replayed no-Alpha Factor Catalog V1 result, its one retained risk guard,
+  protocol identities, limitations, and continuing model/Product lock without
+  presenting a score as validated performance
 - Logout in snapshot mode
 - loading, error, empty, and retry states
 
@@ -137,7 +137,7 @@ npm run build
 - No sector/industry grouping
 - No theme rotation
 - No intraday or real-time data
-- No real Quant Research Lab performance or research-stage activation
+- No validated Quant Research Lab model performance or research-stage activation
 - No browser-side agent orchestration, model selection, or holdout access
 
 The deployed Candidate score and technical Strategy Channels are frozen,

@@ -22,13 +22,12 @@ ADRs, and audits.
   single registered replacement ended `rejected_endpoint_instability`. The
   program is closed with no parameter lock; Validation, Holdout, performance
   claims, and Candidate authority remain closed.
-- **Research architecture:** ADR 0274 now makes Factor Discovery -> Model
+- **Research architecture:** ADR 0274 makes Factor Discovery -> Model
   Construction -> Strategy Expression the durable path. The first 12-factor
-  catalog is one bounded outcome-blind batch, not a permanent factor universe
-  or a promised next model. Its deterministic qualification report and exact
-  replay are complete. ADR 0276 has frozen the eight-hypothesis Development
-  screen before results; implementation has not yet read an outcome and no
-  factor has been admitted.
+  catalog completed its frozen eight-hypothesis Development screen and one
+  exact replay. All five candidate-Alpha factors failed; one risk guard passed.
+  The batch is `closed_no_candidate_alpha`, so no model was constructed and a
+  separately registered discovery campaign is next.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -48,14 +47,14 @@ presentation layers. Guest and credential Sessions intentionally receive the
 same data and capability. Snapshot/API failure closes without synthetic
 Production data.
 
-The deployed Lab now presents the Factor Discovery -> Model Construction ->
-Strategy Expression architecture, its current locked stages, the first
-outcome-blind 12-definition catalog, the exact-replay qualification report,
-all 12 formulas and timing rules, its limitations, the retained Pullback
-rejection, and a dated research-foundation snapshot without inventing a single
-completion percentage. The latest 2026-09-15 UI-only OCI release reused the
-immutable 2026-09-11 Snapshot and Market Intelligence publication; it changed
-no analytics, model authority, or research-performance state.
+The currently deployed Lab presents the Factor Discovery -> Model Construction
+-> Strategy Expression architecture, the first outcome-blind 12-definition
+catalog, its exact-replay qualification report, all formulas and timing rules,
+the retained Pullback rejection, and a dated research-foundation snapshot.
+The newer Factor Catalog V1 Development result exists on Dell but is not yet
+deployed at this status checkpoint. Its planned Product projection must show
+the failed Alpha screen, retained risk guard, exact evidence, and continuing
+lock without implying model or Candidate authority.
 
 The current Candidate score, Entry Geometry, and technical Strategy Channels
 remain visible, transparent, unvalidated **Baseline V1**. They are not expected-
@@ -163,15 +162,29 @@ discovery batch; no next strategy name was preselected.
 ADR 0273 provides the first governed Factor Discovery batch. ADR 0274 places it
 inside the durable Factor Discovery -> Model Construction -> Strategy
 Expression architecture and removes the prior fixed strategy queue. The
-initial registry contains 12 exact, outcome-blind definitions across five
-economic families. Formula implementation and the ADR 0275 zero-outcome
-qualification report are complete and independently replayed: 418,756 complete
-12-factor vectors across 255 eligible sessions, 18,646 explicit quarantines,
-66 same-session pair checks, and zero near-duplicate groups under the frozen
-rule. The strongest absolute weighted Spearman relationship is 0.7812. These
-are method and data-quality facts, not predictive evidence. No factor return,
-threshold, model weight, model name, or Alpha claim may be computed until a
-separate post-coverage/before-outcomes screening protocol is committed.
+initial registry contains 12 exact definitions across five economic families.
+Formula implementation and the ADR 0275 zero-outcome qualification report are
+complete and independently replayed: 418,756 complete 12-factor vectors across
+255 eligible sessions, 18,646 explicit quarantines, 66 same-session pair
+checks, and zero near-duplicate groups under the frozen rule. The strongest
+absolute weighted Spearman relationship is 0.7812. These are method and data-
+quality facts, not predictive evidence.
+
+ADR 0276 then froze five candidate-Alpha and three risk-guard hypotheses before
+outcome access. The completed Development screen covers 106 signal sessions,
+167,860 observations, and 503,580 independently constructed 1/3/5-session
+labels. All five candidate-Alpha hypotheses and two risk guards failed at least
+one frozen gate. `rolling_maximum_drawdown_10s` passed every registered risk-
+guard gate with robust rank effect 0.2540, 90% lower bound 0.2322, and Holm-
+adjusted p 0.0003. It remains risk evidence, not standalone Alpha.
+
+The exact replay matched report SHA-256
+`184bc3f92f97809fbc69ea13877857d78a81472d0fbd15fa48bbce0891c62704`
+and logical fingerprint
+`5e40cd9ab11dd20a98aabdf0834dc3cfb5c5a173a94929eca73891db8f8f789a`.
+The terminal status is `closed_no_candidate_alpha`; Factor Catalog V1 cannot be
+retuned. No model, strategy expression, Validation, Holdout, performance
+claim, Candidate activation, publication, or trading authority was granted.
 
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
@@ -220,12 +233,13 @@ measured budget breach.
    same development result. Validation and Holdout remain untouched and closed.
 6. Preserve the completed ADR 0275 factor-qualification report and exact
    replay without treating coverage or low redundancy as Alpha evidence.
-7. Freeze the bounded factor-screening protocol before reading any new outcome
-   evidence. **Complete under ADR 0276.** Implement and execute only that
-   frozen Development screen and exact replay. Let admitted factor evidence
-   determine whether any model should be constructed; do not preselect Momentum
-   Breakout or another named strategy.
-8. Keep Factor Discovery, Model Construction, and Strategy Expression as
+7. Preserve the completed ADR 0276 screen and exact replay. Do not revise its
+   gates, treat the retained risk guard as Alpha, or construct a model from a
+   batch with zero admitted candidate Alpha.
+8. Register a separate finite Factor Discovery campaign and cumulative trial
+   ledger before any further outcome read; do not preselect Momentum Breakout
+   or another named strategy.
+9. Keep Factor Discovery, Model Construction, and Strategy Expression as
    separate versioned records; lock the complete lineage before Validation.
 
 Do not project current Membership or taxonomy backward, infer lifecycle from

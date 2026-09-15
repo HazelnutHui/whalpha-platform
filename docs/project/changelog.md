@@ -6,6 +6,29 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Close Factor Catalog V1 without a candidate Alpha
+
+- Executed the single frozen ADR 0276 Development screen over 106 signal
+  sessions, 167,860 observations, and 503,580 independent 1/3/5-session labels;
+  no Strong-Leader Pullback outcome was reused.
+- Rejected all five candidate-Alpha factors and two of three risk guards under
+  the preregistered rank, partial-rank, bootstrap, Holm, chronological, decay,
+  bucket, concentration, and evidence gates.
+- Retained `rolling_maximum_drawdown_10s` as risk evidence with robust rank
+  effect 0.2540, 90% lower bound 0.2322, and Holm-adjusted p 0.0003. It is not
+  standalone Alpha and cannot open Model Construction.
+- Replayed the entire source, label, and statistics chain to identical logical
+  fingerprint
+  `5e40cd9ab11dd20a98aabdf0834dc3cfb5c5a173a94929eca73891db8f8f789a`
+  and report SHA-256
+  `184bc3f92f97809fbc69ea13877857d78a81472d0fbd15fa48bbce0891c62704`.
+- Closed V1 at `closed_no_candidate_alpha` without retuning. Validation,
+  Holdout, model, strategy, Candidate, canonical-data, external-network, and
+  Production authority remained closed.
+- Added the complete audit and synchronized the trilingual login and Quant
+  Research Lab projection so the failed Alpha evidence, retained risk guard,
+  protocol, limitations, and exact identities remain visible.
+
 ## 2026-09-15 — Freeze the first development-only factor screen
 
 - Accepted ADR 0276 and registered eight finite outcome-reading hypotheses:

@@ -33,11 +33,13 @@ future research taxonomy.
 
 The completed Strong-Leader Pullback development program did not produce a
 model lock: V1 was inconclusive at its evidence floor and the only registered
-replacement was rejected on endpoint instability. It remains a retained,
-reproducible failure rather than a template to retune. Validation, Holdout,
-Candidate use, and performance publication remain closed. The next research
-stage is the first bounded factor-discovery catalog, not a preselected next
-strategy.
+replacement was rejected on endpoint instability. The succeeding 12-factor
+catalog completed a frozen, exactly replayed Development screen: all five
+candidate-Alpha hypotheses failed and one risk guard passed. It also closed
+without a model. These are retained, reproducible failures rather than
+templates to retune. Validation, Holdout, Candidate use, and performance
+publication remain closed. The next research stage is a separately registered,
+finite factor-discovery campaign, not a preselected named strategy.
 
 Dell is the authority for code, data, and computation. OCI serves only bounded
 static product artifacts and the localhost authentication boundary. The
