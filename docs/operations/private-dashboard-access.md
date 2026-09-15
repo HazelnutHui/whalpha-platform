@@ -60,6 +60,22 @@ manual user check because Codex does not know or use the password.
 - `/dashboard/` and `/private-data/` remain inaccessible without one of these
   valid Sessions; guest access is not a second asset route.
 
+## Cumulative guest-entry counter
+
+- After the protected React workspace opens, it sends one same-origin
+  `POST /auth/visit` for the current Session.
+- A guest Session increments the counter only on its first successful call.
+  Refreshes, deployment-created Sessions that never open the workspace, and
+  credential Sessions do not increment it.
+- The displayed metric is a cumulative guest-entry counter, not unique people,
+  page views, or audited audience analytics. Its owner-selected baseline is
+  retained in ADR 0285 and is not presented as observed traffic.
+- State is one versioned JSON file under the Auth Service's systemd-managed
+  state directory. It is written atomically with mode `0600` and is not part of
+  an immutable web release or canonical `/data`.
+- No IP address, user agent, browser fingerprint, credential, or browsing path
+  is retained for this counter.
+
 ## Password rotation
 
 The deployed helper is:

@@ -1,6 +1,7 @@
 import modelRecord from '../modelRecords/quant-research-lab-model-record-v1.json';
 import factorQualification from '../modelRecords/quant-research-factor-qualification-v2.json';
 import discoveryCycle from '../modelRecords/quant-research-discovery-cycle-v1.json';
+import reusableArtifacts from '../modelRecords/quant-research-reusable-artifact-registry-v1.json';
 import factorScreeningV2 from '../modelRecords/quant-research-factor-screening-v2.json';
 import factorScreening from '../modelRecords/quant-research-factor-screening-v1.json';
 import { useI18n } from '../i18n/I18nProvider';
@@ -131,6 +132,8 @@ const COPY = {
     statusNote: 'The frozen six-trial screen and exact replay are complete. All four candidate-Alpha measurements failed; two risk guards passed their own gates but receive no model-input authority without Alpha.',
     coverage: 'Evidence state', coverageNote: 'Method completeness and model effectiveness are separate questions.',
     coverageBoundary: 'A published method is not a validated strategy, current-market recommendation, or option-return forecast.',
+    submission: 'Submit a falsifiable factor or strategy hypothesis for independent registration and testing under the same governed workflow. If an idea ultimately enters a usable model and future commercial use, WH Alpha will contact the contributor and report the outcome.',
+    submissionContact: 'Contact',
     readiness: 'Evidence ladder', readinessItems: [
       ['Three-layer architecture', 'ACCEPTED', 'Factor Discovery, Model Construction, and Strategy Expression now have separate version and evidence boundaries.', 'met'],
       ['Cumulative research ledger', 'CLOSED · 14 TRIALS', 'All eight V1 and six V2 trials remain counted with their immutable outcomes. No failed trial was removed or relabeled.', 'met'],
@@ -138,6 +141,7 @@ const COPY = {
       ['V2 data qualification', 'PASSED', 'The report and replay are byte-identical: 98.59% complete vectors, 267 eligible sessions, and all eight definitions clear the frozen gates.', 'met'],
       ['Development screen', 'COMPLETED', 'Four Alpha trials failed. Two risk guards passed, but the no-Alpha prerequisite prevents selection into Model Construction.', 'met'],
       ['Exact reproduction', 'VERIFIED', 'The independent replay returned the identical logical fingerprint and report SHA with zero canonical, Production, or external writes.', 'met'],
+      ['Reusable research inputs', 'CONTRACT READY', 'Five content-addressed panel families now have exact reuse and custody rules. No panel is materialized and no new outcome access is open.', 'met'],
       ['Next discovery campaign', 'DESIGN BOUNDARY', 'A new finite batch may study market-structure-conditioned applicability. Its definitions and trial budget are not yet registered.', 'active'],
       ['Model, strategy & Product', 'LOCKED', 'No predictive model, strategy expression, Candidate authority, or option-performance claim exists.', 'locked'],
     ],
@@ -150,6 +154,7 @@ const COPY = {
       ['04', 'Replay, close & return', 'LOCKED', 'Attack leakage and stability, reproduce the exact result, append every failure, route any survivor, then return to hypothesis intake.'],
     ],
     cycleCurrent: 'Current position', cycleCurrentValue: 'READY FOR A NEW QUESTION', cycleCurrentBody: 'V1 and V2 are closed. The next campaign has no factor list, parameter grid, outcome access, or marketing name yet.',
+    cycleInfrastructure: 'Pre-campaign foundation', cycleInfrastructureValue: 'REUSE CONTRACT READY · 0 PANELS', cycleInfrastructureBody: 'Population, market state, features, controls, and labels now have exact content identities. Only the first three are outcome-blind; controls and labels remain inaccessible until a campaign is registered.',
     cycleContinuity: 'Why the loop continues', cycleContinuityValue: 'FAILURE DOES NOT END DISCOVERY', cycleContinuityBody: 'A failed batch returns to new hypothesis intake. A successful batch may open a separate model-construction path while Factor Discovery continues independently.',
     cycleInspect: 'Inspect deduplication, budget, isolation, and pause rules',
     cycleGuardTitles: ['Duplicate identity', 'Finite trial budget', 'Stage isolation', 'Automatic pause'],
@@ -160,6 +165,7 @@ const COPY = {
       'Lineage mismatch, stage leakage, trial-budget breach, replay failure, or sealed-partition breach stops the affected campaign without erasing prior work.',
     ],
     cycleIdentity: 'Cycle fingerprint',
+    artifactIdentity: 'Reusable-artifact registry fingerprint',
     foundation: 'Research foundation snapshot', foundationNote: 'Verified, versioned evidence already built on Dell. Each item states both its useful scope and its limit.', foundationBadge: 'EVIDENCE REVIEWED · 15 SEP 2026',
     foundationItems: [
       ['Five-year market base', 'DEPTH COMPLETE', 'Contiguous EOD price and stable-identity depth are complete.', 'verified'],
@@ -231,6 +237,8 @@ const COPY = {
     statusNote: '冻结的6项开发期筛选和精确重放已经完成。4项候选 Alpha 全部失败；2项风险护栏通过自身门槛，但没有 Alpha 时不获得模型输入权限。',
     coverage: '证据状态', coverageNote: '方法是否完整与模型是否有效，是两个不同问题。',
     coverageBoundary: '公开方法不代表策略已验证，不代表适合当前市场，也不预测期权收益。',
+    submission: '欢迎提交可证伪的因子或策略假设。WH Alpha 将按统一研究流程独立登记、测试并保留失败记录；若建议最终进入可用模型并产生未来商业用途，将联系贡献者并反馈结果。',
+    submissionContact: '联系',
     readiness: '证据阶梯', readinessItems: [
       ['三层研究架构', '已生效', '因子发现、模型构建与策略表达现在拥有相互独立的版本和证据边界。', 'met'],
       ['累计研究账本', '已关闭 · 共14项试验', 'V1 的8项和 V2 的6项试验及其不可变结论均完整保留；没有删除或改名任何失败记录。', 'met'],
@@ -238,6 +246,7 @@ const COPY = {
       ['V2 数据资格诊断', '已通过', '报告与重放逐字节一致：完整向量覆盖率98.59%，267个合格交易日，8项定义全部通过冻结门槛；6,491条五年拆股来源与旧正式证据重叠冲突为零。', 'met'],
       ['开发期筛选', '已完成', '4项 Alpha 全部失败；2项风险护栏通过，但因缺少 Alpha 而不能进入模型构建。', 'met'],
       ['精确复现', '已验证', '独立重放得到完全相同的逻辑指纹和报告 SHA，并保持正式数据、生产和外部请求写入为零。', 'met'],
+      ['可复用研究输入', '合同已就绪', '五类内容寻址研究面板已经具有精确复用和隔离规则；目前尚未实体化面板，也没有开放新的结果访问。', 'met'],
       ['下一批因子发现', '设计边界', '下一有限批次可以研究市场结构对因子适用性的影响；定义和试验预算尚未登记。', 'active'],
       ['模型、策略与产品', '锁定', '目前仍没有预测模型、策略表达、个股候选权限或期权绩效主张。', 'locked'],
     ],
@@ -250,6 +259,7 @@ const COPY = {
       ['04', '重放、关闭并返回', '锁定', '攻击泄漏与稳定性，精确复现结果，追加全部失败，分流幸存证据，然后返回新假设入口。'],
     ],
     cycleCurrent: '当前位置', cycleCurrentValue: '可以开始提出新问题', cycleCurrentBody: 'V1 与 V2 已经关闭；下一批目前没有因子清单、参数网格、结果访问权或营销名称。',
+    cycleInfrastructure: '批次前基础', cycleInfrastructureValue: '复用合同已就绪 · 0个面板', cycleInfrastructureBody: '研究总体、市场状态、特征、控制项和标签均已有精确内容身份。只有前三类属于结果盲数据；控制项与标签在新批次登记前保持不可访问。',
     cycleContinuity: '为何可以持续循环', cycleContinuityValue: '单批失败不终止发现', cycleContinuityBody: '失败批次返回新假设入口；成功批次可以另行开启模型构建，而因子发现仍作为独立研究线继续运行。',
     cycleInspect: '查看去重、预算、隔离与暂停规则',
     cycleGuardTitles: ['重复身份', '有限试验预算', '阶段隔离', '自动暂停'],
@@ -260,6 +270,7 @@ const COPY = {
       '来源谱系不一致、阶段泄漏、超出试验预算、重放失败或密封分区泄漏会立即停止受影响批次，但不会抹去已有研究。',
     ],
     cycleIdentity: '循环逻辑指纹',
+    artifactIdentity: '可复用工件注册表指纹',
     foundation: '研究基础快照', foundationNote: '以下是已经在戴尔完成核验并版本化的工程证据；每一项同时标明可用范围与证据边界。', foundationBadge: '证据核对 · 2026-09-15',
     foundationItems: [
       ['五年行情基础', '深度已完成', '连续日线行情与稳定证券身份的五年深度已经完成。', 'verified'],
@@ -331,6 +342,8 @@ const COPY = {
     statusNote: 'El filtro congelado de seis pruebas y su reproducción exacta han concluido. Fallaron las cuatro medidas candidatas de Alpha; dos salvaguardas superaron sus propios criterios, pero no obtienen permiso de modelo sin Alpha.',
     coverage: 'Estado de la evidencia', coverageNote: 'La integridad del método y la eficacia del modelo son cuestiones distintas.',
     coverageBoundary: 'Publicar un método no convierte la estrategia en validada, adecuada para el mercado actual ni predictiva de rentabilidades de opciones.',
+    submission: 'Se aceptan hipótesis refutables de factores o estrategias para su registro y evaluación independiente bajo el mismo proceso gobernado. Si una propuesta llega a un modelo utilizable y a un futuro uso comercial, WH Alpha contactará a la persona colaboradora y comunicará el resultado.',
+    submissionContact: 'Contacto',
     readiness: 'Escalera de evidencia', readinessItems: [
       ['Arquitectura de tres capas', 'ACEPTADA', 'Descubrimiento de factores, Construcción del modelo y Expresión de estrategia tienen límites de versión y evidencia separados.', 'met'],
       ['Registro acumulativo de investigación', 'CERRADO · 14 PRUEBAS', 'Las ocho pruebas V1 y las seis V2 permanecen contabilizadas con resultados inmutables; no se eliminó ni renombró ningún fallo.', 'met'],
@@ -338,6 +351,7 @@ const COPY = {
       ['Calificación de datos V2', 'SUPERADA', 'El informe y la reproducción son idénticos byte a byte: 98,59 % de vectores completos, 267 sesiones aptas y los ocho factores superan los filtros congelados; no hubo conflictos con la evidencia canónica previa.', 'met'],
       ['Selección en Desarrollo', 'COMPLETADA', 'Fallaron las cuatro pruebas Alpha. Dos salvaguardas superaron los criterios, pero la ausencia de Alpha impide pasar a Construcción del modelo.', 'met'],
       ['Reproducción exacta', 'VERIFICADA', 'La repetición independiente obtuvo las mismas huellas y el mismo SHA, sin escrituras canónicas, de Producción ni solicitudes externas.', 'met'],
+      ['Entradas de investigación reutilizables', 'CONTRATO LISTO', 'Cinco familias de paneles direccionados por contenido ya tienen reglas exactas de reutilización y custodia. No hay paneles materializados ni nuevo acceso a resultados.', 'met'],
       ['Próxima campaña', 'LÍMITE DE DISEÑO', 'Un nuevo lote finito podrá estudiar la aplicabilidad condicionada por la estructura del mercado; aún no se han registrado definiciones ni presupuesto.', 'active'],
       ['Modelo, estrategia y Producto', 'BLOQUEADOS', 'No existe modelo predictivo, expresión de estrategia, autoridad sobre Candidatos ni afirmación sobre opciones.', 'locked'],
     ],
@@ -350,6 +364,7 @@ const COPY = {
       ['04', 'Reproducir, cerrar y volver', 'BLOQUEADA', 'Atacar fugas y estabilidad, reproducir el resultado exacto, conservar cada fallo, encaminar supervivientes y volver a la entrada de hipótesis.'],
     ],
     cycleCurrent: 'Posición actual', cycleCurrentValue: 'LISTO PARA UNA NUEVA PREGUNTA', cycleCurrentBody: 'V1 y V2 están cerrados. La próxima campaña aún no tiene factores, rejilla de parámetros, acceso a resultados ni nombre comercial.',
+    cycleInfrastructure: 'Base previa a la campaña', cycleInfrastructureValue: 'CONTRATO DE REUTILIZACIÓN LISTO · 0 PANELES', cycleInfrastructureBody: 'Población, estado de mercado, variables, controles y etiquetas ya tienen identidades exactas de contenido. Solo las tres primeras familias son ciegas a resultados; controles y etiquetas siguen inaccesibles hasta registrar una campaña.',
     cycleContinuity: 'Por qué continúa el ciclo', cycleContinuityValue: 'UN FALLO NO DETIENE EL DESCUBRIMIENTO', cycleContinuityBody: 'Una campaña fallida vuelve a la entrada de hipótesis. Una campaña exitosa puede abrir una ruta separada de modelos mientras el descubrimiento continúa.',
     cycleInspect: 'Examinar deduplicación, presupuesto, aislamiento y pausas',
     cycleGuardTitles: ['Identidad de duplicados', 'Presupuesto finito', 'Aislamiento por etapas', 'Pausa automática'],
@@ -360,6 +375,7 @@ const COPY = {
       'Una discrepancia de linaje, fuga entre etapas, exceso de presupuesto, fallo de reproducción o ruptura de una partición sellada detiene la campaña afectada.',
     ],
     cycleIdentity: 'Huella lógica del ciclo',
+    artifactIdentity: 'Huella del registro de artefactos reutilizables',
     foundation: 'Resumen de la base de investigación', foundationNote: 'Evidencia verificada y versionada que ya existe en Dell. Cada punto indica tanto su utilidad como su límite.', foundationBadge: 'EVIDENCIA REVISADA · 15 SEP 2026',
     foundationItems: [
       ['Base de mercado a cinco años', 'PROFUNDIDAD COMPLETA', 'La profundidad continua de precios diarios e identidad estable está completa.', 'verified'],
@@ -494,6 +510,13 @@ export function QuantResearchLabPage(): JSX.Element {
       <div className="research-progress-copy"><strong>{c.coverage}</strong><span>{c.coverageNote}</span><small>{c.coverageBoundary}</small></div>
     </section>
 
+    <p className="research-foundation-boundary">
+      {c.submission}{' '}
+      <a href="https://x.com/whalphalab" target="_blank" rel="noreferrer">
+        {c.submissionContact} · @whalphalab
+      </a>
+    </p>
+
     <section className="research-card research-architecture" aria-labelledby="research-architecture-title">
       <header><span>00</span><div><p>{architecture.eyebrow}</p><h2 id="research-architecture-title">{architecture.title}</h2><small>{architecture.note}</small></div></header>
       <div className="research-architecture-grid">
@@ -513,6 +536,7 @@ export function QuantResearchLabPage(): JSX.Element {
       <div className="research-screen-verdict">
         <article className="retained"><span>{c.cycleCurrent}</span><strong>{c.cycleCurrentValue}</strong><p>{c.cycleCurrentBody}</p></article>
         <article className="retained"><span>{c.cycleContinuity}</span><strong>{c.cycleContinuityValue}</strong><p>{c.cycleContinuityBody}</p></article>
+        <article className="retained"><span>{c.cycleInfrastructure}</span><strong>{c.cycleInfrastructureValue}</strong><p>{c.cycleInfrastructureBody}</p></article>
       </div>
       <details className="research-factor-details research-screen-details">
         <summary>{c.cycleInspect}</summary>
@@ -522,6 +546,7 @@ export function QuantResearchLabPage(): JSX.Element {
         <dl className="research-factor-reproduction">
           <div><dt>{c.cycleIdentity}</dt><dd><code>{discoveryCycle.logical_fingerprint}</code></dd></div>
           <div><dt>completed ledger</dt><dd><code>{discoveryCycle.source_completed_ledger_fingerprint}</code></dd></div>
+          <div><dt>{c.artifactIdentity}</dt><dd><code>{reusableArtifacts.logical_fingerprint}</code></dd></div>
         </dl>
       </details>
     </section>

@@ -293,12 +293,14 @@ After=network.target
 Type=simple
 User=www-data
 Group=www-data
-ExecStart=/usr/bin/python3 ${auth_service_path} --host 127.0.0.1 --port 8010 --htpasswd ${auth_file}
+ExecStart=/usr/bin/python3 ${auth_service_path} --host 127.0.0.1 --port 8010 --htpasswd ${auth_file} --visitor-count-state /var/lib/whalpha-dashboard-auth/guest-visitor-count.json
 Restart=on-failure
 NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
+StateDirectory=whalpha-dashboard-auth
+StateDirectoryMode=0750
 ReadOnlyPaths=/etc/nginx/auth
 ReadOnlyPaths=/srv/whalpha/auth
 
@@ -318,6 +320,8 @@ for _ in 1 2 3 4 5 6 7 8 9 10; do
   sleep 1
 done
 [[ "${auth_ready}" == "true" ]] || { echo "auth service did not become ready" >&2; exit 1; }
+visitor_state_meta=$(sudo stat -c '%U:%G:%a:%F' /var/lib/whalpha-dashboard-auth/guest-visitor-count.json)
+[[ "${visitor_state_meta}" == "www-data:www-data:600:regular file" ]] || { echo "guest visitor-count state custody differs" >&2; exit 1; }
 wrong_headers=$(mktemp)
 wrong_body=$(mktemp)
 wrong_code=$(curl -sS -D "${wrong_headers}" -o "${wrong_body}" -w '%{http_code}' -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -H 'Origin: https://whalpha.com' -H 'Host: whalpha.com' --data '{"username":"invalid-test-user","password":"invalid-test-password","next":"/dashboard/"}' http://127.0.0.1:8010/login)
@@ -550,6 +554,8 @@ status_code=$(curl -sS -D "${status_headers}" -o "${status_body}" -w '%{http_cod
 grep -qi '^Cache-Control:.*no-store' "${status_headers}" || { echo "auth status missing no-store" >&2; exit 1; }
 [[ ! -s "${status_body}" ]] || { echo "auth status returned unexpected body" >&2; exit 1; }
 rm -f "${status_headers}" "${status_body}"
+visitor_count_code=$(curl -sS -o /dev/null -w '%{http_code}' -X POST -H 'Origin: https://whalpha.com' https://whalpha.com/auth/visit)
+[[ "${visitor_count_code}" == "401" ]] || { echo "guest visitor-count endpoint unauth status ${visitor_count_code}" >&2; exit 1; }
 auth_internal_code=$(curl -sS -o /dev/null -w '%{http_code}' https://whalpha.com/auth/internal-verify)
 [[ "${auth_internal_code}" == "404" ]] || { echo "internal verify exposed ${auth_internal_code}" >&2; exit 1; }
 http_code=$(curl -sS -o /dev/null -w '%{http_code}' http://whalpha.com/)

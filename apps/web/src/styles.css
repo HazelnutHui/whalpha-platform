@@ -1045,7 +1045,7 @@ body {
   .workspace-navigation small { display: none; }
   .workspace-nav-group--research::after { display: none; }
   .workspace-brand img { width: 42px; height: 42px; }
-  .workspace-boundary { display: none; }
+  .workspace-sidebar > .workspace-boundary { display: none; }
   .workspace-utility { flex-wrap: wrap; justify-content: flex-start; padding: 8px 16px; }
   .workspace-universe { width: 100%; margin-right: 0; }
   .workspace-universe select { flex: 1; max-width: none; }

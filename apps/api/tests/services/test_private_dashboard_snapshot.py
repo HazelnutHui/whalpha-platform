@@ -340,6 +340,7 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "location = /favicon.png" in text and "try_files /favicon.png =404" in text
     assert "location = /login/" in text and "return 302 /$is_args$args" in text
     assert "location = /auth/status" in text
+    assert "location = /auth/visit" in text and "proxy_pass http://127.0.0.1:8010/visit" in text
     assert "location /login/" in text and "root /srv/whalpha/current" in text and "location = /auth/login" in text
     assert "location = /auth/guest" in text and "proxy_pass http://127.0.0.1:8010/guest" in text
     assert "location /private-data/" in text and "no-store" in text
@@ -357,6 +358,9 @@ def test_scripts_default_dry_run_and_nginx_template(repo_root: Path = Path(__fil
     assert "public favicon status" in deploy_text
     assert "login compatibility redirect status" in deploy_text
     assert "auth status unauth status" in deploy_text
+    assert "guest visitor-count endpoint unauth status" in deploy_text
+    assert "StateDirectory=whalpha-dashboard-auth" in deploy_text
+    assert "guest-visitor-count.json" in deploy_text
     assert "guest Dashboard status" in deploy_text and "guest private-data status" in deploy_text
     assert "remote_password_rotation_path" in deploy_text
     assert "--expected-current-release" in deploy_text

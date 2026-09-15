@@ -6,13 +6,16 @@ import base64
 import crypt
 import hmac
 import json
+import os
 import secrets
+import stat
+import tempfile
 import time
 from dataclasses import dataclass
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
-from typing import Final
+from typing import Final, Literal
 from urllib.parse import parse_qs, urlencode
 
 COOKIE_NAME: Final = "__Host-whalpha_session"
@@ -24,6 +27,11 @@ GUEST_LIMIT: Final = 10
 GUEST_WINDOW_SECONDS: Final = 60
 MAX_ACTIVE_SESSIONS: Final = 4096
 ALLOWED_USERNAME: Final = "hui"
+VISITOR_COUNT_SCHEMA_VERSION: Final = "1.0"
+VISITOR_COUNT_BASELINE: Final = 1050
+DEFAULT_VISITOR_COUNT_STATE: Final = Path(
+    "/var/lib/whalpha-dashboard-auth/guest-visitor-count.json"
+)
 
 
 @dataclass(frozen=True)
@@ -36,29 +44,170 @@ class Credential:
 class Session:
     session_id: str
     expires_at: float
+    entry_source: Literal["credential", "guest"]
+    guest_entry_counted: bool = False
 
 
 class SessionCapacityError(RuntimeError):
     pass
 
 
+class VisitorCounterError(RuntimeError):
+    pass
+
+
+class GuestVisitorCounter:
+    def __init__(
+        self,
+        path: Path | None = None,
+        *,
+        baseline: int = VISITOR_COUNT_BASELINE,
+    ) -> None:
+        if baseline < 0 or isinstance(baseline, bool):
+            raise VisitorCounterError("visitor-count baseline is invalid")
+        if path is not None and not path.is_absolute():
+            raise VisitorCounterError("visitor-count state path must be absolute")
+        self.path = path
+        self.baseline = baseline
+        self.recorded_guest_entries = 0
+        if path is not None:
+            self.recorded_guest_entries = self._load_or_initialize()
+
+    @property
+    def display_count(self) -> int:
+        return self.baseline + self.recorded_guest_entries
+
+    def increment(self) -> int:
+        previous = self.recorded_guest_entries
+        self.recorded_guest_entries += 1
+        try:
+            if self.path is not None:
+                self._persist()
+        except Exception:
+            self.recorded_guest_entries = previous
+            raise
+        return self.display_count
+
+    def _load_or_initialize(self) -> int:
+        assert self.path is not None
+        self._validate_parent()
+        if not self.path.exists():
+            self._persist()
+            return 0
+        if self.path.is_symlink() or not stat.S_ISREG(self.path.stat().st_mode):
+            raise VisitorCounterError("visitor-count state is not a regular file")
+        try:
+            payload = json.loads(self.path.read_text(encoding="utf-8"))
+        except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+            raise VisitorCounterError("visitor-count state cannot be read") from exc
+        expected_keys = {
+            "schema_version",
+            "baseline",
+            "recorded_guest_entries",
+            "display_count",
+        }
+        if not isinstance(payload, dict) or set(payload) != expected_keys:
+            raise VisitorCounterError("visitor-count state schema differs")
+        entries = payload["recorded_guest_entries"]
+        if (
+            payload["schema_version"] != VISITOR_COUNT_SCHEMA_VERSION
+            or payload["baseline"] != self.baseline
+            or not isinstance(entries, int)
+            or isinstance(entries, bool)
+            or entries < 0
+            or payload["display_count"] != self.baseline + entries
+        ):
+            raise VisitorCounterError("visitor-count state values differ")
+        return entries
+
+    def _validate_parent(self) -> None:
+        assert self.path is not None
+        parent = self.path.parent
+        parent.mkdir(mode=0o750, parents=True, exist_ok=True)
+        if parent.is_symlink() or not stat.S_ISDIR(parent.stat().st_mode):
+            raise VisitorCounterError("visitor-count state parent is invalid")
+
+    def _persist(self) -> None:
+        assert self.path is not None
+        self._validate_parent()
+        if self.path.is_symlink():
+            raise VisitorCounterError("visitor-count state symlink is forbidden")
+        payload = {
+            "schema_version": VISITOR_COUNT_SCHEMA_VERSION,
+            "baseline": self.baseline,
+            "recorded_guest_entries": self.recorded_guest_entries,
+            "display_count": self.display_count,
+        }
+        body = (
+            json.dumps(payload, sort_keys=True, separators=(",", ":")) + "\n"
+        ).encode("utf-8")
+        descriptor, temporary_name = tempfile.mkstemp(
+            prefix=".guest-visitor-count.", dir=self.path.parent
+        )
+        temporary = Path(temporary_name)
+        try:
+            os.fchmod(descriptor, 0o600)
+            handle = os.fdopen(descriptor, "wb")
+            descriptor = -1
+            with handle:
+                handle.write(body)
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(temporary, self.path)
+            directory_descriptor = os.open(self.path.parent, os.O_RDONLY | os.O_DIRECTORY)
+            try:
+                os.fsync(directory_descriptor)
+            finally:
+                os.close(directory_descriptor)
+        finally:
+            if descriptor >= 0:
+                os.close(descriptor)
+            if temporary.exists():
+                temporary.unlink()
+
+
 class AuthState:
-    def __init__(self, credential: Credential, *, now=time.time, max_active_sessions: int = MAX_ACTIVE_SESSIONS) -> None:
+    def __init__(
+        self,
+        credential: Credential,
+        *,
+        now=time.time,
+        max_active_sessions: int = MAX_ACTIVE_SESSIONS,
+        visitor_counter: GuestVisitorCounter | None = None,
+    ) -> None:
         self.credential = credential
         self.now = now
         self.max_active_sessions = max_active_sessions
         self.sessions: dict[str, Session] = {}
         self.failures: dict[str, list[float]] = {}
         self.guest_requests: dict[str, list[float]] = {}
+        self.visitor_counter = visitor_counter or GuestVisitorCounter()
 
-    def create_session(self) -> Session:
+    def create_session(
+        self, *, entry_source: Literal["credential", "guest"] = "credential"
+    ) -> Session:
         self.cleanup_expired()
         if len(self.sessions) >= self.max_active_sessions:
             raise SessionCapacityError("active Session capacity reached")
         token = secrets.token_urlsafe(48)
-        session = Session(session_id=token, expires_at=self.now() + SESSION_TTL_SECONDS)
+        session = Session(
+            session_id=token,
+            expires_at=self.now() + SESSION_TTL_SECONDS,
+            entry_source=entry_source,
+        )
         self.sessions[token] = session
         return session
+
+    def record_workspace_visit(self, token: str | None) -> tuple[int, bool] | None:
+        if not self.check_session(token):
+            return None
+        assert token is not None
+        session = self.sessions[token]
+        if session.entry_source != "guest" or session.guest_entry_counted:
+            return self.visitor_counter.display_count, False
+        count = self.visitor_counter.increment()
+        session.guest_entry_counted = True
+        return count, True
 
     def check_session(self, token: str | None) -> bool:
         if not token:
@@ -263,6 +412,9 @@ def make_handler(state: AuthState):
                 state.logout(parse_cookie(self.headers.get("Cookie")))
                 self._redirect("/", cookie=clear_cookie_header())
                 return
+            if self.path == "/visit":
+                self._handle_visit()
+                return
             self.send_error(HTTPStatus.NOT_FOUND)
 
         def _handle_login(self) -> None:
@@ -293,7 +445,7 @@ def make_handler(state: AuthState):
                 self._redirect(f"/login/?{urlencode({'error': '1', 'next': next_url})}")
                 return
             try:
-                session = state.create_session()
+                session = state.create_session(entry_source="credential")
             except SessionCapacityError:
                 self._send_json(HTTPStatus.SERVICE_UNAVAILABLE, {"error": "temporarily_unavailable"})
                 return
@@ -320,7 +472,7 @@ def make_handler(state: AuthState):
                 return
             state.record_guest_request(client_id)
             try:
-                session = state.create_session()
+                session = state.create_session(entry_source="guest")
             except SessionCapacityError:
                 self._send_json(HTTPStatus.SERVICE_UNAVAILABLE, {"error": "temporarily_unavailable"})
                 return
@@ -328,6 +480,32 @@ def make_handler(state: AuthState):
                 HTTPStatus.OK,
                 {"authenticated": True, "next": safe_next(form.get("next"))},
                 cookie=cookie_header(session),
+            )
+
+        def _handle_visit(self) -> None:
+            if not self._same_origin_ok():
+                self._send_json(HTTPStatus.FORBIDDEN, {"error": "invalid_request"})
+                return
+            token = parse_cookie(self.headers.get("Cookie"))
+            try:
+                result = state.record_workspace_visit(token)
+            except (OSError, VisitorCounterError):
+                self._send_json(
+                    HTTPStatus.SERVICE_UNAVAILABLE,
+                    {"error": "temporarily_unavailable"},
+                )
+                return
+            if result is None:
+                self._send_json(HTTPStatus.UNAUTHORIZED, {"error": "unauthorized"})
+                return
+            count, counted = result
+            self._send_json(
+                HTTPStatus.OK,
+                {
+                    "metric": "cumulative_guest_entries",
+                    "count": count,
+                    "counted": counted,
+                },
             )
 
     return Handler
@@ -338,10 +516,18 @@ def main() -> int:
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", type=int, default=8010)
     parser.add_argument("--htpasswd", type=Path, default=Path("/etc/nginx/auth/whalpha-dashboard.htpasswd"))
+    parser.add_argument(
+        "--visitor-count-state",
+        type=Path,
+        default=DEFAULT_VISITOR_COUNT_STATE,
+    )
     args = parser.parse_args()
     if args.host != "127.0.0.1":
         raise SystemExit("auth service must bind 127.0.0.1")
-    state = AuthState(load_credential(args.htpasswd))
+    state = AuthState(
+        load_credential(args.htpasswd),
+        visitor_counter=GuestVisitorCounter(args.visitor_count_state),
+    )
     server = HTTPServer((args.host, args.port), make_handler(state))
     server.serve_forever()
     return 0

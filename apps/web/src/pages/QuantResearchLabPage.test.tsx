@@ -23,6 +23,8 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('Model Construction').parentElement).toHaveTextContent('LOCKED');
     expect(screen.getByText('Strategy Expression').parentElement).toHaveTextContent('LOCKED');
     expect(screen.getByText(/A factor is not a model/)).toBeInTheDocument();
+    expect(screen.getByText(/Submit a falsifiable factor or strategy hypothesis/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Contact · @whalphalab' })).toHaveAttribute('href', 'https://x.com/whalphalab');
     expect(screen.getByRole('heading', { name: 'Renewable factor-discovery loop' })).toBeInTheDocument();
     expect(screen.getByText('Operating mode').parentElement).toHaveTextContent('RENEWABLE');
     expect(screen.getByText('Current stage').parentElement).toHaveTextContent('HYPOTHESIS INTAKE');
@@ -120,6 +122,8 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('模型构建层').parentElement).toHaveTextContent('保持锁定');
     expect(screen.getByText('策略表达层').parentElement).toHaveTextContent('保持锁定');
     expect(screen.getByRole('heading', { name: '可持续因子发现循环' })).toBeInTheDocument();
+    expect(screen.getByText(/欢迎提交可证伪的因子或策略假设/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: '联系 · @whalphalab' })).toHaveAttribute('href', 'https://x.com/whalphalab');
     expect(screen.getByText('运行模式').parentElement).toHaveTextContent('持续循环');
     expect(screen.getByText('当前位置').parentElement).toHaveTextContent('可以开始提出新问题');
     expect(screen.getByRole('heading', { name: '证据阶梯' })).toBeInTheDocument();
@@ -163,6 +167,8 @@ describe('Quant Research Lab', () => {
     expect(screen.getAllByText('Construcción del modelo')[0].parentElement).toHaveTextContent('BLOQUEADA');
     expect(screen.getAllByText('Expresión de estrategia')[0].parentElement).toHaveTextContent('BLOQUEADA');
     expect(screen.getByRole('heading', { name: 'Ciclo renovable de descubrimiento de factores' })).toBeInTheDocument();
+    expect(screen.getByText(/Se aceptan hipótesis refutables de factores o estrategias/)).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Contacto · @whalphalab' })).toHaveAttribute('href', 'https://x.com/whalphalab');
     expect(screen.getByText('Modo operativo').parentElement).toHaveTextContent('RENOVABLE');
     expect(screen.getByText('Posición actual').parentElement).toHaveTextContent('LISTO PARA UNA NUEVA PREGUNTA');
     expect(screen.getByRole('heading', { name: 'Escalera de evidencia' })).toBeInTheDocument();

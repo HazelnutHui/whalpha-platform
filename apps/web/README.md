@@ -42,6 +42,12 @@ preregistration budget, stage isolation, and automatic pause rules. This is a
 control surface; it does not claim that unattended mining or outcome access is
 active.
 
+The Lab's hypothesis invitation links to the public WH Alpha Research account
+at `@whalphalab`. The protected workspace footer shows a lightweight
+cumulative guest-entry counter. It is recorded by the Session Auth Service,
+does not identify unique people, and is intentionally independent of research
+evidence and market analytics.
+
 The active Dashboard uses Activation V2 Primary/Secondary Universes. Provider
 security form remains provisional and does not establish issuer structure or
 domicile.
@@ -120,6 +126,8 @@ guide.
   continuing model/Product lock
   without presenting a score as validated performance
 - Logout in snapshot mode
+- Trilingual hypothesis-submission contact link and cumulative guest-entry
+  footer in snapshot mode
 - loading, error, empty, and retry states
 
 ## Local Setup

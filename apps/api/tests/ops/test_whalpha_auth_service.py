@@ -279,9 +279,11 @@ def test_guest_and_credential_sessions_have_identical_role_free_capability() -> 
         assert login_status == guest_status == 200
         login_token = login_headers["Set-Cookie"].split("=", 1)[1].split(";", 1)[0]
         guest_token = guest_headers["Set-Cookie"].split("=", 1)[1].split(";", 1)[0]
-        assert set(vars(state.sessions[login_token])) == set(vars(state.sessions[guest_token])) == {
-            "session_id", "expires_at",
-        }
+        assert set(vars(state.sessions[login_token])) == set(vars(state.sessions[guest_token]))
+        assert state.sessions[login_token].entry_source == "credential"
+        assert state.sessions[guest_token].entry_source == "guest"
+        assert not state.sessions[login_token].guest_entry_counted
+        assert not state.sessions[guest_token].guest_entry_counted
         assert state.check_session(login_token) and state.check_session(guest_token)
     finally:
         server.shutdown()
@@ -329,3 +331,132 @@ def test_guest_requires_json_content_type() -> None:
     finally:
         server.shutdown()
         thread.join(timeout=5)
+
+
+def json_visit(
+    server,
+    cookie: str,
+    *,
+    origin: str = "https://whalpha.com",
+):
+    conn = http.client.HTTPConnection(
+        "127.0.0.1", server.server_address[1], timeout=5
+    )
+    conn.request(
+        "POST",
+        "/visit",
+        headers={
+            "Accept": "application/json",
+            "Cookie": cookie,
+            "Host": "whalpha.com",
+            "Origin": origin,
+        },
+    )
+    response = conn.getresponse()
+    data = response.read().decode("utf-8")
+    conn.close()
+    return response.status, json.loads(data)
+
+
+def test_guest_visit_increments_once_per_session_from_1050() -> None:
+    state = auth.AuthState(credential(), now=lambda: 1000.0)
+    server, thread = run_server(state)
+    try:
+        status, headers, _ = json_guest(server, {"next": "/dashboard/"})
+        assert status == 200
+        assert state.visitor_counter.display_count == 1050
+        cookie = headers["Set-Cookie"].split(";", 1)[0]
+
+        visit_status, first = json_visit(server, cookie)
+        assert visit_status == 200
+        assert first == {
+            "metric": "cumulative_guest_entries",
+            "count": 1051,
+            "counted": True,
+        }
+        visit_status, repeated = json_visit(server, cookie)
+        assert visit_status == 200
+        assert repeated == {
+            "metric": "cumulative_guest_entries",
+            "count": 1051,
+            "counted": False,
+        }
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
+
+
+def test_credential_visit_reads_but_does_not_increment_guest_count() -> None:
+    state = auth.AuthState(credential(), now=lambda: 1000.0)
+    server, thread = run_server(state)
+    try:
+        status, headers, _ = json_login(
+            server,
+            {"username": "hui", "password": "correct-password", "next": "/dashboard/"},
+        )
+        assert status == 200
+        cookie = headers["Set-Cookie"].split(";", 1)[0]
+        visit_status, payload = json_visit(server, cookie)
+
+        assert visit_status == 200
+        assert payload == {
+            "metric": "cumulative_guest_entries",
+            "count": 1050,
+            "counted": False,
+        }
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
+
+
+def test_visit_requires_a_valid_same_origin_session() -> None:
+    state = auth.AuthState(credential(), now=lambda: 1000.0)
+    server, thread = run_server(state)
+    try:
+        status, payload = json_visit(server, "invalid=session")
+        assert status == 401
+        assert payload == {"error": "unauthorized"}
+
+        session = state.create_session(entry_source="guest")
+        status, payload = json_visit(
+            server,
+            f"{auth.COOKIE_NAME}={session.session_id}",
+            origin="https://evil.example",
+        )
+        assert status == 403
+        assert payload == {"error": "invalid_request"}
+        assert state.visitor_counter.display_count == 1050
+    finally:
+        server.shutdown()
+        thread.join(timeout=5)
+
+
+def test_guest_visit_counter_persists_atomically_across_restart(tmp_path: Path) -> None:
+    path = tmp_path / "state" / "guest-visitor-count.json"
+    counter = auth.GuestVisitorCounter(path)
+
+    assert counter.display_count == 1050
+    assert counter.increment() == 1051
+    payload = json.loads(path.read_text(encoding="utf-8"))
+    assert payload == {
+        "schema_version": "1.0",
+        "baseline": 1050,
+        "recorded_guest_entries": 1,
+        "display_count": 1051,
+    }
+    assert path.stat().st_mode & 0o777 == 0o600
+    assert auth.GuestVisitorCounter(path).display_count == 1051
+
+
+def test_guest_visit_counter_rejects_corrupt_or_symlink_state(tmp_path: Path) -> None:
+    corrupt = tmp_path / "corrupt.json"
+    corrupt.write_text('{"baseline":1050}\n', encoding="utf-8")
+    with pytest.raises(auth.VisitorCounterError, match="schema differs"):
+        auth.GuestVisitorCounter(corrupt)
+
+    target = tmp_path / "target.json"
+    target.write_text("{}\n", encoding="utf-8")
+    link = tmp_path / "linked.json"
+    link.symlink_to(target)
+    with pytest.raises(auth.VisitorCounterError, match="regular file"):
+        auth.GuestVisitorCounter(link)

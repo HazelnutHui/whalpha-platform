@@ -403,6 +403,9 @@ accepted ADR was deployed unless current operational evidence says so.
   cutover NO-GO rather than relabeling it as Production.
 - ADRs 0180–0190 govern finite offline chaining, persistent session custody,
   deployment from that custody, paid-plan recency, and runtime integration.
+- [ADR 0285](0285-persist-a-seeded-cumulative-guest-entry-counter.md) keeps a
+  small identifier-free guest-entry counter outside immutable releases while
+  preserving equal guest/credential product capability.
 
 ## Full archive
 

@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 
+import { recordGuestWorkspaceEntry } from './api/visitorCount';
 import { LanguageSelector } from './i18n/LanguageSelector';
 import { useI18n } from './i18n/I18nProvider';
 import type { MessageKey } from './i18n/catalog';
@@ -72,7 +73,17 @@ export default function App(): JSX.Element {
   const { locale, t } = useI18n();
   const [workspace, setWorkspace] = useState<Workspace>(requestedWorkspace);
   const [universe, setUniverse] = useState(requestedUniverse);
+  const [guestVisitorCount, setGuestVisitorCount] = useState<number | null>(null);
   const snapshotMode = import.meta.env.VITE_MARKET_DATA_MODE === 'snapshot';
+
+  useEffect(() => {
+    if (!snapshotMode) return;
+    const controller = new AbortController();
+    void recordGuestWorkspaceEntry(controller.signal)
+      .then((result) => setGuestVisitorCount(result.count))
+      .catch(() => setGuestVisitorCount(null));
+    return () => controller.abort();
+  }, [snapshotMode]);
 
   useEffect(() => {
     const rawUniverse = new URLSearchParams(window.location.search).get('universe');
@@ -173,6 +184,7 @@ export default function App(): JSX.Element {
             {workspace === 'regime' ? <MarketRegimeOpportunityMapPage withinWorkspaceShell /> : workspace === 'sector' ? <SectorRotationPage universeId={universe} /> : workspace === 'market' ? <MarketDashboardPage withinWorkspaceShell /> : workspace === 'candidates' ? <OpportunityCandidatesPage /> : <QuantResearchLabPage />}
           </Suspense>
         </div>
+        {guestVisitorCount !== null ? <footer className="workspace-boundary" aria-live="polite"><span>{t('app.cumulativeGuestEntries')} · </span><strong>{new Intl.NumberFormat(locale === 'zh' ? 'zh-CN' : locale === 'es' ? 'es-ES' : 'en-US').format(guestVisitorCount)}</strong></footer> : null}
       </div>
     </div>
   );

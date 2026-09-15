@@ -141,6 +141,9 @@ see [ADR 0274](../decisions/0274-adopt-factor-model-strategy-three-layer-researc
 - [Quant Research Discovery Cycle V1](quant-research-discovery-cycle-v1.md)
   makes Factor Discovery renewable while keeping each campaign finite,
   deduplicated, stage-isolated, preregistered, replayed, and trial-counted.
+- [Quant Research Reusable Artifact Registry V1](quant-research-reusable-artifact-registry-v1.md)
+  defines exact content-addressed reuse and separate outcome-blind versus
+  outcome-bearing custody for the next campaign's common research panels.
 - [Quant Research Factor Screening V1](quant-research-factor-screening-v1.md)
   freezes the first Development screen; its completed no-Alpha result and exact
   replay are recorded in the [screening audit](../audits/quant-research-factor-screening-2026-09-15.md).

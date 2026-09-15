@@ -181,13 +181,17 @@ bundle creation are separate explicit approvals.
 
 - `/` is the public, data-free branded Session entry page.
 - `/login/` is a compatibility redirect to `/`.
-- `/auth/login`, `/auth/guest`, and `/auth/logout` proxy to the localhost-only
-  Auth Service.
+- `/auth/login`, `/auth/guest`, `/auth/visit`, and `/auth/logout` proxy to the
+  localhost-only Auth Service. `/auth/visit` requires a valid Session and is
+  the only route that may update the cumulative guest-entry state.
 - Credential and guest entry create the same role-free Session; neither Nginx
   nor the Dashboard receives a capability distinction.
 - `/auth/status` exposes only authentication state.
 - `/auth/internal-verify` is an Nginx internal location.
 - `/dashboard/` and `/private-data/` use the same `auth_request` check.
+- The guest-entry state lives outside release directories in the Auth
+  Service's systemd `StateDirectory`; deployments validate its ownership,
+  regular-file type, and `0600` mode without printing its contents.
 - The session cookie is secure, HttpOnly, SameSite=Lax, host-only, and scoped to
   `/`; an Auth Service restart invalidates in-memory sessions.
 

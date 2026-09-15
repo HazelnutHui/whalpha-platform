@@ -50,6 +50,7 @@ export const spanishMessages = {
   'app.account': 'Cuenta',
   'app.privateSession': 'Sesión protegida',
   'app.researchBoundary': 'Investigación transparente · Sin ejecución de órdenes',
+  'app.cumulativeGuestEntries': 'Entradas acumuladas de invitados',
   'app.researchGroup': 'Sistema de investigación',
   'app.coreBadge': 'NÚCLEO',
   'app.freeToolsGroup': 'Herramientas de mercado gratuitas',

@@ -103,4 +103,26 @@ describe('primary workspace shell', () => {
     expect(screen.getByLabelText('Universo activo')).toHaveValue('provider_classified_common_shares_v1');
     expect(new URLSearchParams(window.location.search).get('lang')).toBe('es');
   });
+
+  it('shows the cumulative guest-entry count in the production workspace footer', async () => {
+    vi.stubEnv('VITE_MARKET_DATA_MODE', 'snapshot');
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        metric: 'cumulative_guest_entries',
+        count: 1051,
+        counted: true,
+      }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    render(<I18nProvider><App /></I18nProvider>);
+
+    expect(await screen.findByText(/Cumulative guest entries/)).toBeInTheDocument();
+    expect(screen.getByText('1,051')).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledWith('/auth/visit', expect.objectContaining({
+      method: 'POST',
+      credentials: 'same-origin',
+    }));
+  });
 });

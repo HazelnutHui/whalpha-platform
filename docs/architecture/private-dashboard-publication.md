@@ -123,6 +123,13 @@ The bundle excludes source maps, credentials, `.env`, raw payloads, Parquet file
 
 The existing htpasswd file remains the server-side credential store for the owner login. Browser-native Basic Auth is replaced by a branded entry page, opaque in-memory Sessions, and an HttpOnly `__Host-whalpha_session` cookie. `POST /auth/guest` creates the same role-free Session without accepting a credential; guest and credential Sessions have no data or capability difference.
 
+The protected frontend may call same-origin `POST /auth/visit` after the
+workspace opens. The localhost Auth Service uses the Session's entry source
+only to maintain the cumulative guest-entry counter defined by ADR 0285; it
+does not create a role or capability difference. Mutable counter state is
+kept in a systemd-managed state directory, not in the static bundle or
+canonical `/data`, and contains no visitor identifiers.
+
 The deployment verifies that public `/` remains data-free, public
 `/favicon.png` is a valid PNG, `/login/` redirects to `/`, unauthenticated
 `/dashboard/` redirects to `/?next=/dashboard/`, and unauthenticated

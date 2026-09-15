@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0",
+  "contract_version": "quant-research-reusable-artifact-registry/1.0",
+  "registry_version": "whalpha.quant-research-reusable-artifacts/1.0.0",
+  "accepted_date": "2026-09-15",
+  "implementation_status": "contract_ready_not_materialized",
+  "source_cycle_fingerprint": "55c1eaccbd5ef5c8ef6dd695c4e4e010ed0e11c6483e55f1a2ce6b70898f8218",
+  "source_completed_ledger_fingerprint": "284ab895644ad8eff5feb7d5510f087c3fa1b6436ee655cd71f6a9cedc50a661",
+  "artifact_families": [
+    {
+      "artifact_kind": "population",
+      "custody": "outcome_blind",
+      "retention": "reusable_derived",
+      "permitted_row_access_stages": [
+        "data_admission",
+        "outcome_blind_qualification",
+        "protocol_preregistration",
+        "development_screen",
+        "independent_replay_and_red_team"
+      ],
+      "exact_identity_match_required": true,
+      "mismatch_action": "build_new_immutable_version_never_mutate",
+      "compact_summary_default": true,
+      "registered_campaign_required": false
+    },
+    {
+      "artifact_kind": "market_state",
+      "custody": "outcome_blind",
+      "retention": "reusable_derived",
+      "permitted_row_access_stages": [
+        "outcome_blind_qualification",
+        "protocol_preregistration",
+        "development_screen",
+        "independent_replay_and_red_team"
+      ],
+      "exact_identity_match_required": true,
+      "mismatch_action": "build_new_immutable_version_never_mutate",
+      "compact_summary_default": true,
+      "registered_campaign_required": false
+    },
+    {
+      "artifact_kind": "feature_matrix",
+      "custody": "outcome_blind",
+      "retention": "reusable_derived",
+      "permitted_row_access_stages": [
+        "outcome_blind_qualification",
+        "protocol_preregistration",
+        "development_screen",
+        "independent_replay_and_red_team"
+      ],
+      "exact_identity_match_required": true,
+      "mismatch_action": "build_new_immutable_version_never_mutate",
+      "compact_summary_default": true,
+      "registered_campaign_required": false
+    },
+    {
+      "artifact_kind": "nuisance_control",
+      "custody": "outcome_bearing",
+      "retention": "restricted_reusable_derived",
+      "permitted_row_access_stages": [
+        "development_screen",
+        "independent_replay_and_red_team"
+      ],
+      "exact_identity_match_required": true,
+      "mismatch_action": "build_new_immutable_version_never_mutate",
+      "compact_summary_default": true,
+      "registered_campaign_required": true
+    },
+    {
+      "artifact_kind": "outcome_label",
+      "custody": "outcome_bearing",
+      "retention": "restricted_reusable_derived",
+      "permitted_row_access_stages": [
+        "development_screen",
+        "independent_replay_and_red_team"
+      ],
+      "exact_identity_match_required": true,
+      "mismatch_action": "build_new_immutable_version_never_mutate",
+      "compact_summary_default": true,
+      "registered_campaign_required": true
+    }
+  ],
+  "identity_dimensions": [
+    "source_logical_fingerprints",
+    "source_contract_versions",
+    "stable_universe_fingerprint",
+    "knowledge_time_cutoff",
+    "session_partition_fingerprint",
+    "calculation_code_sha256",
+    "parameter_fingerprint",
+    "upstream_artifact_fingerprints"
+  ],
+  "materialized_artifact_count": 0,
+  "active_campaign_id": null,
+  "next_campaign_registered": false,
+  "new_outcome_access_authorized": false,
+  "physical_data_write_authorized": false,
+  "cleanup_or_deletion_authorized": false,
+  "new_database_or_service_required": false,
+  "parallelism_rule": "profile_first_then_bounded_process_parallelism_with_stable_order",
+  "logical_fingerprint": "70a88ceaa6e2294cc4795f1909fc18717327c27a32fa109cb44e46e160dec68a"
+}
