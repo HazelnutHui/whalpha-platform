@@ -49,12 +49,15 @@ Read this bounded set before Strong-Leader Pullback or Lab work:
 - [Outcome-free research input](data-contracts/strong-leader-pullback-research-input-v1.md)
 - [Outcome-blind method diagnostics](data-contracts/strong-leader-pullback-method-diagnostics-v1.md)
 - [Method-engineering launch review](data-contracts/strong-leader-pullback-method-engineering-launch-review-v1.md)
+- [Frozen source sample](data-contracts/strong-leader-pullback-source-acceptance-sample-v1.md)
+- [Provider-neutral source result](data-contracts/strong-leader-pullback-source-acceptance-result-v1.md)
 - [Current launch audit](audits/strong-leader-pullback-method-engineering-launch-review-2026-09-14.md)
 - [Current diagnostics audit](audits/strong-leader-pullback-method-diagnostics-2026-09-14.md)
 - [ADR 0194: bounded AI-assisted research](decisions/0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md)
 - [ADR 0195: complete reconstructed session cross-sections](decisions/0195-require-complete-session-cross-sections-for-reconstructed-development.md)
 - [ADR 0196: five-year Dell foundation](decisions/0196-build-a-five-year-point-in-time-research-foundation-on-dell.md)
 - [ADR 0266: method engineering versus performance admission](decisions/0266-separate-outcome-blind-method-engineering-from-performance-admission.md)
+- [ADR 0267: provider-neutral evidence acceptance](decisions/0267-freeze-provider-neutral-performance-evidence-acceptance.md)
 
 The complete registries remain available through the
 [data-contract index](data-contracts/README.md) and

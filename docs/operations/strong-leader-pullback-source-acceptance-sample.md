@@ -22,3 +22,11 @@ Building this sample does not authorize contacting a provider. A later pilot
 must be separately bounded to this exact sample fingerprint, declare the
 provider entitlement and requested fields, retain explicit unsupported/missing
 states, and remain outside canonical custody until reviewed.
+
+Every later provider assessment is evaluated by
+[Source Acceptance Result V1](../data-contracts/strong-leader-pullback-source-acceptance-result-v1.md).
+The pure evaluator separates complete primary-source eligibility from partial
+corroboration, rejects a missing or reordered case population, and leaves all
+canonical, performance, Candidate, and Production authorizations false. A
+fixture result proves mechanics only and must never be reported as provider
+coverage.

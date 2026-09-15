@@ -6,7 +6,8 @@ This matrix separates repository-verified capability, publicly documented
 potential, live entitlement, and missing implementation for the historical
 research foundation.
 
-Repository-verified operational evidence is current through 2026-09-09. ADR
+Repository-verified operational evidence is current through 2026-09-09. The
+official-public free-source review is current through 2026-09-15. ADR
 0196 makes the Dell-owned rolling five-year foundation and reviewed
 Massive/official-free composition the active construction program. The latest
 narrow official-public-page reconciliation covers current-session EOD
@@ -48,6 +49,11 @@ LSEG remains an optional first sample candidate for its exact frozen
 population, followed by ICE and then S&P on failure. The owner reported
 submitting LSEG contact forms, but no additional cross-venue lifecycle source
 has been selected, purchased, accessed, permission-cleared, or implemented.
+The 2026-09-15 review confirms that LSEG is optional: the first no-cost
+incremental candidate is Alpha Vantage Listing Status, evaluated only as a
+private corroborator against the same frozen sample. SEC, FINRA, OpenFIGI, and
+exchange evidence retain their narrower roles. No free source or composition
+has passed the complete performance-admission gate.
 
 ## Status meanings
 
@@ -153,6 +159,16 @@ role remains narrower than the source's marketing description and must pass a
 fixture-first pilot. A paid source should later plug into the same provider-
 neutral observations and must expand measured coverage rather than replace
 canonical identities or rewrite history.
+
+The dated
+[Free Performance-Evidence Source Review](../audits/free-performance-evidence-source-review-2026-09-15.md)
+records the current official capabilities and permissions. Alpha Vantage
+documents historical active/delisted population queries after 2010 through a
+free-key endpoint, but does not document all frozen stable-ID, revision,
+availability, action, successor, consideration, last-tradable, and terminal
+semantics. Its standard terms also remain private-individual rather than shared
+product permission. It may therefore be tested as corroboration, not presumed
+to be a sole source or publication authority.
 
 The retained official FINRA OTC Daily List implementation covers 2021-08-11
 through 2026-09-09 in 62 monthly packages / 68,714 observations. It is

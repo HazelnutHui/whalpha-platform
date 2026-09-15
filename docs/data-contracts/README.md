@@ -80,6 +80,7 @@ adjustment evidence remains explicit.
 - [Strong-Leader Pullback Development Admission Decision V1](strong-leader-pullback-development-admission-decision-v1.md)
 - [Strong-Leader Pullback Evidence Blocker Census V1](strong-leader-pullback-evidence-blocker-census-v1.md)
 - [Strong-Leader Pullback Source Acceptance Sample V1](strong-leader-pullback-source-acceptance-sample-v1.md)
+- [Strong-Leader Pullback Source Acceptance Result V1](strong-leader-pullback-source-acceptance-result-v1.md)
 - [Strong-Leader Pullback SEC Lifecycle Pilot V1](strong-leader-pullback-sec-lifecycle-pilot-v1.md)
 - [Strong-Leader Pullback SEC Document Plan V1](strong-leader-pullback-sec-document-plan-v1.md)
 - [Strong-Leader Pullback SEC Document Source V1](strong-leader-pullback-sec-document-source-v1.md)

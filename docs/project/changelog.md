@@ -6,6 +6,24 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Freeze provider-neutral evidence acceptance
+
+- Added a pure evaluator for the complete 20-action / 64-lifecycle source
+  sample, with exact population binding, field-level missing/unsupported/
+  conflict states, stable-identity checks, evidence fingerprints, and explicit
+  permission gates.
+- Separated `sole_primary_candidate`, `corroborator_only`, and `rejected`
+  without granting canonical, performance, Candidate, or Production authority.
+- Rechecked official free-source capabilities. LSEG remains optional;
+  Alpha Vantage Listing Status is the next bounded private corroboration
+  candidate, while SEC, FINRA, OpenFIGI, exchange evidence, and QuantConnect
+  retain narrower roles.
+- No provider sample, credential, canonical data, outcome, parameter,
+  publication, deployment, or Production state changed. The formal first-
+  strategy performance gate remains `rejected_data_blocked`.
+- Passed all 2,831 backend tests and the complete local Markdown-link check;
+  only the two previously known dependency deprecation warnings remained.
+
 ## 2026-09-14 — Present the verified research foundation in the Lab
 
 - Added a trilingual, dated research-foundation snapshot that presents

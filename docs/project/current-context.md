@@ -1,10 +1,10 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-14T16:58:59Z
+Operational state verified at: 2026-09-15T00:15:24Z
 
 Deployment state verified at: 2026-09-14T23:44:48Z
 
-Repository context updated at: 2026-09-14 UTC
+Repository context updated at: 2026-09-15 UTC
 
 This is the compact recovery source for a new task or device. It records only
 the latest verified identities, capability boundaries, and exact evidence
@@ -171,6 +171,12 @@ entitlement, or permission decision has been reviewed. LSEG, ICE, S&P,
 Norgate, or another provider is optional future evidence work. No named source
 is a prerequisite for outcome-blind method engineering; any future sample must
 pass the frozen 20-action / 64-lifecycle acceptance population.
+
+ADR 0267 and Source Acceptance Result V1 now freeze the pure provider-neutral
+evaluation of that population. A 2026-09-15 official-public review retains SEC,
+FINRA, OpenFIGI, Alpha Vantage Listing Status, and exchange evidence in narrow
+free-source roles. No real new-provider sample has been received or evaluated,
+and no free composition has changed the formal `rejected_data_blocked` result.
 
 ## Automation and boundaries
 

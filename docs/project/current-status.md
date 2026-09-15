@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-09-14
+Status date: 2026-09-15
 
 This is the concise actual-capability summary. Exact volatile identities belong
 in [current context](current-context.md), future sequencing in the
@@ -19,8 +19,9 @@ ADRs, and audits.
   signal/cohort engine, and outcome-blind diagnostic pipeline are implemented.
   The reconstructed private population has been diagnosed and independently
   replayed; no real outcome, performance result, or Candidate authority exists.
-- **External source:** none selected; the owner-reported LSEG inquiry is
-  optional for the next engineering phase.
+- **External source:** none selected; LSEG is optional. A source-neutral
+  evaluator is implemented, and the free-source composition remains
+  corroboration-only until a real frozen-sample result proves otherwise.
 - **Automation:** guarded manual daily operation works; unattended write-
   capable operation is not active.
 
@@ -136,7 +137,9 @@ measured budget breach.
 2. Preserve Baseline V1, reconstructed Membership, and all unresolved evidence
    states without silent inference.
 3. Reconsider lifecycle/action providers only against the frozen acceptance
-   sample or define a separately reviewed narrower research cohort.
+   sample. Start with a bounded Alpha Vantage Listing Status corroboration
+   sample if a private-use free key is locally configured; do not infer shared
+   publication permission or complete lifecycle capability.
 4. Execute the real chronological study only after formal performance
    admission, then preserve either validation or failure without retuning V1.
 

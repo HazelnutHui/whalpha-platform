@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0267](0267-freeze-provider-neutral-performance-evidence-acceptance.md):
+  freezes the exact case-, field-, evidence-, and permission-level evaluator
+  that every free, trial, or paid performance-evidence source must pass.
 - [ADR 0266](0266-separate-outcome-blind-method-engineering-from-performance-admission.md):
   permits bounded outcome-blind strategy and Lab engineering while the formal
   performance gate remains rejected.
