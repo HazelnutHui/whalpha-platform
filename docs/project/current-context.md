@@ -188,6 +188,16 @@ No outcome or parameter was opened. SEC, FINRA, OpenFIGI, Alpha Vantage Listing
 Status, issuer, and exchange evidence retain narrow free-source roles; no
 commercial provider sample has been promoted.
 
+The five-document SEC request plan is retained at
+`historical-evidence/strong-leader-pullback-terminal-reference-sec-plan/plan=20260915-v1`.
+It binds LNW, MTSR, REVG, SAND, and SKX to implementation revision
+`ebf58010651642e6cf1221be03c2a5258864e4ff`, report SHA-256
+`68e47bdb57f94edcb9143baa659d26174092502cb12573e3355dd1c363f8e3a1`,
+and logical fingerprint
+`385178ea480fc5813719a2fa924ba0a5abfd1efe046d37fbf6f28bc5c593c410`.
+It is `planned_not_executed`: zero external requests, credential reads, or
+document writes occurred, and no terminal-reference source package exists.
+
 ## Automation and boundaries
 
 The installed daily wake timer is active but read-only. It performs no fetch,
@@ -195,9 +205,9 @@ Apply, analytics, publication, deployment, credential access, or alert
 delivery. No unattended write-capable scheduler is installed; SMTP is
 unconfigured. The guarded manual chain works end to end.
 
-No current document authorizes provider access, credential use, `/data`
-mutation, real research outcomes, model activation, publication, deployment,
-scheduler mutation, order execution, or destructive cleanup.
+No current document authorizes the planned live SEC acquisition, credential
+use, `/data` mutation, real research outcomes, model activation, publication,
+deployment, scheduler mutation, order execution, or destructive cleanup.
 
 ## Cross-device continuity
 

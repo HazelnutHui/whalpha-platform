@@ -20,6 +20,10 @@ and dated [audits](../audits/). Current capability and next work belong in
 - Froze a five-document official SEC completion plan. No commercial vendor is
   required for this step, and no broad adapter will be built merely because a
   source is available.
+- Added and regression-tested a reusable five-file planner and an atomic source
+  wrapper over the existing bounded SEC transport. The retained plan formally
+  matches the local SEC Submissions index and remains `planned_not_executed`
+  with zero credential reads or requests.
 - The current V2 review recognizes 274 complete feature sessions but remains
   blocked solely on those five source cases. No outcome or parameter was
   opened.

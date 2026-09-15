@@ -21,8 +21,8 @@ ADRs, and audits.
   The reconstructed private population has been diagnosed and independently
   replayed; no real outcome, performance result, or Candidate authority exists.
 - **External source:** no commercial lifecycle source is selected or required
-  for the current bounded step. A source-neutral evaluator is implemented; five
-  exact free official SEC documents remain to complete the terminal intervals.
+  for the current bounded step. The exact five-document free official SEC plan
+  is frozen and retained; its separately authorized acquisition has not run.
 - **Automation:** guarded manual daily operation works; unattended write-
   capable operation is not active.
 

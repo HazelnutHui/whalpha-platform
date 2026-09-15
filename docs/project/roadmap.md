@@ -98,6 +98,10 @@ exact free official SEC documents; LSEG or another commercial source is
 optional. Do not build adapters from marketing claims or repeat scans against
 unchanged capability.
 
+The five-document plan is now frozen and retained with zero requests. The next
+state-changing action is only its separately authorized SEC acquisition,
+followed by zero-network field adjudication and a V2 gate rerun.
+
 Exit criterion: one immutable V2 admission report identifies every complete
 feature session and every exact or interval-censored terminal path with no
 hidden exclusion. A positive result opens development only, not validation,

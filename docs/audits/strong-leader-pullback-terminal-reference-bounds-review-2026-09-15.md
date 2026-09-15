@@ -62,10 +62,23 @@ source targets, not a general new-provider integration.
 | SKX | official private-unit acquisition value | parent SEC Form 10-K `0001193125-26-126281`, `ck0002066659-20251231.htm` | zero to the greater contractual alternative using the source-stated unit value |
 
 Availability was located without selecting a commercial vendor. None of these
-documents is treated as retained evidence by this review. Acquisition remains
-subject to the project's separate live-SEC authorization and private
-User-Agent rule; a downloaded response must match the frozen locator, validate
-as SEC content, be hashed and retained, and then pass field adjudication.
+documents is treated as retained evidence by this review.
+
+The exact zero-request plan was subsequently published in private Dell custody
+as `plan=20260915-v1`, bound to implementation revision
+`ebf58010651642e6cf1221be03c2a5258864e4ff` and the formally reread 2026-09-10
+SEC Submissions archive. Plan report SHA-256:
+`68e47bdb57f94edcb9143baa659d26174092502cb12573e3355dd1c363f8e3a1`;
+logical fingerprint:
+`385178ea480fc5813719a2fa924ba0a5abfd1efe046d37fbf6f28bc5c593c410`.
+An independent plan reread matched with zero external requests, credential
+reads, and document writes.
+
+Acquisition remains subject to the project's separate live-SEC authorization
+and private User-Agent rule; a downloaded response must match the frozen
+locator, validate as SEC content, be hashed and retained, and then pass field
+adjudication. The source custody directory exists but contains no source
+package or downloaded document.
 
 Alpha Vantage Listing Status, OpenFIGI, issuer pages, and exchange notices keep
 narrow corroboration roles. They cannot replace transaction terms or a private
