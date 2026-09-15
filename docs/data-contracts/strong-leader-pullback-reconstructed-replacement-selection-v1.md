@@ -60,3 +60,24 @@ Validation passes.
 
 Candidate activation, Lab performance publication, deployment, Production,
 canonical `/data` writes, provider requests, and order execution are all false.
+
+## Result and custody
+
+The result contract is
+`strong-leader-pullback-reconstructed-replacement-selection-result/1.0`. It
+retains all 24 per-parameter eligibility decisions, three endpoint winner IDs,
+the stable provisional winner when one exists, all six gate observations and
+pass states, an exact terminal status, and a parameter lock only when every
+gate passes. Its validators recompute the status, reason codes, gate
+fingerprint, lock linkage, and logical fingerprint rather than trusting stored
+booleans.
+
+The only permitted private result directory is `report=20260915-v1` beneath an
+owner-only `0700` custody root. The canonical JSON is immutable `0400`, bounded
+to 2 MiB, atomically retained, and exactly replayable. The result records zero
+network requests and zero canonical-data or Production writes. It contains no
+Validation or Holdout observations and every downstream authority flag is
+false, including when the development status is `locked`.
+
+Operational procedure is defined in the
+[replacement-selection runbook](../operations/strong-leader-pullback-reconstructed-replacement-selection.md).

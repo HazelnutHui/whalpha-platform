@@ -142,6 +142,9 @@ parameter value. Per-combination evidence eligibility replaces the V1 global
 Regime veto; sparse Regime cells remain explicitly inconclusive. Fixed cost,
 chronological-half, positive-session, concentration, endpoint-stability, and
 two-trial multiplicity controls apply before any possible lock. It has not run.
+The zero-network selector, status-reconciling result contract, and single-
+version owner-only custody are implemented and passed the complete 2,904-test
+backend suite; the fixed real run remains the next gated action.
 
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,

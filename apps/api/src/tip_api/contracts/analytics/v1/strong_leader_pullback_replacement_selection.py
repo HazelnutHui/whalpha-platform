@@ -4,6 +4,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+from datetime import datetime
+from decimal import Decimal
+from enum import StrEnum
 from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -36,6 +39,16 @@ REPLACEMENT_SELECTION_PARAMETER_BUDGET = 24
 REPLACEMENT_SELECTION_PRIOR_PROTOCOL_TRIALS = 1
 REPLACEMENT_SELECTION_TOTAL_PROTOCOL_TRIALS = 2
 REPLACEMENT_SELECTION_RUN_BUDGET = 1
+REPLACEMENT_SELECTION_OUTPUT_DIRECTORY = "report=20260915-v1"
+REPLACEMENT_SELECTION_GATE_IDS = (
+    "positive_adverse_lower_90pct",
+    "positive_25bps_median_spy_relative",
+    "positive_first_half_contrast",
+    "positive_second_half_contrast",
+    "positive_paired_session_majority",
+    "bounded_single_session_concentration",
+)
+_RETURN_PATTERN = r"^-?(?:0|[1-9][0-9]*)\.[0-9]{10}$"
 
 _DESIGN_EVIDENCE = {
     "primary_inference_eligible_combination_count": 23,
@@ -137,6 +150,14 @@ REPLACEMENT_SELECTION_POLICY_FINGERPRINT = hashlib.sha256(
 ).hexdigest()
 
 
+class ReplacementSelectionStatus(StrEnum):
+    LOCKED = "locked"
+    BLOCKED_SOURCE_EVIDENCE = "blocked_source_evidence"
+    REJECTED_NO_COMMON_ELIGIBLE = "rejected_no_common_eligible"
+    REJECTED_ENDPOINT_INSTABILITY = "rejected_endpoint_instability"
+    REJECTED_ROBUSTNESS_GATES = "rejected_robustness_gates"
+
+
 class StrongLeaderPullbackReplacementSelectionProtocolV1(BaseModel):
     model_config = ConfigDict(frozen=True, extra="forbid")
 
@@ -210,6 +231,249 @@ class StrongLeaderPullbackReplacementSelectionProtocolV1(BaseModel):
             or replacement_selection_fingerprint(self) != self.logical_fingerprint
         ):
             raise ValueError("replacement selection protocol differs")
+        return self
+
+
+class ReplacementParameterEligibilityV1(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    parameter_combination_id: str = Field(pattern=r"^[0-9a-f]{64}$")
+    eligible_in_all_endpoint_scenarios: bool
+    eligible_endpoint_scenarios: tuple[str, ...]
+    reason_codes: tuple[str, ...]
+
+    @model_validator(mode="after")
+    def eligibility_reconciles(self) -> "ReplacementParameterEligibilityV1":
+        expected = tuple(sorted(set(self.eligible_endpoint_scenarios)))
+        if (
+            self.eligible_endpoint_scenarios != expected
+            or any(
+                item not in ("all_lower", "all_upper", "contrast_adverse")
+                for item in expected
+            )
+            or self.eligible_in_all_endpoint_scenarios != (len(expected) == 3)
+            or self.reason_codes != tuple(sorted(set(self.reason_codes)))
+        ):
+            raise ValueError("replacement parameter eligibility differs")
+        return self
+
+
+class ReplacementSelectionGateV1(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    gate_id: Literal[
+        "positive_adverse_lower_90pct",
+        "positive_25bps_median_spy_relative",
+        "positive_first_half_contrast",
+        "positive_second_half_contrast",
+        "positive_paired_session_majority",
+        "bounded_single_session_concentration",
+    ]
+    observed_value: str | None = Field(default=None, pattern=_RETURN_PATTERN)
+    comparison: Literal["strictly_greater_than", "less_than_or_equal_to"]
+    threshold: str = Field(pattern=_RETURN_PATTERN)
+    passed: bool
+
+    @model_validator(mode="after")
+    def gate_reconciles(self) -> "ReplacementSelectionGateV1":
+        threshold = Decimal(self.threshold)
+        expected = False
+        if self.observed_value is not None:
+            observed = Decimal(self.observed_value)
+            expected = (
+                observed > threshold
+                if self.comparison == "strictly_greater_than"
+                else observed <= threshold
+            )
+        if self.passed != expected:
+            raise ValueError("replacement selection gate differs")
+        return self
+
+
+class StrongLeaderPullbackReplacementParameterLockV1(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    parameter_combination_id: str = Field(pattern=r"^[0-9a-f]{64}$")
+    source_development_report_fingerprint: Literal[
+        REPLACEMENT_SELECTION_SOURCE_REPORT_FINGERPRINT
+    ] = REPLACEMENT_SELECTION_SOURCE_REPORT_FINGERPRINT
+    replacement_policy_fingerprint: Literal[
+        REPLACEMENT_SELECTION_POLICY_FINGERPRINT
+    ] = REPLACEMENT_SELECTION_POLICY_FINGERPRINT
+    endpoint_winner_ids: dict[str, str]
+    gate_results_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    selected_before_validation: Literal[True] = True
+    validation_cannot_change_parameters: Literal[True] = True
+    holdout_cannot_change_parameters: Literal[True] = True
+    logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def lock_reconciles(
+        self,
+    ) -> "StrongLeaderPullbackReplacementParameterLockV1":
+        if (
+            tuple(sorted(self.endpoint_winner_ids))
+            != ("all_lower", "all_upper", "contrast_adverse")
+            or set(self.endpoint_winner_ids.values())
+            != {self.parameter_combination_id}
+            or replacement_selection_fingerprint(self) != self.logical_fingerprint
+        ):
+            raise ValueError("replacement parameter lock differs")
+        return self
+
+
+class StrongLeaderPullbackReplacementSelectionReportV1(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    contract_version: Literal[
+        "strong-leader-pullback-reconstructed-replacement-selection-result/1.0"
+    ] = "strong-leader-pullback-reconstructed-replacement-selection-result/1.0"
+    implementation_revision: str = Field(pattern=r"^[0-9a-f]{40}$")
+    created_at: datetime
+    protocol_fingerprint: Literal[REPLACEMENT_SELECTION_POLICY_FINGERPRINT] = (
+        REPLACEMENT_SELECTION_POLICY_FINGERPRINT
+    )
+    protocol_logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    source_report_sha256: Literal[REPLACEMENT_SELECTION_SOURCE_REPORT_SHA256] = (
+        REPLACEMENT_SELECTION_SOURCE_REPORT_SHA256
+    )
+    source_report_fingerprint: Literal[
+        REPLACEMENT_SELECTION_SOURCE_REPORT_FINGERPRINT
+    ] = REPLACEMENT_SELECTION_SOURCE_REPORT_FINGERPRINT
+    source_selection_status: Literal["inconclusive_evidence_floor"] = (
+        "inconclusive_evidence_floor"
+    )
+    source_summary_count: Literal[216] = 216
+    parameter_combination_count: Literal[24] = 24
+    eligibility: tuple[ReplacementParameterEligibilityV1, ...]
+    common_eligible_parameter_count: int = Field(ge=0, le=24)
+    endpoint_winner_ids: dict[str, str | None]
+    provisional_winner_id: str | None = Field(
+        default=None, pattern=r"^[0-9a-f]{64}$"
+    )
+    gate_results: tuple[ReplacementSelectionGateV1, ...]
+    selection_status: ReplacementSelectionStatus
+    selected_parameter_combination_id: str | None = Field(
+        default=None, pattern=r"^[0-9a-f]{64}$"
+    )
+    parameter_lock: StrongLeaderPullbackReplacementParameterLockV1 | None
+    prior_protocol_trials: Literal[1] = 1
+    total_protocol_trials: Literal[2] = 2
+    replacement_run_count: Literal[1] = 1
+    reconstructed_latest_vintage: Literal[True] = True
+    as_operated: Literal[False] = False
+    development_only: Literal[True] = True
+    validation_data_accessed: Literal[False] = False
+    holdout_data_accessed: Literal[False] = False
+    validation_transition_authorized: Literal[False] = False
+    performance_claim_authorized: Literal[False] = False
+    candidate_activation_authorized: Literal[False] = False
+    publication_authorized: Literal[False] = False
+    network_request_count: Literal[0] = 0
+    canonical_data_write_count: Literal[0] = 0
+    production_write_count: Literal[0] = 0
+    reason_codes: tuple[str, ...]
+    logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def report_reconciles(
+        self,
+    ) -> "StrongLeaderPullbackReplacementSelectionReportV1":
+        ids = tuple(item.parameter_combination_id for item in self.eligibility)
+        endpoint_values = tuple(self.endpoint_winner_ids.values())
+        stable_winner = (
+            endpoint_values[0]
+            if endpoint_values
+            and endpoint_values[0] is not None
+            and len(set(endpoint_values)) == 1
+            else None
+        )
+        locked = self.selection_status is ReplacementSelectionStatus.LOCKED
+        all_gates_pass = bool(self.gate_results) and all(
+            item.passed for item in self.gate_results
+        )
+        source_evidence_blocked = any(
+            reason.endswith(":unavailable_source_evidence")
+            for item in self.eligibility
+            for reason in item.reason_codes
+        )
+        if source_evidence_blocked:
+            expected_status = ReplacementSelectionStatus.BLOCKED_SOURCE_EVIDENCE
+            expected_reasons = (
+                "primary_family_contains_unavailable_source_evidence",
+            )
+        elif self.common_eligible_parameter_count == 0:
+            expected_status = ReplacementSelectionStatus.REJECTED_NO_COMMON_ELIGIBLE
+            expected_reasons = (
+                "no_parameter_is_eligible_in_every_endpoint_scenario",
+            )
+        elif stable_winner is None:
+            expected_status = ReplacementSelectionStatus.REJECTED_ENDPOINT_INSTABILITY
+            expected_reasons = (
+                "endpoint_scenarios_select_different_parameters",
+            )
+        elif all_gates_pass:
+            expected_status = ReplacementSelectionStatus.LOCKED
+            expected_reasons = (
+                "parameter_locked_formal_validation_review_required",
+            )
+        else:
+            expected_status = ReplacementSelectionStatus.REJECTED_ROBUSTNESS_GATES
+            expected_reasons = tuple(
+                sorted(
+                    f"failed_{item.gate_id}"
+                    for item in self.gate_results
+                    if not item.passed
+                )
+            )
+        expected_gate_fingerprint = replacement_selection_fingerprint(
+            {
+                "gate_results": [
+                    item.model_dump(mode="json") for item in self.gate_results
+                ]
+            },
+            exclude=set(),
+        )
+        if (
+            self.created_at.tzinfo is None
+            or self.created_at.utcoffset() is None
+            or len(ids) != 24
+            or ids != tuple(sorted(set(ids)))
+            or self.common_eligible_parameter_count
+            != sum(item.eligible_in_all_endpoint_scenarios for item in self.eligibility)
+            or tuple(sorted(self.endpoint_winner_ids))
+            != ("all_lower", "all_upper", "contrast_adverse")
+            or self.provisional_winner_id != stable_winner
+            or bool(self.gate_results) != (stable_winner is not None)
+            or (
+                self.gate_results
+                and tuple(item.gate_id for item in self.gate_results)
+                != REPLACEMENT_SELECTION_GATE_IDS
+            )
+            or locked != all_gates_pass
+            or locked != (self.selected_parameter_combination_id is not None)
+            or locked != (self.parameter_lock is not None)
+            or self.selection_status is not expected_status
+            or self.reason_codes != expected_reasons
+            or (
+                locked
+                and self.selected_parameter_combination_id
+                != self.provisional_winner_id
+            )
+            or (
+                self.parameter_lock is not None
+                and (
+                    self.parameter_lock.parameter_combination_id
+                    != self.selected_parameter_combination_id
+                    or self.parameter_lock.endpoint_winner_ids
+                    != self.endpoint_winner_ids
+                    or self.parameter_lock.gate_results_fingerprint
+                    != expected_gate_fingerprint
+                )
+            )
+            or replacement_selection_fingerprint(self) != self.logical_fingerprint
+        ):
+            raise ValueError("replacement selection report differs")
         return self
 
 

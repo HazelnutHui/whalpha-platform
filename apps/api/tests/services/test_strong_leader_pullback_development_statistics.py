@@ -11,6 +11,7 @@ import pytest
 
 from tip_api.contracts.analytics.v1 import (
     DEVELOPMENT_STATISTICS_POLICY_FINGERPRINT,
+    REPLACEMENT_SELECTION_OUTPUT_DIRECTORY,
     REPLACEMENT_SELECTION_POLICY_FINGERPRINT,
     DevelopmentDispositionCountsV1,
     DevelopmentEndpointScenario,
@@ -22,6 +23,11 @@ from tip_api.persistence.strong_leader_pullback_development_statistics import (
     StrongLeaderPullbackDevelopmentStatisticsPersistenceError,
     read_strong_leader_pullback_development_statistics,
     write_strong_leader_pullback_development_statistics,
+)
+from tip_api.persistence.strong_leader_pullback_replacement_selection import (
+    StrongLeaderPullbackReplacementSelectionPersistenceError,
+    read_strong_leader_pullback_replacement_selection,
+    write_strong_leader_pullback_replacement_selection,
 )
 from tip_api.services.candidate_strategy_research_execution import (
     build_strong_leader_pullback_observation,
@@ -37,6 +43,10 @@ from tip_api.services.strong_leader_pullback_development_labels import (
 from tip_api.services.strong_leader_pullback_development_statistics import (
     calculate_development_block_bootstrap,
     evaluate_strong_leader_pullback_development_statistics,
+)
+from tip_api.services.strong_leader_pullback_replacement_selection import (
+    _build_selection_report,
+    apply_replacement_selection_policy,
 )
 
 
@@ -155,6 +165,16 @@ def complete_report():
     return _evaluate(*_research_rows())
 
 
+@pytest.fixture(scope="module")
+def replacement_report(complete_report):
+    return _build_selection_report(
+        decision=apply_replacement_selection_policy(complete_report.summaries),
+        protocol=strong_leader_pullback_replacement_selection_protocol_v1(),
+        implementation_revision="e" * 40,
+        created_at=datetime(2026, 9, 15, tzinfo=timezone.utc),
+    )
+
+
 def test_policy_is_frozen_before_real_result_evaluation() -> None:
     assert DEVELOPMENT_STATISTICS_POLICY_FINGERPRINT == (
         "a420675be6c7eb580bc95906f4ef0588eccee0d9640047a57d459423e5708f37"
@@ -176,6 +196,30 @@ def test_replacement_protocol_is_frozen_without_outcome_design_values() -> None:
     assert protocol.replacement_run_budget == 1
     assert protocol.validation_data_accessed is False
     assert protocol.holdout_data_accessed is False
+
+
+def test_replacement_selection_locks_only_after_all_frozen_gates(
+    complete_report,
+) -> None:
+    decision = apply_replacement_selection_policy(complete_report.summaries)
+
+    assert decision.selection_status.value == "locked"
+    assert decision.common_eligible_parameter_count == 24
+    assert len(decision.eligibility) == 24
+    assert all(item.passed for item in decision.gate_results)
+    assert set(decision.endpoint_winner_ids.values()) == {
+        decision.selected_parameter_combination_id
+    }
+
+
+def test_replacement_selection_blocks_unavailable_primary_evidence() -> None:
+    report = _evaluate(*_research_rows(unavailable_primary_horizon=True))
+
+    decision = apply_replacement_selection_policy(report.summaries)
+
+    assert decision.selection_status.value == "blocked_source_evidence"
+    assert decision.selected_parameter_combination_id is None
+    assert decision.gate_results == ()
 
 
 def test_complete_exact_matrix_locks_one_stable_parameter(complete_report) -> None:
@@ -378,3 +422,104 @@ def test_statistics_cli_retains_only_bounded_summary(
     assert "summaries" not in output
     assert output["validation_transition_authorized"] is False
     assert output["publication_authorized"] is False
+
+
+def test_owner_only_replacement_round_trip_and_immutable_replay(
+    tmp_path, replacement_report
+) -> None:
+    custody = tmp_path / "replacement"
+    custody.mkdir(mode=0o700)
+    target = custody / REPLACEMENT_SELECTION_OUTPUT_DIRECTORY
+
+    first = write_strong_leader_pullback_replacement_selection(
+        output_root=target,
+        output_custody_root=custody,
+        report=replacement_report,
+    )
+    second = write_strong_leader_pullback_replacement_selection(
+        output_root=target,
+        output_custody_root=custody,
+        report=replacement_report,
+    )
+
+    assert first.status == "published"
+    assert second.status == "already_present"
+    assert second.report == replacement_report
+    assert {item.stat().st_mode & 0o777 for item in target.iterdir()} == {0o400}
+
+
+def test_replacement_reader_rejects_custody_tampering(
+    tmp_path, replacement_report
+) -> None:
+    custody = tmp_path / "replacement"
+    custody.mkdir(mode=0o700)
+    target = custody / REPLACEMENT_SELECTION_OUTPUT_DIRECTORY
+    write_strong_leader_pullback_replacement_selection(
+        output_root=target,
+        output_custody_root=custody,
+        report=replacement_report,
+    )
+    (target / "report.json").chmod(0o600)
+
+    with pytest.raises(
+        StrongLeaderPullbackReplacementSelectionPersistenceError,
+        match="custody",
+    ):
+        read_strong_leader_pullback_replacement_selection(
+            output_root=target,
+            output_custody_root=custody,
+        )
+
+
+def test_replacement_cli_retains_only_bounded_decision(
+    tmp_path, complete_report, replacement_report, monkeypatch, capsys
+) -> None:
+    from tip_api.services import strong_leader_pullback_replacement_selection_cli
+
+    source = SimpleNamespace(
+        report=complete_report,
+        report_sha256=(
+            "c29f04b5e6da95e2256c137f23d00898"
+            "b313325ac09e982a991bb823ce0f7852"
+        ),
+    )
+    monkeypatch.setattr(
+        strong_leader_pullback_replacement_selection_cli,
+        "read_strong_leader_pullback_development_statistics",
+        lambda **_kwargs: source,
+    )
+    monkeypatch.setattr(
+        strong_leader_pullback_replacement_selection_cli,
+        "evaluate_strong_leader_pullback_replacement_selection",
+        lambda **_kwargs: replacement_report,
+    )
+    custody = tmp_path / "replacement"
+    custody.mkdir(mode=0o700)
+    target = custody / REPLACEMENT_SELECTION_OUTPUT_DIRECTORY
+
+    status = strong_leader_pullback_replacement_selection_cli.main(
+        [
+            "--development-statistics-root",
+            str(tmp_path / "source"),
+            "--development-statistics-custody-root",
+            str(tmp_path),
+            "--output-root",
+            str(target),
+            "--output-custody-root",
+            str(custody),
+            "--created-at",
+            "2026-09-15T08:00:00Z",
+            "--implementation-revision",
+            "e" * 40,
+        ]
+    )
+    output = json.loads(capsys.readouterr().out)
+
+    assert status == 0
+    assert output["status"] == "published"
+    assert output["selection_status"] == "locked"
+    assert len(output["gate_passes"]) == 6
+    assert "gate_results" not in output
+    assert output["validation_transition_authorized"] is False
+    assert output["publication_authorized"] is False
+    assert output["network_request_count"] == 0

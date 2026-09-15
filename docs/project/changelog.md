@@ -6,6 +6,19 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Implement the one-run replacement selector
+
+- Implemented the frozen ADR 0272 eligibility, endpoint-stability, economic,
+  chronological-half, positive-session, and concentration rules without
+  changing the registered policy or parameter family.
+- Added status-reconciling result and parameter-lock contracts, a zero-network
+  Dell runner, and immutable owner-only custody restricted to the single fixed
+  result version.
+- Passed the complete 2,904-test backend suite before permitting the selector
+  to read its registered real source report. No replacement result, Validation
+  access, performance claim, Candidate authority, publication, deployment, or
+  Production write exists yet.
+
 ## 2026-09-15 — Register one bounded replacement selection attempt
 
 - Accepted ADR 0272 after reviewing only V1 coverage, disposition, and
