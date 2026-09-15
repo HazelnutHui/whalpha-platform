@@ -25,6 +25,12 @@ authority. Stock Candidates (`个股候选`) is the decision-facing consumer of 
 small number of explicitly activated Lab models. Experimental models do not
 become daily Candidate rankings merely because they exist.
 
+The durable research structure is Factor Discovery -> Model Construction ->
+Strategy Expression. Named setups such as breakout or reversal are hypothesis
+territories, not a fixed model catalog. New measurements and models may emerge
+from governed research over time, while every outcome-reading campaign remains
+finite, trial-counted, reproducible, and capable of returning no selection.
+
 The Lab's future AI Quant Research Factory is a governed backend, not another
 product workspace. Specialized agents may broaden hypothesis generation,
 implementation, and adversarial review, while a central deterministic system

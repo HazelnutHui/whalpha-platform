@@ -37,6 +37,13 @@ It is not an automated trading or order-execution system. Quantitative
 research must remain governed, reproducible, falsifiable, and explainable; a
 personal model is not permission for a black box.
 
+The durable research structure is Factor Discovery -> Model Construction ->
+Strategy Expression. Long-term discovery is open to new evidence and model
+families, but every outcome-reading batch has a finite registered budget,
+stage-isolated data, and retained failures. Current fixed Candidate channels
+are compatibility behavior, not the future research taxonomy. See
+[ADR 0274](docs/decisions/0274-adopt-factor-model-strategy-three-layer-research-architecture.md).
+
 The future AI Quant Research Factory is a bounded backend of Quant Research
 Lab, not an ungoverned search engine. High-throughput ideas still require
 deduplication, finite registered experiment budgets, stage-isolated data,

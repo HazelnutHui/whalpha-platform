@@ -6,6 +6,21 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Adopt the three-layer quantitative-research architecture
+
+- Accepted ADR 0274 and made Factor Discovery -> Model Construction -> Strategy
+  Expression the durable Lab structure.
+- Removed the fixed Pullback/Breakout/Continuation/etc. queue from current
+  product and roadmap authority. Named setups remain hypothesis territories;
+  the long-term research universe is open while every outcome-reading campaign
+  remains finite and trial-counted.
+- Preserved the deployed six Strategy Channels and V1 Lab/catalog contracts as
+  frozen compatibility evidence rather than rewriting historical records.
+- Slimmed default documentation recovery so the completed Pullback artifact
+  chain remains searchable but no longer dominates new research work.
+- No data, outcome, Validation, Holdout, Candidate, publication, deployment, or
+  Production state changed.
+
 ## 2026-09-15 — Separate governed factor discovery from strategy construction
 
 - Accepted ADR 0273 after the Pullback rejection so research can expand beyond

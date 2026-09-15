@@ -41,7 +41,8 @@ production FastAPI service reads canonical Dell data remotely.
 - Quant Research Lab model records, result semantics, chronological research,
   statistics, cost scenarios, holdout custody, and Strong-Leader Pullback
   fixture-only input mechanics plus private outcome-blind reconstructed-
-  population diagnostics; and
+  population diagnostics; the first governed Factor Catalog is documented but
+  not yet an active model or strategy expression; and
 - guarded daily planning, acquisition, Apply, analytics, publication, bundle,
   deployment-custody, recovery, and read-only scheduler contracts.
 
@@ -63,10 +64,11 @@ requests and canonical Apply remain guarded operational actions.
 
 ## Quantitative research boundary
 
-Quant Research Lab separates method records, fixture evidence, real event
-studies, portfolio simulations, lifecycle, and independent Candidate
-activation. Strong-Leader Pullback is the first program; no real performance
-result or Candidate authority exists.
+Quant Research Lab separates Factor Discovery, Model Construction, Strategy
+Expression, fixture evidence, real event studies, portfolio simulations,
+lifecycle, and independent Candidate activation. Strong-Leader Pullback is a
+completed rejected first program; no real performance publication or Candidate
+authority exists.
 
 ADR 0194 defines a future bounded AI Quant Research Factory. Specialized
 agents may assist hypothesis, data, implementation, statistics, cost,

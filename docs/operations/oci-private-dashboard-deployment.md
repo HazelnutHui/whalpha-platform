@@ -27,20 +27,15 @@ A valid postflight must prove, without reading credentials:
 - no staging, failed, partial, listener, or service residue remains.
 
 The deployed React workspaces share the public entry's deep-navy/cyan visual
-identity and persistent WH product mark. Strategy Channels includes the
-cross-channel decision desk, stable-ID joined complete review, explicit
-research-priority versus trade-readiness labels, and a stable-ID overlap and
-readiness diagnostic. It also includes the selected-channel decision map that
-plots within-channel score against extension risk and colours independent
-trade-review readiness. The diagnostics are not formal sector concentration
-and do not treat the technical channels as independent diversification sleeves.
-Sector Rotation adds a same-session visual hand-off from confirmed Market
-Regime through five leading ETF price proxies to eight Balanced-risk Candidate
-priorities, while explicitly preserving independent ranks and prohibiting a
-membership or causal interpretation.
-Quant Research Lab exposes family-specific readiness gates. These are
-presentation and navigation changes: guest/credential parity, analytics,
-scoring, contracts, and fail-closed API behavior are unchanged.
+identity and persistent WH product mark. Quant Research Lab is the sole core
+workspace and separates Factor Discovery, Model Construction, Strategy
+Expression, evaluation, and Product activation. Rejected work remains visible;
+the deployed Candidate score, Entry Geometry, and six technical Strategy
+Channels are labeled frozen, unvalidated Baseline V1 compatibility behavior.
+Market Regime, Sector Rotation, and Market Structure remain supporting tools.
+These are presentation and navigation boundaries: guest/credential parity,
+analytics, Baseline V1 calculations, contracts, and fail-closed API behavior
+are unchanged.
 
 The current contract line additionally supports relationship persistence/acceleration evidence
 and the bounded ten-point relationship state timeline. Independent postflight

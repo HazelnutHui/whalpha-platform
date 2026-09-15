@@ -62,6 +62,10 @@ describe('static login client', () => {
     expect(loginHtml).toContain('data-research-layout="core-plus-rail"');
     expect(loginHtml).toContain('data-i18n="notClaim"');
     expect(loginHtml).toContain('data-i18n="baselineNote"');
+    expect(loginHtml).toContain('data-i18n="currentProgram">Factor Discovery V1');
+    expect(loginHtml).toContain('data-i18n="priorProgram"');
+    expect(loginHtml).toContain('data-i18n="flowData">Model construction');
+    expect(loginHtml).toContain('data-i18n="flowValidation">Strategy expression');
     expect(loginHtml.match(/data-i18n="freeBadge"/g)).toHaveLength(3);
     expect(loginHtml).toContain('data-i18n="guestNote"');
     expect(loginHtml.indexOf('id="research"')).toBeLessThan(loginHtml.indexOf('id="free-tools"'));

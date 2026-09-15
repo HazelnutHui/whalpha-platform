@@ -1,5 +1,11 @@
 # Quant Research Lab Model Record V1
 
+> **Version scope:** this remains the implemented first-program model-record
+> contract and historical compatibility evidence. ADR 0274 supersedes its
+> fixed future catalog assumptions with separate factor, model, and strategy-
+> expression records. This V1 contract must not be mutated in place to claim
+> the new architecture.
+
 ## Purpose
 
 The Quant Research Lab contracts separate a disclosed research method from a
@@ -74,8 +80,9 @@ Statistical evidence does not itself approve operational use.
 
 ## Catalog and Candidate boundary
 
-The catalog lists model records and one featured record. It may name at most
-three active Candidate models. Every named model must exist in the catalog, be
+The V1 catalog lists model records and one featured record. It may name at most
+three active Candidate models. That bound is a V1 schema invariant, not a
+permanent research or Product policy. Every named model must exist in the catalog, be
 in `active` lifecycle state, be marked Candidate-eligible, and bind a separate
 activation fingerprint.
 

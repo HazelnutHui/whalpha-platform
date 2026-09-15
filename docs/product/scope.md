@@ -11,19 +11,21 @@
 
 ## Active development scope
 
-- use the implemented Quant Research Lab registry as the transparent
-  methodology, validation, failure, and lifecycle authority;
-- implement the registered Strong-Leader Pullback method and Lab surface under
-  the outcome-blind engineering boundary, with real labels and performance
-  still closed;
+- use Quant Research Lab as the transparent factor, model, strategy-expression,
+  validation, failure, and lifecycle authority;
+- implement the three-layer research structure defined by ADR 0274 rather than
+  extending a fixed queue of named strategies;
+- qualify the first bounded Factor Catalog V1 without outcomes, then freeze a
+  separate screening protocol before any new development return is read;
 - improve only data families tied to a named research requirement and frozen
   acceptance test;
-- execute real research for one falsifiable strategy family at a time only
-  after its formal data admission;
+- keep each factor batch, model campaign, and expression campaign finite and
+  formally admitted while allowing the long-term research universe to expand;
 - prove one complete, rejection-capable research path before generalizing it
   into a bounded AI Quant Research Factory;
 - publish professional research metrics on a slower reviewed cadence;
-- activate at most a small number of validated models into Stock Candidates;
+- activate only a small reviewed set of eligible expressions into Stock
+  Candidates, without a permanent numeric model cap;
   and
 - later redesign Candidate presentation around the exact activated model,
   current-market applicability, entry readiness, and invalidation.
@@ -36,8 +38,12 @@ They are not the target model architecture and must not be tuned directly.
 
 - specialized hypothesis, data, implementation, statistics, cost, red-team,
   reproduction, and shadow-monitor agents under finite experiment budgets;
-- Momentum Breakout, distinct Trend Continuation, Technical Reversal, and
-  Fundamental Value Reversal research;
+- additional price, liquidity, market, sector, fundamental, valuation, event,
+  cross-asset, and later option factor families when their point-in-time data
+  and acceptance tests exist;
+- evidence-led model and strategy-expression versions; breakout, continuation,
+  reversal, value, defensive, and event concepts remain hypothesis tags rather
+  than a promised fixed sequence;
 - governed sector/industry classification and concentration diagnostics;
 - fundamentals, relative valuation, earnings, guidance, macro, and news as
   point-in-time evidence;

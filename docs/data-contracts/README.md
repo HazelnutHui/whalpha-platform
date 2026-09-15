@@ -70,6 +70,12 @@ adjustment evidence remains explicit.
 
 ## Quant Research Lab
 
+The durable research architecture is Factor Discovery -> Model Construction
+-> Strategy Expression. The contracts below include both the first bounded
+factor catalog and retained Strong-Leader Pullback/Baseline V1 evidence. A
+historical model or Candidate contract is not the permanent research taxonomy;
+see [ADR 0274](../decisions/0274-adopt-factor-model-strategy-three-layer-research-architecture.md).
+
 - [Strong-Leader Pullback Method V1](strong-leader-pullback-method-v1.md)
 - [Strong-Leader Pullback Method Diagnostics V1](strong-leader-pullback-method-diagnostics-v1.md)
 - [Quant Research Lab Model Record V1](quant-research-lab-model-record-v1.md)

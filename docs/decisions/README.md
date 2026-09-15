@@ -11,6 +11,13 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0274](0274-adopt-factor-model-strategy-three-layer-research-architecture.md):
+  makes Factor Discovery, Model Construction, and Strategy Expression the
+  durable architecture; fixed strategy names are hypothesis tags rather than
+  a permanent research queue.
+- [ADR 0273](0273-separate-governed-factor-discovery-from-strategy-construction.md):
+  registers the first bounded, outcome-blind factor catalog under that
+  architecture.
 - [ADR 0272](0272-register-one-coverage-corrected-replacement-selection-protocol.md):
   preserves the inconclusive V1 result and registers one count-informed,
   outcome-unread replacement selection attempt with tighter later multiplicity.
@@ -317,10 +324,6 @@ accepted ADR was deployed unless current operational evidence says so.
 - [ADR 0268](0268-admit-reconstructed-research-only-with-adversarial-missingness-bounds.md):
   permit a separately disclosed research lane only when missing terminal
   labels are bounded adversarially before outcomes.
-- [ADR 0273](0273-separate-governed-factor-discovery-from-strategy-construction.md):
-  broaden research through an outcome-blind, trial-counted factor layer before
-  constructing the next strategy.
-
 ## Data-governance decisions
 
 - ADRs 0011–0048 establish EOD, Identity, stable-ID, security classification,

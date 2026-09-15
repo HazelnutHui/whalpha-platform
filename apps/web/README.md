@@ -11,7 +11,7 @@ Shares` and `Common Shares + ADRs`, with CS-only as default. A validated stable
 ID is persisted in the URL; Legacy remains an internal rollback boundary.
 
 The public entry is research-first rather than a catalog of equally weighted
-features. It presents Quant Research Lab as model/evidence authority,
+features. It presents Quant Research Lab as factor/model/expression authority,
 model-driven Candidate ranking as a downstream activation, governed research
 automation as a planned extension of traditional quantitative discipline, and
 the three established market-context workspaces as free supporting tools. Its
@@ -38,10 +38,11 @@ React/TypeScript/Vite frontend for Trading Intelligence Platform.
 
 ## Purpose
 
-The frontend implements the five product workspaces and shared multilingual shell
-for local/private development and versioned static publication. Quant Research
-Lab is the model/evidence view; a future AI Quant Research Factory is its
-backend capability and does not create another navigation item.
+The frontend implements the five product workspaces and shared multilingual
+shell for local/private development and versioned static publication. Quant
+Research Lab is the factor/model/strategy-expression evidence view; a future AI
+Quant Research Factory is its backend capability and does not create another
+navigation item.
 
 The authenticated and guest application uses a restrained institutional
 research-workspace layer that is intentionally separate from the public

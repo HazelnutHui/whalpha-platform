@@ -1,6 +1,6 @@
 # Documentation Index
 
-This is the short navigation map. It intentionally does not enumerate every
+This is the short authority map. It intentionally does not enumerate every
 ADR, audit, contract, or operational command.
 
 ## Recover current context
@@ -13,13 +13,12 @@ Read in this order:
 4. [Current status](project/current-status.md)
 5. [Roadmap](project/roadmap.md)
 
-Then read only the documents tied to the selected objective. Authority is
-separated deliberately:
+Then read only the documents tied to the selected objective:
 
 - current context: volatile verified identities and infrastructure;
 - current status: concise actual capability and limitations;
 - roadmap: future sequencing, not authorization;
-- ADRs: accepted material decisions;
+- ADRs: accepted material decisions and supersession;
 - data contracts: exact interfaces and invariants;
 - operations: procedures, not standing permission;
 - audits: dated execution evidence; and
@@ -29,56 +28,34 @@ separated deliberately:
 
 - [Product Vision](product/vision.md)
 - [Product Scope](product/scope.md)
+- [Three-Layer Quant Research Architecture](product/quant-research-three-layer-architecture-v1.md)
 - [Quant Research Lab](product/quant-research-lab-v1.md)
 - [Opportunity Strategy Channels Baseline V1](product/opportunity-strategy-channels-v1.md)
 - [Market Regime & Opportunities](product/market-regime-opportunity-map-v1.md)
 - [Dashboard Universe Funnel](product/dashboard-universe-funnel.md)
 
-Quant Research Lab owns model evidence and lifecycle. Stock Candidates may
-consume only separately validated and explicitly activated models under
-[ADR 0191](decisions/0191-promote-validated-research-models-into-stock-candidates.md).
+Quant Research Lab owns factor, model, strategy-expression, evidence, and
+lifecycle records. Stock Candidates may consume only separately activated
+expressions under [ADR 0191](decisions/0191-promote-validated-research-models-into-stock-candidates.md)
+and [ADR 0274](decisions/0274-adopt-factor-model-strategy-three-layer-research-architecture.md).
 
-## First quantitative-research path
+## Current quantitative-research path
 
-Read this bounded set before Strong-Leader Pullback or Lab work:
+Read this bounded set before new Lab research:
 
 - [Professional Quantitative Research Action Framework](research/professional-quantitative-research-action-framework-v1.md)
+- [Three-Layer Quant Research Architecture](product/quant-research-three-layer-architecture-v1.md)
 - [Quant Research Lab product contract](product/quant-research-lab-v1.md)
-- [First experiment preregistration](data-contracts/candidate-strategy-research-experiment-v1.md)
-- [Canonical Strong-Leader Pullback method](data-contracts/strong-leader-pullback-method-v1.md)
-- [Outcome-free research input](data-contracts/strong-leader-pullback-research-input-v1.md)
-- [Outcome-blind method diagnostics](data-contracts/strong-leader-pullback-method-diagnostics-v1.md)
-- [Method-engineering launch review](data-contracts/strong-leader-pullback-method-engineering-launch-review-v1.md)
-- [Frozen source sample](data-contracts/strong-leader-pullback-source-acceptance-sample-v1.md)
-- [Provider-neutral source result](data-contracts/strong-leader-pullback-source-acceptance-result-v1.md)
-- [Reconstructed research admission](data-contracts/strong-leader-pullback-research-admission-v2.md)
-- [Terminal reference bounds](data-contracts/strong-leader-pullback-terminal-reference-bounds-v1.md)
-- [Reconstructed development dataset](data-contracts/strong-leader-pullback-reconstructed-development-dataset-v1.md)
-- [Reconstructed development statistics](data-contracts/strong-leader-pullback-reconstructed-development-statistics-v1.md)
-- [Reconstructed replacement selection](data-contracts/strong-leader-pullback-reconstructed-replacement-selection-v1.md)
-- [Outcome-blind factor catalog](data-contracts/quant-research-factor-catalog-v1.md)
-- [Current terminal-bounds review](audits/strong-leader-pullback-terminal-reference-final-review-2026-09-15.md)
-- [Current reconstructed admission review](audits/strong-leader-pullback-research-admission-v2-final-review-2026-09-15.md)
-- [Current reconstructed development dataset audit](audits/strong-leader-pullback-reconstructed-development-dataset-2026-09-15.md)
-- [Current reconstructed development statistics review](audits/strong-leader-pullback-reconstructed-development-statistics-2026-09-15.md)
-- [Current replacement-selection review](audits/strong-leader-pullback-reconstructed-replacement-selection-2026-09-15.md)
-- [Current launch audit](audits/strong-leader-pullback-method-engineering-launch-review-2026-09-14.md)
-- [Current diagnostics audit](audits/strong-leader-pullback-method-diagnostics-2026-09-14.md)
+- [Outcome-blind Factor Catalog V1](data-contracts/quant-research-factor-catalog-v1.md)
+- [ADR 0274: durable three-layer architecture](decisions/0274-adopt-factor-model-strategy-three-layer-research-architecture.md)
+- [ADR 0273: first governed factor batch](decisions/0273-separate-governed-factor-discovery-from-strategy-construction.md)
 - [ADR 0194: bounded AI-assisted research](decisions/0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md)
-- [ADR 0195: complete reconstructed session cross-sections](decisions/0195-require-complete-session-cross-sections-for-reconstructed-development.md)
-- [ADR 0196: five-year Dell foundation](decisions/0196-build-a-five-year-point-in-time-research-foundation-on-dell.md)
-- [ADR 0266: method engineering versus performance admission](decisions/0266-separate-outcome-blind-method-engineering-from-performance-admission.md)
-- [ADR 0267: provider-neutral evidence acceptance](decisions/0267-freeze-provider-neutral-performance-evidence-acceptance.md)
-- [ADR 0268: adversarial missingness bounds](decisions/0268-admit-reconstructed-research-only-with-adversarial-missingness-bounds.md)
-- [ADR 0269: frozen terminal gross-value intervals](decisions/0269-bound-reconstructed-terminal-references-with-frozen-gross-value-intervals.md)
-- [ADR 0270: isolated reconstructed development labels](decisions/0270-materialize-reconstructed-development-labels-without-opening-evaluation.md)
-- [ADR 0271: freeze reconstructed development statistics](decisions/0271-freeze-reconstructed-development-statistics-before-reading-results.md)
-- [ADR 0272: one coverage-corrected replacement selection](decisions/0272-register-one-coverage-corrected-replacement-selection-protocol.md)
-- [ADR 0273: governed factor discovery before strategy construction](decisions/0273-separate-governed-factor-discovery-from-strategy-construction.md)
+- [Strong-Leader Pullback final rejection audit](audits/strong-leader-pullback-reconstructed-replacement-selection-2026-09-15.md)
 
-The complete registries remain available through the
-[data-contract index](data-contracts/README.md) and
-[ADR index](decisions/README.md).
+The Pullback contracts, operations, and intermediate audits remain immutable
+historical evidence, but are no longer part of default recovery. Use the
+[data-contract index](data-contracts/README.md), [ADR index](decisions/README.md),
+or dated [audits](audits/) when reproducing that program.
 
 ## Architecture and data
 
@@ -97,20 +74,14 @@ The complete registries remain available through the
 - [Infrastructure](operations/infrastructure.md)
 - [Daily EOD Automation](operations/daily-eod-automation.md)
 - [Five-Year EOD and Identity Backfill](operations/five-year-eod-identity-backfill.md)
-- [Strong-Leader Pullback Method Launch Review](operations/strong-leader-pullback-method-engineering-launch-review.md)
-- [Strong-Leader Pullback Method Diagnostics](operations/strong-leader-pullback-method-diagnostics.md)
-- [Strong-Leader Pullback Research Admission V2](operations/strong-leader-pullback-research-admission-v2.md)
-- [Strong-Leader Pullback Reconstructed Development Dataset](operations/strong-leader-pullback-reconstructed-development-dataset.md)
-- [Strong-Leader Pullback Reconstructed Development Statistics](operations/strong-leader-pullback-reconstructed-development-statistics.md)
-- [Strong-Leader Pullback Reconstructed Replacement Selection](operations/strong-leader-pullback-reconstructed-replacement-selection.md)
-- [Terminal Reference SEC Source](operations/strong-leader-pullback-terminal-reference-sec-source.md)
 - [Market Intelligence Publication](operations/market-intelligence-publication.md)
 - [Dashboard Snapshot Publication](operations/dashboard-snapshot-publication.md)
 - [OCI Dashboard Deployment](operations/oci-private-dashboard-deployment.md)
 
-Other runbooks are discoverable in [`docs/operations`](operations/). They do
-not authorize credentials, provider access, canonical Apply, publication,
-deployment, scheduler mutation, or cleanup by themselves.
+Strategy-specific runbooks are historical or objective-specific and remain
+discoverable in [`docs/operations`](operations/). A runbook never authorizes
+credentials, provider access, canonical Apply, publication, deployment,
+scheduler mutation, or cleanup by itself.
 
 ## Application
 
@@ -123,10 +94,10 @@ deployment, scheduler mutation, or cleanup by themselves.
 ## Historical evidence
 
 - [Concise changelog](project/changelog.md)
+- [2026-09-15 research-direction reconciliation](audits/quant-research-direction-reconciliation-2026-09-15.md)
 - [Granular execution archive through 2026-09-14](audits/project-execution-archive-through-2026-09-14.md)
 - [Open Questions](project/open-questions.md)
 - [Dated audits](audits/)
 
-Historical records preserve reproducibility but are not part of the default
-recovery path. They never override a later accepted ADR or current verified
-state.
+Historical records preserve reproducibility but are not part of default
+recovery. They never override a later accepted ADR or current verified state.

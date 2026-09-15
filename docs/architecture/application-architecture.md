@@ -61,9 +61,10 @@ market state
 
 Market Regime & Opportunities, Sector ETF Rotation, and Market Structure &
 Activity are stable context workspaces. Quant Research Lab owns model identity,
-method, evidence, lifecycle, failure, and activation history. Stock Candidates
-is a downstream consumer of at most a small number of separately validated and
-activated Lab models.
+factor/model/expression lineage, evidence, lifecycle, failure, and activation
+history. Stock Candidates is a downstream consumer of only the small reviewed
+set of separately activated Lab expressions; there is no permanent model-count
+or fixed-strategy taxonomy.
 
 The deployed Candidate score, Entry Geometry, and technical Strategy Channels
 remain transparent but unvalidated Baseline V1. They are maintained for
@@ -72,10 +73,11 @@ compatibility and correctness, not tuned as the future model architecture.
 ## Quantitative research flow
 
 ```text
-research question and mechanism
--> point-in-time admitted data
--> leakage-safe features and labels
--> bounded development
+research question and point-in-time admitted data
+-> bounded Factor Discovery
+-> bounded Model Construction
+-> bounded Strategy Expression
+-> locked factor/model/expression lineage
 -> locked validation
 -> single sealed holdout
 -> prospective shadow / paper evidence
@@ -91,10 +93,12 @@ roles. Agent work remains subject to one append-only experiment registry,
 finite search budgets, stage-specific data access, deterministic calculation,
 and human activation authority.
 
-The factory begins only after Strong-Leader Pullback proves one complete,
-rejection-capable path. Initial orchestration stays local and bounded on Dell;
-no long-running agent platform, service mesh, cluster, or automatic trading
-path is implied.
+Strong-Leader Pullback proved a complete rejection-capable development path but
+did not produce a locked model. The factory remains deferred until one complete
+factor-to-model-to-expression lineage survives locked evaluation and
+prospective shadow review. Initial orchestration stays local and bounded on
+Dell; no long-running agent platform, service mesh, cluster, or automatic
+trading path is implied.
 
 ## Data boundaries
 

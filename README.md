@@ -20,19 +20,24 @@ research-only Quant Research Lab. Guest and credential Sessions intentionally
 receive identical data and capabilities.
 
 The first three are stable market-context workspaces. Quant Research Lab is
-the model registry and validation authority. Its future AI Quant Research
-Factory may generate hypotheses at high throughput, but every real experiment
-remains deduplicated, budgeted, data-isolated, deterministic, and falsifiable.
-Stock Candidates will eventually consume only one to three validated and
-explicitly activated Lab models. The currently deployed Candidate score,
-Entry Geometry, and technical Strategy Channels remain transparent but
-unvalidated **Baseline V1**, not a direct parameter-tuning target.
+the factor, model, strategy-expression, and validation authority. Research now
+uses the durable sequence **Factor Discovery -> Model Construction -> Strategy
+Expression**. It is not limited to a fixed list of chart-pattern strategies;
+successive discovery batches may explore new evidence, while every batch that
+reads outcomes remains deduplicated, budgeted, data-isolated, deterministic,
+and falsifiable. Stock Candidates will eventually consume only the small set
+of Lab expressions that receive separate activation. The currently deployed
+Candidate score, Entry Geometry, and technical Strategy Channels remain
+transparent but unvalidated **Baseline V1**, not a direct tuning target or the
+future research taxonomy.
 
-The reconstructed Strong-Leader Pullback V1 development study has run against
-its fixed 24-combination budget and ended inconclusive at the preregistered
-Regime evidence floor. No parameter was locked and Validation, Holdout,
-Candidate use, and performance publication remain closed. The stricter exact/
-as-operated research lane remains data-blocked.
+The completed Strong-Leader Pullback development program did not produce a
+model lock: V1 was inconclusive at its evidence floor and the only registered
+replacement was rejected on endpoint instability. It remains a retained,
+reproducible failure rather than a template to retune. Validation, Holdout,
+Candidate use, and performance publication remain closed. The next research
+stage is the first bounded factor-discovery catalog, not a preselected next
+strategy.
 
 Dell is the authority for code, data, and computation. OCI serves only bounded
 static product artifacts and the localhost authentication boundary. The
@@ -96,19 +101,22 @@ volume proxies must never be described as actual fund flow. Research,
 validation, shadow, Production, and retired states remain visibly distinct.
 
 ~~~text
-registered Lab experiment -> bounded development -> locked validation
--> sealed holdout -> prospective shadow -> explicit activation
--> Stock Candidates
+registered factor discovery -> bounded factor screening
+-> bounded model construction -> bounded strategy expression
+-> locked validation -> sealed holdout -> prospective shadow
+-> explicit activation -> Stock Candidates
 ~~~
 
 See:
 
 - [Professional Quantitative Research Action Framework](docs/research/professional-quantitative-research-action-framework-v1.md)
+- [Three-Layer Quant Research Architecture](docs/product/quant-research-three-layer-architecture-v1.md)
 - [Historical Research Data Foundation](docs/architecture/historical-research-data-foundation-v1.md)
 - [Quant Research Lab V1](docs/product/quant-research-lab-v1.md)
 - [Candidate Strategy Evaluation V1](docs/data-contracts/candidate-strategy-evaluation-v1.md)
 - [ADR 0191: validated model promotion](docs/decisions/0191-promote-validated-research-models-into-stock-candidates.md)
 - [ADR 0194: bounded AI-assisted research](docs/decisions/0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md)
+- [ADR 0274: factor-model-strategy architecture](docs/decisions/0274-adopt-factor-model-strategy-three-layer-research-architecture.md)
 - [ADR 0195: reconstructed development admission](docs/decisions/0195-require-complete-session-cross-sections-for-reconstructed-development.md)
 - [ADR 0196: five-year point-in-time foundation](docs/decisions/0196-build-a-five-year-point-in-time-research-foundation-on-dell.md)
 

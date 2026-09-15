@@ -7,6 +7,9 @@
 > [Quant Research Lab](quant-research-lab-v1.md), and only separately validated
 > and activated Lab models may later drive Stock Candidates under
 > [ADR 0191](../decisions/0191-promote-validated-research-models-into-stock-candidates.md).
+> Under [ADR 0274](../decisions/0274-adopt-factor-model-strategy-three-layer-research-architecture.md),
+> these six labels are a Production compatibility taxonomy only. They are not
+> the future factor catalog, model queue, or required strategy count.
 
 ## Purpose
 
@@ -184,8 +187,8 @@ place. The transition is:
 1. preserve V1 as a transparent, reproducible Production baseline;
 2. conduct new, versioned strategy research in Quant Research Lab;
 3. retain failed, rejected, and retired experiments as evidence;
-4. activate no more than one to three validated models through a separate
-   reviewed decision; and
+4. activate only a small reviewed set of eligible strategy expressions, with
+   no permanent numeric model cap; and
 5. redesign Stock Candidates to identify the exact active model/version and
    present model rank, current-market applicability, entry readiness,
    counterevidence, and invalidation without inventing a cross-model total.

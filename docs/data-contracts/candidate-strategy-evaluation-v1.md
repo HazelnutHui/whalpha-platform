@@ -1,5 +1,10 @@
 # Candidate Strategy Evaluation V1
 
+> **Version scope:** this contract governs the deployed six-channel Baseline V1
+> and the first Pullback research program. ADR 0274 makes Factor Discovery,
+> Model Construction, and Strategy Expression the future architecture. New
+> research contracts must not inherit this fixed channel enum by default.
+
 ## Status
 
 Repository-only typed shadow contract. Display-oriented Strategy Channels and
@@ -10,8 +15,9 @@ evaluation dataset has been written and no performance result exists.
 
 Candidate Strategy Evaluation V1 separates information available when a
 research signal is created from forward outcomes that become knowable later.
-This is the core anti-look-ahead boundary for the six independent Candidate
-strategy channels.
+This is the anti-look-ahead boundary for the six Baseline V1 Candidate channel
+records. The six are independent record keys in this contract, not validated
+models or the future strategy taxonomy.
 
 ## Fixed evaluation policy
 

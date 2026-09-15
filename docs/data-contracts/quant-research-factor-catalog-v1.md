@@ -7,6 +7,11 @@ created by ADR 0273. It broadens research inputs before the next strategy is
 frozen while keeping factor definitions, model construction, and strategy
 execution separate.
 
+It is the first bounded discovery batch under ADR 0274. Its 12 definitions,
+five families, and role counts are immutable for this version but are not a
+permanent factor universe, a promised model, or a fixed strategy queue. Later
+catalogs require new versions and their own finite trial budgets.
+
 Every value is calculated from information available by the session close.
 The earliest modeled execution remains the next session open. Prices and
 volumes are split-reconciled to the signal-session basis; raw source facts are

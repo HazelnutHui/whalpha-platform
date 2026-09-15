@@ -18,9 +18,14 @@ ADRs, and audits.
   `ready_for_reconstructed_development`.
 - **First strategy:** its canonical method, derived Lab record, signal/cohort
   engine, diagnostics, immutable development labels, and fixed 24-combination
-  development study are complete. V1 ended `inconclusive_evidence_floor` with
-  no parameter lock; Validation, Holdout, performance claims, and Candidate
-  authority remain closed.
+  development study are complete. V1 ended `inconclusive_evidence_floor`; its
+  single registered replacement ended `rejected_endpoint_instability`. The
+  program is closed with no parameter lock; Validation, Holdout, performance
+  claims, and Candidate authority remain closed.
+- **Research architecture:** ADR 0274 now makes Factor Discovery -> Model
+  Construction -> Strategy Expression the durable path. The first 12-factor
+  catalog is one bounded outcome-blind batch, not a permanent factor universe
+  or a promised next model.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -29,7 +34,8 @@ ADRs, and audits.
 
 ## Product capability
 
-Quant Research Lab is the default and sole core workspace. Model-Driven Equity
+Quant Research Lab is the default and sole core workspace and owns separate
+factor, model, strategy-expression, and evidence records. Model-Driven Equity
 Selection is its reserved downstream consumer. Market Regime & Opportunities,
 Sector ETF Rotation, and Market Structure & Activity remain stable supporting
 tools.
@@ -146,16 +152,18 @@ matched report SHA-256
 and logical fingerprint
 `086675c82efb4453f9bc71e88ad65fc0f64c411569313cd6ac3795ee0a6baaec`.
 Strong-Leader Pullback cannot receive a third selection rule over the same
-development outcome; the next work is a genuinely independent strategy
-hypothesis.
+development outcome. The next work is a governed factor-discovery batch; no
+next strategy name is preselected.
 
-ADR 0273 now inserts a governed Factor Discovery stage before the next model.
-Its initial registry contains 12 exact, outcome-blind definitions across five
+ADR 0273 provides the first governed Factor Discovery batch. ADR 0274 places it
+inside the durable Factor Discovery -> Model Construction -> Strategy
+Expression architecture and removes the prior fixed strategy queue. The
+initial registry contains 12 exact, outcome-blind definitions across five
 economic families. The immediate operation is formula-contract implementation
 followed by a zero-outcome coverage, missingness, distribution, concentration,
-and redundancy report. No factor return, threshold, model weight, or Alpha
-claim may be computed until a separate post-coverage/before-outcomes screening
-protocol is committed.
+and redundancy report. No factor return, threshold, model weight, model name,
+or Alpha claim may be computed until a separate post-coverage/before-outcomes
+screening protocol is committed.
 
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
@@ -205,7 +213,10 @@ measured budget breach.
 6. Implement and inspect the ADR 0273 outcome-blind factor catalog before
    reading any new outcome evidence.
 7. Freeze the bounded factor-screening protocol only after that coverage
-   report; Momentum Breakout remains the leading next strategy family.
+   report. Let admitted factor evidence determine whether any model should be
+   constructed; do not preselect Momentum Breakout or another named strategy.
+8. Keep Factor Discovery, Model Construction, and Strategy Expression as
+   separate versioned records; lock the complete lineage before Validation.
 
 Do not project current Membership or taxonomy backward, infer lifecycle from
 ticker patterns, call price/volume fund flow, call stock outcomes option

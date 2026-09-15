@@ -2,350 +2,213 @@
 
 ## Product authority
 
-Quant Research Lab / `量化研究实验室` is WH Alpha's model registry, research
-record, validation evidence center, and model-lifecycle authority. It is the
-place where a personal quantitative idea becomes falsifiable evidence—or a
-recorded failure.
+Quant Research Lab / `量化研究实验室` is WH Alpha's core research workspace.
+It is the human-readable registry for factor discovery, model construction,
+strategy expression, evaluation evidence, failure, activation, monitoring, and
+retirement.
 
-It is also the default authenticated/guest workspace and the sole core module
-in first-level product navigation. Model-Driven Equity Selection sits directly
-below it as a downstream application. Market Regime & Opportunities, Sector
-ETF Rotation, and Market Structure & Activity are grouped separately as free
-market tools; they are useful context, not peer model authorities. Navigation
-does not number these five surfaces as equivalent modules.
+Model-Driven Equity Selection is a downstream consumer, not a parallel research
+system. Market Regime & Opportunities, Sector ETF Rotation, and Market
+Structure & Activity are supporting market tools. The deployed Candidate
+score, Entry Geometry, and six Strategy Channels remain frozen, unvalidated
+**Baseline V1** compatibility behavior; they do not define the future research
+taxonomy.
 
-Stock Candidates is a downstream consumer, not a second research system. Only
-one to three separately validated and explicitly activated Lab models may
-eventually feed its rankings. The deployed heuristic Candidate score and
-technical Strategy Channels remain frozen, unvalidated `Baseline V1` until a
-later replacement decision.
-
-The Lab does not need to publish a full daily candidate list for every
-experiment. It must publish enough method and evidence for a reviewer to
-reproduce the claim, find its weaknesses, and understand whether it currently
-has any Product authority.
-
-ADR 0192, the Strong-Leader Pullback Method V1 contract, and the Quant Research
-Lab Model Record V1 contract now implement this separation in the repository.
-The method contract is the single source for formulae, data lineage,
-parameters, and evaluation design. The first browser record is its derived,
-method-only, data-blocked, Candidate-ineligible projection. It includes the
-independently replayed method-computability disclosure while keeping
-performance admission visibly separate. No real result publication or active
-Candidate model exists.
+The durable research authority is
+[Factor Discovery -> Model Construction -> Strategy Expression](quant-research-three-layer-architecture-v1.md).
+There is no permanent list of three, six, or any other number of future models.
+The Product may feature only a small reviewed active set, while long-term
+research remains open to evidence-led factor and model families through finite
+registered campaigns.
 
 ## Non-black-box contract
 
-Every model version must disclose:
+Every lineage must disclose:
 
-- owner, model family, exact version, lifecycle state, and immutable identity;
-- intended decision, holding horizon, Universe, benchmark, and economic
-  rationale;
-- feature names, source fields, as-of clocks, formulas, transformations,
-  missingness rules, and expected signs;
-- label and entry/exit basis, overlap rules, corporate-action treatment, and
-  stock-versus-option boundary;
-- complete fixed parameters, search space, selection budget, seed where
-  relevant, and reason for each choice;
-- development, validation, holdout, walk-forward, purge, embargo, and
-  multiplicity method;
-- sample coverage, exclusions, quarantines, survivorship controls, revision
-  policy, costs, and capacity assumptions;
-- result metrics, uncertainty, stability slices, sensitivity, failure cases,
-  counterevidence, invalidation, and known missing evidence;
-- activation decision, monitoring thresholds, observed decay, retirement, and
-  replacement history; and
-- source publications, code revision, environment, and reproducibility
-  fingerprints.
+- owner, IDs, versions, lifecycle, status, and immutable fingerprints;
+- intended decision, horizon, point-in-time Universe, benchmark, and economic
+  mechanism;
+- every source field, availability clock, formula, transformation,
+  missingness/quarantine rule, and expected/counter relationship;
+- complete feature/model/expression parameters and the true search budget;
+- labels, entry/exit timing, corporate-action treatment, costs, capacity,
+  portfolio rules, and stock-versus-option boundary;
+- development, Validation, Holdout, walk-forward, purge, embargo, multiplicity,
+  and reproduction design;
+- coverage, exclusions, uncertainty, stability, sensitivity, concentration,
+  counterevidence, invalidation, and missing evidence; and
+- activation, shadow monitoring, decay, pause, rollback, and retirement
+  history.
 
-The compact page may fold these fields. The detailed record may not hide a
-material parameter or silently substitute a narrative summary for the formula.
-Guest and credential Sessions receive the same Lab evidence and capability
-until the product policy is explicitly changed.
+Compact views may fold details. Expanded records may not hide material
+parameters or replace formulas with marketing summaries. English, Simplified
+Chinese, and professional neutral Spanish present the same canonical evidence.
+Guest and credential Sessions retain identical data and capability until the
+product policy explicitly changes.
 
-The interface is available in English, Simplified Chinese, and neutral
-professional Spanish. Locale changes never alter model identity, evidence,
-parameters, lifecycle state, Candidate authority, or access policy. Exact
-formulae, identifiers, reason codes, and canonical source-record values remain
-source-faithful rather than being rewritten as localized model evidence.
+## Lab information architecture
 
-## Public research-foundation snapshot
+### 1. Factor registry
 
-Before the first model record, the Lab may present a compact, dated summary of
-verified research infrastructure already built on Dell. The current summary
-shows five-year price and stable-Identity depth, reconstructed versus
-prospective Membership, first-strategy corporate-action assignments,
-lifecycle-reference coverage, and the point-in-time fundamental engineering
-pilot. Every item must state its limitation next to its count.
+Shows exact definitions, economic role, coverage, missingness, redundancy,
+screening evidence, failure, and lineage. It distinguishes directional
+candidates from conditioners, neutralizers, risk guards, and execution inputs.
+A factor record never implies a strategy or Product rank.
 
-The snapshot also shows already frozen evaluation controls such as the finite
-specification budget, chronological split, purge/embargo, declared cost
-scenarios, and single-use holdout. It must not combine heterogeneous evidence
-families into one completion score, imply performance readiness, expose
-private source material, or replace the authoritative dated status documents.
+### 2. Model registry
 
-## Model lifecycle
+Shows which admitted factor versions feed a ranking, probability,
+distribution, conditional estimate, or risk state. It exposes the exact
+algorithm/formula, target, benchmark, parameters, baselines, calibration,
+uncertainty, out-of-sample evidence, and failure conditions. A model is not an
+entry rule or portfolio.
+
+### 3. Strategy-expression registry
+
+Shows how a locked model becomes a decision: eligibility, entry, waiting,
+invalidation, exit, holding, re-entry, sizing, concurrency, costs, liquidity,
+capacity, portfolio risk, vehicle, and monitoring. Stock and option expressions
+remain separate versions and evidence systems.
+
+### 4. Evidence and lifecycle
+
+Links the exact factor/model/expression lineage to data cohort, labels, split,
+metrics, uncertainty, sensitivity, counterevidence, reproduction, shadow,
+activation, decay, and retirement. Rejected and retired records remain visible
+so repeated testing cannot erase failures.
+
+## Lifecycle
 
 | State | Meaning | Candidate authority |
 | --- | --- | --- |
-| `idea` | Research question exists but is not registered | None |
-| `preregistered_data_blocked` | Hypothesis and plan frozen; required evidence incomplete | None |
-| `development` | Development interval open; alternatives may be compared only within the registered budget | None |
-| `validation` | Parameters locked; validation interval open | None |
-| `holdout_review` | One sealed holdout is consumed once | None |
-| `validated_research` | Registered gates passed; operational suitability still unapproved | None |
-| `shadow` | Frozen model runs prospectively without driving Product rank | None |
-| `active` | Separate reviewed activation permits Candidate use | Exact approved scope only |
+| `idea` | Mechanism exists but no registered test | None |
+| `registered` | Finite question, data, trial budget, and gates frozen | None |
+| `data_blocked` | Required evidence is not admissible | None |
+| `development` | Only the registered development partition may be used | None |
+| `validation` | Factor/model/expression lineage locked | None |
+| `holdout_review` | One sealed Holdout is consumed once | None |
+| `validated_research` | Research gates passed; operational review pending | None |
+| `shadow` | Frozen lineage runs prospectively without ranking authority | None |
+| `active` | Separate activation permits exact Product use | Approved scope only |
 | `rejected` | A registered gate failed | None |
-| `retired` | Formerly useful evidence decayed, became invalid, or was replaced | None |
+| `retired` | Previously useful evidence decayed or was replaced | None |
 
-No state advances from attractive charts, a higher recent return, more price
-history alone, or user-interface completion. Rejected and retired versions
-remain visible so repeated testing cannot erase unfavorable evidence.
+No state advances from attractive charts, recent return, more price history,
+agent consensus, or user-interface completion.
 
-## Research record layout
+## Evaluation sequence
 
-### Catalog card
+```text
+mechanism and falsifiable question
+-> registered factor batch
+-> outcome-blind factor qualification
+-> registered development screening
+-> admitted small factor set or no selection
+-> bounded model and strategy-expression construction
+-> locked chronological Validation
+-> one sealed Holdout
+-> independent reproduction and red-team review
+-> prospective shadow / paper evidence
+-> separate activation
+-> monitoring and retirement
+```
 
-The collapsed catalog should show only the decision-critical summary:
+Stable-ID joins, point-in-time membership, delisted/terminal outcomes,
+corporate actions, source-availability clocks, overlap-aware purge/embargo,
+true trial counts, realistic costs, and explicit missingness are mandatory.
+Randomly mixing overlapping security-session rows is prohibited. Validation
+and Holdout outcomes cannot be used to generate factors, select features, tune
+models, or rewrite expressions.
 
-- model name/version, family, owner, and lifecycle;
-- one-sentence hypothesis and intended 1–5-session or other declared horizon;
-- declared Universe and current-market applicability state;
-- last validation/monitor date and next required decision;
-- out-of-sample scope and sample count;
-- net expectancy and worst drawdown when a portfolio simulation exists; and
-- one primary strength, one primary weakness, and a clear `not validated` or
-  `not active` label where applicable.
+## Result semantics
 
-Do not show Sharpe, annualized return, or maximum drawdown when the underlying
-study is only an event-level contrast and has no defined portfolio construction.
+### Factor screening
 
-### Expanded model record
-
-The expanded view is organized as:
-
-1. **Logic:** what behavior is being tested and why it might persist.
-2. **Inputs:** all data families, clocks, coverage, exclusions, and quality.
-3. **Features:** exact formulas, units, windows, transforms, expected signs,
-   redundancy, and missingness.
-4. **Rules/model:** complete formula, parameters, ranking, signal, and
-   applicability logic.
-5. **Evaluation:** split diagram, purge/embargo, controls, costs, uncertainty,
-   and sealed-holdout custody.
-6. **Results:** out-of-sample headline, complete metric ledger, regime/time/
-   liquidity/sector slices, and sensitivity.
-7. **Failure evidence:** counterexamples, concentration, unstable cells,
-   missed opportunities, chase risk, decay, and invalidation.
-8. **Lifecycle:** versions, decisions, shadow monitoring, active scope,
-   retirement, and rollback.
-9. **Reproduction:** source and result fingerprints, code revision, and report
-   artifacts.
-
-## Result semantics and metrics
-
-The Lab must identify which of two evidence types is being reported.
+Report coverage, rank IC/decay or the registered role-specific statistic,
+uncertainty, monotonicity where appropriate, exposure attribution,
+time/Regime/liquidity stability, cost implications, concentration, redundancy,
+and all counted failures. Factor evidence is not portfolio performance.
 
 ### Signal/event study
 
-Use this before a portfolio construction has been fixed. Headline fields are:
-
-- available signal and control observations plus comparable sessions;
-- net expected value per signal after the declared cost scenario;
-- median outcome and signal-minus-control/benchmark contrast;
-- confidence interval or other preregistered uncertainty statement;
-- win rate, average win, average loss, payoff ratio, and Profit Factor;
-- MFE, MAE, chase/false-positive rate, coverage, and quarantine; and
-- stability by time block, Regime, liquidity, volatility, and concentration.
-
-An event-study result cannot claim portfolio annualized return, Sharpe, or
-maximum drawdown.
+Before portfolio construction is fixed, report available signal/control
+observations, net expectancy under declared cost scenarios, median and
+signal-minus-control/benchmark contrast, uncertainty, win/payoff/Profit
+Factor, MFE/MAE, false-positive/chase risk, coverage, quarantine, and stability.
+Do not publish annualized return, Sharpe, or maximum drawdown as if a portfolio
+exists.
 
 ### Tradable portfolio simulation
 
-Only after position sizing, concurrent holdings, cash, rebalance timing,
-turnover, capacity, and costs are frozen may the Lab additionally report:
+Only after sizing, concurrency, cash, rebalance, turnover, capacity, and costs
+are frozen may the Lab report total/annualized return, drawdown, volatility,
+Beta/Alpha, Sharpe, Sortino, Calmar, Information Ratio, exposure, turnover,
+capacity, cost attribution, and trade statistics. The headline remains
+out-of-sample, net of realistic costs, with period, sample, benchmark, and
+uncertainty.
 
-- total and annualized return;
-- maximum drawdown, volatility, Beta, and benchmark Alpha;
-- Sharpe, Sortino, Calmar, and Information Ratio where their assumptions are
-  meaningful;
-- turnover, exposure, capacity, cost attribution, and worst period; and
-- trade count, win rate, payoff ratio, Profit Factor, and net expectancy.
+## Current research state
 
-The primary headline is always out-of-sample and net of the declared realistic
-cost scenario. In-sample metrics are visibly secondary. Point estimates must
-appear with sample size, period, uncertainty, and benchmark; more metrics do
-not compensate for a weak design.
+Strong-Leader Pullback is the first completed research program and a retained
+rejection. Its V1 24-combination study ended `inconclusive_evidence_floor`.
+The only registered replacement ended `rejected_endpoint_instability` because
+different conservative terminal-reference worlds selected different winners.
+No parameter was locked, Validation and Holdout stayed closed, and no
+performance or Candidate authority was created. Its detailed contracts and
+audits remain historical reproduction evidence rather than the forward
+roadmap.
 
-## Evaluation standard
+ADR 0273 registers the first outcome-blind Factor Catalog V1: 12 exact daily
+price/volume definitions across five economic families. They are one bounded
+catalog version, not the permanent factor universe and not a promised next
+strategy. The next permitted work is deterministic formula implementation and
+an outcome-free coverage, missingness, distribution, concentration,
+correlation, and reproducibility report. Only after that report may a separate
+before-outcomes screening protocol be frozen.
 
-Every model must begin from a written decision and label, not from indiscriminate
-factor mining. The standard sequence is:
-
-```text
-question and mechanism
--> point-in-time admitted data cohort
--> leakage-safe features and labels
--> simple baseline
--> bounded development search
--> locked chronological validation
--> single sealed holdout
--> prospective shadow
--> separate activation
--> ongoing monitoring and retirement
-```
-
-Required protections include stable-ID joins, point-in-time membership,
-delisted/terminal outcomes, corporate actions, source-availability clocks,
-chronological splits, overlap-aware purge/embargo, search-budget and
-multiplicity controls, realistic costs, and explicit missing/quarantine
-statistics. Randomly mixing overlapping security-session rows is prohibited.
-
-Data readiness is scoped to the exact experiment rather than an endless claim
-that every possible dataset must be complete. Before outcomes are opened, each
-version declares an admitted interval/cohort, mandatory evidence, acceptable
-coverage, and rejection policy. Missing evidence may never be silently filled
-or selectively dropped. Strong-Leader Pullback V1 retains its strict complete-
-cross-section rule. ADR 0193 separately permits a later-retrieved, latest-
-vintage historical reconstruction for an outcome-blind coverage census. ADR
-0195 requires 100%-complete Primary session cross-sections and at least 252
-admitted sessions for development use. It cannot support locked validation,
-sealed holdout, performance-grade claims, or Candidate activation.
+No factor return, selected threshold, model weight, three-layer model,
+strategy expression, Lab performance publication, or active Candidate model
+currently exists.
 
 ## AI Quant Research Factory
 
-ADR 0194 defines the future factory as a governed Lab backend. It is not an
-unbounded agent search system and is not a sixth product answer. Its purpose is
-to increase research throughput while strengthening rejection discipline.
+The future Factory is a governed backend of these three layers, not another
+workspace or an unlimited search engine. Hypothesis, data, factor,
+implementation, statistics, cost, red-team, reproduction, and shadow roles
+share an append-only registry but not unrestricted data access. Numerical
+calculation and gates are deterministic on Dell; narrative or agent consensus
+cannot override chronology, cost, multiplicity, fingerprint, Validation, or
+Holdout failures.
 
-Logical roles may include hypothesis, data, factor, implementation,
-statistics, cost, red-team, independent reproduction, and shadow monitoring.
-They share the same registry but not unrestricted data access. Every
-experiment is deduplicated, preregistered, assigned a finite search budget,
-and retained whether it passes or fails. Development agents cannot read sealed
-validation or holdout outcomes, and an agent consensus cannot override a
-deterministic gate.
-
-The implementation order is deliberately incremental:
-
-```text
-one complete Strong-Leader Pullback research path
--> reusable experiment/data/evaluation interfaces
--> small multi-role agent pilot
--> automated falsification and independent reproduction
--> additional strategy families
-```
-
-The first success criterion is not a high-return result. It is a reproducible
-system that can reject a weak strategy, preserve the failed attempt, and prove
-that no hidden data or parameter search changed the decision.
-
-## First program: Strong-Leader Pullback
-
-The first registered question is:
-
-> Among securities that were already point-in-time relative leaders, does an
-> orderly pullback followed by a close-based recovery improve the next 1-, 3-,
-> and 5-session underlying-stock outcome relative to comparable leaders that
-> did not trigger the setup?
-
-The Primary Universe is primary; Secondary is sensitivity-only. The signal is
-formed at the close, modeled entry is no earlier than the next open, three
-sessions is the primary horizon, and same-session eligible non-trigger leaders
-are the primary control. SPY price return is a separate benchmark.
-
-The immutable V1 preregistration contains 24 combinations: two leadership
-gates, three ATR pullback-depth bands, two close-recovery triggers, and two
-volume caps. It uses chronological 50/25/25 development/validation/holdout,
-five-session purge/embargo, session-balanced inference, block bootstrap,
-multiplicity control, fixed cost scenarios, and single-use holdout custody.
-Failure may not be repaired by editing V1.
-
-V1 remains `preregistered_data_blocked`. Current canonical price depth has
-passed the minimum length, but full historical point-in-time Membership,
-lifecycle/terminal evidence, complete corporate-action and adjustment
-coverage, final transitive Historical Coverage, calibrated execution evidence,
-and a real sealed evaluation dataset are incomplete. Exact current counts
-belong only in [current context](../project/current-context.md).
-
-ADR 0193 freezes the next admissibility step without changing this V1 record:
-use the 287-session historical source interval ending before the first known
-Identity-source gap for an outcome-blind coverage census. The source is
-explicitly `reconstructed_point_in_time_latest_vintage`, not `as_operated`.
-ADR 0195 now freezes the coverage threshold and rejects current evidence: zero
-of 267 candidate sessions have complete mandatory evidence. No cohort,
-trigger, return, parameter, or development authority exists.
-
-ADR 0266 now separates that strict performance decision from method
-engineering. The immutable launch review permits the registered feature and
-signal implementation, private outcome-blind diagnostics, synthetic tests,
-future-label interfaces, and Lab method/readiness views. V1 remains
-`preregistered_data_blocked`; real labels, parameter selection, lifecycle
-advancement, validation, holdout access, performance claims, and Candidate
-authority remain prohibited.
-
-The versioned method-diagnostics contract and pure aggregator now define how
-coverage, missingness, ties, threshold crowding, Regime balance, session and
-instrument concentration, and all 24 trigger/control counts are measured. The
-contract contains no return field and makes those counts ineligible for
-parameter selection. The first valid private reconstructed-population report
-has been materialized and independently replayed with identical fingerprints.
-It may now feed the Lab's method/data-readiness disclosure, but it is not an
-as-operated sample, a result publication, or a source of Candidate authority.
-
-ADR 0186 fixes an outcome-free, complete-cross-section input adapter and exact
-21-session feature semantics. It has fixture evidence only and has never run a
-real backtest. Before activation, the study must also challenge whether static
-geometry captures an orderly path, whether leadership predates the pullback,
-whether the control is comparable, whether next-open gaps destroy the setup,
-and whether apparent evidence is concentrated by date or industry.
-
-## Model sequence
-
-Research proceeds one family at a time:
-
-1. Strong-Leader Pullback;
-2. Momentum Breakout;
-3. Trend Continuation only after proving it is distinct from the first two;
-4. Oversold Technical Reversal; and
-5. Fundamental Value Reversal after point-in-time fundamental and valuation
-   evidence exists.
-
-Defensive opportunity is initially a Regime-conditioned search for relative
-resilience, not one universal defensive score. Earnings, guidance, macro, and
-news begin as risk/context or stratification evidence rather than a claim of
-first-information advantage. Cross-asset macro models follow the first proven
-single-security research pipeline rather than replacing it.
+Factory work begins only after one complete factor-to-model-to-expression path
+survives locked evaluation and prospective shadow review. The first success
+criterion is reliable rejection and reproduction, not a high-return chart.
 
 ## Candidate promotion
 
-A `validated_research` result is necessary but not sufficient. Activation also
-reviews economic plausibility, temporal and Regime stability, concentration,
-cost/capacity, operational reproducibility, user interpretation, monitoring,
-decay thresholds, and rollback.
+Validated research is necessary but insufficient. Activation separately
+reviews economic plausibility, stability, concentration, cost/capacity,
+operational reproducibility, interpretation, monitoring, decay, and rollback.
+Every active Candidate result must show:
 
-An active Candidate consumer must show:
-
-- exact active model/version and validation date;
-- why the model is currently applicable, neutral, adverse, or unavailable;
-- within-model rank and the facts that raised or lowered it;
-- entry readiness and chase risk as a separate axis;
+- exact model and strategy-expression versions;
+- current applicability and freshness;
+- within-model rank/estimate and factor contributions;
+- entry readiness and chase/fragility risk as separate evidence;
 - supporting evidence, counterevidence, event context, and invalidation; and
 - a link to the complete Lab record.
 
-Different strategy ranks remain separate unless an ensemble is independently
-registered and validated. No automatic model switch may be based only on which
-model recently performed best.
+Different outputs remain separate unless an ensemble is independently
+registered, evaluated, and activated. Recent performance cannot automatically
+select or switch the active model.
 
-## Publication cadence and boundary
+## Publication boundary
 
-Daily price/data operation does not require monthly research recalculation.
-Model evaluation and public research metrics should normally refresh monthly,
-on a registered review cadence, or after a material data/model version—not
-every day. Active-model signals may update daily while the frozen model and its
-validation evidence remain unchanged.
+Research evidence normally refreshes on a reviewed cadence or after a material
+data/model version, not merely because daily EOD data arrived. Active signals
+may later update daily while their frozen method and validation evidence remain
+unchanged.
 
-This document authorizes no provider request, `/data` write, real evaluation,
-parameter selection, model activation, Candidate replacement, Snapshot change,
-deployment, order, or trading recommendation.
+This document authorizes no provider request, `/data` write, outcome access,
+Validation/Holdout opening, result publication, model activation, Candidate
+replacement, Snapshot change, deployment, broker action, or order execution.
