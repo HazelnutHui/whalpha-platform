@@ -191,8 +191,11 @@ def build_reconstructed_development_label(
         favorable = adverse = None
         reasons = ("terminal_path_excursions_unavailable",)
 
-    lower_return = _return(lower_exit, entry_bar.open)
-    upper_return = _return(upper_exit, entry_bar.open)
+    entry_price = _quantize(entry_bar.open)
+    lower_exit_price = _quantize(lower_exit)
+    upper_exit_price = _quantize(upper_exit)
+    lower_return = _return(lower_exit_price, entry_price)
+    upper_return = _return(upper_exit_price, entry_price)
     return _build_label(
         observation_fingerprint=observation_fingerprint,
         signal_session=signal_session,
@@ -201,9 +204,9 @@ def build_reconstructed_development_label(
         expected_path_sessions=expected_path_sessions,
         split_basis_session=split_basis_session,
         state=state,
-        entry_price_usd=_string(entry_bar.open),
-        exit_price_lower_usd=_string(lower_exit),
-        exit_price_upper_usd=_string(upper_exit),
+        entry_price_usd=_string(entry_price),
+        exit_price_lower_usd=_string(lower_exit_price),
+        exit_price_upper_usd=_string(upper_exit_price),
         underlying_price_return_lower=_string(lower_return),
         underlying_price_return_upper=_string(upper_return),
         benchmark_price_return=_string(benchmark_return),
@@ -256,5 +259,9 @@ def _return(exit_price: Decimal, entry_price: Decimal) -> Decimal:
     return (exit_price / entry_price - Decimal("1")).quantize(_QUANTUM)
 
 
+def _quantize(value: Decimal) -> Decimal:
+    return value.quantize(_QUANTUM)
+
+
 def _string(value: Decimal) -> str:
-    return format(value.quantize(_QUANTUM), "f")
+    return format(_quantize(value), "f")

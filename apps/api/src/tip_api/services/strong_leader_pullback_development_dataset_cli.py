@@ -492,8 +492,8 @@ def _build_labels(
                         ],
                     }
                 )
-                labels.append(
-                    build_reconstructed_development_label(
+                try:
+                    label = build_reconstructed_development_label(
                         observation_fingerprint=observation.logical_fingerprint,
                         signal_session=signal_session,
                         instrument_id=observation.instrument_id,
@@ -509,7 +509,13 @@ def _build_labels(
                         terminal_reference=terminal,
                         unavailable_reason_codes=tuple(sorted(reasons)),
                     )
-                )
+                except Exception as exc:
+                    raise StrongLeaderPullbackDevelopmentDatasetCliError(
+                        "development label rejected for "
+                        f"{signal_session.isoformat()}/"
+                        f"{observation.instrument_id}/{horizon}"
+                    ) from exc
+                labels.append(label)
         if session_index % 25 == 0 or session_index == len(observations_by_session):
             print(
                 json.dumps(

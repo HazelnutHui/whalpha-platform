@@ -195,3 +195,26 @@ def test_unresolved_adjustment_is_retained_without_numeric_result() -> None:
 def test_interval_reference_rejects_point_imputation() -> None:
     with pytest.raises(ValueError, match="terminal-reference ledger"):
         _terminal(TerminalReferenceLedgerState.FINITE_INTERVAL, "100", "100")
+
+
+def test_split_adjusted_prices_freeze_contract_precision_before_return() -> None:
+    label = build_reconstructed_development_label(
+        **{
+            **_values(),
+            "expected_path_sessions": (SESSIONS[0],),
+            "benchmark_bars": (_benchmark()[0],),
+        },
+        instrument_bars=(
+            _bar(
+                SESSIONS[0],
+                "12.345678901234",
+                "13.000000000001",
+                "12.000000000001",
+                "12.876543210987",
+            ),
+        ),
+    )
+
+    assert label.entry_price_usd == "12.3456789012"
+    assert label.exit_price_lower_usd == "12.8765432110"
+    assert label.underlying_price_return_lower == "0.0430000095"
