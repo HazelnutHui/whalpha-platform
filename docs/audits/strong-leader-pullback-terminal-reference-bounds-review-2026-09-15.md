@@ -1,5 +1,10 @@
 # Strong-Leader Pullback Terminal Reference Bounds Review
 
+This first partial review is superseded by the
+[final terminal-reference review](strong-leader-pullback-terminal-reference-final-review-2026-09-15.md),
+which binds 219 exact and 83 finite-interval paths with zero unbounded paths.
+The evidence below is retained as the earlier decision boundary.
+
 ## Decision
 
 The first outcome-blind bounds review is `source_evidence_pending`. It reduces

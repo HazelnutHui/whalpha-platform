@@ -39,9 +39,20 @@ and dated [audits](../audits/). Current capability and next work belong in
 - Added fixture-tested, outcome-blind adjudication for exactly the three
   supplemental REVG/SKX fields. It cannot create terminal references, labels,
   metrics, parameters, canonical writes, or Production state.
-- The current V2 review recognizes 274 complete feature sessions but remains
-  blocked solely on those five source cases. No outcome or parameter was
-  opened.
+- Acquired and formally reread the exact two-file SEC supplement; all three
+  missing REVG/SKX facts matched, completing all 11 registered source facts.
+- Published the final terminal report with 219 exact, 83 finite-interval, and
+  zero unbounded paths; a zero-network replay returned identical hashes.
+- Corrected the feature-session denominator: 287 chronological sessions minus
+  20 warm-up sessions yield 267 rankable cross-sections; after 13 whole-session
+  exclusions, 254 complete sessions exceed the 252 floor. The earlier 274
+  figure never opened outcomes or parameters.
+- Added and executed a source-driven V2 admission review. It reconciles
+  five-year/repeat/annual split sources, proves later split revisions touch zero
+  Primary included paths, and returns `ready_for_reconstructed_development`.
+  Only development labels and development-only selection are open; validation,
+  holdout, performance claims, Candidate activation, and Production remain
+  closed.
 
 ## 2026-09-15 — Freeze provider-neutral evidence acceptance
 

@@ -74,7 +74,7 @@ The exit criterion passed: the registered method is deterministic and
 explainable, the Lab record reproduces the same source identities, all
 zero-label guarantees pass, and no Production or Candidate authority changed.
 
-## Current gated phase — Reconstructed performance-data admission
+## Completed phase — Reconstructed performance-data admission
 
 This phase may proceed in parallel only when a mandatory evidence input truly
 changes. It must not interrupt method work with repeated manual adjudication.
@@ -90,30 +90,22 @@ exact/as-operated claim. Required gates for the research lane are:
 - declared costs/liquidity evidence; and
 - a real chronological evaluation dataset with sealed holdout custody.
 
-The V2 review recognizes 274 complete feature sessions. ADR 0269 now binds 63
-of 88 residual paths to finite conservative intervals, leaving 25 paths across
-five securities unbounded. Massive remains the primary price/reference source,
-not the sole lifecycle or terminal authority. The immediate plan uses five
-exact free official SEC documents; LSEG or another commercial source is
-optional. Do not build adapters from marketing claims or repeat scans against
-unchanged capability.
+Completed on 2026-09-15: seven retained official SEC documents support 219
+exact and 83 finite terminal references, leaving zero unbounded paths. The
+source-driven V2 review distinguishes 287 chronological sessions, 20 warm-up
+sessions, 267 rankable cross-sections, 254 complete cross-sections, and 13
+whole-session exclusions. It also verifies that later split-source revisions
+do not touch a Primary included path.
 
-The five-document plan and source are now retained and hash-verified. Its
-outcome-blind field review matched eight of eleven facts; the selected REVG
-and SKX documents omit three terms. The exact two-document supplemental SEC
-plan is now frozen and formally reread with zero requests. The next bounded
-work is to acquire it only with separate authority, adjudicate all named fields
-with the already tested zero-network evaluator, rebuild all 18 bounds, and
-rerun the V2 gate.
-
-Exit criterion: one immutable V2 admission report identifies every complete
+Exit criterion passed: one immutable V2 admission report identifies every complete
 feature session and every exact or interval-censored terminal path with no
-hidden exclusion. A positive result opens development only, not validation,
+hidden exclusion. Its positive result opens development only, not validation,
 holdout, performance claims, or Candidate activation.
 
-## Gated phase — Real Strong-Leader Pullback study
+## Current gated phase — Real Strong-Leader Pullback study
 
-Only after formal data admission:
+The reconstructed V2 admission now permits steps 1 and 2 on Dell. Each later
+transition remains separately gated:
 
 1. run the preregistered development stage on Dell;
 2. lock at most one specification within the 24-combination budget;

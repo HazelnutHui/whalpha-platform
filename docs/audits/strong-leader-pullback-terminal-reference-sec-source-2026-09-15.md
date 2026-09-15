@@ -70,6 +70,22 @@ document writes. The two documents have not been acquired. The immutable
 five-document source remains retained as valid partial evidence, and LSEG is
 not required for this correction.
 
-The supplemental three-field adjudicator is fixture-tested and remains
-outcome-blind. It has not run against real supplemental content because that
-content does not yet exist.
+## Supplemental completion
+
+The exact two-document supplement was subsequently acquired under the frozen
+plan with two requests, zero retries, and 5,064,066 retained bytes:
+
+- source package:
+  `historical-source/strong-leader-pullback-terminal-reference-sec-supplement-content/source=20260915-v1`;
+- source manifest SHA-256:
+  `e09a68dfaa896faecd8bd06f3ffcec62edf49997a841a1ac18752043d3bf8330`;
+- source logical fingerprint:
+  `2fc86e39950e93b0f93fc96a8d8bfad20e4efb4be62b3a74b87cf279ed9b0eee`.
+
+A formal reread returned `already_present` with no new request. The real
+zero-network adjudication matched all three missing REVG/SKX fields; its
+logical fingerprint is
+`8836b3dd50eda3bbb9d95da9d27446ef08082036bd8bebaa8e9b900c1149af4`.
+Together, the original and supplemental packages cover all 11 registered
+facts. No outcome, parameter, canonical data, Candidate, or Production state
+was changed by acquisition or adjudication.

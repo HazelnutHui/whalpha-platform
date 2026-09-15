@@ -70,7 +70,7 @@ acquisition gap.
 | Membership | 3 signal-eligible plus 1,250 physically separate reconstructed research-only sessions; combined 1,253 / 1,255 |
 | Corporate actions | 4,643 first-strategy exposures; 4,623 exact event-date assignments and 20 unassigned; absence neutrality remains unproven |
 | Adjustment | 101,321 sparse split-only rows; 98,291 clear and 3,030 quarantined; neutral omitted rows and total-return coverage are unproven |
-| Lifecycle/terminal | 214 exact + 63 finite-interval references of 302 five-session paths; 25 paths / 5 cases remain unbounded; references are not outcomes |
+| Lifecycle/terminal | 219 exact + 83 finite-interval references of 302 five-session paths; zero unbounded; references are not outcomes |
 | Classification | complete point-in-time historical classification absent |
 | Fundamentals | cutoff-aware SEC engineering exists for four registered queries; only four sessions have strict as-operated next-open projection evidence |
 | Historical Coverage | final pre-research review V2 is `rejected_data_blocked`; no research-ready manifest exists |
@@ -112,9 +112,12 @@ Two different gates must remain visible:
 - **Method engineering:** authorized for the registered method, synthetic and
   adversarial tests, private outcome-blind diagnostics, zero-row future-label
   interfaces, and Lab method/readiness presentation.
-- **Performance research:** rejected until complete point-in-time Membership,
-  lifecycle/terminal outcomes, corporate-action neutrality, adjustment basis,
-  exact Historical Coverage, costs, and sealed evaluation custody are admitted.
+- **Strict exact/as-operated performance research:** remains rejected until all
+  point-in-time Membership, lifecycle, action, adjustment, cost, and Historical
+  Coverage requirements are exact.
+- **Reconstructed development:** separately admitted under ADR 0268 with
+  complete-session ranks, frozen mechanical adjustments, conservative terminal
+  intervals, fixed costs, and sealed evaluation controls.
 
 The launch report is in owner-only Dell custody at
 `historical-evidence/strong-leader-pullback-method-engineering-launch-review/review=20260914-v1`.
@@ -155,8 +158,9 @@ changing any registered trigger threshold. An independent complete replay
 returned the identical report and fingerprints with zero external, canonical,
 or Production writes.
 
-The final performance-admission report remains
-`rejected_data_blocked`. Report SHA-256:
+The stricter exact/as-operated pre-research report remains
+`rejected_data_blocked`; it is not the separate ADR 0268 reconstructed V2
+decision. Strict report SHA-256:
 `0c433cd4d8f97c5e6b9df0af5cfaf4533f83160ab07d88ed7c5774dbd74d5bb1`;
 logical fingerprint:
 `b58a3671451ba89332b0fe437ecdea48389156ffac59bd1cc26266700c81a149`.
@@ -169,50 +173,41 @@ Do not copy them back into this recovery file.
 LSEG contact is owner-reported submitted, but no response, sample, quote,
 entitlement, or permission decision has been reviewed. LSEG, ICE, S&P,
 Norgate, or another provider remains optional future evidence work. No named
-source is a prerequisite for the current reconstructed lane. The remaining
-terminal-bound plan is limited to five free official SEC documents; future
-commercial samples must still pass the frozen 20-action / 64-lifecycle
-acceptance population.
+source is a prerequisite for the admitted reconstructed lane. Any future
+commercial sample must still pass the frozen 20-action / 64-lifecycle
+acceptance population before it changes a stronger exact/as-operated claim.
 
 ADR 0267 and Source Acceptance Result V1 freeze provider-neutral evaluation of
-that population. ADR 0268 now adds a separate reconstructed-research admission
-that preserves complete cross-section ranks and requires finite adversarial
-bounds for every non-exact terminal reference. Its initial in-memory review binds
-274 complete feature sessions and binds 214 exact plus 63 interval-censored
-terminal references. It remains `blocked` solely because 25 paths across LNW,
-MTSR, REVG, SAND, and SKX are still unbounded; terminal-bounds fingerprint
-`7975716fffe346a432c2a184bbef35cf47e306868ac33e66356edbe652cc5e6f` and
-current decision fingerprint
-`a3d7d94cffb8564208217f06fe035ac0c6c9f2fbcec7382a9c4cfebd916d720d`.
-No outcome or parameter was opened. SEC, FINRA, OpenFIGI, Alpha Vantage Listing
-Status, issuer, and exchange evidence retain narrow free-source roles; no
-commercial provider sample has been promoted.
+that population. ADR 0268 adds a separate reconstructed-research admission that
+preserves complete cross-section ranks and requires finite adversarial bounds
+for every non-exact terminal reference. The formal V2 report correctly binds
+287 chronological sessions, 20 warm-up sessions, 267 rankable sessions, 254
+complete sessions, and 13 whole-session exclusions. Terminal references are
+219 exact plus 83 finite intervals, with zero unbounded paths.
 
-The five-document SEC request plan is retained at
-`historical-evidence/strong-leader-pullback-terminal-reference-sec-plan/plan=20260915-v1`.
-It binds LNW, MTSR, REVG, SAND, and SKX to implementation revision
-`ebf58010651642e6cf1221be03c2a5258864e4ff`, report SHA-256
-`68e47bdb57f94edcb9143baa659d26174092502cb12573e3355dd1c363f8e3a1`,
-and logical fingerprint
-`385178ea480fc5813719a2fa924ba0a5abfd1efe046d37fbf6f28bc5c593c410`.
-Its exact five documents are now retained under source revision
-`60709ee653e015c3a3b520ba2c6e3c91d5adc49c`: five requests, zero retries,
-7,316,540 bytes, manifest SHA-256
-`8a475a228dc36d95f21611963fff1c6e09f5605b1eab6bb0cec89d5b8951c0e4`,
-and logical fingerprint
-`1cad0618842eae64cc88d8b5e38b9c1f6d51b1e1b0e7b12940b207240144e113`.
-Formal reread used zero requests. Outcome-blind review matched 8 of 11 frozen
-facts: REVG's selected completion release omits both consideration values and
-SKX's selected 10-K omits the mixed-election cash value. No bound or admission
-state changed. Two free SEC supplemental candidates are metadata-verified but
-not yet acquired. Their owner-only plan `plan=20260915-v1` is bound to revision
-`661fcf12a82694215148b03f683b71ae6aa32d84`, report SHA-256
-`097701d9e9bd76a889418f4e946402e8394d17ed24aac3005e628e628d43e3a7`,
-and logical fingerprint
-`20b7a0fd0278b14797fd9e60d871075dfa6fb8dd6ce8640d4f1fad5818040fa6`.
-It was formally reread with zero requests, credential reads, or document
-writes. See the
-[dated audit](../audits/strong-leader-pullback-terminal-reference-sec-source-2026-09-15.md).
+The owner-only report is
+`historical-evidence/strong-leader-pullback-research-admission-v2/review=20260915-v1`;
+report SHA-256
+`aefaa2590d89d310a16d0ff0d0c3eb84e185611c633448b2af28c26628c4e49c`;
+logical fingerprint
+`6b6ea132a8efb68cf0ab21ed5911871361055692d92516a344d185415ca06a16`.
+An exact zero-network replay returned `already_present`. It opens development
+labels and development-only selection, but not validation, holdout,
+performance claims, Candidate activation, publication, or Production.
+
+The original five-document and exact two-document supplemental SEC packages
+are retained in owner-only custody. The supplement used two requests, zero
+retries, and 5,064,066 bytes; manifest SHA-256
+`e09a68dfaa896faecd8bd06f3ffcec62edf49997a841a1ac18752043d3bf8330`;
+logical fingerprint
+`2fc86e39950e93b0f93fc96a8d8bfad20e4efb4be62b3a74b87cf279ed9b0eee`.
+The zero-network supplemental adjudication matched all three missing facts.
+The final terminal report SHA-256 is
+`5a49da2a9c148b2c237faf3b3232cd1a1de5f532c6a575645b455f3b2145bcdd`;
+logical fingerprint
+`37e8f7adf3433649c18961a96390be7f27ee2c0009f0d84609277ca4687c1777`.
+See the [SEC source audit](../audits/strong-leader-pullback-terminal-reference-sec-source-2026-09-15.md)
+and [final bounds audit](../audits/strong-leader-pullback-terminal-reference-final-review-2026-09-15.md).
 
 ## Automation and boundaries
 
@@ -222,8 +217,10 @@ delivery. No unattended write-capable scheduler is installed; SMTP is
 unconfigured. The guarded manual chain works end to end.
 
 No current document authorizes another live SEC acquisition, `/data` mutation,
-real research outcomes, model activation, publication, deployment, scheduler
-mutation, order execution, or destructive cleanup.
+validation or holdout access, model activation, publication, deployment,
+scheduler mutation, order execution, or destructive cleanup. The V2 report
+does authorize the registered reconstructed development-label and
+development-only selection stages on Dell.
 
 ## Cross-device continuity
 

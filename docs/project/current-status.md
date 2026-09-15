@@ -14,17 +14,16 @@ ADRs, and audits.
   session at the 2026-09-14 deployment review.
 - **Five-year source depth:** EOD price and stable Identity complete.
 - **Professional performance foundation:** the strict exact/as-operated gate
-  remains `data_blocked`; reconstructed-research V2 is separately blocked only
-  on 25 still-unbounded terminal-crossing paths.
+  remains `data_blocked`; reconstructed-research V2 is separately
+  `ready_for_reconstructed_development`.
 - **First strategy:** its canonical method, derived Lab record, pure
   signal/cohort engine, and outcome-blind diagnostic pipeline are implemented.
-  The reconstructed private population has been diagnosed and independently
-  replayed; no real outcome, performance result, or Candidate authority exists.
+  The reconstructed private population is admitted for development-label
+  construction and development-only parameter selection; no real result,
+  validation, holdout access, performance claim, or Candidate authority exists.
 - **External source:** no commercial lifecycle source is selected or required
-  for the current bounded step. The frozen five-document free official SEC
-  batch is retained and hash-verified; it supports 8 of 11 preregistered facts.
-  The exact two-file free SEC supplement is frozen and metadata-verified but
-  not acquired; its three-field outcome-blind adjudicator is fixture-tested.
+  for the admitted reconstructed lane. Seven exact free official SEC documents
+  are retained and hash-verified; all 11 preregistered source facts matched.
 - **Automation:** guarded manual daily operation works; unattended write-
   capable operation is not active.
 
@@ -65,13 +64,13 @@ history is much deeper.
 | Membership | combined 1,253 / 1,255 sessions | reconstructed history is not `as_operated` |
 | Corporate actions | 4,643 first-strategy exposures; 20 unassigned | absence neutrality unproven |
 | Adjustment | 101,321 sparse split-only rows | no neutral-row or total-return authority |
-| Lifecycle/terminal | 214 exact + 63 finite-interval paths of 302; five SEC documents retained | 8/11 planned source facts matched, but 25 paths stay unbounded until supplemental evidence and a new bounds report; references are not outcomes |
+| Lifecycle/terminal | 219 exact + 83 finite-interval references of 302 | zero unbounded paths; references are not outcomes |
 | Historical classification | no complete point-in-time family | absent |
 | SEC fundamentals | four registered query paths; four strict sessions | engineering evidence only |
 | Costs/liquidity | transparent fixed scenarios | no observed spread/impact calibration |
 | Historical Coverage | immutable strict review V2 | `rejected_data_blocked` |
-| Reconstructed research admission | 274 complete feature sessions; 25 unbounded terminal paths | `blocked` |
-| Evaluation/holdout | fixture-tested mechanics | no real dataset or sealed real holdout |
+| Reconstructed research admission | 287 chronological; 20 warm-up; 267 rankable; 254 complete; 13 excluded | `ready_for_reconstructed_development` |
+| Evaluation/holdout | fixed chronological mechanics and sealed controls | development open; validation and holdout closed |
 
 The five-year database is therefore a strong source and engineering foundation,
 not a complete professional backtest database. Later-retrieved evidence may be
@@ -102,18 +101,19 @@ activation, or Production use. The strict exact/as-operated gate still has
 zero complete Primary session cross-sections.
 
 ADR 0268 adds a distinct latest-vintage reconstructed lane without changing
-that strict result. Its pure V2 evaluator recognizes 274 complete
-cross-sections and the frozen mechanical split evidence, but the initial review
-is still blocked: 214 of 302 terminal-crossing paths have exact reference
-values and 63 now have frozen conservative intervals—not calculated returns.
-The remaining 25 paths across LNW, MTSR, REVG, SAND, and SKX are still
-unbounded in the authoritative bounds report. The first five-document SEC
-batch is now retained and eight of eleven preregistered facts match. The
-selected REVG completion release omits its two consideration values, while the
-selected SKX 10-K omits the mixed-election cash value. Missing terminal rows
-cannot be silently removed or point-imputed. Development labels and parameters
-remain closed until the two free supplemental SEC documents are retained, all
-fields are adjudicated, the bounds report is rebuilt, and the gate is rerun.
+that strict result. The source-driven V2 review correctly separates 20
+feature-window warm-up sessions from 267 rankable cross-sections. After 13
+whole-session exclusions, 254 complete cross-sections exceed the registered
+252-session floor. Seven retained SEC documents support final terminal bounds
+of 219 exact and 83 finite-interval references, with zero unbounded paths.
+
+The immutable V2 decision is `ready_for_reconstructed_development`; report
+SHA-256 `aefaa2590d89d310a16d0ff0d0c3eb84e185611c633448b2af28c26628c4e49c`
+and logical fingerprint
+`6b6ea132a8efb68cf0ab21ed5911871361055692d92516a344d185415ca06a16`.
+It opens only development-label construction and development-only parameter
+selection. Validation, holdout, performance claims, Candidate activation,
+publication, and Production remain closed.
 
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
@@ -153,13 +153,13 @@ measured budget breach.
    preregistered version.
 2. Preserve Baseline V1, reconstructed Membership, and all unresolved evidence
    states without silent inference.
-3. Preserve the verified five-document SEC source and acquire only the frozen
-   two-document supplement for REVG and SKX after separate authorization, then
-   adjudicate all named fields; do not build a general adapter or reopen the 13
-   cases whose finite intervals already reconcile.
-4. Rerun reconstructed-research V2. Only a positive decision may open
-   development labels; validation and the single-use holdout stay separate.
-5. Preserve either validation or failure without retuning V1.
+3. Construct the immutable 1/3/5-session development-label dataset on Dell,
+   preserving exact and interval-censored rows separately and applying every
+   registered cost scenario.
+4. Evaluate only the 24 preregistered specifications on the development split
+   and lock at most one before any validation access.
+5. Preserve either later validation or failure without retuning V1; validation,
+   holdout, Candidate activation, and web performance remain separate gates.
 
 Do not project current Membership or taxonomy backward, infer lifecycle from
 ticker patterns, call price/volume fund flow, call stock outcomes option
