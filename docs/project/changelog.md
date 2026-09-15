@@ -22,6 +22,12 @@ and dated [audits](../audits/). Current capability and next work belong in
   Validation, Holdout, publication, or trading authority was granted.
 - Set finite Development-screen preregistration as the next research boundary;
   outcomes remain unread.
+- Updated the trilingual public dossier and protected Lab without changing
+  analytics or Baseline V1, then deployed OCI release
+  `2026-09-15T164234Z-188c7ae00193` from source
+  `188c7ae00193e75c0386515a48bda32faca94457`. Independent postflight verified
+  exact checksums, guest access, protected routes, services, listeners, and
+  zero staging or failed-release residue.
 
 ## 2026-09-15 — Synchronize the website with Factor Discovery V2
 
