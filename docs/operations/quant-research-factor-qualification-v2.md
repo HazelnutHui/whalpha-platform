@@ -23,6 +23,14 @@ with the exact canonical data root, Membership shadow root, development census,
 canonical split-action publication, canonical split-adjustment publication,
 and owner-only output/custody roots.
 
+When repairing the proved pre-2025-06-23 split boundary under ADR 0280, also
+pass the exact persistent five-year candidate build and its owner-only custody
+root as `--historical-split-candidate-root` and
+`--historical-split-candidate-custody-root`. Both arguments are required
+together. The runner first revalidates the canonical evidence bound by the
+development census, then reconciles the private extension against it. This
+mode remains outcome-blind and never writes `/data`.
+
 The runner disables network access, verifies the exact 287-session population,
 reads the preceding 126 EOD sessions only as factor warm-up, and logs bounded
 progress. It quarantines stock-specific source defects by stable ID and closes

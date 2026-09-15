@@ -11,6 +11,9 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0280](0280-admit-private-five-year-split-evidence-for-outcome-blind-factor-qualification.md):
+  admits a formally reread, canonical-reconciled five-year split extension
+  only for the frozen zero-outcome V2 qualification repair.
 - [ADR 0279](0279-freeze-factor-catalog-v2-outcome-blind-qualification.md):
   freezes V2 coverage, missingness, distribution, concentration, redundancy,
   isolation, and exact-replay rules before any real factor value is inspected.

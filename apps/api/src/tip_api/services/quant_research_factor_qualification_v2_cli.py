@@ -45,6 +45,9 @@ from tip_api.services.candidate_strategy_development_coverage_cli import (
     _validated_data_root,
     _validated_shadow_root,
 )
+from tip_api.services.historical_split_adjustment_candidate import (
+    read_historical_split_adjustment_candidate,
+)
 from tip_api.services.market_calendar import ExchangeCalendar
 from tip_api.services.quant_research_factor_matrix_v2 import (
     QuantResearchFactorMatrixV2,
@@ -56,6 +59,10 @@ from tip_api.services.quant_research_factor_qualification_v2 import (
 )
 from tip_api.services.quant_research_factor_values_v2 import (
     QuantResearchFactorBarV2,
+)
+from tip_api.services.quant_research_historical_split_extension_v2 import (
+    QuantResearchSplitAdjustmentV2,
+    build_quant_research_historical_split_evidence_v2,
 )
 from tip_api.services.strong_leader_pullback_diagnostics_cli import (
     _network_disabled,
@@ -90,6 +97,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--split-adjustment-publication-root", type=Path, required=True)
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--output-custody-root", type=Path, required=True)
+    parser.add_argument("--historical-split-candidate-root", type=Path)
+    parser.add_argument("--historical-split-candidate-custody-root", type=Path)
     args = parser.parse_args(argv)
     try:
         path, report = run_quant_research_factor_qualification_v2(
@@ -102,6 +111,12 @@ def main(argv: list[str] | None = None) -> int:
             ),
             output_root=args.output_root,
             output_custody_root=args.output_custody_root,
+            historical_split_candidate_root=(
+                args.historical_split_candidate_root
+            ),
+            historical_split_candidate_custody_root=(
+                args.historical_split_candidate_custody_root
+            ),
         )
     except Exception as exc:
         print(
@@ -154,6 +169,8 @@ def run_quant_research_factor_qualification_v2(
     split_adjustment_publication_root: Path,
     output_root: Path,
     output_custody_root: Path,
+    historical_split_candidate_root: Path | None = None,
+    historical_split_candidate_custody_root: Path | None = None,
 ):
     with _network_disabled():
         canonical_root = _validated_data_root(data_root)
@@ -177,6 +194,12 @@ def run_quant_research_factor_qualification_v2(
                 adjustment_source.publication.logical_fingerprint
             ),
         )
+        if (historical_split_candidate_root is None) != (
+            historical_split_candidate_custody_root is None
+        ):
+            raise QuantResearchFactorQualificationV2CliError(
+                "historical split candidate root and custody must be supplied together"
+            )
 
         calendar = ExchangeCalendar()
         ordered_sessions = tuple(item.session_date for item in census.sessions)
@@ -215,6 +238,76 @@ def run_quant_research_factor_qualification_v2(
                 "canonical EOD does not cover the exact V2 source interval"
             )
 
+        all_member_ids = frozenset(
+            item.instrument_id
+            for records in memberships.values()
+            for item in records
+        )
+        first_source_read = repository.read_history_sessions((source_sessions[0],))[0]
+        spy_id = _spy_instrument_id(first_source_read.bars)
+        if historical_split_candidate_root is not None:
+            historical_candidate = read_historical_split_adjustment_candidate(
+                output_root=historical_split_candidate_root,
+                output_custody_root=(
+                    historical_split_candidate_custody_root
+                ),
+            )
+            split_evidence = build_quant_research_historical_split_evidence_v2(
+                candidate=historical_candidate.candidate,
+                candidate_file_sha256=historical_candidate.file_sha256,
+                canonical_action_source=action_source,
+                canonical_adjustment_source=adjustment_source,
+                source_sessions=source_sessions,
+                required_ids=all_member_ids | {spy_id},
+            )
+            source_action_fingerprint = split_evidence.source_action_fingerprint
+            source_adjustment_fingerprint = (
+                split_evidence.source_adjustment_fingerprint
+            )
+            active_action_keys = set(split_evidence.active_action_keys)
+            quarantined_action_keys = set(
+                split_evidence.quarantined_action_keys
+            )
+            unresolved_impact_keys = set(split_evidence.unresolved_impact_keys)
+            clear_adjustments = split_evidence.clear_adjustments
+            quarantined_adjustment_keys = set(
+                split_evidence.quarantined_adjustment_keys
+            )
+            action_start = split_evidence.action_start
+            adjustment_start = split_evidence.adjustment_start
+        else:
+            source_action_fingerprint = action_source.publication.logical_fingerprint
+            source_adjustment_fingerprint = (
+                adjustment_source.publication.logical_fingerprint
+            )
+            active_action_keys = {
+                (item.instrument_id, item.effective_date)
+                for item in action_source.actions
+                if item.record_status is CorporateActionRecordStatus.ACTIVE
+            }
+            quarantined_action_keys = {
+                (item.instrument_id, item.effective_date)
+                for item in action_source.actions
+                if item.record_status is not CorporateActionRecordStatus.ACTIVE
+            }
+            unresolved_impact_keys = {
+                (item.instrument_id, effective_date)
+                for item in action_source.publication.possible_unresolved_impacts
+                for effective_date in item.effective_dates
+            }
+            clear_adjustments = {
+                (item.instrument_id, item.source_session): item
+                for item in adjustment_source.records
+                if item.split_adjustment_status is AdjustmentAvailabilityStatus.CLEAR
+            }
+            quarantined_adjustment_keys = {
+                (item.instrument_id, item.source_session)
+                for item in adjustment_source.records
+                if item.split_adjustment_status is not AdjustmentAvailabilityStatus.CLEAR
+            }
+            action_start = action_source.publication.start_date
+            adjustment_start = adjustment_source.publication.first_source_session
+
         evidence_by_family = {item.family: item for item in census.dataset_evidence}
         eod_fingerprint = evidence_by_family["eod_price_bar"].logical_fingerprint
         membership_fingerprint = evidence_by_family[
@@ -229,10 +322,8 @@ def run_quant_research_factor_qualification_v2(
             source_population_fingerprint=source_population_fingerprint,
             source_eod_fingerprint=eod_fingerprint,
             source_membership_fingerprint=membership_fingerprint,
-            source_action_fingerprint=action_source.publication.logical_fingerprint,
-            source_adjustment_fingerprint=(
-                adjustment_source.publication.logical_fingerprint
-            ),
+            source_action_fingerprint=source_action_fingerprint,
+            source_adjustment_fingerprint=source_adjustment_fingerprint,
             calculation_code_sha256=_calculation_code_sha256(),
             diagnostic_code_sha256=_diagnostic_code_sha256(),
             first_source_session=source_sessions[0],
@@ -244,8 +335,13 @@ def run_quant_research_factor_qualification_v2(
             source_sessions=source_sessions,
             signal_sessions=frozenset(ordered_sessions),
             memberships=memberships,
-            action_source=action_source,
-            adjustment_source=adjustment_source,
+            active_action_keys=active_action_keys,
+            quarantined_action_keys=quarantined_action_keys,
+            unresolved_impact_keys=unresolved_impact_keys,
+            clear_adjustments=clear_adjustments,
+            quarantined_adjustment_keys=quarantined_adjustment_keys,
+            action_start=action_start,
+            adjustment_start=adjustment_start,
             calendar=calendar,
         )
         report = accumulator.build()
@@ -344,8 +440,15 @@ def _accumulate_source_interval(
     source_sessions: tuple[date, ...],
     signal_sessions: frozenset[date],
     memberships: Mapping[date, tuple[object, ...]],
-    action_source,
-    adjustment_source,
+    active_action_keys: set[tuple[UUID, date]],
+    quarantined_action_keys: set[tuple[UUID, date]],
+    unresolved_impact_keys: set[tuple[UUID, date]],
+    clear_adjustments: Mapping[
+        tuple[UUID, date], AdjustmentLedgerEntryV1 | QuantResearchSplitAdjustmentV2
+    ],
+    quarantined_adjustment_keys: set[tuple[UUID, date]],
+    action_start: date,
+    adjustment_start: date,
     calendar: ExchangeCalendar,
 ) -> None:
     all_member_ids = frozenset(
@@ -353,31 +456,6 @@ def _accumulate_source_interval(
         for records in memberships.values()
         for item in records
     )
-    active_action_keys = {
-        (item.instrument_id, item.effective_date)
-        for item in action_source.actions
-        if item.record_status is CorporateActionRecordStatus.ACTIVE
-    }
-    quarantined_action_keys = {
-        (item.instrument_id, item.effective_date)
-        for item in action_source.actions
-        if item.record_status is not CorporateActionRecordStatus.ACTIVE
-    }
-    unresolved_impact_keys = {
-        (item.instrument_id, effective_date)
-        for item in action_source.publication.possible_unresolved_impacts
-        for effective_date in item.effective_dates
-    }
-    clear_adjustments = {
-        (item.instrument_id, item.source_session): item
-        for item in adjustment_source.records
-        if item.split_adjustment_status is AdjustmentAvailabilityStatus.CLEAR
-    }
-    quarantined_adjustment_keys = {
-        (item.instrument_id, item.source_session)
-        for item in adjustment_source.records
-        if item.split_adjustment_status is not AdjustmentAvailabilityStatus.CLEAR
-    }
     window: deque[tuple[date, dict[UUID, EodMarketBarReadModel]]] = deque(
         maxlen=127
     )
@@ -424,8 +502,8 @@ def _accumulate_source_interval(
             unresolved_impact_keys=unresolved_impact_keys,
             clear_adjustments=clear_adjustments,
             quarantined_adjustment_keys=quarantined_adjustment_keys,
-            action_start=action_source.publication.start_date,
-            adjustment_start=adjustment_source.publication.first_source_session,
+            action_start=action_start,
+            adjustment_start=adjustment_start,
         )
         accumulator.add_session(
             as_of_session=source_session,
@@ -459,7 +537,9 @@ def _build_signal_factor_payload(
     active_action_keys: set[tuple[UUID, date]],
     quarantined_action_keys: set[tuple[UUID, date]],
     unresolved_impact_keys: set[tuple[UUID, date]],
-    clear_adjustments: Mapping[tuple[UUID, date], AdjustmentLedgerEntryV1],
+    clear_adjustments: Mapping[
+        tuple[UUID, date], AdjustmentLedgerEntryV1 | QuantResearchSplitAdjustmentV2
+    ],
     quarantined_adjustment_keys: set[tuple[UUID, date]],
     action_start: date,
     adjustment_start: date,
@@ -621,7 +701,7 @@ def _valid_factor_bar(bar: EodMarketBarReadModel | None) -> bool:
 
 def _adjusted_factor_bar_v2(
     bar: EodMarketBarReadModel,
-    adjustment: AdjustmentLedgerEntryV1 | None,
+    adjustment: AdjustmentLedgerEntryV1 | QuantResearchSplitAdjustmentV2 | None,
 ) -> QuantResearchFactorBarV2:
     price = Decimal("1")
     volume = Decimal("1")
@@ -664,6 +744,7 @@ def _diagnostic_code_sha256() -> str:
             / "contracts/analytics/v1/quant_research_factor_qualification_v2.py",
             root / "services/quant_research_factor_qualification_v2.py",
             root / "services/quant_research_factor_qualification_v2_cli.py",
+            root / "services/quant_research_historical_split_extension_v2.py",
         )
     )
 
