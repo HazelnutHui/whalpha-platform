@@ -161,12 +161,15 @@ roadmap.
 ADR 0273 registers the first outcome-blind Factor Catalog V1: 12 exact daily
 price/volume definitions across five economic families. They are one bounded
 catalog version, not the permanent factor universe and not a promised next
-strategy. The next permitted work is deterministic formula implementation and
-an outcome-free coverage, missingness, distribution, concentration,
-correlation, and reproducibility report. Only after that report may a separate
-before-outcomes screening protocol be frozen.
+strategy. Deterministic formula implementation and the outcome-free coverage,
+missingness, distribution, concentration, correlation, and exact-replay report
+are complete under ADR 0275. The report covers 418,756 complete factor vectors
+across 255 eligible sessions, retains 18,646 explicit quarantines, and finds no
+pair meeting the frozen near-duplicate rule. These are calculation-quality
+facts, not Alpha evidence. The next permitted work is to freeze a separate
+before-outcomes screening protocol.
 
-No factor return, selected threshold, model weight, three-layer model,
+No factor has been admitted. No factor return, selected threshold, model weight, three-layer model,
 strategy expression, Lab performance publication, or active Candidate model
 currently exists.
 

@@ -65,11 +65,12 @@ than the permanent factor universe or a promised next strategy.
 
 Sequence:
 
-1. implement the typed catalog and deterministic factor formulas;
-2. compute only coverage, missingness, ties, dispersion, outliers,
-   concentration, correlation, redundancy, and reproducibility;
-3. retain one immutable outcome-free qualification report;
-4. review whether definitions, data, and effective sample meet a frozen
+1. ~~Implement the typed catalog and deterministic factor formulas.~~ Complete.
+2. ~~Compute coverage, missingness, ties, dispersion, outliers, concentration,
+   correlation, redundancy, and reproducibility without outcomes.~~ Complete.
+3. ~~Retain and independently replay one immutable outcome-free qualification
+   report.~~ Complete under ADR 0275.
+4. Review whether definitions, data, and effective sample meet a frozen
    screening entry gate; and
 5. before any forward return is read, register the finite screening cohort,
    labels, costs, related-hypothesis groups, multiplicity, stability tests,

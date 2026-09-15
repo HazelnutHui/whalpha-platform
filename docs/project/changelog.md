@@ -6,6 +6,25 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-15 — Qualify the first factor catalog without outcomes
+
+- Implemented the immutable 12-factor catalog, deterministic point-in-time
+  calculations, typed observation and diagnostics contracts, private Dell
+  runner, and owner-only idempotent report custody.
+- Froze coverage, distribution, outlier, concentration, same-session Spearman,
+  near-duplicate, and replay rules in ADR 0275 before reading the real cohort.
+- Reconciled 437,402 paths across 287 sessions to 418,756 complete 12-factor
+  vectors and 18,646 explicit split-evidence quarantines. All 66 factor pairs
+  were checked; none met the frozen near-duplicate rule.
+- Independently replayed the complete cohort to logical fingerprint
+  `fb92e95acb146af66fb4d9e286c96852374a51884936c4accacdab02`; the immutable
+  report SHA-256 remained
+  `3767c39e327e8e3959d184ae8a16d2c5be3e1425fda416093b6aeefc51485e5e`.
+- Preserved zero forward outcomes, zero performance metrics, zero factor
+  admissions, and zero model, strategy, Candidate, canonical-data, or
+  Production authority. The next gate is a separate before-outcomes screening
+  protocol.
+
 ## 2026-09-15 — Adopt the three-layer quantitative-research architecture
 
 - Accepted ADR 0274 and made Factor Discovery -> Model Construction -> Strategy

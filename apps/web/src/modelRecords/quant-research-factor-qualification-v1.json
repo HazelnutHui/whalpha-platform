@@ -1,0 +1,158 @@
+{
+  "record_id": "whalpha.factor-qualification.price-volume-v1",
+  "contract_version": "quant-research-factor-diagnostics/1.0",
+  "protocol_version": "quant-research-factor-qualification/1.0.0",
+  "catalog_id": "whalpha.factor-catalog.price-volume-v1",
+  "catalog_fingerprint": "699fff686d2b05c53ba5f586934224794e17cef8d38690ced6a7da2dcd5a9368",
+  "report_logical_fingerprint": "fb92e95acb146af66fb4d9e286c96852374a51884936f5d69536c4accacdab02",
+  "report_sha256": "3767c39e327e8e3959d184ae8a16d2c5be3e1425fda416093b6aeefc51485e5e",
+  "first_session": "2025-06-23",
+  "last_session": "2026-08-12",
+  "session_count": 287,
+  "eligible_session_count": 255,
+  "instrument_count": 2161,
+  "expected_path_count": 437402,
+  "complete_factor_vector_count": 418756,
+  "incomplete_factor_vector_count": 18646,
+  "coverage_percent": 95.7371,
+  "available_factor_cell_count": 5025072,
+  "unavailable_factor_cell_count": 223752,
+  "factor_count": 12,
+  "family_count": 5,
+  "candidate_alpha_count": 5,
+  "setup_conditioner_count": 4,
+  "risk_guard_count": 3,
+  "pairwise_correlation_count": 66,
+  "near_duplicate_group_count": 0,
+  "maximum_absolute_weighted_same_session_spearman": 0.7812291509,
+  "maximum_session_observation_share": 0.0042387452,
+  "maximum_instrument_observation_share": 0.0006089465,
+  "unavailable_reason_codes": [
+    "complete_cross_section_split_evidence_quarantined"
+  ],
+  "limitation_codes": [
+    "historical_classification_unavailable",
+    "reconstructed_membership_not_as_operated",
+    "split_neutral_absence_unproven",
+    "temporal_coverage_limited_to_287_sessions"
+  ],
+  "contains_forward_outcomes": false,
+  "contains_performance_metrics": false,
+  "factor_admission_authorized": false,
+  "factor_screening_authorized": false,
+  "model_construction_authorized": false,
+  "strategy_expression_authorized": false,
+  "validation_authorized": false,
+  "holdout_access_authorized": false,
+  "candidate_activation_authorized": false,
+  "definitions": [
+    {
+      "factor_id": "relative_return_spy_20s",
+      "family": "relative_leadership",
+      "role": "candidate_alpha",
+      "expected_relationship": "positive_monotonic",
+      "exact_formula": "ln(C[t]/C[t-20]) - ln(B[t]/B[t-20])",
+      "source_fields": ["close", "spy_close"],
+      "source_window": "t-20_through_t"
+    },
+    {
+      "factor_id": "relative_return_acceleration_5_vs_prior15",
+      "family": "relative_leadership",
+      "role": "candidate_alpha",
+      "expected_relationship": "positive_monotonic",
+      "exact_formula": "[ln(C[t]/C[t-5])-ln(B[t]/B[t-5])] - [ln(C[t-5]/C[t-20])-ln(B[t-5]/B[t-20])]/3",
+      "source_fields": ["close", "spy_close"],
+      "source_window": "t-20_through_t_with_5_session_recent_leg"
+    },
+    {
+      "factor_id": "signed_path_efficiency_10s",
+      "family": "trend_path",
+      "role": "candidate_alpha",
+      "expected_relationship": "positive_monotonic",
+      "exact_formula": "sum(log(C[i]/C[i-1]),i=t-9..t)/sum(abs(log(C[i]/C[i-1])),i=t-9..t)",
+      "source_fields": ["close"],
+      "source_window": "ten_returns_from_t-10_through_t"
+    },
+    {
+      "factor_id": "positive_session_share_10s",
+      "family": "trend_path",
+      "role": "candidate_alpha",
+      "expected_relationship": "positive_monotonic",
+      "exact_formula": "count(C[i]/C[i-1]-1>0,i=t-9..t)/10",
+      "source_fields": ["close"],
+      "source_window": "ten_returns_from_t-10_through_t"
+    },
+    {
+      "factor_id": "largest_absolute_return_share_10s",
+      "family": "trend_path",
+      "role": "risk_guard",
+      "expected_relationship": "negative_monotonic",
+      "exact_formula": "max(abs(log(C[i]/C[i-1])))/sum(abs(log(C[i]/C[i-1])),i=t-9..t)",
+      "source_fields": ["close"],
+      "source_window": "ten_returns_from_t-10_through_t"
+    },
+    {
+      "factor_id": "prior_atr_ratio_5_to_14",
+      "family": "volatility_structure",
+      "role": "setup_conditioner",
+      "expected_relationship": "no_standalone_alpha_claim",
+      "exact_formula": "ATR5[t-1]/ATR14[t-1]",
+      "source_fields": ["high", "low", "close"],
+      "source_window": "true_ranges_ending_t-1"
+    },
+    {
+      "factor_id": "prior_close_range_10s_atr14",
+      "family": "volatility_structure",
+      "role": "setup_conditioner",
+      "expected_relationship": "no_standalone_alpha_claim",
+      "exact_formula": "(max(C[t-10:t-1])-min(C[t-10:t-1]))/ATR14[t-1]",
+      "source_fields": ["high", "low", "close"],
+      "source_window": "prior_ten_closes_and_prior_atr14"
+    },
+    {
+      "factor_id": "close_vs_prior_high_20s_atr14",
+      "family": "volatility_structure",
+      "role": "setup_conditioner",
+      "expected_relationship": "no_standalone_alpha_claim",
+      "exact_formula": "(C[t]-max(C[t-20:t-1]))/ATR14[t-1]",
+      "source_fields": ["high", "low", "close"],
+      "source_window": "t_against_prior_twenty_closes_and_prior_atr14"
+    },
+    {
+      "factor_id": "dollar_volume_surprise_1_to_20",
+      "family": "participation_execution",
+      "role": "setup_conditioner",
+      "expected_relationship": "no_standalone_alpha_claim",
+      "exact_formula": "(C[t]*V[t])/median(C[i]*V[i],i=t-20..t-1)",
+      "source_fields": ["close", "volume"],
+      "source_window": "signal_session_against_prior_twenty_sessions"
+    },
+    {
+      "factor_id": "close_location_value_1s",
+      "family": "participation_execution",
+      "role": "candidate_alpha",
+      "expected_relationship": "positive_monotonic",
+      "exact_formula": "(C[t]-L[t])/(H[t]-L[t])",
+      "source_fields": ["high", "low", "close"],
+      "source_window": "signal_session"
+    },
+    {
+      "factor_id": "absolute_overnight_gap_atr14",
+      "family": "downside_fragility",
+      "role": "risk_guard",
+      "expected_relationship": "negative_monotonic",
+      "exact_formula": "abs(O[t]-C[t-1])/ATR14[t-1]",
+      "source_fields": ["open", "high", "low", "close"],
+      "source_window": "signal_open_and_prior_atr14"
+    },
+    {
+      "factor_id": "rolling_maximum_drawdown_10s",
+      "family": "downside_fragility",
+      "role": "risk_guard",
+      "expected_relationship": "positive_monotonic",
+      "exact_formula": "min(C[j]/C[i]-1) for t-10<=i<j<=t",
+      "source_fields": ["close"],
+      "source_window": "eleven_closes_from_t-10_through_t"
+    }
+  ]
+}

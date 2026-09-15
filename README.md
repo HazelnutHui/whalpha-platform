@@ -117,6 +117,7 @@ See:
 - [ADR 0191: validated model promotion](docs/decisions/0191-promote-validated-research-models-into-stock-candidates.md)
 - [ADR 0194: bounded AI-assisted research](docs/decisions/0194-govern-ai-assisted-quant-research-as-a-bounded-factory.md)
 - [ADR 0274: factor-model-strategy architecture](docs/decisions/0274-adopt-factor-model-strategy-three-layer-research-architecture.md)
+- [ADR 0275: outcome-blind factor qualification](docs/decisions/0275-freeze-outcome-blind-factor-qualification-protocol.md)
 - [ADR 0195: reconstructed development admission](docs/decisions/0195-require-complete-session-cross-sections-for-reconstructed-development.md)
 - [ADR 0196: five-year point-in-time foundation](docs/decisions/0196-build-a-five-year-point-in-time-research-foundation-on-dell.md)
 

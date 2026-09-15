@@ -223,9 +223,13 @@ authority.
 - Strong-Leader Pullback is a completed rejected program and remains preserved
   as evidence of a functioning rejection path.
 - Quant Research Factor Catalog V1 is the first bounded discovery batch. Its
-  12 factors are not the permanent feature universe or a promised model.
+  12 factors are not the permanent feature universe or a promised model. Its
+  outcome-blind value, coverage, distribution, concentration, redundancy, and
+  exact-replay report is complete under ADR 0275; no factor has been admitted.
 - The current six Strategy Channels and Candidate score remain frozen,
   unvalidated Baseline V1 compatibility surfaces until separately replaced.
 - No three-layer model or strategy expression is active in Stock Candidates.
-- Validation, Holdout, publication, deployment, broker, and execution
+- The next research gate is a separate before-outcomes screening protocol;
+  Model Construction and Strategy Expression remain locked.
+- Validation, Holdout, publication, broker, and execution
   authority are unchanged.

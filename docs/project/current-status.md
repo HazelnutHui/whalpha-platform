@@ -25,7 +25,8 @@ ADRs, and audits.
 - **Research architecture:** ADR 0274 now makes Factor Discovery -> Model
   Construction -> Strategy Expression the durable path. The first 12-factor
   catalog is one bounded outcome-blind batch, not a permanent factor universe
-  or a promised next model.
+  or a promised next model. Its deterministic qualification report and exact
+  replay are complete; no factor has been admitted and outcomes remain closed.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -153,18 +154,21 @@ matched report SHA-256
 and logical fingerprint
 `086675c82efb4453f9bc71e88ad65fc0f64c411569313cd6ac3795ee0a6baaec`.
 Strong-Leader Pullback cannot receive a third selection rule over the same
-development outcome. The next work is a governed factor-discovery batch; no
-next strategy name is preselected.
+development outcome. Its rejection opened the succeeding governed factor-
+discovery batch; no next strategy name was preselected.
 
 ADR 0273 provides the first governed Factor Discovery batch. ADR 0274 places it
 inside the durable Factor Discovery -> Model Construction -> Strategy
 Expression architecture and removes the prior fixed strategy queue. The
 initial registry contains 12 exact, outcome-blind definitions across five
-economic families. The immediate operation is formula-contract implementation
-followed by a zero-outcome coverage, missingness, distribution, concentration,
-and redundancy report. No factor return, threshold, model weight, model name,
-or Alpha claim may be computed until a separate post-coverage/before-outcomes
-screening protocol is committed.
+economic families. Formula implementation and the ADR 0275 zero-outcome
+qualification report are complete and independently replayed: 418,756 complete
+12-factor vectors across 255 eligible sessions, 18,646 explicit quarantines,
+66 same-session pair checks, and zero near-duplicate groups under the frozen
+rule. The strongest absolute weighted Spearman relationship is 0.7812. These
+are method and data-quality facts, not predictive evidence. No factor return,
+threshold, model weight, model name, or Alpha claim may be computed until a
+separate post-coverage/before-outcomes screening protocol is committed.
 
 The versioned `strong-leader-pullback-method/1.0` contract is now the single
 source for exact features, raw-data lineage, parameters, evaluation design,
@@ -211,10 +215,10 @@ measured budget breach.
    it cannot be retuned.
 5. Preserve the completed ADR 0272 rejection and do not create V3 over the
    same development result. Validation and Holdout remain untouched and closed.
-6. Implement and inspect the ADR 0273 outcome-blind factor catalog before
-   reading any new outcome evidence.
-7. Freeze the bounded factor-screening protocol only after that coverage
-   report. Let admitted factor evidence determine whether any model should be
+6. Preserve the completed ADR 0275 factor-qualification report and exact
+   replay without treating coverage or low redundancy as Alpha evidence.
+7. Freeze the bounded factor-screening protocol before reading any new outcome
+   evidence. Let admitted factor evidence determine whether any model should be
    constructed; do not preselect Momentum Breakout or another named strategy.
 8. Keep Factor Discovery, Model Construction, and Strategy Expression as
    separate versioned records; lock the complete lineage before Validation.

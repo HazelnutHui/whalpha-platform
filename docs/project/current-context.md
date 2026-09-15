@@ -113,15 +113,21 @@ audits and archived contracts.
 ADR 0274 makes **Factor Discovery -> Model Construction -> Strategy
 Expression** the durable architecture. ADR 0273's 12 price/volume definitions
 are the first finite outcome-blind catalog, not the permanent factor universe
-or a promised model. No factor value, factor Alpha, model, strategy expression,
-or three-layer Product authority exists yet.
+or a promised model. Their deterministic value, coverage, distribution,
+concentration, redundancy, and exact-replay report is complete under ADR 0275.
+It contains 418,756 complete 12-factor vectors across 255 eligible sessions,
+18,646 explicit quarantines, 66 pair checks, and zero pairs meeting the frozen
+near-duplicate rule. Report SHA-256 is
+`3767c39e327e8e3959d184ae8a16d2c5be3e1425fda416093b6aeefc51485e5e`;
+logical fingerprint is
+`fb92e95acb146af66fb4d9e286c96852374a51884936c4accacdab02`.
 
-The next research action is to implement the factor definitions and produce
-zero-outcome coverage, missingness, distribution, concentration, redundancy,
-and replay evidence. A separate registered screening protocol must freeze
-labels, trial count, multiplicity, and stopping rules before any new outcome is
-read. Model Construction and Strategy Expression remain locked until their
-preceding evidence qualifies.
+No future outcome or performance metric was read and no factor was admitted.
+The next research action is a separate registered screening protocol that must
+freeze labels, cohort, trial count, related-hypothesis groups, multiplicity,
+stability gates, costs, selection cap, and stopping rules before any new
+outcome is read. Model Construction and Strategy Expression remain locked
+until their preceding evidence qualifies.
 
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility
