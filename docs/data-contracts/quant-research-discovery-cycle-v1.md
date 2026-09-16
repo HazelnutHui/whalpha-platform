@@ -51,7 +51,9 @@ cap, and stopping rule. Lineage mismatch, stage leakage, trial-budget breach,
 replay failure, or sealed-partition breach pauses the affected campaign without
 deleting previous evidence.
 
-The current state is `ready_for_next_campaign_design`: two campaigns and 14
-formal trials are closed, no new campaign is registered, and no model input is
-authorized.
-
+The contract's embedded state is the immutable baseline at version 1.0
+registration: `ready_for_next_campaign_design`, two closed campaigns, and 14
+formal trials. It is not a live current-state record. Campaign Three was later
+registered in Ledger V4 with three unread trials, bringing cumulative formal
+trials to 17; read [current status](../project/current-status.md) and the latest
+ledger contract for current state. No model input is authorized.

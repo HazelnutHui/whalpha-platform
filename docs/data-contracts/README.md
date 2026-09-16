@@ -164,7 +164,8 @@ see [ADR 0274](../decisions/0274-adopt-factor-model-strategy-three-layer-researc
   alignment gates before any Campaign Three outcome trial is registered.
 - [Campaign Three Screening Protocol V1](quant-research-campaign-three-screening-v1.md)
   freezes the three interaction trials, session-level estimand, labels,
-  inference, multiplicity, stability, selection, and stop rules.
+  inference, multiplicity, stability, selection, result lineage, and
+  one-run-plus-replay custody rules.
 - [Quant Research Discovery Trial Ledger V4](quant-research-discovery-trial-ledger-v4.md)
   carries all 14 consumed trials forward and registers three unread Campaign
   Three trials without granting Development access.

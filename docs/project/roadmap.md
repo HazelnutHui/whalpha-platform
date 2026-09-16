@@ -131,12 +131,12 @@ until point-in-time classification has a named evidence source.
 
 Exit: closed without a model at `closed_no_candidate_alpha`.
 
-## Current gated phase — next Factor Discovery campaign
+## Current gated phase — Campaign Three
 
-The next campaign is not yet registered. Its purpose is to find economically
-distinct evidence whose usefulness may depend on the point-in-time market
-structure, without converting V1/V2 failures into an unlimited parameter
-search. ADR 0284 supplies the permanent loop: hypothesis intake,
+Campaign Three is registered but outcome-unread. Its purpose is to test a
+finite set of economically distinct interactions whose usefulness may depend
+on point-in-time market structure, without converting V1/V2 failures into an
+unlimited parameter search. ADR 0284 supplies the permanent loop: hypothesis intake,
 seven-dimensional deduplication, data admission, outcome-blind qualification,
 protocol preregistration, Development screen, replay/red-team, and ledger close
 before returning to intake.
@@ -162,8 +162,12 @@ Sequence:
    new cumulative ledger before reading outcomes;~~ complete under ADR 0291;
    Ledger V4 registers 17 cumulative trials and keeps the three new trials
    unread; and
-6. execute once, replay once, retain every failure, and either open a separately
-   frozen Model Construction protocol or close the campaign.
+6. ~~freeze and implement the deterministic evaluator, source-bound report,
+   typed access workflow, and fail-closed formal/replay custody before outcome
+   access;~~ complete under ADR 0292, with no request, grant, or result; and
+7. bind the clean committed revision into one request, obtain the exact user
+   grant, execute once, replay once, retain every failure, and either open a
+   separately frozen Model Construction protocol or close the campaign.
 
 Historical sector-neutral work remains blocked until point-in-time
 classification has a named evidence source. The campaign must not receive a

@@ -33,7 +33,47 @@ retained before-outcomes failures and are not registered trials.
 - at most one selected Alpha plus one selected risk guard, with Alpha required
   before Model Construction can be proposed.
 
-Exact gates and rationale are frozen in [ADR 0291](../decisions/0291-freeze-campaign-three-screening-protocol-and-ledger-v4.md).
+ADR 0292 fixes the implementation choices that ADR 0291 intentionally leaves
+implicit:
+
+- unweighted OLS with intercept over ordered session pairs;
+- the original calendar halves, not a midpoint split of surviving evidence;
+- paired circular-block resampling with deterministic content-bound seeds;
+- the linearly interpolated tenth percentile as the one-sided 90% lower bound;
+- a centered-bootstrap one-sided probability with finite-sample `+1`
+  correction;
+- maximum probability and minimum slope/lower bound across registered primary
+  endpoint and block worlds;
+- probability one for an unavailable registered trial, which remains in Holm;
+- exact complete-path evidence for the risk guard; and
+- nonnumeric, non-gating cost declarations until Strategy Expression exists.
+
+Exact gates and rationale are frozen in [ADR 0291](../decisions/0291-freeze-campaign-three-screening-protocol-and-ledger-v4.md),
+with evaluator and custody mechanics in [ADR 0292](../decisions/0292-freeze-campaign-three-evaluator-and-execution-custody.md).
+
+## Result and execution contracts
+
+The typed report contains all ordered session evidence, 15 summaries, three
+decisions, role-specific Holm results, conservative primary statistics,
+source lineage, limitations, and zero downstream authority. It binds the
+exact V1 diagnostics, V2 qualification, Campaign Three input qualification,
+qualified Market-State artifact, canonical labels, request, grant, clean
+implementation revision, and evaluator code hash.
+
+The access workflow persists four immutable record types under owner-only
+custody:
+
+1. a closed request bound to the clean revision, protocol, and Ledger V4;
+2. an exact user grant bound to that request;
+3. one formal reservation and completion; and
+4. one exact-replay reservation and completion.
+
+Reservation occurs only after all outcome-blind reconstruction and preflight
+checks pass, but before terminal evidence or future EOD labels are read. A
+reservation consumes its slot even if the subsequent run fails. Replay
+requires a completed formal report, the same request/grant/revision/
+`created_at`/sources, a distinct output root, and byte-identical report SHA-256
+and logical fingerprint. A third run is rejected.
 
 ## Authority boundary
 
@@ -42,3 +82,7 @@ separate typed grant bound to the protocol, Ledger V4, and a clean committed
 implementation revision. Validation, Holdout, Model Construction, Strategy
 Expression, Candidate activation, publication, options, broker access, and
 trading remain closed.
+
+The evaluator, immutable report custody, typed access workflow, and two-slot
+execution boundary are implemented and tested. No request, grant, formal run,
+replay, or Campaign Three result exists yet.

@@ -6,6 +6,28 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-16 — Implement the frozen Campaign Three evaluator without reading outcomes
+
+- Accepted ADR 0292 and fixed the remaining statistical interpretation before
+  outcomes: unweighted OLS with intercept, original 53/53 calendar halves,
+  deterministic paired circular-block resampling, tenth-percentile one-sided
+  lower bounds, centered-bootstrap probabilities, conservative endpoint/block
+  aggregation, and fixed Holm families that retain missing trials at
+  probability one.
+- Added the typed Campaign Three session evidence, 15 summaries, three
+  decisions, exact source lineage, and zero-downstream-authority report.
+- Added owner-only canonical request, grant, report, reservation, and
+  completion custody. Formal execution must complete before an exact replay;
+  output roots must differ, results must be byte-identical, and a reservation
+  consumes its slot even after failure.
+- Added network-disabled access and screening runners. They reconstruct and
+  verify all outcome-blind V1/V2/Market-State inputs before reservation, then
+  read only the registered Development labels after the slot is consumed.
+- Added focused contract, statistics, persistence, canonical-JSON round-trip,
+  CLI, and execution-boundary tests; all 3,067 backend tests pass. No request,
+  grant, outcome read, report, ledger result, website change, publication, or
+  deployment occurred.
+
 ## 2026-09-16 — Clarify public research lineage and implement the next access boundary
 
 - Removed the pre-three-layer Strong-Leader Pullback program and its retained

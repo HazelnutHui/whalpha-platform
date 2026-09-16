@@ -303,6 +303,19 @@ exact replay, and leaves Validation, Holdout, canonical writes, publication,
 Candidate activation, broker, and trading authority closed. No request or
 grant has yet been issued for an evaluator revision.
 
+ADR 0292 now fixes the evaluator details before any result is read. The source
+implementation contains the typed 15-summary/three-decision report, exact V1/
+V2/Market-State/source bindings, deterministic session-paired circular-block
+inference, owner-only canonical custody, typed request/grant commands, and an
+append-only two-slot execution chain. Outcome-blind feature reconstruction and
+output preflight must finish before reservation; terminal evidence and future
+EOD labels are read only after a slot is irrevocably consumed. Formal and
+replay runs require distinct output roots and byte-identical results. All
+3,067 backend tests pass, including canonical JSON reread and date round-trip.
+This is implementation readiness only: the work has not issued a request or
+grant, opened Campaign Three outcomes, produced a result, updated Ledger V4 outcomes,
+or changed Production.
+
 The source Lab projection now presents this pilot without exposing internal
 fingerprints, raw IDs, or custody identifiers. Formulas, parameters, sample
 sizes, coverage, outcomes, limitations, and gates remain visible. Public copy

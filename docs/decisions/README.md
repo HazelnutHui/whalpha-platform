@@ -11,6 +11,14 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0292](0292-freeze-campaign-three-evaluator-and-execution-custody.md):
+  fixes Campaign Three's regression, block-bootstrap, conservative endpoint,
+  multiplicity, and fail-closed one-run-plus-replay custody mechanics before
+  any Development outcome read.
+- [ADR 0291](0291-freeze-campaign-three-screening-protocol-and-ledger-v4.md):
+  registers the three qualified Campaign Three trials, their Development-only
+  gates, selection caps, Ledger V4 accounting, and separate typed-access
+  requirement.
 - [ADR 0284](0284-adopt-a-renewable-sequence-of-bounded-factor-campaigns.md):
   makes the research program continuous through separately closed finite
   campaigns with seven-dimensional deduplication and append-only accounting.

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from copy import deepcopy
 from decimal import Inexact, Rounded, localcontext
 from pathlib import Path
@@ -59,40 +58,8 @@ def _result_payload(*, evidence_scope: str = "method_only") -> dict[str, object]
     return payload
 
 
-def test_checked_in_web_record_is_the_canonical_method_projection() -> None:
-    checked_in = json.loads(WEB_MODEL_RECORD.read_text(encoding="utf-8"))
-    parsed = QuantResearchLabModelRecordV1.model_validate(checked_in)
-
-    assert parsed == strong_leader_pullback_lab_model_record_v1()
-    assert parsed.lifecycle_state.value == "preregistered_data_blocked"
-    assert parsed.evidence_scope.value == "method_only"
-    assert parsed.candidate_eligible is False
-    assert parsed.out_of_sample_observation_count == 0
-    assert parsed.result_publication_id is None
-    assert parsed.next_required_decision == (
-        "Define and review a performance-grade admitted cohort; keep real "
-        "outcomes sealed until the separate data-admission gate passes."
-    )
-    engineering = parsed.method_engineering_evidence
-    assert engineering is not None
-    assert engineering.status == "replayed_reconstructed_proxy"
-    assert engineering.expected_path_count == 437_402
-    assert engineering.complete_observation_count == 417_209
-    assert engineering.complete_observation_rate == "0.9538"
-    assert engineering.unobserved_regime_states == ("Stress",)
-    assert engineering.contains_forward_outcomes is False
-    assert engineering.contains_performance_metrics is False
-    assert engineering.parameter_selection_authorized is False
-    method = strong_leader_pullback_method_v1()
-    assert parsed.source_method_contract_version == method.contract_version
-    assert parsed.source_method_fingerprint == method.logical_fingerprint
-    assert parsed.input_feature_fingerprint == method.input_feature_fingerprint
-    assert tuple(item.exact_formula for item in parsed.feature_disclosures) == tuple(
-        item.exact_formula for item in method.features
-    )
-    assert tuple(item.candidate_values for item in parsed.parameter_disclosures) == tuple(
-        item.display_candidate_values for item in method.parameters
-    )
+def test_pre_architecture_method_record_is_not_a_web_projection() -> None:
+    assert not WEB_MODEL_RECORD.exists()
 
 
 def test_model_record_rejects_formula_drift_without_new_fingerprint() -> None:

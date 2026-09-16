@@ -60,7 +60,15 @@ ADRs, and audits.
   sparse and concentrated natural-zero state support. Campaign Three remains
   outcome-unread. ADR 0291 now registers only the three qualified designs in
   the finite protocol and Ledger V4. The cumulative formal-trial count is 17;
-  the three new trials have no result, and no new outcome access exists.
+  the three new trials have no result, and no new outcome access exists. ADR
+  0292 now freezes and implements the remaining evaluator and custody
+  mechanics: unweighted session-level interaction regression, paired
+  deterministic circular-block inference, conservative endpoint/block
+  aggregation, fixed Holm families, immutable source-bound reports, and a
+  fail-closed formal-run/exact-replay event chain. All 3,067 backend tests pass,
+  including the new contract, persistence, statistics, CLI, canonical-JSON,
+  and execution-boundary coverage. No clean-revision request, grant, formal
+  run, replay, or Campaign Three result has been created.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
