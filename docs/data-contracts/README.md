@@ -159,6 +159,9 @@ see [ADR 0274](../decisions/0274-adopt-factor-model-strategy-three-layer-researc
 - [Campaign Three Hypothesis Registry V1](quant-research-campaign-three-hypothesis-registry-v1.md)
   freezes five proposals, advances four to outcome-blind input qualification,
   and retains one near-duplicate rejection without registering outcome trials.
+- [Campaign Three Input Qualification V1](quant-research-campaign-three-input-qualification-v1.md)
+  freezes factor/state support, chronological-balance, and exact Development-
+  alignment gates before any Campaign Three outcome trial is registered.
 - [Quant Research Factor Screening V1](quant-research-factor-screening-v1.md)
   freezes the first Development screen; its completed no-Alpha result and exact
   replay are recorded in the [screening audit](../audits/quant-research-factor-screening-2026-09-15.md).

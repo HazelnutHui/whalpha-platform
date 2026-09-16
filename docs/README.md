@@ -60,6 +60,7 @@ Read this bounded set before new Lab research:
 - [ADR 0287: stage-isolated multi-Agent pilot](decisions/0287-pilot-stage-isolated-multi-agent-research-governance.md)
 - [ADR 0288: hardened market-state qualification](decisions/0288-harden-market-state-qualification-before-materialization.md)
 - [ADR 0289: frozen Campaign Three hypothesis intake](decisions/0289-freeze-campaign-three-hypothesis-intake-before-input-qualification.md)
+- [ADR 0290: frozen Campaign Three input qualification](decisions/0290-freeze-campaign-three-input-qualification-before-outcomes.md)
 - [Closed V2 screening result](audits/quant-research-factor-screening-v2-2026-09-15.md)
 - [Qualified Campaign Three market-state input](audits/quant-research-market-state-qualification-2026-09-16.md)
 
@@ -89,6 +90,7 @@ or dated [audits](audits/) when reproducing that program.
 - [Quant Research Factor Screening V2](operations/quant-research-factor-screening-v2.md)
 - [Quant Research Factor Qualification V2](operations/quant-research-factor-qualification-v2.md)
 - [Quant Research Market-State Qualification](operations/quant-research-market-state-qualification.md)
+- [Campaign Three Input Qualification](operations/quant-research-campaign-three-input-qualification.md)
 - [Market Intelligence Publication](operations/market-intelligence-publication.md)
 - [Dashboard Snapshot Publication](operations/dashboard-snapshot-publication.md)
 - [OCI Dashboard Deployment](operations/oci-private-dashboard-deployment.md)

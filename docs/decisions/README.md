@@ -370,6 +370,10 @@ accepted ADR was deployed unless current operational evidence says so.
 - [ADR 0289](0289-freeze-campaign-three-hypothesis-intake-before-input-qualification.md):
   freezes a four-design prospective Campaign Three budget after seven-
   dimensional deduplication, without opening outcomes or formal trials.
+- [ADR 0290](0290-freeze-campaign-three-input-qualification-before-outcomes.md):
+  freezes exact Development-alignment and factor/state support gates plus a
+  bounded V2 input replay before any Campaign Three outcome access.
+
 ## Data-governance decisions
 
 - ADRs 0011–0048 establish EOD, Identity, stable-ID, security classification,
