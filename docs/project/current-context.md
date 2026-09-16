@@ -1,10 +1,10 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-15T23:41:30Z
+Operational state verified at: 2026-09-16T02:44:53Z
 
-Deployment state verified at: 2026-09-15T23:41:30Z
+Deployment state verified at: 2026-09-16T02:44:53Z
 
-Repository context updated at: 2026-09-15 UTC
+Repository context updated at: 2026-09-16 UTC
 
 This is the compact recovery source for a new task or device. Interpretation
 belongs in [current status](current-status.md), sequencing in the
@@ -20,8 +20,8 @@ ADRs, and dated audits.
 | Branch | `main`; verify live HEAD before mutation |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Active OCI release | `2026-09-15T234025Z-30b0f10` |
-| Deployed source | `30b0f101bceaaf8b80df760c9b4f8b3df31ba45a` |
+| Active OCI release | `2026-09-16T024346Z-2255d9f9d61a` |
+| Deployed source | `2255d9f9d61a1ff6d11ee2c6363f8aaa54cf9ef7` |
 
 Dell owns code, canonical data, governance, and heavy computation. OCI is the
 bounded public-serving tier. A newer clean repository commit does not imply a
@@ -35,7 +35,7 @@ network-disabled reread. Run project Python through
 
 | Boundary | Verified value |
 | --- | --- |
-| Latest EOD / Snapshot | 2026-09-11; stale by one completed session at the 2026-09-14 review |
+| Latest EOD / Snapshot | 2026-09-11; stale by two completed sessions at the 2026-09-16 operational review |
 | Market Intelligence | `2026-09-11T205429Z-26cab64fabda`; contract 1.3 |
 | Dashboard Snapshot | `2026-09-11T211340Z-26cab64fabda`; Snapshot 1.11 / Dashboard 2.8 |
 | Market state | Primary 50.1578 Balanced; Secondary 50.1501 Balanced |
@@ -265,8 +265,8 @@ The source Lab projection now presents this pilot without exposing internal
 fingerprints, raw IDs, or custody identifiers. Formulas, parameters, sample
 sizes, coverage, outcomes, limitations, and gates remain visible. Public copy
 uses the generic term "workstation"; exact host and alias details remain only
-in operational documentation. This updated source projection is not yet
-deployed.
+in operational documentation. This projection is deployed in the release
+identified above.
 
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility

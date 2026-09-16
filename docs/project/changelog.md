@@ -29,8 +29,13 @@ and dated [audits](../audits/). Current capability and next work belong in
 - Passed 3,027 backend tests, 129 frontend tests, the focused trilingual Lab
   tests, and the production frontend build after recording the real
   qualification and replay.
-- Kept the Production release unchanged pending the real qualification,
-  independent replay, full repository verification, and reviewed deployment.
+- Deployed OCI release `2026-09-16T024346Z-2255d9f9d61a` from source
+  `2255d9f9d61a`. Independent postflight matched release, source, manifest,
+  checksums, protected routes, guest Session, equal guest/credential policy,
+  services, listener boundary, and zero failed/staging residue. Password login
+  and final browser appearance remain manual checks. The served Snapshot data
+  remains dated 2026-09-11 and was stale by two completed sessions at review;
+  this release does not claim a data refresh.
 
 ## 2026-09-15 — Prepare reusable research inputs and add a bounded guest-entry metric
 

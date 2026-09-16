@@ -10,9 +10,10 @@ ADRs, and audits.
 ## Overall verdict
 
 - **Production:** live and serving the verified trilingual V2 qualification
-  pass, completed six-trial Development result, and three-layer research UI to
-  equal guest/credential flows; underlying data is stale by one completed
-  session at the 2026-09-15 deployment review.
+  pass, completed six-trial Development result, three-layer research UI, and
+  the qualified Campaign Three market-state input to equal guest/credential
+  flows; underlying data is stale by two completed sessions at the 2026-09-16
+  operational review.
 - **Five-year source depth:** EOD price and stable Identity complete.
 - **Professional performance foundation:** the strict exact/as-operated gate
   remains `data_blocked`; reconstructed-research V2 is separately
@@ -89,12 +90,11 @@ trials, seven-dimensional duplicate identity, finite preregistration budget,
 stage isolation, and automatic pause conditions. It is a research-control
 surface, not evidence that an unattended factor miner is already running.
 
-The current source tree also contains the reviewed trilingual multi-agent pilot
-surface. It exposes human-readable roles, isolation, current qualification,
-and locked downstream gates while withholding internal fingerprints, raw IDs,
-and custody identifiers from the website. Public infrastructure wording uses
-"workstation" rather than a hardware brand. This source milestone is tested
-and build-ready but is not part of the Production release identified above.
+Production also contains the reviewed trilingual multi-agent pilot surface. It
+exposes human-readable roles, isolation, the completed market-state
+qualification and replay, and locked downstream gates while withholding
+internal fingerprints, raw IDs, and custody identifiers from the website.
+Public infrastructure wording uses "workstation" rather than a hardware brand.
 
 The reusable research-input registry is implemented and visible at
 `contract_ready_not_materialized`: five content-addressed panel families, zero
