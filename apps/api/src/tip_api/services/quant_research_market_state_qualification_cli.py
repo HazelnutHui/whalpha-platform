@@ -242,9 +242,9 @@ def run_quant_research_market_state_qualification_v1(
             {item.instrument_id: item for item in first_read.bars}
         )
         all_member_ids = frozenset(
-            item.instrument_id
-            for records in memberships.values()
-            for item in records
+            instrument_id
+            for member_ids in memberships.values()
+            for instrument_id in member_ids
         )
         required_ids = all_member_ids | frozenset(benchmark_ids.values())
         (
@@ -334,7 +334,7 @@ def run_quant_research_market_state_qualification_v1(
 def _read_market_state_memberships(
     *, shadow_root, partitions, census, ordered_sessions
 ) -> tuple[
-    dict[date, tuple[object, ...]],
+    dict[date, tuple[UUID, ...]],
     dict[date, str],
     dict[date, str],
 ]:
@@ -351,7 +351,7 @@ def _read_market_state_memberships(
         manifest_hash = hashlib.sha256(
             (partitions[session] / "manifest.json").read_bytes()
         ).hexdigest()
-        memberships[session] = membership
+        memberships[session] = tuple(item.instrument_id for item in membership)
         logical_fingerprints[session] = membership_fingerprint
         manifest_hashes[session] = manifest_hash
     return memberships, logical_fingerprints, manifest_hashes
@@ -442,7 +442,9 @@ def _calculate_sessions(
     calendar,
 ):
     all_member_ids = frozenset(
-        item.instrument_id for records in memberships.values() for item in records
+        instrument_id
+        for member_ids in memberships.values()
+        for instrument_id in member_ids
     )
     retained_ids = all_member_ids | frozenset(benchmark_ids.values())
     window: deque[tuple[date, dict[UUID, EodMarketBarReadModel]]] = deque(maxlen=21)
@@ -472,12 +474,7 @@ def _calculate_sessions(
             raise QuantResearchMarketStateQualificationCliError(
                 "market-state rolling source window differs"
             )
-        member_ids = tuple(
-            sorted(
-                (item.instrument_id for item in memberships[source_session]),
-                key=str,
-            )
-        )
+        member_ids = memberships[source_session]
         output.append(
             _build_session(
                 source_session=source_session,

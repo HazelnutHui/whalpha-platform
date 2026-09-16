@@ -236,7 +236,7 @@ class QuantResearchMarketStateSessionV1(FrozenModel):
                 for item, expected in zip(self.metrics[:6], benchmark_expected)
             )
             or any(
-                item.expected_observations != self.declared_member_count
+                item.expected_observations != max(self.declared_member_count, 1)
                 or item.actual_observations != self.complete_member_count
                 for item in self.metrics[6:]
             )

@@ -47,6 +47,8 @@ def test_market_state_membership_read_binds_manifest_hashes(
 
     assert len(calls) == 2
     assert tuple(memberships) == sessions
+    assert memberships[sessions[0]] == (UUID(int=1),)
+    assert memberships[sessions[1]] == (UUID(int=2),)
     assert all(len(value) == 64 for value in logical.values())
     assert all(len(value) == 64 for value in hashes.values())
 
@@ -115,4 +117,66 @@ def test_market_state_session_retains_one_benchmark_quarantine(
     )
     assert by_id["reconstructed_member_above_sma20_share"].availability is (
         QuantResearchMarketStateAvailability.AVAILABLE
+    )
+
+
+def test_market_state_session_represents_zero_member_warmup_without_failing(
+    monkeypatch,
+) -> None:
+    sessions = tuple(date(2026, 1, 1) + timedelta(days=index) for index in range(21))
+    benchmark_ids = {
+        "SPY": UUID(int=1),
+        "QQQ": UUID(int=2),
+        "IWM": UUID(int=3),
+        "DIA": UUID(int=4),
+    }
+    window = tuple(
+        (
+            session,
+            {instrument_id: object() for instrument_id in benchmark_ids.values()},
+        )
+        for session in sessions
+    )
+
+    monkeypatch.setattr(cli, "_valid_bar", lambda bar: True)
+    monkeypatch.setattr(
+        cli,
+        "_split_path_status",
+        lambda **kwargs: (frozenset(), frozenset()),
+    )
+    monkeypatch.setattr(
+        cli,
+        "_market_state_series",
+        lambda *, source_sessions, **kwargs: tuple(
+            QuantResearchMarketStateBarV1(
+                session=session,
+                close=Decimal("100") + Decimal(index),
+            )
+            for index, session in enumerate(source_sessions)
+        ),
+    )
+
+    value = cli._build_session(
+        source_session=sessions[-1],
+        window=window,
+        member_ids=(),
+        membership_logical_fingerprint="2" * 64,
+        membership_manifest_sha256="1" * 64,
+        benchmark_ids=benchmark_ids,
+        active_action_keys=set(),
+        quarantined_action_keys=set(),
+        unresolved_impact_keys=set(),
+        clear_adjustments={},
+        quarantined_adjustment_keys=set(),
+        action_start=sessions[0],
+        adjustment_start=sessions[0],
+    )
+
+    assert value.declared_member_count == 0
+    assert value.complete_member_count == 0
+    assert all(
+        item.expected_observations == 1
+        and item.actual_observations == 0
+        and item.availability is QuantResearchMarketStateAvailability.UNAVAILABLE
+        for item in value.metrics[6:]
     )
