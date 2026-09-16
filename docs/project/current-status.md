@@ -9,12 +9,12 @@ ADRs, and audits.
 
 ## Overall verdict
 
-- **Production:** live and serving the verified trilingual V2 qualification
-  pass, completed six-trial Development result, three-layer research UI, one
-  qualified Campaign Three Market-State panel, and the five-card hypothesis /
-  dedup milestone plus the completed Campaign Three input qualification to
-  equal guest/credential flows. Underlying data is stale by two completed
-  sessions at the 2026-09-16 operational review.
+- **Production:** live and serving the verified trilingual three-layer research
+  UI, completed V1/V2 screens, and completed Campaign Three formal/replay
+  result to equal guest/credential flows. All three campaigns closed without
+  candidate Alpha; Ledger V5 contains 17 formal trials, and active Alpha,
+  model, and strategy counts remain zero. Underlying data is stale by two
+  completed sessions at the 2026-09-16 operational review.
 - **Five-year source depth:** EOD price and stable Identity complete.
 - **Professional performance foundation:** the strict exact/as-operated gate
   remains `data_blocked`; reconstructed-research V2 is separately
@@ -92,18 +92,16 @@ same data and capability. Snapshot/API failure closes without synthetic
 Production data.
 
 The Lab presents the Factor Discovery -> Model Construction -> Strategy
-Expression architecture. Repository source now shows three closed campaigns,
+Expression architecture. Production now shows three closed campaigns,
 17 permanently counted formal trials, and zero admitted Alpha, model, or
 strategy. Named methods from before the three-layer architecture are not
 rendered publicly; their immutable contracts and audits remain internal anti-
-retesting evidence. The deployed release still shows the pre-result Campaign
-Three state until a separate deployment. Neither state changes market
-analytics, Baseline Candidate calculation, model authority, or Candidate
-activation.
+retesting evidence. This result changes no market analytics, Baseline Candidate
+calculation, model authority, or Candidate activation.
 
 Production additionally contains the reviewed renewable-cycle panel in its
-pre-result state. The newer source projection shows three completed campaigns,
-17 closed formal trials, no active campaign, seven-dimensional duplicate
+completed Campaign Three state: three completed campaigns, 17 closed formal
+trials, no active campaign, seven-dimensional duplicate
 identity, finite preregistration budgets, stage isolation, and automatic pause
 conditions. It is a research-control surface, not evidence that an unattended
 factor miner is already running.

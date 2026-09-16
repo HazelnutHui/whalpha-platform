@@ -6,6 +6,21 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-16 — Deploy the completed Campaign Three result
+
+- Built OCI release `2026-09-16T141001Z-250f423b01cb` from clean source
+  `250f423b01cbea7ac6ec1f16a43dcecb82b678ac`, reusing the immutable
+  2026-09-11 Snapshot 1.11 / Dashboard 2.8 and Market Intelligence 1.3
+  publication without recalculation or `/data` mutation.
+- Dry-run preflight and atomic apply passed. Independent postflight matched the
+  active release, source, manifest, checksums, equal guest/credential route
+  policy, temporary guest Session, protected routes, services, localhost-only
+  listener, and zero failed/staging residue.
+- Production now presents the completed Campaign Three result, Ledger V5 with
+  17 consumed formal trials, no active campaign, and zero admitted Alpha,
+  model, or strategy. Credential login and final browser appearance remain
+  manual checks.
+
 ## 2026-09-16 — Close Campaign Three without candidate Alpha
 
 - Bound the clean evaluator revision to the exact user authorization and

@@ -1,8 +1,8 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-16T06:04:43Z
+Operational state verified at: 2026-09-16T14:11:04Z
 
-Deployment state verified at: 2026-09-16T06:04:43Z
+Deployment state verified at: 2026-09-16T14:11:04Z
 
 Repository context updated at: 2026-09-16 UTC
 
@@ -20,8 +20,8 @@ ADRs, and dated audits.
 | Branch | `main`; verify live HEAD before mutation |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Active OCI release | `2026-09-16T060322Z-bd530f40ed45` |
-| Deployed source | `bd530f40ed45d42617e83f77741e1091fe95a311` |
+| Active OCI release | `2026-09-16T141001Z-250f423b01cb` |
+| Deployed source | `250f423b01cbea7ac6ec1f16a43dcecb82b678ac` |
 
 Dell owns code, canonical data, governance, and heavy computation. OCI is the
 bounded public-serving tier. A newer clean repository commit does not imply a
@@ -45,14 +45,14 @@ network-disabled reread. Run project Python through
 | Failure policy | API/Snapshot failure closes without synthetic Production data |
 
 The current release passed independent release, source, bundle, checksum,
-service, protected-route, guest-flow, Candidate-route, logout, listener, and
-residue checks. The public entry dossier and protected Lab now show the governed
-three-layer lineage: the first two factor campaigns closed without candidate
-Alpha; Campaign Three has two Alpha interactions and one risk guard registered
-as unread trials; the cumulative ledger contains 17 formal trials; and active
-Alpha, model, and strategy counts remain zero. The qualified Market-State
-panel, frozen hypothesis intake, completed input qualification, exact replay,
-and one Alpha design rejected before outcomes remain visible. The
+service, protected-route, guest-flow, listener, equal-policy, and residue
+checks. The public entry dossier and protected Lab now show the governed
+three-layer lineage: all three factor campaigns are closed without candidate
+Alpha; Ledger V5 permanently accounts for 17 formal trials; and active Alpha,
+model, and strategy counts remain zero. Campaign Three displays its qualified
+Market-State panel, frozen hypothesis intake, completed input qualification,
+exact formal/replay result, one Alpha design rejected before outcomes, and the
+two tested Alpha interactions plus risk guard rejected under frozen gates. The
 pre-architecture Strong-Leader Pullback name and method record are no longer
 rendered publicly; their immutable contracts and audits remain internal
 anti-retesting evidence. The Lab links hypothesis submissions to
@@ -247,8 +247,9 @@ Ledger V5 logical fingerprint is
 `424da475ee8aa87a7b54eac8c9eec64f32035d7ae1a7d491b90604863edc5df1`;
 Cycle State V2 logical fingerprint is
 `6852801667f0e680b730d157c3293abd78c4046ed3a39d86eedc28c249b293ea`.
-The deployed cycle panel in the release identified above still shows the
-pre-result Campaign Three state; a newer source projection is not a deployment.
+The deployed cycle panel in the release identified above shows the completed
+Campaign Three result and returns the renewable cycle to outcome-blind
+hypothesis intake with no active campaign.
 
 ADR 0287 fixes the first multi-agent pilot as a manually supervised,
 outcome-blind research team. Five current roles may inspect governance,
@@ -329,13 +330,11 @@ their frozen gates, so the campaign closed as `closed_no_candidate_alpha`.
 Validation, Holdout, model construction, Candidate activation, publication,
 broker, and trading authority remain closed.
 
-The repository Lab projection now presents the completed pilot without exposing
+The deployed Lab projection presents the completed pilot without exposing
 internal fingerprints, raw IDs, or custody identifiers. Formulas, parameters,
 sample sizes, coverage, outcomes, limitations, and gates remain visible. Public
 copy uses the generic term "workstation"; exact host and alias details remain
-only in operational documentation. This newer projection is source state only
-until a separately authorized deployment replaces the release identified
-above.
+only in operational documentation.
 
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility
