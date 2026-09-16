@@ -2,9 +2,10 @@
 
 ## Status
 
-Implemented contracts, provider adapters, and an exactly reread temporary
-normalized-reference pilot; canonical pilot data and five-year coverage remain
-absent.
+Implemented contracts, provider adapters, an exactly reread temporary
+normalized-reference package, and a linked five-year daily pilot package for
+six SSE/SZSE securities. Canonical pilot data and admitted historical coverage
+remain absent.
 
 ## Scope
 
@@ -77,11 +78,12 @@ observed.
 
 ## Adjustment observation
 
-`ChinaAshareAdjustmentFactorObservationV1` preserves the provider factor and a
-human-readable semantics declaration. `normalized_return_authorized` is fixed
-to `false`. A later reconciliation contract must prove multiplier direction,
+`ChinaAshareAdjustmentFactorObservationV1` separately preserves BaoStock's
+`adjustFactor`, `foreAdjustFactor`, and `backAdjustFactor` fields plus a human-
+readable semantics declaration. `normalized_return_authorized` is fixed to
+`false`. A later reconciliation contract must prove multiplier direction,
 action coverage, revision behavior, and return meaning before research labels
-use it.
+use any of them.
 
 ## Effective-dated trading rule
 
@@ -119,17 +121,22 @@ opens a network connection by itself.
 
 ## Temporary pilot package
 
-`ChinaAsharePilotPlanV1` fixes five board anchors, two lifecycle subject keys,
-separate official-reference and BaoStock-snapshot dates, a five-year target
-interval, provider identities, and a request ceiling. The temporary publisher
-stores only typed normalized observations below a dedicated `/tmp` boundary,
-uses canonical JSON, owner-only file modes, atomic rename, physical hashes,
-logical fingerprints, and a complete exact reread.
+`ChinaAsharePilotPlanV1` fixes seven varied exchange/board/state anchors, two
+lifecycle subject keys, separate official-reference and BaoStock-snapshot
+dates, a five-year target interval, provider identities, and a request
+ceiling. The temporary publisher stores only typed normalized observations
+below a dedicated `/tmp` boundary, uses canonical JSON, owner-only file modes,
+atomic rename, physical hashes, logical fingerprints, and a complete exact
+reread.
 
 The reference quality report exposes missing official, BaoStock, and lifecycle
-keys. Raw upstream retention, stable identity, daily history, adjustment
-semantics, canonical Apply, backtesting, Product publication, and deployment
-all remain explicitly false.
+keys. `ChinaAsharePilotIdentityDecisionV1` either creates a deterministic
+pilot-only join identity or retains a quarantined decision with reasons; it
+cannot create canonical identity authority. The linked daily package contains
+those decisions, typed daily source batches, and
+`ChinaAsharePilotDailyQualityReportV1`. Raw upstream retention, canonical
+stable identity, adjustment semantics, canonical Apply, backtesting, Product
+publication, and deployment all remain explicitly false.
 
 ## Foundation census and admission
 

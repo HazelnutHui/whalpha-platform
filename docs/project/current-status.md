@@ -70,7 +70,7 @@ ADRs, and audits.
   permanently records all 17 trials with zero admitted Alpha and zero model
   inputs. The cycle is back at outcome-blind hypothesis intake; Validation,
   Holdout, Model Construction, and all Product authority remain closed. All
-  3,074 backend tests, 129 frontend tests, and the Production frontend build
+  3,117 backend tests, 129 frontend tests, and the Production frontend build
   pass in repository source.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
@@ -79,14 +79,16 @@ ADRs, and audits.
   capable operation is not active.
 - **China A-share foundation:** isolated daily-research, source-state,
   lifecycle-subject, and temporary-pilot contracts plus BaoStock and
-  AKShare-mediated adapters are implemented. Forty-one focused tests and all
-  3,115 backend tests pass. A
-  normalized, owner-only `/tmp` reference package was captured and exactly
-  reread for five board anchors and two lifecycle subjects. Current official
-  evidence covered all five anchors; BaoStock covered the four SSE/SZSE
-  anchors and not the BSE anchor. The package deliberately retains no raw
-  upstream bytes and grants no stable identity, canonical Apply, research,
-  Product, or deployment authority.
+  AKShare-mediated adapters are implemented. A normalized, owner-only `/tmp`
+  reference package covers seven varied exchange/board/state anchors and two
+  lifecycle subjects. Pilot-only adjudication binds six SSE/SZSE securities
+  and quarantines the BSE anchor because BaoStock has no matching instrument
+  observation. A linked five-year temporary package contains 7,255 unadjusted
+  bars, 7,266 daily states including 11 suspensions, and 28 adjustment
+  observations. Both packages exactly reread, all 43 focused A-share tests and
+  all 3,117 backend tests pass, no raw upstream bytes are retained, and no
+  canonical identity, Apply, research, Product, or deployment authority is
+  granted.
 
 ## Product capability
 
@@ -167,12 +169,14 @@ used only at its declared knowledge-time tier; it cannot silently become
 historically `as_operated`.
 
 The China A-share foundation is a separate market namespace and is earlier in
-its lifecycle. Its first normalized reference/lifecycle pilot exists only
-under temporary owner-only custody and rereads exactly. It is not a raw source
-archive or canonical database. It has no stable-ID registry, admitted
-historical Universe, BSE daily-price route, return-authorized adjustment
-family, or backtest-ready session. It must not be combined with the U.S.
-readiness table above.
+its lifecycle. Its normalized reference/lifecycle package and linked five-year
+SSE/SZSE daily pilot exist only under temporary owner-only custody and reread
+exactly. They are not a raw source archive or canonical database. The six
+pilot IDs are deterministic test bindings, not canonical stable identities.
+There is no admitted historical Universe, qualified exchange calendar or
+price-limit family, BSE daily-price route, reconciled corporate-action
+economics, return-authorized adjustment family, or backtest-ready session. It
+must not be combined with the U.S. readiness table above.
 
 ## Pre-architecture research record (internal audit only)
 

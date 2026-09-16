@@ -58,7 +58,7 @@ def test_default_plan_and_capture_remain_bounded_and_fail_closed(
         created_at=NOW,
     )
 
-    assert len(plan.anchors) == 5
+    assert len(plan.anchors) == 7
     assert plan.history_start_date == date(2021, 9, 16)
     assert result.quality_report.source_request_count == 7
     assert result.quality_report.reference_evidence_complete is False

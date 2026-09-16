@@ -247,6 +247,8 @@ def test_adjustment_factor_cannot_grant_return_authority() -> None:
         instrument_id=INSTRUMENT_ID,
         session_date=date(2026, 9, 16),
         provider_factor=Decimal("12.345678"),
+        fore_adjust_factor=Decimal("0.081000"),
+        back_adjust_factor=Decimal("12.345678"),
         provider_semantics="provider cumulative factor; direction not yet reconciled",
         source="source-a",
         source_available_at=AVAILABLE,
@@ -256,6 +258,8 @@ def test_adjustment_factor_cannot_grant_return_authority() -> None:
     )
 
     assert row.normalized_return_authorized is False
+    assert row.fore_adjust_factor == Decimal("0.081000")
+    assert row.back_adjust_factor == Decimal("12.345678")
     with pytest.raises(ValidationError):
         row.normalized_return_authorized = True  # type: ignore[misc]
 

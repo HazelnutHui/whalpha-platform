@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 from datetime import UTC, date, datetime
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
 
 from tip_api.contracts.china_ashare.v1 import (
     ChinaAshareBoard,
+    ChinaAshareAdjustmentFactorObservationV1,
+    ChinaAshareDailyBarV1,
+    ChinaAshareDailyTradingStateV1,
     ChinaAshareExchange,
     ChinaAshareIdentityResolutionStatus,
     ChinaAshareInstrumentSourceObservationV1,
@@ -14,6 +18,8 @@ from tip_api.contracts.china_ashare.v1 import (
     ChinaAshareLifecycleSourceObservationV1,
     ChinaAshareLifecycleSubjectKind,
     ChinaAshareListingStatus,
+    ChinaAsharePriceLimitRegime,
+    ChinaAshareRiskWarningStatus,
     ChinaAshareSecurityForm,
     ChinaAshareSourceSecuritySnapshotStateV1,
     ChinaAshareTradingStatus,
@@ -22,10 +28,22 @@ from tip_api.contracts.china_ashare.v1 import (
 from tip_api.contracts.common import QualityStatus
 from tip_api.persistence.china_ashare_pilot_package import (
     CapturedChinaAsharePilotReferenceV1,
+    CapturedChinaAsharePilotDailyV1,
     ChinaAsharePilotPackageConflictError,
     ChinaAsharePilotPackageCorruptionError,
     publish_china_ashare_pilot_reference_package,
+    publish_china_ashare_pilot_daily_package,
+    read_china_ashare_pilot_daily_package,
     read_china_ashare_pilot_reference_package,
+)
+from tip_api.services.china_ashare_pilot_reference import (
+    adjudicate_china_ashare_pilot_identities,
+    build_china_ashare_pilot_identity_bindings,
+)
+from tip_api.providers.china_ashare import (
+    BAOSTOCK_ASHARE_PROVIDER_ID,
+    ChinaAshareDailySourceBatchV1,
+    ChinaAshareSourceDailyQuery,
 )
 
 
@@ -202,6 +220,7 @@ def test_reference_package_round_trip_is_exact_and_non_authorizing(
 
     assert published.status == "published"
     assert reread.manifest == published.manifest
+    assert reread.captured == published.captured
     assert again.status == "already_present"
     assert reread.file_count == 7
     assert reread.quality_report.reference_evidence_complete is True
@@ -224,6 +243,31 @@ def test_reference_package_reports_missing_official_anchor(tmp_path: Path) -> No
     assert "official_reference_evidence_incomplete" in (
         result.quality_report.reason_codes
     )
+
+
+def test_reference_package_supports_only_evidence_bound_pilot_identities(
+    tmp_path: Path,
+) -> None:
+    result = _publish(tmp_path)
+
+    decisions = adjudicate_china_ashare_pilot_identities(
+        plan=result.plan,
+        captured=result.captured,
+        reference_package_fingerprint=result.manifest.logical_fingerprint,
+        evaluated_at=NOW,
+    )
+    bindings = build_china_ashare_pilot_identity_bindings(decisions)
+
+    bound = [item for item in decisions if item.pilot_instrument_id is not None]
+    quarantined = [item for item in decisions if item.pilot_instrument_id is None]
+    assert len(bound) == 4
+    assert [item.source_security_id for item in quarantined] == ["bj.920000"]
+    assert quarantined[0].reason_codes == (
+        "baostock_instrument_observation_missing",
+        "baostock_source_state_missing",
+    )
+    assert len(bindings) == 4
+    assert all(item.source_security_id != "bj.920000" for item in bindings)
 
 
 def test_reference_package_rejects_changed_artifact(tmp_path: Path) -> None:
@@ -266,3 +310,119 @@ def test_reference_package_rejects_unplanned_security(tmp_path: Path) -> None:
         match="unplanned security",
     ):
         _publish(tmp_path, captured=changed)
+
+
+def test_daily_package_round_trip_preserves_pilot_only_authority(
+    tmp_path: Path,
+) -> None:
+    reference = _publish(tmp_path)
+    decisions = adjudicate_china_ashare_pilot_identities(
+        plan=reference.plan,
+        captured=reference.captured,
+        reference_package_fingerprint=reference.manifest.logical_fingerprint,
+        evaluated_at=NOW,
+    )
+    bindings = build_china_ashare_pilot_identity_bindings(decisions)
+    query = ChinaAshareSourceDailyQuery(
+        source_security_ids=tuple(item.source_security_id for item in bindings),
+        start_date=reference.plan.history_start_date,
+        end_date=reference.plan.history_end_date,
+    )
+    rows = sorted(bindings, key=lambda item: str(item.instrument_id))
+    bars = tuple(
+        ChinaAshareDailyBarV1(
+            instrument_id=item.instrument_id,
+            session_date=query.start_date,
+            open=Decimal("10"),
+            high=Decimal("11"),
+            low=Decimal("9"),
+            close=Decimal("10.5"),
+            pre_close=Decimal("10"),
+            volume_shares=Decimal("1000"),
+            turnover_amount_cny=Decimal("10500"),
+            source=BAOSTOCK_ASHARE_PROVIDER_ID,
+            source_record_id=f"{item.source_security_id}:{query.start_date.isoformat()}",
+            source_available_at=None,
+            ingested_at=NOW,
+            revision=1,
+            quality_status=QualityStatus.WARNING,
+            reason_codes=("source_available_time_unreported",),
+        )
+        for item in rows
+    )
+    states = tuple(
+        ChinaAshareDailyTradingStateV1(
+            instrument_id=item.instrument_id,
+            session_date=query.start_date,
+            exchange=(
+                ChinaAshareExchange.SSE
+                if item.source_security_id.startswith("sh.")
+                else ChinaAshareExchange.SZSE
+            ),
+            board=item.board,
+            trading_status=ChinaAshareTradingStatus.TRADING,
+            risk_warning_status=ChinaAshareRiskWarningStatus.NONE,
+            price_limit_regime=ChinaAsharePriceLimitRegime.UNKNOWN,
+            pre_close=Decimal("10"),
+            exact_limit_prices_source_observed=False,
+            source=BAOSTOCK_ASHARE_PROVIDER_ID,
+            source_available_at=None,
+            ingested_at=NOW,
+            quality_status=QualityStatus.WARNING,
+            reason_codes=(
+                "price_limit_requires_official_rule_resolution",
+                "source_available_time_unreported",
+            ),
+        )
+        for item in rows
+    )
+    first = rows[0]
+    adjustment = ChinaAshareAdjustmentFactorObservationV1(
+        instrument_id=first.instrument_id,
+        session_date=query.start_date,
+        provider_factor=Decimal("1.1"),
+        fore_adjust_factor=Decimal("0.9"),
+        back_adjust_factor=Decimal("1.1"),
+        provider_semantics="fixture source factors; return semantics unreconciled",
+        source=BAOSTOCK_ASHARE_PROVIDER_ID,
+        source_available_at=None,
+        ingested_at=NOW,
+        normalized_return_authorized=False,
+        quality_status=QualityStatus.WARNING,
+        reason_codes=(
+            "return_semantics_unreconciled",
+            "source_available_time_unreported",
+        ),
+    )
+    captured = CapturedChinaAsharePilotDailyV1(
+        identity_decisions=decisions,
+        daily_batch=ChinaAshareDailySourceBatchV1(
+            provider_id=BAOSTOCK_ASHARE_PROVIDER_ID,
+            query=query,
+            bars=bars,
+            trading_states=states,
+            source_request_count=len(bindings),
+        ),
+        adjustment_observations=(adjustment,),
+        source_request_count=len(bindings) * 2,
+    )
+
+    published = publish_china_ashare_pilot_daily_package(
+        custody_root=tmp_path / "china-a-share-research-pilot",
+        plan=reference.plan,
+        reference_package_fingerprint=reference.manifest.logical_fingerprint,
+        captured=captured,
+        created_at=NOW,
+    )
+    reread = read_china_ashare_pilot_daily_package(
+        package_path=published.package_path
+    )
+
+    assert published.status == "published"
+    assert reread.manifest == published.manifest
+    assert reread.captured == published.captured
+    assert reread.file_count == 7
+    assert reread.quality_report.source_capture_complete is True
+    assert reread.quality_report.diverse_scenarios_observed is False
+    assert reread.quality_report.research_backtest_authorized is False
+    assert reread.manifest.canonical_apply_authorized is False

@@ -348,13 +348,15 @@ ADR 0294 isolates a future five-year China A-share daily research foundation
 from all U.S. data, calendars, rules, Universes, research panels, and Product
 state. Provider-neutral contracts, source-keyed trading state, lifecycle-
 subject semantics, BaoStock/AKShare-mediated adapters, and temporary pilot
-  custody are implemented with 41 focused tests and 3,115 passing backend
-  tests. A five-board/two-lifecycle
-normalized reference package was captured below `/tmp` and exactly reread:
-official current evidence covered all anchors, while BaoStock exposed the
-expected BSE gap. SSE lifecycle rows remain issuer evidence and cannot claim
-listed-security identity. No raw upstream archive, stable identity, canonical
-Apply, historical coverage, backtest admission, website change, or Production
+custody are implemented. A seven-anchor/two-lifecycle normalized reference
+package was captured below `/tmp` and exactly reread. It creates six
+pilot-only SSE/SZSE identity bindings and quarantines the BSE anchor. A linked
+five-year package exactly rereads 7,255 unadjusted bars, 7,266 daily states,
+and 28 adjustment observations for those six securities. All 43 focused tests
+and all 3,117 backend tests pass. SSE lifecycle rows remain issuer evidence and
+cannot claim listed-security identity. No raw
+upstream archive, canonical stable identity, canonical Apply, admitted
+historical Universe, backtest admission, website change, or Production
 authority exists. See the
 [source audit](../audits/china-a-share-free-source-availability-2026-09-16.md).
 

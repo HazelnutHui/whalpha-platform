@@ -9,6 +9,7 @@ from datetime import date, datetime
 from enum import StrEnum
 from pathlib import PurePosixPath
 from typing import Any, Literal
+from uuid import UUID
 
 from pydantic import Field, field_validator, model_validator
 
@@ -30,10 +31,19 @@ _REASON_CODE = re.compile(r"^[a-z][a-z0-9_]*$")
 
 
 class ChinaAsharePilotArtifactKind(StrEnum):
+    ADJUSTMENT_FACTOR = "adjustment_factor"
     OFFICIAL_CURRENT_INSTRUMENT = "official_current_instrument"
     BAOSTOCK_INSTRUMENT = "baostock_instrument"
     BAOSTOCK_SOURCE_STATE = "baostock_source_state"
+    DAILY_BAR = "daily_bar"
+    DAILY_TRADING_STATE = "daily_trading_state"
+    IDENTITY_DECISION = "identity_decision"
     OFFICIAL_LIFECYCLE = "official_lifecycle"
+
+
+class ChinaAsharePilotIdentityDisposition(StrEnum):
+    BOUND_FOR_DAILY_CAPTURE = "bound_for_daily_capture"
+    QUARANTINED = "quarantined"
 
 
 class ChinaAsharePilotAnchorV1(FrozenContract):
@@ -321,6 +331,97 @@ class ChinaAsharePilotArtifactV1(FrozenContract):
         return _sha(value, "physical_sha256")
 
 
+class ChinaAsharePilotIdentityDecisionV1(FrozenContract):
+    """Pilot-only identity decision; never a canonical stable-ID publication."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    market_id: Literal["china_a_share"] = MARKET_ID
+    source_security_id: str
+    exchange: ChinaAshareExchange
+    board: ChinaAshareBoard
+    pilot_instrument_id: UUID | None = None
+    disposition: ChinaAsharePilotIdentityDisposition
+    official_observation_fingerprint: str | None = None
+    baostock_observation_fingerprint: str | None = None
+    baostock_state_fingerprint: str | None = None
+    reference_package_fingerprint: str
+    name_agreement: bool | None = None
+    evaluated_at: datetime
+    reason_codes: tuple[str, ...] = Field(min_length=1)
+    canonical_apply_authorized: Literal[False] = False
+    research_backtest_authorized: Literal[False] = False
+    logical_fingerprint: str
+
+    @field_validator("source_security_id", mode="before")
+    @classmethod
+    def source_id_is_canonical(cls, value: str) -> str:
+        normalized = normalize_required_string(
+            value,
+            field_name="source_security_id",
+        ).lower()
+        if not _SOURCE_SECURITY_ID.fullmatch(normalized):
+            raise ValueError("source_security_id must use sh|sz|bj plus six digits")
+        return normalized
+
+    @field_validator(
+        "official_observation_fingerprint",
+        "baostock_observation_fingerprint",
+        "baostock_state_fingerprint",
+        mode="before",
+    )
+    @classmethod
+    def optional_hashes_are_sha256(cls, value: str | None, info: Any) -> str | None:
+        return None if value is None else _sha(value, info.field_name)
+
+    @field_validator("reference_package_fingerprint", "logical_fingerprint")
+    @classmethod
+    def hashes_are_sha256(cls, value: str, info: Any) -> str:
+        return _sha(value, info.field_name)
+
+    @field_validator("evaluated_at")
+    @classmethod
+    def evaluated_time_is_utc(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @field_validator("reason_codes", mode="before")
+    @classmethod
+    def reasons_are_canonical(cls, value: Any) -> tuple[str, ...]:
+        return _canonical_reason_codes(value, field_name="reason_codes")
+
+    @model_validator(mode="after")
+    def decision_reconciles(self) -> "ChinaAsharePilotIdentityDecisionV1":
+        prefix = self.source_security_id.split(".", maxsplit=1)[0]
+        expected_exchange = {
+            "sh": ChinaAshareExchange.SSE,
+            "sz": ChinaAshareExchange.SZSE,
+            "bj": ChinaAshareExchange.BSE,
+        }[prefix]
+        if self.exchange is not expected_exchange:
+            raise ValueError("identity decision exchange differs from source ID")
+        if self.disposition is ChinaAsharePilotIdentityDisposition.BOUND_FOR_DAILY_CAPTURE:
+            if self.pilot_instrument_id is None:
+                raise ValueError("bound pilot identity requires an instrument ID")
+            if self.board is ChinaAshareBoard.UNKNOWN:
+                raise ValueError("bound pilot identity requires a proven board")
+            if not all(
+                (
+                    self.official_observation_fingerprint,
+                    self.baostock_observation_fingerprint,
+                    self.baostock_state_fingerprint,
+                )
+            ):
+                raise ValueError("bound pilot identity requires all source evidence")
+            if self.name_agreement is not True:
+                raise ValueError("bound pilot identity requires exact name agreement")
+            if "pilot_only_not_canonical" not in self.reason_codes:
+                raise ValueError("bound pilot identity requires pilot-only warning")
+        elif self.pilot_instrument_id is not None:
+            raise ValueError("quarantined identity cannot carry an instrument ID")
+        if china_ashare_pilot_identity_decision_fingerprint(self) != self.logical_fingerprint:
+            raise ValueError("pilot identity decision fingerprint differs")
+        return self
+
+
 class ChinaAsharePilotPackageManifestV1(FrozenContract):
     schema_version: Literal["1.0"] = "1.0"
     package_version: Literal["china-ashare-foundation-pilot-package/1.0"] = (
@@ -372,6 +473,159 @@ class ChinaAsharePilotPackageManifestV1(FrozenContract):
         return self
 
 
+class ChinaAsharePilotDailyQualityReportV1(FrozenContract):
+    schema_version: Literal["1.0"] = "1.0"
+    market_id: Literal["china_a_share"] = MARKET_ID
+    plan_fingerprint: str
+    reference_package_fingerprint: str
+    evaluated_at: datetime
+    planned_anchor_ids: tuple[str, ...]
+    bound_for_daily_capture_ids: tuple[str, ...]
+    quarantined_ids: tuple[str, ...]
+    daily_requested_ids: tuple[str, ...]
+    daily_bar_count: int = Field(ge=0)
+    daily_state_count: int = Field(ge=0)
+    suspended_state_count: int = Field(ge=0)
+    risk_warning_state_count: int = Field(ge=0)
+    adjustment_observation_count: int = Field(ge=0)
+    source_request_count: int = Field(ge=1)
+    source_request_ceiling: int = Field(ge=1)
+    source_capture_complete: bool
+    diverse_scenarios_observed: bool
+    canonical_identity_authorized: Literal[False] = False
+    calendar_reconciled: Literal[False] = False
+    price_limit_rules_reconciled: Literal[False] = False
+    adjustment_semantics_reconciled: Literal[False] = False
+    research_backtest_authorized: Literal[False] = False
+    canonical_apply_authorized: Literal[False] = False
+    product_publication_authorized: Literal[False] = False
+    deployment_authorized: Literal[False] = False
+    reason_codes: tuple[str, ...] = Field(min_length=1)
+    logical_fingerprint: str
+
+    @field_validator(
+        "plan_fingerprint",
+        "reference_package_fingerprint",
+        "logical_fingerprint",
+    )
+    @classmethod
+    def hashes_are_sha256(cls, value: str, info: Any) -> str:
+        return _sha(value, info.field_name)
+
+    @field_validator("evaluated_at")
+    @classmethod
+    def evaluated_time_is_utc(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @field_validator(
+        "planned_anchor_ids",
+        "bound_for_daily_capture_ids",
+        "quarantined_ids",
+        "daily_requested_ids",
+        mode="before",
+    )
+    @classmethod
+    def source_ids_are_canonical(cls, value: Any, info: Any) -> tuple[str, ...]:
+        return _canonical_source_security_ids(value, field_name=info.field_name)
+
+    @field_validator("reason_codes", mode="before")
+    @classmethod
+    def reasons_are_canonical(cls, value: Any) -> tuple[str, ...]:
+        return _canonical_reason_codes(value, field_name="reason_codes")
+
+    @model_validator(mode="after")
+    def report_reconciles(self) -> "ChinaAsharePilotDailyQualityReportV1":
+        planned = set(self.planned_anchor_ids)
+        bound = set(self.bound_for_daily_capture_ids)
+        quarantined = set(self.quarantined_ids)
+        if bound & quarantined or bound | quarantined != planned:
+            raise ValueError("daily identity dispositions do not partition the plan")
+        if self.daily_requested_ids != self.bound_for_daily_capture_ids:
+            raise ValueError("daily requested IDs differ from bound pilot identities")
+        if self.daily_state_count < self.daily_bar_count:
+            raise ValueError("daily state count cannot be below bar count")
+        if self.suspended_state_count > self.daily_state_count:
+            raise ValueError("suspension count exceeds daily state count")
+        if self.risk_warning_state_count > self.daily_state_count:
+            raise ValueError("risk-warning count exceeds daily state count")
+        if self.source_request_count > self.source_request_ceiling:
+            raise ValueError("daily source request count exceeds its ceiling")
+        expected_complete = bool(self.daily_requested_ids) and self.daily_state_count > 0
+        if self.source_capture_complete is not expected_complete:
+            raise ValueError("daily source capture status differs")
+        expected_diverse = all(
+            (
+                self.suspended_state_count > 0,
+                self.risk_warning_state_count > 0,
+                self.adjustment_observation_count > 0,
+            )
+        )
+        if self.diverse_scenarios_observed is not expected_diverse:
+            raise ValueError("daily pilot scenario status differs")
+        if china_ashare_pilot_daily_quality_report_fingerprint(self) != self.logical_fingerprint:
+            raise ValueError("daily pilot quality report fingerprint differs")
+        return self
+
+
+class ChinaAsharePilotDailyPackageManifestV1(FrozenContract):
+    schema_version: Literal["1.0"] = "1.0"
+    package_version: Literal["china-ashare-foundation-pilot-daily-package/1.0"] = (
+        "china-ashare-foundation-pilot-daily-package/1.0"
+    )
+    market_id: Literal["china_a_share"] = MARKET_ID
+    plan_fingerprint: str
+    reference_package_fingerprint: str
+    created_at: datetime
+    payload_layer: Literal["normalized_library_observations"] = (
+        "normalized_library_observations"
+    )
+    raw_upstream_payload_retained: Literal[False] = False
+    plan_document_sha256: str
+    quality_report_sha256: str
+    quality_report_fingerprint: str
+    artifacts: tuple[ChinaAsharePilotArtifactV1, ...] = Field(min_length=4, max_length=4)
+    canonical_apply_authorized: Literal[False] = False
+    research_backtest_authorized: Literal[False] = False
+    product_publication_authorized: Literal[False] = False
+    deployment_authorized: Literal[False] = False
+    logical_fingerprint: str
+
+    @field_validator(
+        "plan_fingerprint",
+        "reference_package_fingerprint",
+        "plan_document_sha256",
+        "quality_report_sha256",
+        "quality_report_fingerprint",
+        "logical_fingerprint",
+    )
+    @classmethod
+    def hashes_are_sha256(cls, value: str, info: Any) -> str:
+        return _sha(value, info.field_name)
+
+    @field_validator("created_at")
+    @classmethod
+    def created_time_is_utc(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @model_validator(mode="after")
+    def manifest_reconciles(self) -> "ChinaAsharePilotDailyPackageManifestV1":
+        required = {
+            ChinaAsharePilotArtifactKind.ADJUSTMENT_FACTOR,
+            ChinaAsharePilotArtifactKind.DAILY_BAR,
+            ChinaAsharePilotArtifactKind.DAILY_TRADING_STATE,
+            ChinaAsharePilotArtifactKind.IDENTITY_DECISION,
+        }
+        kinds = tuple(item.artifact_kind for item in self.artifacts)
+        if set(kinds) != required or kinds != tuple(sorted(required, key=lambda item: item.value)):
+            raise ValueError("daily pilot artifact set differs")
+        paths = tuple(item.relative_path for item in self.artifacts)
+        if len(paths) != len(set(paths)):
+            raise ValueError("daily pilot artifact paths must be unique")
+        if china_ashare_pilot_daily_package_fingerprint(self) != self.logical_fingerprint:
+            raise ValueError("daily pilot package fingerprint differs")
+        return self
+
+
 def build_china_ashare_pilot_plan(**values: Any) -> ChinaAsharePilotPlanV1:
     provisional = ChinaAsharePilotPlanV1.model_construct(
         **values,
@@ -417,6 +671,57 @@ def build_china_ashare_pilot_package_manifest(
     )
 
 
+def build_china_ashare_pilot_identity_decision(
+    **values: Any,
+) -> ChinaAsharePilotIdentityDecisionV1:
+    provisional = ChinaAsharePilotIdentityDecisionV1.model_construct(
+        **values,
+        logical_fingerprint="0" * 64,
+    )
+    return ChinaAsharePilotIdentityDecisionV1.model_validate(
+        {
+            **values,
+            "logical_fingerprint": china_ashare_pilot_identity_decision_fingerprint(
+                provisional
+            ),
+        }
+    )
+
+
+def build_china_ashare_pilot_daily_quality_report(
+    **values: Any,
+) -> ChinaAsharePilotDailyQualityReportV1:
+    provisional = ChinaAsharePilotDailyQualityReportV1.model_construct(
+        **values,
+        logical_fingerprint="0" * 64,
+    )
+    return ChinaAsharePilotDailyQualityReportV1.model_validate(
+        {
+            **values,
+            "logical_fingerprint": china_ashare_pilot_daily_quality_report_fingerprint(
+                provisional
+            ),
+        }
+    )
+
+
+def build_china_ashare_pilot_daily_package_manifest(
+    **values: Any,
+) -> ChinaAsharePilotDailyPackageManifestV1:
+    provisional = ChinaAsharePilotDailyPackageManifestV1.model_construct(
+        **values,
+        logical_fingerprint="0" * 64,
+    )
+    return ChinaAsharePilotDailyPackageManifestV1.model_validate(
+        {
+            **values,
+            "logical_fingerprint": china_ashare_pilot_daily_package_fingerprint(
+                provisional
+            ),
+        }
+    )
+
+
 def china_ashare_pilot_plan_fingerprint(value: ChinaAsharePilotPlanV1) -> str:
     return _fingerprint(value.model_dump(mode="json", exclude={"logical_fingerprint"}))
 
@@ -429,6 +734,28 @@ def china_ashare_pilot_quality_report_fingerprint(
 
 def china_ashare_pilot_package_fingerprint(
     value: ChinaAsharePilotPackageManifestV1,
+) -> str:
+    return _fingerprint(value.model_dump(mode="json", exclude={"logical_fingerprint"}))
+
+
+def china_ashare_pilot_identity_decision_fingerprint(
+    value: ChinaAsharePilotIdentityDecisionV1,
+) -> str:
+    return _fingerprint(value.model_dump(mode="json", exclude={"logical_fingerprint"}))
+
+
+def china_ashare_pilot_source_observation_fingerprint(value: FrozenContract) -> str:
+    return _fingerprint(value.model_dump(mode="json"))
+
+
+def china_ashare_pilot_daily_quality_report_fingerprint(
+    value: ChinaAsharePilotDailyQualityReportV1,
+) -> str:
+    return _fingerprint(value.model_dump(mode="json", exclude={"logical_fingerprint"}))
+
+
+def china_ashare_pilot_daily_package_fingerprint(
+    value: ChinaAsharePilotDailyPackageManifestV1,
 ) -> str:
     return _fingerprint(value.model_dump(mode="json", exclude={"logical_fingerprint"}))
 

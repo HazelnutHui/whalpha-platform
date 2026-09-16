@@ -76,17 +76,39 @@ listing security-code rows. Both families remain unadjudicated source evidence.
 
 ## Temporary normalized reference package
 
-A bounded seven-request capture wrote only to owner-only custody below `/tmp`
+A bounded reference capture wrote only to owner-only custody below `/tmp`
 and passed a complete byte/hash/schema/mode/file-set reread. The final plan
-covered SSE Main, STAR, SZSE Main, ChiNext, and BSE current anchors plus one SSE
-issuer-lifecycle and one SZSE security-lifecycle subject. Current official
-lists covered all five anchors and both lifecycle subjects. BaoStock covered
-the four SSE/SZSE anchors but not BSE.
+covered seven varied anchors across SSE Main, STAR, SZSE Main, ChiNext, and BSE
+plus one SSE issuer-lifecycle and one SZSE security-lifecycle subject. Current
+official lists covered all seven anchors and both lifecycle subjects. BaoStock
+covered all six SSE/SZSE anchors but not BSE.
 
 The first attempted BSE anchor used an obsolete `430xxx` assumption and was
 absent from the current official list. The failed package remained an immutable
 diagnostic; the plan was corrected to a current official `920xxx` anchor and
 rerun. Neither package retained raw upstream bytes or touched `/data`.
+
+## Five-year daily pilot follow-up
+
+Pilot-only adjudication bound the six SSE/SZSE anchors whose official-list and
+BaoStock evidence agreed and quarantined the BSE anchor because BaoStock had no
+matching instrument observation. The identifiers are deterministic package
+join keys, not canonical stable identities.
+
+The linked daily capture covers 2021-09-16 through 2026-09-16 and made 12
+source requests: one daily-history and one adjustment-history request for each
+bound security. The owner-only package contains:
+
+- 7,255 unadjusted daily bars;
+- 7,266 daily source states, including 11 suspended states;
+- 259 present-but-unspecified risk-warning states; and
+- 28 adjustment observations preserving the provider, forward-adjustment,
+  and backward-adjustment factor fields separately.
+
+Seven physical files totaling 8,319,284 bytes passed complete
+byte/hash/schema/mode/file-set reread. The quality report keeps raw retention,
+canonical identity, calendar reconciliation, adjustment semantics, canonical
+Apply, backtest, Product, publication, and deployment authority false.
 
 ## Decision
 
@@ -95,14 +117,15 @@ rerun. Neither package retained raw upstream bytes or touched `/data`.
   board/form source and the initial BSE identity route.
 - BSE daily-price history still requires a qualified primary/corroborating
   route; no source is promoted merely because the current list is available.
-- The normalized reference/lifecycle slice now rereads exactly, but raw source
-  retention and stable-identity adjudication remain separate work.
+- The normalized reference/lifecycle and linked daily slices now reread
+  exactly, but raw source retention and canonical stable-identity adjudication
+  remain separate work.
 - Suspensions, risk-warning history, corporate actions, effective-dated rules,
   fees, exact availability clocks, and BSE daily history remain incomplete.
-- The next safe milestone is stable-identity adjudication followed by bounded
-  five-year SSE/SZSE daily/state/adjustment capture. Full-market backfill
-  remains closed.
+- The next safe milestone is a source-repeat comparison plus qualification of
+  calendars, price-limit rules, corporate actions, factor semantics, fees, and
+  historical Universe decisions. Full-market backfill remains closed.
 
 ## Verdict
 
-`NORMALIZED_REFERENCE_PILOT_EXACT_FOUNDATION_INCOMPLETE`
+`NORMALIZED_DAILY_PILOT_EXACT_FOUNDATION_INCOMPLETE`

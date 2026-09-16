@@ -201,11 +201,14 @@ Sequence:
 6. only after admission, register the first A-share outcome-blind factor batch
    under the same three-layer research governance.
 
-Current checkpoint: the five-board current-reference and two-subject lifecycle
-slice of step 1 is complete under temporary normalized custody. Stable identity,
-SSE/SZSE five-year daily history, suspension/risk-warning selection, adjustment
-semantics, actions, and a qualified BSE daily route remain before step 1 can be
-called complete.
+Current checkpoint: seven varied current-reference anchors and two lifecycle
+subjects are retained under temporary normalized custody. Six pilot-only
+SSE/SZSE identity bindings now link to an exactly reread five-year package of
+unadjusted daily bars, daily states, and all three provider factor fields. The
+BSE anchor remains quarantined. Source-repeat comparison, canonical stable
+identity, qualified calendars and price-limit rules, adjustment semantics,
+corporate-action economics, historical Universe decisions, fees, and a
+qualified BSE daily route remain before the historical pilot can be admitted.
 
 Exit: a reproducible daily-research admission for an exact interval and
 population, or an explicit blocker report. Intraday, live model, Product,

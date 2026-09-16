@@ -8,9 +8,10 @@ not authorize a live acquisition, `/data` write, research outcome read,
 Candidate activation, website publication, or deployment.
 
 The implementation contains provider-neutral contracts, BaoStock and
-AKShare-mediated adapters, and an owner-only temporary normalized-reference
-pilot that rereads exactly. That package is not a raw provider archive,
-canonical dataset, or completed historical pilot.
+AKShare-mediated adapters, an owner-only temporary normalized-reference
+package, and a linked five-year daily pilot package. Both packages reread
+exactly. They are not raw provider archives, canonical datasets, or completed
+historical admission.
 
 ## Logical layers
 
@@ -37,6 +38,11 @@ The current temporary reference package explicitly declares
 `normalized_library_observations` and `raw_upstream_payload_retained=false`.
 It qualifies adapter semantics only and cannot satisfy the later raw-source
 archive requirement by itself.
+
+The linked daily package preserves typed identity decisions, unadjusted bars,
+daily source states, all three provider adjustment-factor fields, and a
+quality report. It makes the same no-raw-payload declaration and cannot be
+promoted into canonical custody by path movement or manifest relabelling.
 
 ### Normalized observations
 
@@ -108,6 +114,13 @@ the current BSE code namespace uses `920xxx`, while an earlier assumed `430xxx`
 anchor was absent from the current official list. The obsolete assumption was
 replaced in the plan, not silently joined across time.
 
+The current pilot adjudication creates deterministic pilot-only identifiers
+for six SSE/SZSE anchors whose official current-list and BaoStock observations
+agree on their source identity. The BSE anchor remains quarantined because the
+BaoStock snapshot contains no matching instrument. These bindings exist only
+to join the bounded temporary packages; they are not canonical stable IDs and
+cannot enter a production registry.
+
 ## Required foundation families
 
 Daily research admission covers exactly these families:
@@ -163,6 +176,13 @@ frequency execution from EOD data.
    instrument.
 7. Publish a coverage census and admission decision.
 8. Open Factor Discovery only for the exact admitted interval and population.
+
+The first bounded five-year daily capture covers six varied SSE/SZSE
+securities from 2021-09-16 through 2026-09-16. It retains 7,255 unadjusted
+bars, 7,266 daily states including 11 suspensions and 259 present-but-
+unspecified risk-warning states, and 28 adjustment observations. Exact reread
+passes. This is scenario and adapter evidence, not a representative market
+sample or research-ready historical panel.
 
 Expansion stops on systemic schema drift, unexplained coverage loss,
 unbounded rate failure, fingerprint mismatch, or a critical family with no

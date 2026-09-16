@@ -262,6 +262,8 @@ def test_adjustment_factor_remains_non_authoritative_for_returns() -> None:
 
     assert len(rows) == 1
     assert rows[0].provider_factor == Decimal("1.125")
+    assert rows[0].fore_adjust_factor == Decimal("0.75")
+    assert rows[0].back_adjust_factor == Decimal("1.25")
     assert rows[0].normalized_return_authorized is False
     assert "return_semantics_unreconciled" in rows[0].reason_codes
 

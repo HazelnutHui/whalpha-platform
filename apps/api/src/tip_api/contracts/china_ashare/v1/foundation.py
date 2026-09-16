@@ -582,6 +582,8 @@ class ChinaAshareAdjustmentFactorObservationV1(FrozenContract):
     instrument_id: UUID
     session_date: date
     provider_factor: Decimal
+    fore_adjust_factor: Decimal
+    back_adjust_factor: Decimal
     provider_semantics: str
     source: str
     source_available_at: datetime | None = None
@@ -597,17 +599,26 @@ class ChinaAshareAdjustmentFactorObservationV1(FrozenContract):
             raise ValueError("session_date must not receive a datetime")
         return value
 
-    @field_validator("provider_factor", mode="before")
+    @field_validator(
+        "provider_factor",
+        "fore_adjust_factor",
+        "back_adjust_factor",
+        mode="before",
+    )
     @classmethod
-    def factor_is_exact(cls, value: Any) -> Any:
-        return reject_float_decimal_input(value, field_name="provider_factor")
+    def factor_is_exact(cls, value: Any, info: Any) -> Any:
+        return reject_float_decimal_input(value, field_name=info.field_name)
 
-    @field_validator("provider_factor")
+    @field_validator(
+        "provider_factor",
+        "fore_adjust_factor",
+        "back_adjust_factor",
+    )
     @classmethod
-    def factor_is_positive(cls, value: Decimal) -> Decimal:
-        value = ensure_finite_decimal(value, field_name="provider_factor")
+    def factor_is_positive(cls, value: Decimal, info: Any) -> Decimal:
+        value = ensure_finite_decimal(value, field_name=info.field_name)
         if value <= 0:
-            raise ValueError("provider_factor must be positive")
+            raise ValueError(f"{info.field_name} must be positive")
         return value
 
     @field_validator("provider_semantics", "source", mode="before")

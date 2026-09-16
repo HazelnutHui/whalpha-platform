@@ -372,8 +372,17 @@ class BaoStockAshareSourceAdapter:
                             row["adjustFactor"],
                             field_name="adjustFactor",
                         ),
+                        fore_adjust_factor=_required_decimal(
+                            row["foreAdjustFactor"],
+                            field_name="foreAdjustFactor",
+                        ),
+                        back_adjust_factor=_required_decimal(
+                            row["backAdjustFactor"],
+                            field_name="backAdjustFactor",
+                        ),
                         provider_semantics=(
-                            "BaoStock adjustFactor source observation; direction and "
+                            "BaoStock adjustFactor, foreAdjustFactor, and "
+                            "backAdjustFactor source observation; direction and "
                             "total-return semantics are not reconciled"
                         ),
                         source=self.provider_id,

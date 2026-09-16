@@ -32,6 +32,16 @@ and dated [audits](../audits/). Current capability and next work belong in
   archive, stable-ID registry, historical Universe, five-year coverage,
   research admission, Product change, publication, deployment, or Production
   write exists.
+- Expanded the plan to seven varied anchors and completed pilot-only identity
+  adjudication: six SSE/SZSE securities are bound only for temporary package
+  joins, while the BSE anchor is quarantined because BaoStock lacks matching
+  evidence.
+- Captured and exactly reread a linked owner-only five-year package containing
+  7,255 unadjusted bars, 7,266 daily source states, and 28 adjustment
+  observations. All three provider factor fields are retained separately;
+  adjustment-return semantics and every downstream authority remain false.
+- Passed all 43 focused A-share tests and all 3,117 backend tests after the
+  linked daily-package implementation.
 
 ## 2026-09-16 — Deploy the completed Campaign Three result
 
