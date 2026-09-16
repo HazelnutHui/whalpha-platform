@@ -15,28 +15,30 @@ features. It presents Quant Research Lab as factor/model/expression authority,
 model-driven Candidate ranking as a downstream activation, governed research
 automation as a planned extension of traditional quantitative discipline, and
 the three established market-context workspaces as free supporting tools. Its
-current dossier identifies Factor Discovery V2, the byte-identical 98.59%
-data-qualification pass, its completed six-trial Development screen, four
-rejected Alpha trials, two qualified-but-unselected risk guards, the completed
-14-trial ledger, and the next unregistered campaign design boundary. Its
+current dossier identifies Campaign Three as registered with three unread
+trials, a cumulative 17-trial ledger, and a still-closed Development-access
+boundary. The first two factor campaigns remain closed without candidate
+Alpha; no model or strategy exists. Its
 outcome-blind market-state input now also shows the completed 287-session
 qualification, 267 jointly available reconstructed sessions, and matching
-independent replay without exposing internal report identities. V1 and
-Strong-Leader Pullback remain historical failed research. The first viewport keeps account/password sign-in as the
+independent replay without exposing internal report identities. Pre-three-layer
+method programs remain internal audit history rather than public Product
+research. The first viewport keeps account/password sign-in as the
 primary entry, places equal-capability guest access immediately below it, and
 uses a persistent continuation cue to expose the research narrative below.
 
 Inside the Lab, a trilingual research-foundation snapshot shows the verified
 five-year price/identity depth, reconstructed Membership, action assignments,
 lifecycle references, and point-in-time fundamental pilot without combining
-them into a misleading readiness score. Factor Discovery V2 now leads the
-page: all eight exact formulas, roles, the qualification identity, 431,249 of
+them into a misleading readiness score. Campaign Three now leads the page as a
+registered, outcome-unread campaign; “ledger edition 4” is described only as
+cumulative accounting, never as a model version. The prior Factor Discovery V2
+evidence remains inspectable: all eight exact formulas, roles, 431,249 of
 437,402 complete vectors, the split-evidence lineage, six formal decisions,
 completed report/replay identities, and zero selected model inputs are visible.
-V1 screening and the Pullback
-method remain explicitly historical. The displayed 95.38% lower on the page is
-the old Pullback method-computability coverage, not a hit rate, prediction
-accuracy, or return.
+V1 screening remains a retained failed factor campaign. The pre-architecture
+Strong-Leader Pullback method and parameter record are no longer rendered in
+the public entry or protected Lab.
 
 The Lab also shows the permanent renewable discovery loop. It distinguishes an
 indefinitely continuing research program from each finite campaign and exposes
@@ -122,17 +124,17 @@ guide.
   context, contribution ledgers, and evidence drawer
 - Trilingual Quant Research Lab foundation, Factor Catalog V2 qualification
   and completed six-trial Development screen,
-  historical V1 Development screening, and retained-method workspace. The page
+  and historical V1 Development screening. The page
   exposes the exactly replayed V2 qualification and result, its source boundary,
   all eight V2 definitions, all six decisions, the historical no-Alpha V1
-  result and retained risk guard, protocol identities, limitations, and
+  result and retained risk guard, limitations, and
   continuing model/Product lock
   without presenting a score as validated performance
 - completed market-state and Campaign Three input qualification with exact
   replays for the first manually supervised multi-Agent pilot; five
   deduplicated hypothesis cards are recorded, two Alpha interactions and one
-  risk guard advance to protocol freeze, one Alpha design stopped before
-  outcomes, Campaign Three remains unregistered, and all Development,
+  risk guard are now registered under a frozen protocol and cumulative ledger,
+  one Alpha design stopped before outcomes, and all Development,
   Validation, and Holdout outcomes stay closed
 - Logout in snapshot mode
 - Trilingual hypothesis-submission contact link and cumulative guest-entry

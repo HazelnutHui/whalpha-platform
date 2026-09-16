@@ -6,6 +6,25 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-16 — Clarify public research lineage and implement the next access boundary
+
+- Removed the pre-three-layer Strong-Leader Pullback program and its retained
+  method record from the public entry and Quant Research Lab. Its immutable
+  contracts and audits remain internal rejection and anti-retesting evidence;
+  it is not an Alpha, model, strategy expression, or active Product method.
+- Reframed the trilingual public research state around the actual governed
+  lineage: the first two factor campaigns closed without candidate Alpha,
+  Campaign Three has three registered unread trials, the cumulative ledger
+  contains 17 formal trials, and active model / strategy counts remain zero.
+- Clarified that V1/V2/Campaign Three name research campaigns and that Ledger
+  V4 is a cumulative accounting edition, not a model version.
+- Added and tested the typed Campaign Three Development access request/grant
+  contract. It binds a clean implementation revision, the frozen protocol, and
+  Ledger V4 to one formal run plus one exact replay and keeps every downstream
+  or write authority closed until a separate exact authorization.
+- Tightened the frozen sensitivity-bootstrap gate wording: the one-sided 90%
+  lower bound must be positive under both registered block lengths.
+
 ## 2026-09-16 — Register Campaign Three protocol without reading outcomes
 
 - Accepted ADR 0291 and froze exactly two candidate-Alpha interactions and one

@@ -19,20 +19,17 @@ ADRs, and audits.
 - **Professional performance foundation:** the strict exact/as-operated gate
   remains `data_blocked`; reconstructed-research V2 is separately
   `ready_for_reconstructed_development`.
-- **First strategy:** its canonical method, derived Lab record, signal/cohort
-  engine, diagnostics, immutable development labels, and fixed 24-combination
-  development study are complete. V1 ended `inconclusive_evidence_floor`; its
-  single registered replacement ended `rejected_endpoint_instability`. The
-  program is closed with no parameter lock; Validation, Holdout, performance
-  claims, and Candidate authority remain closed.
+- **Pre-architecture study:** Strong-Leader Pullback is closed with no parameter
+  lock after an inconclusive fixed study and an endpoint-unstable replacement.
+  It is retained only as internal rejection and anti-retesting evidence, not as
+  a current Alpha, model, strategy expression, or public Lab program.
 - **Research architecture:** ADR 0274 makes Factor Discovery -> Model
   Construction -> Strategy Expression the durable path. The first 12-factor
   catalog completed its frozen eight-hypothesis Development screen and one
   exact replay. All five candidate-Alpha factors failed; one risk guard passed.
-  The batch is `closed_no_candidate_alpha`, so no model was constructed and a
-  separately registered discovery campaign is next. ADR 0277 now retains all
-  eight consumed trials in a machine-verifiable cumulative ledger before that
-  adaptive campaign is designed. ADR 0278 registered eight exact V2
+  The batch is `closed_no_candidate_alpha`, so no model was constructed. ADR
+  0277 retains all eight consumed trials in a machine-verifiable cumulative
+  ledger. ADR 0278 registered eight exact V2
   definitions with zero outcome access. Under ADR 0280, retained five-year split
   evidence repaired the proved source boundary without changing formulas,
   population, or gates. Qualification and its byte-identical replay now pass at
@@ -44,8 +41,7 @@ ADRs, and audits.
   106-session cohort and prevent all 118 raw Development sessions from entering
   it. The single formal V2 report and exact replay are complete: all four Alpha
   trials failed, both risk guards passed their own gates but were not selected,
-  and no model opened. Ledger V3 closes all 14 consumed trials. A new finite
-  factor campaign is the next design boundary; it is not yet registered. ADR
+  and no model opened. Ledger V3 closes all 14 consumed trials. ADR
   0284 now makes the long-run discovery program renewable while keeping each
   campaign finite, deduplicated, stage-isolated, preregistered, and replayed.
   ADR 0287 defines the first manually supervised, outcome-blind multi-agent
@@ -85,20 +81,20 @@ same data and capability. Snapshot/API failure closes without synthetic
 Production data.
 
 The Lab presents the Factor Discovery -> Model Construction -> Strategy
-Expression architecture. Production now shows Factor Catalog V2 as a closed
-campaign: all eight definitions and their 98.59% outcome-blind qualification,
-the six-trial Development result, four rejected Alpha trials, two
-qualified-but-unselected risk guards, exact replay identities, 14 cumulative
-trials, and zero model inputs. V1 screening and the Pullback program remain
-visible as historical failed research. The public entry dossier carries the
-same result in all three languages. This changes no market analytics, Baseline
-Candidate calculation, model authority, or Candidate activation.
+Expression architecture. Its public projection shows the two closed factor
+campaigns and Campaign Three's registered, unread trials, with 17 cumulative
+formal trials and zero admitted Alpha, model, or strategy. Named methods from
+before the three-layer architecture are not rendered publicly; their immutable
+contracts and audits remain internal anti-retesting evidence. This changes no
+market analytics, Baseline Candidate calculation, model authority, or
+Candidate activation.
 
-Production additionally contains the reviewed renewable-cycle panel. It shows
-the current return to hypothesis intake, the 2 completed campaigns / 14 formal
-trials, seven-dimensional duplicate identity, finite preregistration budget,
-stage isolation, and automatic pause conditions. It is a research-control
-surface, not evidence that an unattended factor miner is already running.
+Production additionally contains the reviewed renewable-cycle panel. Its
+current source projection shows 2 completed campaigns, 17 cumulative formal
+trials including 3 registered and unread Campaign Three trials,
+seven-dimensional duplicate identity, finite preregistration budgets, stage
+isolation, and automatic pause conditions. It is a research-control surface,
+not evidence that an unattended factor miner is already running.
 
 Production also contains the reviewed trilingual multi-agent pilot surface. It
 exposes human-readable roles, isolation, the completed market-state
@@ -151,9 +147,9 @@ not a complete professional backtest database. Later-retrieved evidence may be
 used only at its declared knowledge-time tier; it cannot silently become
 historically `as_operated`.
 
-## First research program
+## Pre-architecture research record (internal audit only)
 
-Strong-Leader Pullback V1 asks whether an orderly pullback and close-based
+Strong-Leader Pullback V1 asked whether an orderly pullback and close-based
 recovery among existing relative leaders improves the next 1-, 3-, and
 5-session underlying-stock outcome. The hypothesis, 24-combination search
 budget, chronological split, purge/embargo, controls, costs, statistics, and
@@ -356,9 +352,9 @@ measured budget breach.
 
 ## Immediate boundary
 
-1. Treat Strong-Leader Pullback method engineering and its Lab/data-readiness
-   surface as complete; do not reopen it without a named defect or a new
-   preregistered version.
+1. Keep Strong-Leader Pullback out of the public Product and retain its closed
+   contracts and audits only as internal rejection and anti-retesting evidence;
+   do not reopen it without a named defect and a separately preregistered study.
 2. Preserve Baseline V1, reconstructed Membership, and all unresolved evidence
    states without silent inference.
 3. Treat the immutable raw development dataset as complete; do not rebuild it
@@ -379,9 +375,10 @@ measured budget breach.
 9. Preserve the completed Market-State qualification, reusable-artifact V2
    registration, Campaign Three hypothesis registry, and exact input-
    qualification report/replay, the three-trial protocol, and Ledger V4. Do not
-   rescue the rejected defensive-resilience design. Build and review the
-   deterministic evaluator and clean-revision typed access boundary, then stop
-   before Development outcomes for separate exact authorization.
+   rescue the rejected defensive-resilience design. The typed clean-revision
+   access contract is implemented and tested but grants nothing by itself.
+   Build and review the deterministic evaluator, bind both to a clean commit,
+   then stop before Development outcomes for separate exact authorization.
 10. Use the ADR 0284 cycle for every successor campaign: deduplicate before
     implementation, close and append before another campaign reads outcomes,
     and return to intake after either success or failure.

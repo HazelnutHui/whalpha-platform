@@ -32,9 +32,10 @@ Candidate score, Entry Geometry, and technical Strategy Channels remain
 transparent but unvalidated **Baseline V1**, not a direct tuning target or the
 future research taxonomy.
 
-The completed Strong-Leader Pullback development program did not produce a
-model lock: V1 was inconclusive at its evidence floor and the only registered
-replacement was rejected on endpoint instability. Factor Discovery V1 and V2
+The pre-architecture Strong-Leader Pullback study did not produce a model lock:
+V1 was inconclusive at its evidence floor and the only registered replacement
+was rejected on endpoint instability. It remains internal audit and
+anti-retesting evidence, not a current public strategy. Factor Discovery V1 and V2
 also completed frozen, exactly replayed Development screens. Across the two
 campaigns, all nine candidate-Alpha trials failed; three risk guards qualified
 as risk evidence, but none can open a model by itself. These are retained,

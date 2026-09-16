@@ -220,8 +220,9 @@ authority.
 
 ## Current migration state
 
-- Strong-Leader Pullback is a completed rejected program and remains preserved
-  as evidence of a functioning rejection path.
+- Strong-Leader Pullback predates this architecture and remains preserved only
+  in internal contracts and audits as rejection and anti-retesting evidence.
+  It is not a current Alpha, model, strategy expression, or public Lab program.
 - Quant Research Factor Catalog V1 is the first bounded discovery batch. Its
   12 factors are not the permanent feature universe or a promised model. Its
   outcome-blind value, coverage, distribution, concentration, redundancy, and
@@ -233,10 +234,10 @@ authority.
   outcome-blind qualification passed, but its frozen Development screen closed
   without candidate Alpha: four Alpha trials failed and two risk guards
   qualified but were not selected. Ledger V3 closes all 14 consumed trials.
-- The next factor campaign is not registered. It must append a finite trial
-  family to a new ledger before outcomes and should test economically distinct,
-  point-in-time market-structure-conditioned evidence without reopening V1 or
-  V2.
+- Campaign Three completed outcome-blind intake and input qualification. Its
+  finite Ledger V4 registers two Alpha interactions and one risk guard as
+  unread trials, bringing the cumulative formal-trial count to 17 without
+  admitting any model input.
 - ADR 0284 makes Factor Discovery itself renewable: close and count each finite
   campaign, then return to deduplicated hypothesis intake. Model Construction
   may open only for admitted Alpha and runs independently from later discovery.

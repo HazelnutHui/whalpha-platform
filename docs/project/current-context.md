@@ -107,7 +107,8 @@ Core/Broad activation remains deferred.
 
 ## Research state
 
-Strong-Leader Pullback is a closed rejected historical program:
+Strong-Leader Pullback is a closed pre-architecture research record retained
+only in internal contracts and audits:
 
 - the immutable development dataset contains 105 signal sessions, 166,313
   complete observations, and 498,939 independent 1/3/5-session label rows;
@@ -122,7 +123,8 @@ was granted. The exact replacement replay matched report SHA-256
 and logical fingerprint
 `086675c82efb4453f9bc71e88ad65fc0f64c411569313cd6ac3795ee0a6baaec`.
 Detailed custody identities and source decisions remain in the dated Pullback
-audits and archived contracts.
+audits and archived contracts. It is not a current Alpha, model, strategy
+expression, or public Lab program.
 
 ADR 0274 makes **Factor Discovery -> Model Construction -> Strategy
 Expression** the durable architecture. ADR 0273's 12 price/volume definitions
@@ -154,9 +156,8 @@ fingerprint is
 SHA-256 is
 `184bc3f92f97809fbc69ea13877857d78a81472d0fbd15fa48bbce0891c62704`.
 No prior strategy outcome was reused, and Validation and Holdout remain
-untouched. Factor Catalog V1 is closed without retuning. The next research
-action is a separately registered finite Factor Discovery campaign; Model
-Construction and Strategy Expression remain locked.
+untouched. Factor Catalog V1 is closed without retuning. Model Construction
+and Strategy Expression remain locked.
 
 ADR 0277 now binds all eight consumed factor-screen trials in cumulative
 machine-verifiable ledger version
@@ -216,9 +217,7 @@ SHA-256 is
 `c900ce46f1685e140e3ef9f309bf0d1cda34b1838df7f4741678b9170d4f0733`.
 Cumulative ledger V3 closes all 14 consumed trials under logical fingerprint
 `284ab895644ad8eff5feb7d5510f087c3fa1b6436ee655cd71f6a9cedc50a661`.
-Validation and Holdout remain closed. The next research action is a new finite,
-outcome-unread factor campaign designed around economically distinct signals
-and point-in-time market-structure applicability; it is not yet registered.
+Validation and Holdout remain closed.
 
 ADR 0283 now requires content-addressed reuse of expensive deterministic
 research panels, separated feature/label custody, compact machine summaries,
@@ -235,10 +234,10 @@ all other artifact families remain at zero. This changes no campaign, outcome,
 physical-data-write, or service authority.
 
 ADR 0284 and `quant-research-discovery-cycle/1.0` make Factor Discovery a
-renewable sequence of finite campaigns. The current cycle is
-`ready_for_next_campaign_design` at `hypothesis_intake`: two campaigns and 14
-formal trials are closed, no new campaign is registered, and no outcome access
-or model input is authorized. Exact duplicates stop, near-duplicates share a
+renewable sequence of finite campaigns. Two campaigns and 14 formal trials are
+closed; Campaign Three subsequently registered three unread trials in Ledger
+V4, raising the cumulative total to 17 without outcome access or a model input.
+Exact duplicates stop, near-duplicates share a
 related family and multiplicity accounting, and every campaign must freeze its
 budget before Development outcomes. Cycle logical fingerprint is
 `55c1eaccbd5ef5c8ef6dd695c4e4e010ed0e11c6483e55f1a2ce6b70898f8218`.
@@ -266,7 +265,8 @@ canonical report bytes. Report SHA-256 is
 `8f3ec454b2626b3a2feab79e8f38e3ae014c0d853e7698d9266a32dca224b02a`;
 logical fingerprint is
 `20b496eb76ba6597b6937bf2e79924a65491631767e7e1c4ac186281bba04ee3`.
-Campaign Three is still unregistered and all outcomes remain closed.
+Campaign Three's market-state input is qualified and exactly replayed; its
+three registered trials remain outcome-unread.
 
 ADR 0289 and `quant-research-campaign-hypothesis-registry/1.0` close the
 outcome-blind hypothesis-intake and deduplication gate. Five proposals are
@@ -295,7 +295,12 @@ regressed on the preregistered point-in-time state; 3 sessions is primary,
 and 20-session sensitivity blocks, and Holm correction is separate across the
 two-Alpha and one-risk families. At most one Alpha and one risk guard may be
 selected, and risk cannot open a model alone. Registration does not authorize
-Development access; a clean-revision typed grant is the next boundary.
+Development access. The typed request/grant contract is implemented and tested:
+it requires a clean committed implementation revision and an exact request-
+bound authorization phrase, permits only one formal Development run plus one
+exact replay, and leaves Validation, Holdout, canonical writes, publication,
+Candidate activation, broker, and trading authority closed. No request or
+grant has yet been issued for an evaluator revision.
 
 The source Lab projection now presents this pilot without exposing internal
 fingerprints, raw IDs, or custody identifiers. Formulas, parameters, sample

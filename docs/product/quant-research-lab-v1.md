@@ -149,14 +149,13 @@ uncertainty.
 
 ## Current research state
 
-Strong-Leader Pullback is the first completed research program and a retained
-rejection. Its V1 24-combination study ended `inconclusive_evidence_floor`.
-The only registered replacement ended `rejected_endpoint_instability` because
-different conservative terminal-reference worlds selected different winners.
-No parameter was locked, Validation and Holdout stayed closed, and no
-performance or Candidate authority was created. Its detailed contracts and
-audits remain historical reproduction evidence rather than the forward
-roadmap.
+Strong-Leader Pullback predates the three-layer architecture. It is retained
+only in internal contracts and audits as rejection and anti-retesting evidence;
+it is not a current Alpha, model, strategy expression, or public Lab program.
+Its V1 24-combination study ended `inconclusive_evidence_floor`, and its only
+registered replacement ended `rejected_endpoint_instability`. No parameter was
+locked, Validation and Holdout stayed closed, and no performance or Candidate
+authority was created.
 
 ADR 0273 registers the first outcome-blind Factor Catalog V1: 12 exact daily
 price/volume definitions across five economic families. They are one bounded
@@ -173,20 +172,25 @@ registered a separate eight-definition V2 catalog; its outcome-blind
 qualification passed, but the frozen Development screen rejected all four
 candidate-Alpha trials. Two risk guards passed their own gates but were not
 selected because no Alpha survived. Ledger V3 now closes all 14 consumed
-trials, no model input exists, and the next factor campaign is an unregistered
-design boundary.
+trials and no model input exists. Campaign Three subsequently completed
+outcome-blind intake and qualification. Ledger V4 now registers two Alpha
+interactions and one risk guard as unread trials, bringing the cumulative
+formal-trial count to 17. It has not yet admitted an Alpha.
 
 No candidate-Alpha factor has been admitted. No selected threshold, model
 weight, three-layer model,
 strategy expression, Lab performance publication, or active Candidate model
 currently exists.
 
-The public Lab is a reviewed milestone projection, not a live process log. A
+The public Lab is a reviewed milestone projection, not a live process log. It
+shows the current three-layer research lineage and its governed results; named
+pre-architecture methods remain internal audit history so they cannot be
+mistaken for active strategies. A
 material state change must update the typed record, cumulative ledger,
 authoritative project state, dated audit, trilingual Product projection, and
 tests together. Deployment remains separately verified. Current decisions stay
-expanded; formulas, parameters, lineage, hashes, limitations, and historical
-campaigns may use disclosure panels without becoming unavailable.
+expanded; formulas, parameters, lineage, hashes, limitations, and current
+three-layer campaigns may use disclosure panels without becoming unavailable.
 
 The Lab also exposes the renewable Factor Discovery cycle. This is a permanent
 process contract, not a third model or a promise that research is unattended:
