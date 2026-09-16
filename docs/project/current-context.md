@@ -20,8 +20,8 @@ ADRs, and dated audits.
 | Branch | `main`; verify live HEAD before mutation |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Active OCI release | `2026-09-16T024346Z-2255d9f9d61a` |
-| Deployed source | `2255d9f9d61a1ff6d11ee2c6363f8aaa54cf9ef7` |
+| Active OCI release | `2026-09-16T031253Z-3d03b961de62` |
+| Deployed source | `3d03b961de62a6c3cd5d3e96bcf5c02514561ab1` |
 
 Dell owns code, canonical data, governance, and heavy computation. OCI is the
 bounded public-serving tier. A newer clean repository commit does not imply a
@@ -49,8 +49,10 @@ service, protected-route, guest-flow, Candidate-route, logout, listener, and
 residue checks. The public entry dossier and protected Lab expose the completed V2
 Development result: four candidate-Alpha trials failed, two risk guards
 qualified as risk evidence but were not selected, the exact replay matched,
-and no model opened. The Lab also exposes the reusable-input contract state and
-links hypothesis submissions to `@whalphalab`. The protected workspace now
+and no model opened. The Lab also exposes one qualified reusable Market-State
+panel, five frozen hypothesis cards, four designs in outcome-blind input
+review, and links hypothesis submissions to `@whalphalab`. The protected
+workspace now
 shows an identifier-free cumulative guest-entry counter; the internal baseline
 is 1,050 and the first actual guest workspace entry displays 1,051. English,
 Chinese, and Spanish agree on that state. V1 screening and

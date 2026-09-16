@@ -20,6 +20,12 @@ and dated [audits](../audits/). Current capability and next work belong in
   and trading authority closed.
 - Corrected the website source to show one qualified Market-State panel and
   the input-qualification stage without exposing internal hashes or IDs.
+- Deployed OCI release `2026-09-16T031253Z-3d03b961de62` from source
+  `3d03b961de62`. Independent postflight matched release, source, manifest,
+  checksums, guest Session, protected routes, equal guest/credential policy,
+  services, and listener boundary with no failed or staging residue. Password
+  login and final browser appearance remain manual checks; this UI/research
+  release does not refresh the 2026-09-11 Snapshot data.
 
 ## 2026-09-16 — Bound the first multi-agent pilot and harden market-state qualification
 

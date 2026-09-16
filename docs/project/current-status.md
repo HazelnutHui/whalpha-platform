@@ -10,10 +10,10 @@ ADRs, and audits.
 ## Overall verdict
 
 - **Production:** live and serving the verified trilingual V2 qualification
-  pass, completed six-trial Development result, three-layer research UI, and
-  the qualified Campaign Three market-state input to equal guest/credential
-  flows; underlying data is stale by two completed sessions at the 2026-09-16
-  operational review.
+  pass, completed six-trial Development result, three-layer research UI, one
+  qualified Campaign Three Market-State panel, and the five-card hypothesis /
+  dedup milestone to equal guest/credential flows; underlying data is stale by
+  two completed sessions at the 2026-09-16 operational review.
 - **Five-year source depth:** EOD price and stable Identity complete.
 - **Professional performance foundation:** the strict exact/as-operated gate
   remains `data_blocked`; reconstructed-research V2 is separately
