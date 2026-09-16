@@ -1,0 +1,18 @@
+{
+  "schema_version": "2.0",
+  "contract_version": "quant-research-discovery-cycle-state/2.0",
+  "state_version": "whalpha.factor-discovery-cycle-state/2.0.0",
+  "source_cycle_policy_fingerprint": "55c1eaccbd5ef5c8ef6dd695c4e4e010ed0e11c6483e55f1a2ce6b70898f8218",
+  "source_completed_ledger_fingerprint": "424da475ee8aa87a7b54eac8c9eec64f32035d7ae1a7d491b90604863edc5df1",
+  "current_status": "ready_for_next_campaign_design",
+  "current_stage": "hypothesis_intake",
+  "completed_campaign_count": 3,
+  "cumulative_formal_trial_count": 17,
+  "active_campaign_id": null,
+  "next_campaign_registered": false,
+  "admitted_alpha_count": 0,
+  "active_model_count": 0,
+  "active_strategy_count": 0,
+  "next_outcome_access_requires_new_registered_campaign": true,
+  "logical_fingerprint": "6852801667f0e680b730d157c3293abd78c4046ed3a39d86eedc28c249b293ea"
+}

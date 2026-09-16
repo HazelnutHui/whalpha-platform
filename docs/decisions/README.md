@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0293](0293-close-campaign-three-without-alpha-and-append-ledger-v5.md):
+  closes all three Campaign Three trials after a byte-identical formal/replay
+  pair, appends Ledger V5, keeps Model Construction locked, and returns the
+  renewable program to outcome-blind intake.
 - [ADR 0292](0292-freeze-campaign-three-evaluator-and-execution-custody.md):
   fixes Campaign Three's regression, block-bootstrap, conservative endpoint,
   multiplicity, and fail-closed one-run-plus-replay custody mechanics before

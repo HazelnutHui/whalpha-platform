@@ -131,9 +131,9 @@ until point-in-time classification has a named evidence source.
 
 Exit: closed without a model at `closed_no_candidate_alpha`.
 
-## Current gated phase — Campaign Three
+## Completed factor campaign — Campaign Three
 
-Campaign Three is registered but outcome-unread. Its purpose is to test a
+Campaign Three tested a
 finite set of economically distinct interactions whose usefulness may depend
 on point-in-time market structure, without converting V1/V2 failures into an
 unlimited parameter search. ADR 0284 supplies the permanent loop: hypothesis intake,
@@ -160,18 +160,46 @@ Sequence:
 5. ~~append the exact trial family, horizons, costs, multiplicity, stability,
    selection cap, and stopping rule for only the three qualified designs to a
    new cumulative ledger before reading outcomes;~~ complete under ADR 0291;
-   Ledger V4 registers 17 cumulative trials and keeps the three new trials
+   Ledger V4 registered 17 cumulative trials and kept the three new trials
    unread; and
 6. ~~freeze and implement the deterministic evaluator, source-bound report,
    typed access workflow, and fail-closed formal/replay custody before outcome
-   access;~~ complete under ADR 0292, with no request, grant, or result; and
-7. bind the clean committed revision into one request, obtain the exact user
+   access;~~ complete under ADR 0292; and
+7. ~~bind the clean committed revision into one request, obtain the exact user
    grant, execute once, replay once, retain every failure, and either open a
-   separately frozen Model Construction protocol or close the campaign.
+   separately frozen Model Construction protocol or close the campaign;~~
+   complete under ADR 0293: formal and replay reports are byte-identical, all
+   three trials failed, Ledger V5 closes all 17 cumulative trials, and Model
+   Construction remains locked.
 
 Historical sector-neutral work remains blocked until point-in-time
 classification has a named evidence source. The campaign must not receive a
 marketing name or promised stock-selection role before evidence earns it.
+
+Exit: closed without a model at `closed_no_candidate_alpha`.
+
+## Current gated phase — Successor outcome-blind intake
+
+No campaign is active. The next cycle may begin only with a new finite set of
+falsifiable hypotheses deduplicated against all 17 consumed trials. Research
+territories may expand, but Campaign Three formulas and thresholds cannot be
+retuned after the result.
+
+Sequence:
+
+1. propose economically motivated hypotheses without reading new outcomes;
+2. apply the seven-dimensional duplicate and related-family review;
+3. name required point-in-time inputs and reject ideas the current data cannot
+   support honestly;
+4. freeze a finite qualification budget before implementation;
+5. qualify inputs without outcomes and independently replay the result;
+6. preregister only qualified trials in the next cumulative ledger edition;
+7. require a new clean implementation, exact authorization, formal run, and
+   exact replay before any further Development result is read.
+
+Exit: a separately registered successor campaign, or a retained no-launch
+decision. This phase grants no Development, Validation, Holdout, model,
+Candidate, publication, broker, or trading authority.
 
 ## Conditional next phase — Model Construction
 

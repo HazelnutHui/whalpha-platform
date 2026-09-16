@@ -55,20 +55,23 @@ ADRs, and audits.
   Three hypothesis cards: four advanced and one near-duplicate was rejected
   before outcomes. ADR 0290's outcome-blind input qualification and exact
   replay are now complete over the exact 106 Development sessions. Two
-  candidate-Alpha interactions and one risk guard qualify for protocol review;
-  the defensive-resilience Alpha interaction is rejected before outcomes for
-  sparse and concentrated natural-zero state support. Campaign Three remains
-  outcome-unread. ADR 0291 now registers only the three qualified designs in
-  the finite protocol and Ledger V4. The cumulative formal-trial count is 17;
-  the three new trials have no result, and no new outcome access exists. ADR
-  0292 now freezes and implements the remaining evaluator and custody
+  candidate-Alpha interactions and one risk guard qualified for protocol
+  review; the defensive-resilience Alpha interaction was rejected before
+  outcomes for sparse and concentrated natural-zero state support. ADR 0291
+  registered only those three designs in the finite protocol and Ledger V4.
+  ADR 0292 froze and implemented the remaining evaluator and custody
   mechanics: unweighted session-level interaction regression, paired
   deterministic circular-block inference, conservative endpoint/block
   aggregation, fixed Holm families, immutable source-bound reports, and a
-  fail-closed formal-run/exact-replay event chain. All 3,067 backend tests pass,
-  including the new contract, persistence, statistics, CLI, canonical-JSON,
-  and execution-boundary coverage. No clean-revision request, grant, formal
-  run, replay, or Campaign Three result has been created.
+  fail-closed formal-run/exact-replay event chain. The exact authorization was
+  consumed for one formal run and one replay. Both reports are byte-identical;
+  all two Alpha interactions and the risk guard failed their frozen gates.
+  ADR 0293 closes Campaign Three as `closed_no_candidate_alpha`, and Ledger V5
+  permanently records all 17 trials with zero admitted Alpha and zero model
+  inputs. The cycle is back at outcome-blind hypothesis intake; Validation,
+  Holdout, Model Construction, and all Product authority remain closed. All
+  3,074 backend tests, 129 frontend tests, and the Production frontend build
+  pass in repository source.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -89,20 +92,21 @@ same data and capability. Snapshot/API failure closes without synthetic
 Production data.
 
 The Lab presents the Factor Discovery -> Model Construction -> Strategy
-Expression architecture. Its public projection shows the two closed factor
-campaigns and Campaign Three's registered, unread trials, with 17 cumulative
-formal trials and zero admitted Alpha, model, or strategy. Named methods from
-before the three-layer architecture are not rendered publicly; their immutable
-contracts and audits remain internal anti-retesting evidence. This changes no
-market analytics, Baseline Candidate calculation, model authority, or
-Candidate activation.
+Expression architecture. Repository source now shows three closed campaigns,
+17 permanently counted formal trials, and zero admitted Alpha, model, or
+strategy. Named methods from before the three-layer architecture are not
+rendered publicly; their immutable contracts and audits remain internal anti-
+retesting evidence. The deployed release still shows the pre-result Campaign
+Three state until a separate deployment. Neither state changes market
+analytics, Baseline Candidate calculation, model authority, or Candidate
+activation.
 
-Production additionally contains the reviewed renewable-cycle panel. Its
-current source projection shows 2 completed campaigns, 17 cumulative formal
-trials including 3 registered and unread Campaign Three trials,
-seven-dimensional duplicate identity, finite preregistration budgets, stage
-isolation, and automatic pause conditions. It is a research-control surface,
-not evidence that an unattended factor miner is already running.
+Production additionally contains the reviewed renewable-cycle panel in its
+pre-result state. The newer source projection shows three completed campaigns,
+17 closed formal trials, no active campaign, seven-dimensional duplicate
+identity, finite preregistration budgets, stage isolation, and automatic pause
+conditions. It is a research-control surface, not evidence that an unattended
+factor miner is already running.
 
 Production also contains the reviewed trilingual multi-agent pilot surface. It
 exposes human-readable roles, isolation, the completed market-state
@@ -111,12 +115,11 @@ internal fingerprints, raw IDs, and custody identifiers from the website.
 Public infrastructure wording uses "workstation" rather than a hardware brand.
 
 The reusable research-input policy remains preserved in V1, while registry V2
-now records one qualified, exactly replayed Market-State panel and zero
-outcome-bearing panels. Production Lab now presents the completed Campaign
-Three input gate: two Alpha interactions and one risk guard qualify for
-the frozen protocol, while one Alpha interaction stopped before outcomes.
-Ledger V4 registers the three unread trials and retains the cumulative count of
-17. There is still no new outcome access or active model. The Lab accepts
+records one qualified, exactly replayed Market-State panel and zero outcome-
+bearing reusable panels. The repository Lab now presents the completed Campaign
+Three result: one Alpha design stopped before outcomes, then the two tested
+Alpha interactions and one risk guard were rejected. Ledger V5 closes all 17
+trials. There is no active model. The Lab accepts
 factor/strategy hypotheses through the public `@whalphalab`
 contact. The protected workspace footer now shows a persistent cumulative
 guest-entry count without retaining IP addresses, user agents, fingerprints,
@@ -381,12 +384,10 @@ measured budget breach.
    trials, and ledger V3. Do not alter their gates, treat V2 risk evidence as
    Alpha, open Validation/Holdout, or preselect a named strategy.
 9. Preserve the completed Market-State qualification, reusable-artifact V2
-   registration, Campaign Three hypothesis registry, and exact input-
-   qualification report/replay, the three-trial protocol, and Ledger V4. Do not
-   rescue the rejected defensive-resilience design. The typed clean-revision
-   access contract is implemented and tested but grants nothing by itself.
-   Build and review the deterministic evaluator, bind both to a clean commit,
-   then stop before Development outcomes for separate exact authorization.
+   registration, Campaign Three hypothesis registry, exact input qualification,
+   three-trial protocol, formal screen, byte-identical replay, and Ledger V5.
+   Do not rescue any rejected design or reopen Campaign Three. It closed with
+   zero admitted Alpha, zero qualified risk guard, and zero model inputs.
 10. Use the ADR 0284 cycle for every successor campaign: deduplicate before
     implementation, close and append before another campaign reads outcomes,
     and return to intake after either success or failure.

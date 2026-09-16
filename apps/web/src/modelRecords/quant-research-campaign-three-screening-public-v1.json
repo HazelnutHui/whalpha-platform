@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "status": "closed_no_candidate_alpha",
+  "exact_replay_verified": true,
+  "formal_trial_count": 3,
+  "candidate_alpha_trial_count": 2,
+  "risk_guard_trial_count": 1,
+  "cumulative_trial_count": 17,
+  "signal_session_count": 106,
+  "first_signal_session": "2025-07-22",
+  "last_signal_session": "2026-01-07",
+  "observation_count": 167860,
+  "label_count": 503580,
+  "selected_alpha_count": 0,
+  "selected_risk_guard_count": 0,
+  "decisions": [
+    {
+      "decision_key": "breakout_breadth",
+      "role": "candidate_alpha_interaction",
+      "status": "rejected_screen",
+      "interaction_beta": -0.0029272881,
+      "second_half_beta": -0.0650575098,
+      "robust_lower_bound": -0.0653772794,
+      "holm_adjusted_p_value": 1.0,
+      "failed_gate_count": 6
+    },
+    {
+      "decision_key": "volume_participation",
+      "role": "candidate_alpha_interaction",
+      "status": "rejected_screen",
+      "interaction_beta": -0.014345335,
+      "second_half_beta": -0.0555602571,
+      "robust_lower_bound": -0.0465919832,
+      "holm_adjusted_p_value": 1.0,
+      "failed_gate_count": 5
+    },
+    {
+      "decision_key": "residual_risk_volatility",
+      "role": "risk_guard_interaction",
+      "status": "rejected_screen",
+      "interaction_beta": 0.0567238762,
+      "second_half_beta": -0.125842277,
+      "robust_lower_bound": -0.6670950953,
+      "holm_adjusted_p_value": 0.4149585041,
+      "failed_gate_count": 4
+    }
+  ]
+}

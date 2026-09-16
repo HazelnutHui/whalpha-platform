@@ -6,6 +6,29 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-16 — Close Campaign Three without candidate Alpha
+
+- Bound the clean evaluator revision to the exact user authorization and
+  consumed the single formal Development slot plus its one exact replay.
+- The reports are byte-identical at SHA-256
+  `8ba525beb7e39e7e9175fd0359b45e17c44c16cd6c1a083fb53c99704c4f13e1`
+  and logical fingerprint
+  `7b4f0e60c7dd3aa4faa01d16e303ed7bec35a4af5a7b992a4941ef01e3a439f9`.
+  The exact cohort contains 106 signal sessions, 167,860 observations, and
+  503,580 labels.
+- Rejected both candidate-Alpha interactions and the risk guard under the
+  frozen gates. No retuning, rescue rule, Validation, Holdout, model input,
+  Candidate authority, publication, broker, or trading authority was opened.
+- Accepted ADR 0293, appended immutable Ledger V5 with all 17 consumed trials,
+  and added Cycle State V2 with no active campaign and the current stage set to
+  outcome-blind hypothesis intake.
+- Updated repository Lab and public-entry source in English, Chinese, and
+  Spanish to show the completed result while withholding internal IDs and
+  hashes. Production remains on the separately verified release until a new
+  deployment is explicitly authorized.
+- Passed all 3,074 backend tests, all 129 frontend tests, and the Production
+  frontend build.
+
 ## 2026-09-16 — Implement the frozen Campaign Three evaluator without reading outcomes
 
 - Accepted ADR 0292 and fixed the remaining statistical interpretation before

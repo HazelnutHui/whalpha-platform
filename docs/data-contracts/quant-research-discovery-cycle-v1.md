@@ -54,6 +54,7 @@ deleting previous evidence.
 The contract's embedded state is the immutable baseline at version 1.0
 registration: `ready_for_next_campaign_design`, two closed campaigns, and 14
 formal trials. It is not a live current-state record. Campaign Three was later
-registered in Ledger V4 with three unread trials, bringing cumulative formal
-trials to 17; read [current status](../project/current-status.md) and the latest
-ledger contract for current state. No model input is authorized.
+registered unread in Ledger V4 and closed in Ledger V5, bringing cumulative
+formal trials to 17; read [Cycle State V2](quant-research-discovery-cycle-state-v2.md),
+[current status](../project/current-status.md), and the latest ledger contract
+for current state. No model input is authorized.

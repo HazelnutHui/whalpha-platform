@@ -46,8 +46,9 @@ Read this bounded set before new Lab research:
 - [Professional Quantitative Research Action Framework](research/professional-quantitative-research-action-framework-v1.md)
 - [Three-Layer Quant Research Architecture](product/quant-research-three-layer-architecture-v1.md)
 - [Quant Research Lab product contract](product/quant-research-lab-v1.md)
-- [Registered Factor Discovery Trial Ledger V4](data-contracts/quant-research-discovery-trial-ledger-v4.md)
+- [Closed Factor Discovery Trial Ledger V5](data-contracts/quant-research-discovery-trial-ledger-v5.md)
 - [Renewable Factor Discovery Cycle V1](data-contracts/quant-research-discovery-cycle-v1.md)
+- [Current Factor Discovery Cycle State V2](data-contracts/quant-research-discovery-cycle-state-v2.md)
 - [Reusable Research Artifact Registry V2](data-contracts/quant-research-reusable-artifact-registry-v2.md)
 - [Market-State Vector V1.1](data-contracts/quant-research-market-state-vector-v1.md)
 - [Market-State Qualification V1](data-contracts/quant-research-market-state-qualification-v1.md)
@@ -65,9 +66,11 @@ Read this bounded set before new Lab research:
 - [ADR 0290: frozen Campaign Three input qualification](decisions/0290-freeze-campaign-three-input-qualification-before-outcomes.md)
 - [ADR 0291: Campaign Three screening protocol and Ledger V4](decisions/0291-freeze-campaign-three-screening-protocol-and-ledger-v4.md)
 - [ADR 0292: Campaign Three evaluator and execution custody](decisions/0292-freeze-campaign-three-evaluator-and-execution-custody.md)
+- [ADR 0293: close Campaign Three and append Ledger V5](decisions/0293-close-campaign-three-without-alpha-and-append-ledger-v5.md)
 - [Closed V2 screening result](audits/quant-research-factor-screening-v2-2026-09-15.md)
 - [Qualified Campaign Three market-state input](audits/quant-research-market-state-qualification-2026-09-16.md)
 - [Campaign Three outcome-blind input qualification](audits/quant-research-campaign-three-input-qualification-2026-09-16.md)
+- [Closed Campaign Three Development screen](audits/quant-research-campaign-three-screening-2026-09-16.md)
 
 The Pullback contracts, operations, and intermediate audits remain immutable
 historical evidence, but are no longer part of default recovery. Use the

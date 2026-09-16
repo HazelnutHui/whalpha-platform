@@ -38,14 +38,13 @@ was rejected on endpoint instability. It remains internal audit and
 anti-retesting evidence, not a current public strategy. Factor Discovery V1 and V2
 also completed frozen, exactly replayed Development screens. Across the two
 campaigns, all nine candidate-Alpha trials failed; three risk guards qualified
-as risk evidence, but none can open a model by itself. These are retained,
-reproducible failures rather than templates to retune. Validation, Holdout,
-Candidate use, and performance publication remain closed. Campaign Three has
-completed outcome-blind intake and input qualification. Its separately frozen
-finite protocol and Ledger V4 now register two Alpha interactions and one risk
-guard as unread trials, while one Alpha design stopped before outcomes. It is
-not a preselected named strategy, and a separate typed grant is still required
-before any new Development result can be read.
+as risk evidence, but none can open a model by itself. Campaign Three then
+completed its frozen formal screen and byte-identical replay: both Alpha
+interactions and its risk guard failed. Ledger V5 records all 17 consumed
+trials across three closed campaigns, with zero admitted Alpha and zero model
+inputs. These are retained, reproducible failures rather than templates to
+retune. Validation, Holdout, Candidate use, and performance publication remain
+closed; the renewable program has returned to outcome-blind hypothesis intake.
 
 Dell is the authority for code, data, and computation. OCI serves only bounded
 static product artifacts and the localhost authentication boundary. The

@@ -65,9 +65,9 @@ describe('static login client', () => {
     expect(loginHtml).toContain('data-i18n="currentProgram">Campaign Three');
     expect(loginHtml).toContain('<span>03</span>');
     expect(loginHtml).toContain('class="dossier-state" data-state="qualified"');
-    expect(loginHtml).toContain('data-i18n="researchState">Registered · outcomes unread');
+    expect(loginHtml).toContain('data-i18n="researchState">Closed · no candidate Alpha');
     expect(loginHtml).toContain('data-i18n="stateQualified">Complete');
-    expect(loginHtml).toContain('Campaign Three has three registered trials and no result yet');
+    expect(loginHtml).toContain('All three campaigns closed without candidate Alpha');
     expect(loginHtml).toContain('data-i18n="priorProgram"');
     expect(loginHtml).not.toContain('Pullback program');
     expect(loginHtml).toContain('data-i18n="flowData">Model construction');

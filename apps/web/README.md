@@ -15,10 +15,10 @@ features. It presents Quant Research Lab as factor/model/expression authority,
 model-driven Candidate ranking as a downstream activation, governed research
 automation as a planned extension of traditional quantitative discipline, and
 the three established market-context workspaces as free supporting tools. Its
-current dossier identifies Campaign Three as registered with three unread
-trials, a cumulative 17-trial ledger, and a still-closed Development-access
-boundary. The first two factor campaigns remain closed without candidate
-Alpha; no model or strategy exists. Its
+current dossier identifies Campaign Three as closed after one formal
+Development screen and byte-identical replay. Its three trials all failed, the
+cumulative ledger permanently counts all 17 trials across three closed
+campaigns, and no model or strategy exists. Its
 outcome-blind market-state input now also shows the completed 287-session
 qualification, 267 jointly available reconstructed sessions, and matching
 independent replay without exposing internal report identities. Pre-three-layer
@@ -31,8 +31,8 @@ Inside the Lab, a trilingual research-foundation snapshot shows the verified
 five-year price/identity depth, reconstructed Membership, action assignments,
 lifecycle references, and point-in-time fundamental pilot without combining
 them into a misleading readiness score. Campaign Three now leads the page as a
-registered, outcome-unread campaign; “ledger edition 4” is described only as
-cumulative accounting, never as a model version. The prior Factor Discovery V2
+closed, exactly replayed campaign; Ledger V5 is described only as cumulative
+accounting, never as a model version. The prior Factor Discovery V2
 evidence remains inspectable: all eight exact formulas, roles, 431,249 of
 437,402 complete vectors, the split-evidence lineage, six formal decisions,
 completed report/replay identities, and zero selected model inputs are visible.
@@ -130,12 +130,12 @@ guide.
   result and retained risk guard, limitations, and
   continuing model/Product lock
   without presenting a score as validated performance
-- completed market-state and Campaign Three input qualification with exact
-  replays for the first manually supervised multi-Agent pilot; five
-  deduplicated hypothesis cards are recorded, two Alpha interactions and one
-  risk guard are now registered under a frozen protocol and cumulative ledger,
-  one Alpha design stopped before outcomes, and all Development,
-  Validation, and Holdout outcomes stay closed
+- completed market-state and Campaign Three input qualification, formal
+  Development screen, and byte-identical replay for the first manually
+  supervised multi-Agent pilot; five deduplicated hypothesis cards are
+  recorded, one Alpha design stopped before outcomes, and the two tested Alpha
+  interactions plus one risk guard were rejected under the frozen protocol;
+  Validation and Holdout remained sealed
 - Logout in snapshot mode
 - Trilingual hypothesis-submission contact link and cumulative guest-entry
   footer in snapshot mode

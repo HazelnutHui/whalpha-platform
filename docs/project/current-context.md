@@ -235,14 +235,20 @@ all other artifact families remain at zero. This changes no campaign, outcome,
 physical-data-write, or service authority.
 
 ADR 0284 and `quant-research-discovery-cycle/1.0` make Factor Discovery a
-renewable sequence of finite campaigns. Two campaigns and 14 formal trials are
-closed; Campaign Three subsequently registered three unread trials in Ledger
-V4, raising the cumulative total to 17 without outcome access or a model input.
+renewable sequence of finite campaigns. Three campaigns and all 17 formal
+trials are now closed. Ledger V5 retains every result and zero model inputs;
+Cycle State V2 returns the program to outcome-blind hypothesis intake with no
+active campaign.
 Exact duplicates stop, near-duplicates share a
 related family and multiplicity accounting, and every campaign must freeze its
 budget before Development outcomes. Cycle logical fingerprint is
 `55c1eaccbd5ef5c8ef6dd695c4e4e010ed0e11c6483e55f1a2ce6b70898f8218`.
-The trilingual cycle panel is deployed in the release identified above.
+Ledger V5 logical fingerprint is
+`424da475ee8aa87a7b54eac8c9eec64f32035d7ae1a7d491b90604863edc5df1`;
+Cycle State V2 logical fingerprint is
+`6852801667f0e680b730d157c3293abd78c4046ed3a39d86eedc28c249b293ea`.
+The deployed cycle panel in the release identified above still shows the
+pre-result Campaign Three state; a newer source projection is not a deployment.
 
 ADR 0287 fixes the first multi-agent pilot as a manually supervised,
 outcome-blind research team. Five current roles may inspect governance,
@@ -266,8 +272,8 @@ canonical report bytes. Report SHA-256 is
 `8f3ec454b2626b3a2feab79e8f38e3ae014c0d853e7698d9266a32dca224b02a`;
 logical fingerprint is
 `20b496eb76ba6597b6937bf2e79924a65491631767e7e1c4ac186281bba04ee3`.
-Campaign Three's market-state input is qualified and exactly replayed; its
-three registered trials remain outcome-unread.
+Campaign Three's market-state input remains qualified and exactly replayed. It
+was consumed only by the subsequently authorized frozen Development screen.
 
 ADR 0289 and `quant-research-campaign-hypothesis-registry/1.0` close the
 outcome-blind hypothesis-intake and deduplication gate. Five proposals are
@@ -281,11 +287,9 @@ Alpha interactions plus the residual-risk volatility guard qualify for
 screening-protocol review. The defensive-resilience Alpha interaction is
 rejected before outcomes because its natural-zero state has insufficient and
 overly concentrated positive-side support, including in the first
-chronological half. No threshold was moved to rescue it. Campaign Three,
-Ledger V4, Development outcomes, Validation, Holdout, model inputs, and
-Candidate activation remain closed. The next gate is to freeze exactly those
-three qualified trials, their evaluation protocol, and append-only Ledger V4
-before any separate Development-access decision.
+chronological half. No threshold was moved to rescue it. This outcome-blind
+qualification remains immutable evidence and was not revised after the later
+Development result.
 
 ADR 0291 now freezes that three-trial protocol and append-only Ledger V4. The
 ledger carries all 14 prior consumed trials unchanged and registers two unread
@@ -295,13 +299,13 @@ regressed on the preregistered point-in-time state; 3 sessions is primary,
 1/5 sessions are diagnostics, circular block bootstraps use 10-session primary
 and 20-session sensitivity blocks, and Holm correction is separate across the
 two-Alpha and one-risk families. At most one Alpha and one risk guard may be
-selected, and risk cannot open a model alone. Registration does not authorize
-Development access. The typed request/grant contract is implemented and tested:
-it requires a clean committed implementation revision and an exact request-
-bound authorization phrase, permits only one formal Development run plus one
-exact replay, and leaves Validation, Holdout, canonical writes, publication,
-Candidate activation, broker, and trading authority closed. No request or
-grant has yet been issued for an evaluator revision.
+selected, and risk cannot open a model alone. Registration did not authorize
+Development access. The typed request/grant contract required a clean committed
+implementation revision and an exact request-bound authorization phrase,
+permitted only one formal Development run plus one exact replay, and left
+Validation, Holdout, canonical writes, publication, Candidate activation,
+broker, and trading authority closed. That single-use boundary was subsequently
+exercised and is now consumed.
 
 ADR 0292 now fixes the evaluator details before any result is read. The source
 implementation contains the typed 15-summary/three-decision report, exact V1/
@@ -310,18 +314,28 @@ inference, owner-only canonical custody, typed request/grant commands, and an
 append-only two-slot execution chain. Outcome-blind feature reconstruction and
 output preflight must finish before reservation; terminal evidence and future
 EOD labels are read only after a slot is irrevocably consumed. Formal and
-replay runs require distinct output roots and byte-identical results. All
-3,067 backend tests pass, including canonical JSON reread and date round-trip.
-This is implementation readiness only: the work has not issued a request or
-grant, opened Campaign Three outcomes, produced a result, updated Ledger V4 outcomes,
-or changed Production.
+replay runs require distinct output roots and byte-identical results. All 3,074
+backend tests pass, including contract, persistence, statistical, CLI,
+canonical-JSON, and execution-boundary coverage.
 
-The source Lab projection now presents this pilot without exposing internal
-fingerprints, raw IDs, or custody identifiers. Formulas, parameters, sample
-sizes, coverage, outcomes, limitations, and gates remain visible. Public copy
-uses the generic term "workstation"; exact host and alias details remain only
-in operational documentation. This projection is deployed in the release
-identified above.
+ADR 0293 records the completed single formal run and exact replay. Both reports
+are byte-identical at SHA-256
+`8ba525beb7e39e7e9175fd0359b45e17c44c16cd6c1a083fb53c99704c4f13e1`
+and logical fingerprint
+`7b4f0e60c7dd3aa4faa01d16e303ed7bec35a4af5a7b992a4941ef01e3a439f9`.
+The exact cohort contains 106 signal sessions, 167,860 observations, and
+503,580 labels. Both candidate-Alpha interactions and the risk guard failed
+their frozen gates, so the campaign closed as `closed_no_candidate_alpha`.
+Validation, Holdout, model construction, Candidate activation, publication,
+broker, and trading authority remain closed.
+
+The repository Lab projection now presents the completed pilot without exposing
+internal fingerprints, raw IDs, or custody identifiers. Formulas, parameters,
+sample sizes, coverage, outcomes, limitations, and gates remain visible. Public
+copy uses the generic term "workstation"; exact host and alias details remain
+only in operational documentation. This newer projection is source state only
+until a separately authorized deployment replaces the release identified
+above.
 
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility
