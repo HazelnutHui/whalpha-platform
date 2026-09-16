@@ -32,6 +32,11 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('Formal trials consumed').parentElement).toHaveTextContent('14');
     expect(screen.getByText('Current position').parentElement).toHaveTextContent('READY FOR A NEW QUESTION');
     expect(screen.getByText('Why the loop continues').parentElement).toHaveTextContent('FAILURE DOES NOT END DISCOVERY');
+    expect(screen.getByRole('heading', { name: 'Stage-isolated research team' })).toBeInTheDocument();
+    expect(screen.getByText('Pilot roles').parentElement).toHaveTextContent('5 ACTIVE');
+    expect(screen.getByText('Development outcomes').parentElement).toHaveTextContent('CLOSED');
+    expect(screen.getByText(/Market-state qualification/).parentElement).toHaveTextContent('CURRENT');
+    expect(screen.getByText(/not an unattended Alpha miner/i)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Evidence ladder' })).toBeInTheDocument();
     expect(screen.getByText('Three-layer architecture').parentElement).toHaveTextContent('ACCEPTED');
     expect(screen.getByText('Cumulative research ledger').parentElement).toHaveTextContent('CLOSED · 14 TRIALS');
@@ -85,30 +90,23 @@ describe('Quant Research Lab', () => {
 
     await user.click(screen.getByText(/Inspect deduplication, budget/));
     expect(screen.getByText('Duplicate identity')).toBeInTheDocument();
-    expect(screen.getByText('55c1eaccbd5ef5c8ef6dd695c4e4e010ed0e11c6483e55f1a2ce6b70898f8218')).toBeInTheDocument();
+    expect(screen.queryByText('55c1eaccbd5ef5c8ef6dd695c4e4e010ed0e11c6483e55f1a2ce6b70898f8218')).not.toBeInTheDocument();
 
     await user.click(screen.getByText(/Inspect complete logic/));
     expect(screen.getByText(/max\(close\[t-20:t-1\]\)/)).toBeInTheDocument();
-    expect(screen.getByText('4622fb2fe86cc28249f53c89003f450a9e9d19c5696cd4eb865f413140b982c8')).toBeInTheDocument();
-    expect(screen.getByText('ed3e83b1a3827d1faddea6cb0eedc0471c5e9db854d5577b7faa12e0084186ba')).toBeInTheDocument();
-    expect(screen.getByText('c082566f283516b9a93d5658832450fb85071a3b59892cb8d922c1f37af34bd8')).toBeInTheDocument();
+    expect(screen.queryByText('4622fb2fe86cc28249f53c89003f450a9e9d19c5696cd4eb865f413140b982c8')).not.toBeInTheDocument();
 
     await user.click(screen.getByText(/Inspect all eight registered definitions/));
     expect(screen.getAllByText('126-session relative momentum, skipping the latest five')).toHaveLength(3);
     expect(screen.getByText('ln(C[t-5]/C[t-126]) - ln(B[t-5]/B[t-126])')).toBeInTheDocument();
-    expect(screen.getByText('b74214155cc148d1e0d37c530ab4fea2f385af1a81237b901eec45e1fee2eb0b')).toBeInTheDocument();
+    expect(screen.queryByText('b74214155cc148d1e0d37c530ab4fea2f385af1a81237b901eec45e1fee2eb0b')).not.toBeInTheDocument();
 
     await user.click(screen.getByText(/Inspect the frozen protocol, lineage/));
     expect(screen.getAllByText('126-session relative momentum, skipping the latest five')).toHaveLength(3);
-    expect(screen.getByText('5441468ef8b392f555aac5a4e9cc8c6d50a9fb064349b6da342ccc2540dc193b')).toBeInTheDocument();
-    expect(screen.getByText('cdc07a2194540b94dbba6bfee673a720ce232dc1d939f8b2c7496dda628946e9')).toBeInTheDocument();
-    expect(screen.getAllByText('284ab895644ad8eff5feb7d5510f087c3fa1b6436ee655cd71f6a9cedc50a661')).toHaveLength(2);
-    expect(screen.getByText('caf88beb14434f60d4cf018dc6bc5c33b2c788b6504b1db93107faecdd313f42')).toBeInTheDocument();
-    expect(screen.getByText('c900ce46f1685e140e3ef9f309bf0d1cda34b1838df7f4741678b9170d4f0733')).toBeInTheDocument();
+    expect(screen.queryByText('5441468ef8b392f555aac5a4e9cc8c6d50a9fb064349b6da342ccc2540dc193b')).not.toBeInTheDocument();
 
     await user.click(screen.getByText(/Inspect protocol, custody, limits/));
-    expect(screen.getByText('5e40cd9ab11dd20a98aabdf0834dc3cfb5c5a173a94929eca73891db8f8f789a')).toBeInTheDocument();
-    expect(screen.getByText('184bc3f92f97809fbc69ea13877857d78a81472d0fbd15fa48bbce0891c62704')).toBeInTheDocument();
+    expect(screen.queryByText('5e40cd9ab11dd20a98aabdf0834dc3cfb5c5a173a94929eca73891db8f8f789a')).not.toBeInTheDocument();
   });
 
   it('renders the complete research boundary in Chinese', () => {
@@ -126,6 +124,10 @@ describe('Quant Research Lab', () => {
     expect(screen.getByRole('link', { name: '联系 · @whalphalab' })).toHaveAttribute('href', 'https://x.com/whalphalab');
     expect(screen.getByText('运行模式').parentElement).toHaveTextContent('持续循环');
     expect(screen.getByText('当前位置').parentElement).toHaveTextContent('可以开始提出新问题');
+    expect(screen.getByRole('heading', { name: '阶段隔离的研究协作组' })).toBeInTheDocument();
+    expect(screen.getByText('当前试点角色').parentElement).toHaveTextContent('5 个启用');
+    expect(screen.getByText(/市场状态资格审查/).parentElement).toHaveTextContent('当前');
+    expect(screen.getByText(/不是无人监管的 Alpha 挖掘器/)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '证据阶梯' })).toBeInTheDocument();
     expect(screen.getByText('三层研究架构').parentElement).toHaveTextContent('已生效');
     expect(screen.getByText('累计研究账本').parentElement).toHaveTextContent('已关闭 · 共14项试验');
@@ -171,6 +173,10 @@ describe('Quant Research Lab', () => {
     expect(screen.getByRole('link', { name: 'Contacto · @whalphalab' })).toHaveAttribute('href', 'https://x.com/whalphalab');
     expect(screen.getByText('Modo operativo').parentElement).toHaveTextContent('RENOVABLE');
     expect(screen.getByText('Posición actual').parentElement).toHaveTextContent('LISTO PARA UNA NUEVA PREGUNTA');
+    expect(screen.getByRole('heading', { name: 'Equipo de investigación aislado por etapas' })).toBeInTheDocument();
+    expect(screen.getByText('Roles del piloto').parentElement).toHaveTextContent('5 ACTIVOS');
+    expect(screen.getByText(/Calificación del estado de mercado/).parentElement).toHaveTextContent('ACTUAL');
+    expect(screen.getByText(/No es un minero de Alpha autónomo/)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Escalera de evidencia' })).toBeInTheDocument();
     expect(screen.getByText('Arquitectura de tres capas').parentElement).toHaveTextContent('ACEPTADA');
     expect(screen.getByText('Registro acumulativo de investigación').parentElement).toHaveTextContent('CERRADO · 14 PRUEBAS');

@@ -12,6 +12,7 @@ from tip_api.services.quant_research_market_state_vector import (
     QuantResearchMarketStateBarV1,
     QuantResearchMarketStateCalculationError,
     QuantResearchMarketStateMemberSeriesV1,
+    QuantResearchMarketStateUnavailableMemberV1,
     calculate_quant_research_market_state_vector_v1,
 )
 
@@ -50,11 +51,18 @@ def _members(count: int):
     )
 
 
+def _declared(count: int):
+    return tuple(f"instrument-{index:04d}" for index in range(count))
+
+
 def test_market_state_calculator_emits_ten_outcome_blind_values() -> None:
     result = calculate_quant_research_market_state_vector_v1(
+        expected_sessions=SESSIONS,
         benchmark_series=_benchmarks(),
+        benchmark_unavailable_reasons={},
+        declared_member_ids=_declared(600),
         member_series=_members(600),
-        declared_member_count=600,
+        unavailable_members=(),
     )
     by_id = {item.metric_id: item for item in result}
 
@@ -63,7 +71,10 @@ def test_market_state_calculator_emits_ten_outcome_blind_values() -> None:
         item.availability is QuantResearchMarketStateAvailability.AVAILABLE
         for item in result
     )
-    assert by_id["broad_etf_above_sma20_share"].value == "1.0000000000"
+    assert (
+        Decimal(by_id["broad_etf_mean_log_distance_to_sma20"].value)
+        > Decimal("0")
+    )
     assert (
         by_id["reconstructed_member_positive_log_return_5s_share"].value
         == "0.6666666667"
@@ -73,9 +84,18 @@ def test_market_state_calculator_emits_ten_outcome_blind_values() -> None:
 
 def test_market_state_calculator_keeps_low_coverage_cross_section_unavailable() -> None:
     result = calculate_quant_research_market_state_vector_v1(
+        expected_sessions=SESSIONS,
         benchmark_series=_benchmarks(),
+        benchmark_unavailable_reasons={},
+        declared_member_ids=_declared(600),
         member_series=_members(400),
-        declared_member_count=600,
+        unavailable_members=tuple(
+            QuantResearchMarketStateUnavailableMemberV1(
+                instrument_id=instrument_id,
+                reason_codes=("eod_path_unavailable",),
+            )
+            for instrument_id in _declared(600)[400:]
+        ),
     )
 
     assert all(
@@ -95,7 +115,54 @@ def test_market_state_calculator_rejects_misaligned_or_unsorted_inputs() -> None
     benchmarks["QQQ"] = tuple(reversed(benchmarks["QQQ"]))
     with pytest.raises(QuantResearchMarketStateCalculationError):
         calculate_quant_research_market_state_vector_v1(
+            expected_sessions=SESSIONS,
             benchmark_series=benchmarks,
+            benchmark_unavailable_reasons={},
+            declared_member_ids=_declared(600),
             member_series=_members(600),
-            declared_member_count=600,
+            unavailable_members=(),
         )
+
+
+def test_market_state_calculator_rejects_silent_member_omission() -> None:
+    with pytest.raises(
+        QuantResearchMarketStateCalculationError,
+        match="declared member reconciliation differs",
+    ):
+        calculate_quant_research_market_state_vector_v1(
+            expected_sessions=SESSIONS,
+            benchmark_series=_benchmarks(),
+            benchmark_unavailable_reasons={},
+            declared_member_ids=_declared(600),
+            member_series=_members(599),
+            unavailable_members=(),
+        )
+
+
+def test_market_state_calculator_retains_benchmark_failure_as_unavailable() -> None:
+    benchmarks = _benchmarks()
+    benchmarks["QQQ"] = ()
+    result = calculate_quant_research_market_state_vector_v1(
+        expected_sessions=SESSIONS,
+        benchmark_series=benchmarks,
+        benchmark_unavailable_reasons={
+            "QQQ": ("benchmark_qqq_eod_path_unavailable",),
+        },
+        declared_member_ids=_declared(600),
+        member_series=_members(600),
+        unavailable_members=(),
+    )
+    by_id = {item.metric_id: item for item in result}
+
+    assert by_id["spy_log_return_20s"].availability is (
+        QuantResearchMarketStateAvailability.AVAILABLE
+    )
+    assert by_id["qqq_spy_relative_log_return_20s"].availability is (
+        QuantResearchMarketStateAvailability.UNAVAILABLE
+    )
+    assert by_id["broad_etf_mean_log_distance_to_sma20"].availability is (
+        QuantResearchMarketStateAvailability.UNAVAILABLE
+    )
+    assert by_id["reconstructed_member_above_sma20_share"].availability is (
+        QuantResearchMarketStateAvailability.AVAILABLE
+    )

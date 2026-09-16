@@ -1,7 +1,7 @@
 import modelRecord from '../modelRecords/quant-research-lab-model-record-v1.json';
 import factorQualification from '../modelRecords/quant-research-factor-qualification-v2.json';
 import discoveryCycle from '../modelRecords/quant-research-discovery-cycle-v1.json';
-import reusableArtifacts from '../modelRecords/quant-research-reusable-artifact-registry-v1.json';
+import multiAgentGovernance from '../modelRecords/quant-research-multi-agent-governance-v1.json';
 import factorScreeningV2 from '../modelRecords/quant-research-factor-screening-v2.json';
 import factorScreening from '../modelRecords/quant-research-factor-screening-v1.json';
 import { useI18n } from '../i18n/I18nProvider';
@@ -140,7 +140,7 @@ const COPY = {
       ['Factor Catalog V2', 'SCREENED', 'Eight exact definitions covered continuation, reversal, return timing, defensive state, liquidity applicability, and downside risk.', 'met'],
       ['V2 data qualification', 'PASSED', 'The report and replay are byte-identical: 98.59% complete vectors, 267 eligible sessions, and all eight definitions clear the frozen gates.', 'met'],
       ['Development screen', 'COMPLETED', 'Four Alpha trials failed. Two risk guards passed, but the no-Alpha prerequisite prevents selection into Model Construction.', 'met'],
-      ['Exact reproduction', 'VERIFIED', 'The independent replay returned the identical logical fingerprint and report SHA with zero canonical, Production, or external writes.', 'met'],
+      ['Exact reproduction', 'VERIFIED', 'The independent replay returned the identical reviewed result with zero canonical, Production, or external writes.', 'met'],
       ['Reusable research inputs', 'CONTRACT READY', 'Five content-addressed panel families now have exact reuse and custody rules. No panel is materialized and no new outcome access is open.', 'met'],
       ['Next discovery campaign', 'DESIGN BOUNDARY', 'A new finite batch may study market-structure-conditioned applicability. Its definitions and trial budget are not yet registered.', 'active'],
       ['Model, strategy & Product', 'LOCKED', 'No predictive model, strategy expression, Candidate authority, or option-performance claim exists.', 'locked'],
@@ -164,9 +164,19 @@ const COPY = {
       'Idea and qualification stages cannot read outcomes. Development access begins only for a newly registered campaign; Validation and Holdout remain separate.',
       'Lineage mismatch, stage leakage, trial-budget breach, replay failure, or sealed-partition breach stops the affected campaign without erasing prior work.',
     ],
-    cycleIdentity: 'Cycle fingerprint',
-    artifactIdentity: 'Reusable-artifact registry fingerprint',
-    foundation: 'Research foundation snapshot', foundationNote: 'Verified, versioned evidence already built on Dell. Each item states both its useful scope and its limit.', foundationBadge: 'EVIDENCE REVIEWED · 15 SEP 2026',
+    agentPilot: 'Stage-isolated research team', agentPilotNote: 'Campaign Three is the first manually supervised multi-Agent pilot. Specialized roles may work in parallel only before outcomes and on disjoint artifacts; deterministic gates and one shared ledger remain authoritative.', agentPilotBadge: 'OUTCOME-BLIND PILOT · ACTIVE',
+    agentStats: ['Pilot roles', 'Development outcomes', 'Campaign Three', 'Validation / Holdout'], agentStatValues: ['5 ACTIVE', 'CLOSED', 'NOT REGISTERED', 'SEALED'],
+    agentStages: [
+      ['01', 'Independent reviews', 'COMPLETED', 'Governance, methodology, and implementation reviewers found and corrected real pre-run defects.'],
+      ['02', 'Market-state qualification', 'CURRENT', 'Reconcile the complete security population and verify chronology, coverage, variation, persistence, redundancy, and exact replay without labels.'],
+      ['03', 'Protocol and ledger freeze', 'LOCKED', 'Only a qualified panel may support a finite hypothesis set, trial budget, multiplicity rule, and cumulative ledger update.'],
+      ['04', 'Development evaluation', 'LOCKED', 'A single deterministic execution boundary may open only after separate review and authorization.'],
+      ['05', 'Replay, red team, and human route', 'LOCKED', 'Agent consensus never replaces exact reproduction, deterministic gates, or human authority.'],
+    ],
+    agentRoles: 'Role and access map', agentRoleNames: ['Research controller', 'Data & evidence', 'Hypothesis review', 'Implementation', 'Evaluation', 'Red team', 'Approval & publication'],
+    agentBoundary: 'What this does not mean', agentBoundaryBody: 'This is not an unattended Alpha miner. No new return trial, model, Validation, Holdout, Candidate authority, deployment, broker access, or trading authority is open.',
+    agentInspect: 'Inspect role isolation, serial gates, and shared accounting',
+    foundation: 'Research foundation snapshot', foundationNote: 'Verified, versioned evidence already built on the research workstation. Each item states both its useful scope and its limit.', foundationBadge: 'EVIDENCE REVIEWED · 15 SEP 2026',
     foundationItems: [
       ['Five-year market base', 'DEPTH COMPLETE', 'Contiguous EOD price and stable-identity depth are complete.', 'verified'],
       ['Historical membership', 'RECONSTRUCTED', '1,250 sessions are reconstructed and three are prospective; reconstructed history is not as operated.', 'qualified'],
@@ -176,7 +186,7 @@ const COPY = {
     ],
     foundationControls: 'Evaluation controls already frozen', controlLabels: ['Registered specifications', 'Chronological split', 'Purge + embargo', 'Cost scenarios per side', 'Sealed holdout use'],
     foundationBoundary: 'These facts are not blended into one readiness percentage. A weak mandatory evidence family keeps performance research locked.',
-    factorQualification: 'Factor qualification V2', factorQualificationNote: 'The eight-factor catalog was calculated twice over the same frozen Dell population. The byte-identical replay measures source and implementation fitness only; it never reads future returns.', factorQualificationBadge: 'PASSED · EXACT REPLAY',
+    factorQualification: 'Factor qualification V2', factorQualificationNote: 'The eight-factor catalog was calculated twice over the same frozen workstation population. The exact replay measures source and implementation fitness only; it never reads future returns.', factorQualificationBadge: 'PASSED · EXACT REPLAY',
     factorStats: ['Registered factors', 'Complete vectors', 'Coverage', 'Pair checks', 'Near-duplicate groups'],
     factorCoverageMeaning: '431,249 of 437,402 declared paths produced complete eight-factor vectors. The 6,153 incomplete paths remain explicit; none was zero-filled. Availability reached 98.59% across 267 eligible sessions, split 123 / 144 across the frozen chronological halves.',
     factorRedundancy: 'Strongest same-session relationship', factorRedundancyBody: 'The largest absolute weighted Spearman relationship was 0.8942 between the two risk guards. No pair met the full near-duplicate rule. This passes a data-qualification test; it says nothing about predictive value.',
@@ -187,7 +197,7 @@ const COPY = {
     factorVerdict: 'What V2 earned', factorVerdictValue: '8 / 8 eligible for protocol review', factorVerdictBody: 'Four candidate Alpha measurements, one setup conditioner, one applicability input, and two risk guards cleared coverage, chronology, variation, tie, and redundancy gates. They are measurements awaiting a registered outcome test—not admitted factors.',
     factorNext: 'Qualification outcome', factorNextValue: 'SCREEN COMPLETED · SEE DECISION BELOW', factorNextBody: 'All eight measurements were eligible to be tested, not presumed useful. The completed screen rejected every candidate Alpha and preserved the qualification record unchanged.',
     factorLimits: 'Qualification limits', factorLimitsBody: 'Membership is reconstructed rather than as operated; historical classifications and broad Regime diversity remain unproven; daily bars do not observe spreads or signed order flow; and split-neutral absence remains a disclosed source limitation despite the qualified reconstruction.',
-    screeningV2: 'Completed Development Screen · Factor Catalog V2', screeningV2Note: 'This is the immutable result of the preregistered question, not a backtest selected for appearance. The exact replay matched every count and fingerprint.', screeningV2Badge: 'CLOSED · EXACT REPLAY',
+    screeningV2: 'Completed Development Screen · Factor Catalog V2', screeningV2Note: 'This is the immutable result of the preregistered question, not a backtest selected for appearance. The exact replay matched every result and count.', screeningV2Badge: 'CLOSED · EXACT REPLAY',
     screeningV2Stats: ['Formal trials', 'Cumulative trials', 'Signal sessions', 'Observations', 'Forward labels'],
     screeningV2State: 'Candidate Alpha decision', screeningV2StateValue: '0 / 4 admitted', screeningV2StateBody: 'All four candidate-Alpha measurements failed at least one frozen gate. Their formulas and thresholds cannot be repaired after seeing these outcomes.',
     screeningV2Selection: 'Risk evidence', screeningV2SelectionValue: '2 qualified · 0 selected', screeningV2SelectionBody: 'Both downside-risk guards passed their registered gates. They remain useful evidence, but neither becomes a model input because no candidate Alpha survived.',
@@ -202,7 +212,7 @@ const COPY = {
     factorScreenInspect: 'Inspect protocol, custody, limits, and exact report identity',
     factorScreenProtocol: 'Frozen evaluation', factorScreenProtocolBody: 'Primary horizon: 3 sessions · decay diagnostics: 1 and 5 · 10,000 circular five-session block-bootstrap replications · 90% intervals · Holm family-wise control · 0/10/25/50 bps per-side cost diagnostics.',
     factorScreenLimits: 'Interpretation boundary', factorScreenLimitsBody: 'Development only; reconstructed membership; 106 signal sessions; historical classification and broad Regime diversity not proven; fixed costs are scenarios, not execution calibration. Validation and Holdout were never opened.',
-    engineering: 'Historical method-engineering evidence', engineeringNote: 'The first Pullback method was run twice over the reconstructed Dell population with identical fingerprints. These retained facts answer whether that method could be computed—not whether it worked.', engineeringBadge: 'HISTORICAL · OUTCOME BLIND',
+    engineering: 'Historical method-engineering evidence', engineeringNote: 'The first Pullback method was run twice over the reconstructed workstation population with identical results. These retained facts answer whether that method could be computed—not whether it worked.', engineeringBadge: 'HISTORICAL · OUTCOME BLIND',
     engineeringStages: ['Method frozen', 'Implementation tested', 'Population replayed', 'Performance admission'], verified: 'Verified', blockedState: 'Blocked',
     declaredSessions: 'Declared sessions', completeSessions: 'Feature-complete sessions', declaredPaths: 'Declared paths', computablePaths: 'Computable paths', excludedPaths: 'Explicit exclusions',
     coverageMeaning: '95.38% is method-computability coverage—not win rate, prediction accuracy, or return.',
@@ -213,7 +223,7 @@ const COPY = {
     methodOnly: 'Method only', noCandidate: 'Not Candidate-eligible', notAssessed: 'Market fit not assessed',
     version: 'Version', lifecycleState: 'Lifecycle', evidence: 'Evidence', applicability: 'Applicability',
     oos: 'Out-of-sample observations', nextDecision: 'Next decision', strength: 'Primary strength', weakness: 'Primary weakness',
-    inspect: 'Inspect complete logic, formulas, parameters, evaluation, and fingerprints',
+    inspect: 'Inspect complete logic, formulas, parameters, and evaluation',
     logic: '1 · Logic and decision', features: '2 · Inputs and features', parameters: '3 · Parameters and search budget',
     evaluation: '4 · Evaluation design', gates: '5 · Advancement gates', failure: '6 · Failure, invalidation, and blockers', reproduction: '7 · Reproduction',
     decisionUse: 'Decision use', hypothesis: 'Hypothesis', rationale: 'Economic rationale', signal: 'Signal rule', ranking: 'Ranking rule',
@@ -245,7 +255,7 @@ const COPY = {
       ['因子目录 V2', '已筛选', '8项精确定义覆盖延续、反转、收益时段、防御状态、流动性适用性与下行风险。', 'met'],
       ['V2 数据资格诊断', '已通过', '报告与重放逐字节一致：完整向量覆盖率98.59%，267个合格交易日，8项定义全部通过冻结门槛；6,491条五年拆股来源与旧正式证据重叠冲突为零。', 'met'],
       ['开发期筛选', '已完成', '4项 Alpha 全部失败；2项风险护栏通过，但因缺少 Alpha 而不能进入模型构建。', 'met'],
-      ['精确复现', '已验证', '独立重放得到完全相同的逻辑指纹和报告 SHA，并保持正式数据、生产和外部请求写入为零。', 'met'],
+      ['精确复现', '已验证', '独立重放得到完全相同且经过审阅的结果，并保持正式数据、生产和外部请求写入为零。', 'met'],
       ['可复用研究输入', '合同已就绪', '五类内容寻址研究面板已经具有精确复用和隔离规则；目前尚未实体化面板，也没有开放新的结果访问。', 'met'],
       ['下一批因子发现', '设计边界', '下一有限批次可以研究市场结构对因子适用性的影响；定义和试验预算尚未登记。', 'active'],
       ['模型、策略与产品', '锁定', '目前仍没有预测模型、策略表达、个股候选权限或期权绩效主张。', 'locked'],
@@ -269,9 +279,19 @@ const COPY = {
       '提出想法和资格诊断阶段不能读取结果；只有新批次完成登记后才能打开开发期结果，验证集与留出集继续独立隔离。',
       '来源谱系不一致、阶段泄漏、超出试验预算、重放失败或密封分区泄漏会立即停止受影响批次，但不会抹去已有研究。',
     ],
-    cycleIdentity: '循环逻辑指纹',
-    artifactIdentity: '可复用工件注册表指纹',
-    foundation: '研究基础快照', foundationNote: '以下是已经在戴尔完成核验并版本化的工程证据；每一项同时标明可用范围与证据边界。', foundationBadge: '证据核对 · 2026-09-15',
+    agentPilot: '阶段隔离的研究协作组', agentPilotNote: '第三批是首次人工监督的多 Agent 试点。不同角色只能在结果盲阶段、且不写同一工件时并行；确定性门槛与唯一试验账本仍是权威。', agentPilotBadge: '结果盲试点 · 进行中',
+    agentStats: ['当前试点角色', 'Development 收益', '第三批', 'Validation / Holdout'], agentStatValues: ['5 个启用', '保持关闭', '尚未登记', '保持密封'],
+    agentStages: [
+      ['01', '独立审查', '已完成', '治理、方法和实现审查在真实运行前发现并修正了实质问题。'],
+      ['02', '市场状态资格审查', '当前', '不读取标签，核对完整证券总体，并检查时序、覆盖、变化、持续性、冗余和精确重放。'],
+      ['03', '冻结协议与账本', '锁定', '只有合格面板才能进入有限假设、试验预算、多重检验规则和累计账本更新。'],
+      ['04', 'Development 评估', '锁定', '必须经单独审查和授权后，才可由唯一确定性执行边界开启。'],
+      ['05', '重放、反证与人工裁决', '锁定', 'Agent 共识不能替代精确复现、确定性门槛或人工权限。'],
+    ],
+    agentRoles: '角色与访问权限', agentRoleNames: ['研究主控', '数据与证据', '假设审查', '实现', '评估', '反证', '审批与发布'],
+    agentBoundary: '这不代表什么', agentBoundaryBody: '这不是无人监管的 Alpha 挖掘器。新的收益试验、模型、Validation、Holdout、候选权限、部署、券商或交易权限均未开放。',
+    agentInspect: '查看角色隔离、串行阶段门与共享账本',
+    foundation: '研究基础快照', foundationNote: '以下是已经在研究工作站完成核验并版本化的工程证据；每一项同时标明可用范围与证据边界。', foundationBadge: '证据核对 · 2026-09-15',
     foundationItems: [
       ['五年行情基础', '深度已完成', '连续日线行情与稳定证券身份的五年深度已经完成。', 'verified'],
       ['历史成员资格', '事后重建', '其中1,250个交易日为事后重建、3个为前瞻记录；重建历史不等于当时实录。', 'qualified'],
@@ -281,7 +301,7 @@ const COPY = {
     ],
     foundationControls: '已经冻结的评估约束', controlLabels: ['已登记规格', '时间顺序切分', '清洗期 + 隔离期', '单边成本情景', '封存样本外使用次数'],
     foundationBoundary: '不会把不同证据强行合成为一个“总完成度”。任何必需证据族不合格，绩效研究仍保持锁定。',
-    factorQualification: '因子资格诊断 V2', factorQualificationNote: '8项因子已在戴尔同一冻结总体上完整计算两次。逐字节一致的精确重放只检验来源与实现是否合格，全程不读取未来收益。', factorQualificationBadge: '已通过 · 精确重放',
+    factorQualification: '因子资格诊断 V2', factorQualificationNote: '8项因子已在工作站同一冻结总体上完整计算两次。精确重放只检验来源与实现是否合格，全程不读取未来收益。', factorQualificationBadge: '已通过 · 精确重放',
     factorStats: ['登记因子', '完整向量', '覆盖率', '成对核验', '近重复组'],
     factorCoverageMeaning: '437,402条声明路径中，431,249条形成完整的8因子向量；6,153条不完整路径继续明确保留，没有静默补零。覆盖率达到98.59%，267个合格交易日在冻结的前后时间段中分布为123 / 144。',
     factorRedundancy: '最强同日关系', factorRedundancyBody: '两个风险护栏之间的绝对加权 Spearman 关系最高，为0.8942；没有因子对满足完整的近重复规则。这只代表数据资格通过，并不代表存在预测价值。',
@@ -292,7 +312,7 @@ const COPY = {
     factorVerdict: 'V2 获得了什么资格', factorVerdictValue: '8 / 8 项可进入协议审查', factorVerdictBody: '4项候选 Alpha 测量、1项形态条件、1项适用性输入和2项风险护栏均通过覆盖、时间分布、取值、并列与冗余门槛。它们只是等待登记结果检验的测量，并非已获准因子。',
     factorNext: '资格诊断之后', factorNextValue: '筛选已完成 · 结论见下方', factorNextBody: '8项测量获得的是接受检验的资格，不是预设有效。正式筛选拒绝了所有候选 Alpha，并保持原资格报告不变。',
     factorLimits: '资格诊断边界', factorLimitsBody: '成员资格为事后重建而非当时实录；历史行业分类和充分的市场状态多样性尚未证明；日线不能观察点差或带方向订单流；即使重建数据通过资格，拆股空白是否中性仍作为来源限制公开保留。',
-    screeningV2: '已完成开发期筛选 · 因子目录 V2', screeningV2Note: '这是预登记问题的不可变结论，不是为了外观挑选出来的回测。精确重放复现了全部计数和指纹。', screeningV2Badge: '已关闭 · 精确重放',
+    screeningV2: '已完成开发期筛选 · 因子目录 V2', screeningV2Note: '这是预登记问题的不可变结论，不是为了外观挑选出来的回测。精确重放复现了全部结果和计数。', screeningV2Badge: '已关闭 · 精确重放',
     screeningV2Stats: ['正式试验', '累计试验', '信号交易日', '观察数', '前瞻标签'],
     screeningV2State: '候选 Alpha 结论', screeningV2StateValue: '0 / 4 获准', screeningV2StateBody: '4项候选 Alpha 均至少失败一个冻结门槛；已经看到结果后，不得再修补它们的公式或阈值。',
     screeningV2Selection: '风险证据', screeningV2SelectionValue: '2项通过 · 0项入选', screeningV2SelectionBody: '两项下行风险护栏均通过登记门槛，可以作为风险认识保留；但没有候选 Alpha 存活，因此都不能成为模型输入。',
@@ -307,7 +327,7 @@ const COPY = {
     factorScreenInspect: '展开审阅协议、保管、限制与报告身份',
     factorScreenProtocol: '冻结评估规则', factorScreenProtocolBody: '主要周期3个交易日；1日与5日用于衰减诊断；10,000次五日循环区块自助法；90%区间；Holm家族错误控制；单边0/10/25/50 bps成本情景。',
     factorScreenLimits: '解释边界', factorScreenLimitsBody: '仅限开发期；成员资格为事后重建；仅106个信号日；历史分类和充分的市场状态多样性未获证明；固定成本只是情景而非执行校准。验证集和留出集从未打开。',
-    engineering: '历史方法工程证据', engineeringNote: '首个回撤方法已在戴尔重建样本上完整运行两次，结果指纹完全一致。以下保留事实只回答“该方法能否计算”，不回答“策略是否有效”。', engineeringBadge: '历史记录 · 不含结果',
+    engineering: '历史方法工程证据', engineeringNote: '首个回撤方法已在工作站重建样本上完整运行两次，结果完全一致。以下保留事实只回答“该方法能否计算”，不回答“策略是否有效”。', engineeringBadge: '历史记录 · 不含结果',
     engineeringStages: ['方法已冻结', '实现测试通过', '总体重放完成', '绩效数据准入'], verified: '已核验', blockedState: '仍阻塞',
     declaredSessions: '声明交易日', completeSessions: '特征完整交易日', declaredPaths: '声明路径', computablePaths: '可计算路径', excludedPaths: '明确排除',
     coverageMeaning: '95.38% 是方法可计算路径覆盖率，不是胜率、预测准确率或收益率。',
@@ -318,7 +338,7 @@ const COPY = {
     methodOnly: '仅有方法', noCandidate: '不可进入个股候选', notAssessed: '尚未评估市场适配',
     version: '版本', lifecycleState: '生命周期', evidence: '证据类型', applicability: '当前适配',
     oos: '样本外观察数', nextDecision: '下一项决策', strength: '主要优点', weakness: '主要弱点',
-    inspect: '展开审阅完整逻辑、公式、参数、评估设计与指纹',
+    inspect: '展开审阅完整逻辑、公式、参数与评估设计',
     logic: '1 · 逻辑与决策用途', features: '2 · 输入与特征', parameters: '3 · 参数与搜索预算',
     evaluation: '4 · 评估设计', gates: '5 · 晋级门槛', failure: '6 · 反面证据、失效条件与阻塞项', reproduction: '7 · 复现信息',
     decisionUse: '决策用途', hypothesis: '研究假设', rationale: '经济逻辑', signal: '触发公式', ranking: '排名规则',
@@ -350,7 +370,7 @@ const COPY = {
       ['Catálogo de factores V2', 'EVALUADO', 'Ocho definiciones exactas cubrieron continuación, reversión, momento del retorno, defensa, aplicabilidad de liquidez y riesgo bajista.', 'met'],
       ['Calificación de datos V2', 'SUPERADA', 'El informe y la reproducción son idénticos byte a byte: 98,59 % de vectores completos, 267 sesiones aptas y los ocho factores superan los filtros congelados; no hubo conflictos con la evidencia canónica previa.', 'met'],
       ['Selección en Desarrollo', 'COMPLETADA', 'Fallaron las cuatro pruebas Alpha. Dos salvaguardas superaron los criterios, pero la ausencia de Alpha impide pasar a Construcción del modelo.', 'met'],
-      ['Reproducción exacta', 'VERIFICADA', 'La repetición independiente obtuvo las mismas huellas y el mismo SHA, sin escrituras canónicas, de Producción ni solicitudes externas.', 'met'],
+      ['Reproducción exacta', 'VERIFICADA', 'La repetición independiente obtuvo el mismo resultado revisado, sin escrituras canónicas, de Producción ni solicitudes externas.', 'met'],
       ['Entradas de investigación reutilizables', 'CONTRATO LISTO', 'Cinco familias de paneles direccionados por contenido ya tienen reglas exactas de reutilización y custodia. No hay paneles materializados ni nuevo acceso a resultados.', 'met'],
       ['Próxima campaña', 'LÍMITE DE DISEÑO', 'Un nuevo lote finito podrá estudiar la aplicabilidad condicionada por la estructura del mercado; aún no se han registrado definiciones ni presupuesto.', 'active'],
       ['Modelo, estrategia y Producto', 'BLOQUEADOS', 'No existe modelo predictivo, expresión de estrategia, autoridad sobre Candidatos ni afirmación sobre opciones.', 'locked'],
@@ -374,9 +394,19 @@ const COPY = {
       'Las fases de ideas y calificación no pueden leer resultados. Desarrollo se abre solo para una campaña nueva registrada; Validación y Holdout siguen separados.',
       'Una discrepancia de linaje, fuga entre etapas, exceso de presupuesto, fallo de reproducción o ruptura de una partición sellada detiene la campaña afectada.',
     ],
-    cycleIdentity: 'Huella lógica del ciclo',
-    artifactIdentity: 'Huella del registro de artefactos reutilizables',
-    foundation: 'Resumen de la base de investigación', foundationNote: 'Evidencia verificada y versionada que ya existe en Dell. Cada punto indica tanto su utilidad como su límite.', foundationBadge: 'EVIDENCIA REVISADA · 15 SEP 2026',
+    agentPilot: 'Equipo de investigación aislado por etapas', agentPilotNote: 'La Campaña Tres es el primer piloto multiagente con supervisión humana. Los roles solo pueden trabajar en paralelo antes de consultar resultados y sobre artefactos distintos; las puertas deterministas y un único registro siguen siendo la autoridad.', agentPilotBadge: 'PILOTO SIN RESULTADOS · ACTIVO',
+    agentStats: ['Roles del piloto', 'Resultados de Desarrollo', 'Campaña Tres', 'Validación / Holdout'], agentStatValues: ['5 ACTIVOS', 'CERRADOS', 'NO REGISTRADA', 'SELLADOS'],
+    agentStages: [
+      ['01', 'Revisiones independientes', 'COMPLETADO', 'Las revisiones de gobierno, método e implementación detectaron y corrigieron defectos reales antes de ejecutar datos.'],
+      ['02', 'Calificación del estado de mercado', 'ACTUAL', 'Concilia la población completa de valores y revisa cronología, cobertura, variación, persistencia, redundancia y reproducción exacta sin etiquetas.'],
+      ['03', 'Congelar protocolo y registro', 'BLOQUEADO', 'Solo un panel calificado puede respaldar hipótesis finitas, presupuesto, multiplicidad y actualización acumulativa.'],
+      ['04', 'Evaluación de Desarrollo', 'BLOQUEADA', 'Un único límite de ejecución determinista solo puede abrirse tras revisión y autorización separadas.'],
+      ['05', 'Reproducción, ataque y decisión humana', 'BLOQUEADO', 'El consenso de agentes no sustituye la reproducción exacta, las puertas deterministas ni la autoridad humana.'],
+    ],
+    agentRoles: 'Mapa de roles y acceso', agentRoleNames: ['Control de investigación', 'Datos y evidencia', 'Revisión de hipótesis', 'Implementación', 'Evaluación', 'Equipo adversarial', 'Aprobación y publicación'],
+    agentBoundary: 'Lo que esto no significa', agentBoundaryBody: 'No es un minero de Alpha autónomo. No se ha abierto ninguna nueva prueba de retorno, modelo, Validación, Holdout, autoridad de Candidatos, despliegue, bróker ni negociación.',
+    agentInspect: 'Examinar aislamiento, puertas seriales y contabilidad compartida',
+    foundation: 'Resumen de la base de investigación', foundationNote: 'Evidencia verificada y versionada que ya existe en la estación de trabajo de investigación. Cada punto indica tanto su utilidad como su límite.', foundationBadge: 'EVIDENCIA REVISADA · 15 SEP 2026',
     foundationItems: [
       ['Base de mercado a cinco años', 'PROFUNDIDAD COMPLETA', 'La profundidad continua de precios diarios e identidad estable está completa.', 'verified'],
       ['Composición histórica', 'RECONSTRUIDA', '1.250 sesiones son reconstruidas y tres son prospectivas; la reconstrucción no equivale a un registro operativo de la fecha.', 'qualified'],
@@ -386,7 +416,7 @@ const COPY = {
     ],
     foundationControls: 'Controles de evaluación ya congelados', controlLabels: ['Especificaciones registradas', 'División cronológica', 'Purga + embargo', 'Escenarios de costes por lado', 'Uso del holdout sellado'],
     foundationBoundary: 'Estos hechos no se combinan en un único porcentaje de avance. Una familia de evidencia obligatoria insuficiente mantiene bloqueada la investigación de rendimiento.',
-    factorQualification: 'Calificación de factores V2', factorQualificationNote: 'El catálogo de ocho factores se calculó dos veces sobre la misma población congelada en Dell. La reproducción idéntica byte a byte evalúa solo la aptitud de las fuentes y de la implementación; nunca consulta rendimientos futuros.', factorQualificationBadge: 'SUPERADA · REPRODUCCIÓN EXACTA',
+    factorQualification: 'Calificación de factores V2', factorQualificationNote: 'El catálogo de ocho factores se calculó dos veces sobre la misma población congelada en la estación de trabajo. La reproducción exacta evalúa solo la aptitud de las fuentes y de la implementación; nunca consulta rendimientos futuros.', factorQualificationBadge: 'SUPERADA · REPRODUCCIÓN EXACTA',
     factorStats: ['Factores registrados', 'Vectores completos', 'Cobertura', 'Pares revisados', 'Grupos casi duplicados'],
     factorCoverageMeaning: 'De 437.402 trayectorias declaradas, 431.249 produjeron vectores completos de ocho factores. Las 6.153 incompletas siguen explícitas, sin rellenarlas con cero. La disponibilidad alcanzó el 98,59 % en 267 sesiones aptas, repartidas 123 / 144 entre las dos mitades cronológicas congeladas.',
     factorRedundancy: 'Relación contemporánea más intensa', factorRedundancyBody: 'La mayor relación de Spearman ponderada en valor absoluto fue 0,8942 entre las dos salvaguardas de riesgo. Ningún par cumplió la regla completa de casi duplicado. Esto supera una prueba de datos, pero no demuestra capacidad predictiva.',
@@ -397,7 +427,7 @@ const COPY = {
     factorVerdict: 'Qué habilitó V2', factorVerdictValue: '8 / 8 aptos para revisar el protocolo', factorVerdictBody: 'Las cuatro medidas candidatas de Alpha, un condicionante, una variable de aplicabilidad y dos salvaguardas superaron cobertura, cronología, variación, empates y redundancia. Son mediciones pendientes de una prueba registrada, no factores admitidos.',
     factorNext: 'Después de la calificación', factorNextValue: 'FILTRO COMPLETADO · DECISIÓN ABAJO', factorNextBody: 'Las ocho mediciones obtuvieron permiso para ser evaluadas, no una presunción de utilidad. El filtro rechazó todos los candidatos de Alpha y conservó intacta la calificación.',
     factorLimits: 'Límites de la calificación', factorLimitsBody: 'La composición está reconstruida y no registrada tal como se operó; la clasificación histórica y una diversidad amplia de regímenes no están demostradas; las barras diarias no observan diferenciales ni flujo firmado; la neutralidad de ausencias de splits sigue declarada como limitación incluso tras la calificación.',
-    screeningV2: 'Selección de Desarrollo completada · Catálogo V2', screeningV2Note: 'Este es el resultado inmutable de la pregunta preinscrita, no un backtest elegido por su apariencia. La reproducción exacta coincidió en todos los recuentos y huellas.', screeningV2Badge: 'CERRADO · REPRODUCCIÓN EXACTA',
+    screeningV2: 'Selección de Desarrollo completada · Catálogo V2', screeningV2Note: 'Este es el resultado inmutable de la pregunta preinscrita, no un backtest elegido por su apariencia. La reproducción exacta coincidió en todos los resultados y recuentos.', screeningV2Badge: 'CERRADO · REPRODUCCIÓN EXACTA',
     screeningV2Stats: ['Pruebas formales', 'Pruebas acumuladas', 'Sesiones de señal', 'Observaciones', 'Etiquetas futuras'],
     screeningV2State: 'Decisión sobre Alpha', screeningV2StateValue: '0 / 4 admitidos', screeningV2StateBody: 'Las cuatro medidas candidatas de Alpha fallaron al menos un criterio congelado. Sus fórmulas y umbrales no pueden repararse después de observar los resultados.',
     screeningV2Selection: 'Evidencia de riesgo', screeningV2SelectionValue: '2 calificadas · 0 seleccionadas', screeningV2SelectionBody: 'Las dos salvaguardas bajistas superaron sus criterios. Se conservan como evidencia, pero no pasan a ser entradas de modelo porque ningún Alpha sobrevivió.',
@@ -412,7 +442,7 @@ const COPY = {
     factorScreenInspect: 'Examinar protocolo, custodia, límites e identidad exacta',
     factorScreenProtocol: 'Evaluación congelada', factorScreenProtocolBody: 'Horizonte principal: 3 sesiones; diagnósticos de decaimiento: 1 y 5; 10.000 réplicas bootstrap con bloques circulares de cinco sesiones; intervalos del 90 %; control familiar de Holm; costes de 0/10/25/50 pb por lado.',
     factorScreenLimits: 'Límite de interpretación', factorScreenLimitsBody: 'Solo Desarrollo; composición reconstruida; 106 sesiones de señal; clasificación histórica y diversidad amplia de regímenes no demostradas; los costes fijos son escenarios, no calibración de ejecución. Validación y Holdout nunca se abrieron.',
-    engineering: 'Evidencia histórica de ingeniería', engineeringNote: 'El primer método Pullback se ejecutó dos veces sobre la población reconstruida en Dell y produjo huellas idénticas. Estos datos conservados indican si aquel método podía calcularse, no si funcionaba.', engineeringBadge: 'HISTÓRICA · SIN RESULTADOS',
+    engineering: 'Evidencia histórica de ingeniería', engineeringNote: 'El primer método Pullback se ejecutó dos veces sobre la población reconstruida en la estación de trabajo y produjo resultados idénticos. Estos datos conservados indican si aquel método podía calcularse, no si funcionaba.', engineeringBadge: 'HISTÓRICA · SIN RESULTADOS',
     engineeringStages: ['Método congelado', 'Implementación probada', 'Población reproducida', 'Admisión de rendimiento'], verified: 'Verificado', blockedState: 'Bloqueada',
     declaredSessions: 'Sesiones declaradas', completeSessions: 'Sesiones con características completas', declaredPaths: 'Trayectorias declaradas', computablePaths: 'Trayectorias computables', excludedPaths: 'Exclusiones explícitas',
     coverageMeaning: 'El 95,38 % mide cobertura de cálculo del método; no es tasa de acierto, precisión predictiva ni rentabilidad.',
@@ -423,7 +453,7 @@ const COPY = {
     methodOnly: 'Solo método', noCandidate: 'No apto para Candidatos', notAssessed: 'Adecuación al mercado no evaluada',
     version: 'Versión', lifecycleState: 'Ciclo de vida', evidence: 'Evidencia', applicability: 'Aplicabilidad',
     oos: 'Observaciones fuera de muestra', nextDecision: 'Próxima decisión', strength: 'Fortaleza principal', weakness: 'Debilidad principal',
-    inspect: 'Examinar la lógica completa, las fórmulas, los parámetros, la evaluación y las huellas',
+    inspect: 'Examinar la lógica completa, las fórmulas, los parámetros y la evaluación',
     logic: '1 · Lógica y decisión', features: '2 · Entradas y características', parameters: '3 · Parámetros y presupuesto de búsqueda',
     evaluation: '4 · Diseño de evaluación', gates: '5 · Criterios de avance', failure: '6 · Fallos, invalidación y bloqueos', reproduction: '7 · Reproducción',
     decisionUse: 'Uso en la decisión', hypothesis: 'Hipótesis', rationale: 'Fundamento económico', signal: 'Regla de señal', ranking: 'Regla de clasificación',
@@ -543,11 +573,23 @@ export function QuantResearchLabPage(): JSX.Element {
         <div className="research-screen-protocol">
           {c.cycleGuardTitles.map((title, index) => <article key={title}><strong>{title}</strong><p>{c.cycleGuardBodies[index]}</p></article>)}
         </div>
-        <dl className="research-factor-reproduction">
-          <div><dt>{c.cycleIdentity}</dt><dd><code>{discoveryCycle.logical_fingerprint}</code></dd></div>
-          <div><dt>completed ledger</dt><dd><code>{discoveryCycle.source_completed_ledger_fingerprint}</code></dd></div>
-          <div><dt>{c.artifactIdentity}</dt><dd><code>{reusableArtifacts.logical_fingerprint}</code></dd></div>
-        </dl>
+      </details>
+    </section>
+
+    <section className="research-card research-engineering-evidence research-agent-pilot" aria-labelledby="research-agent-pilot-title">
+      <header><span>MA</span><div><h2 id="research-agent-pilot-title">{c.agentPilot}</h2><p>{c.agentPilotNote}</p></div><b>{c.agentPilotBadge}</b></header>
+      <div className="research-factor-stats research-agent-stats">
+        {c.agentStats.map((label, index) => <article key={label}><span>{label}</span><strong>{c.agentStatValues[index]}</strong></article>)}
+      </div>
+      <ol className="research-engineering-rail research-agent-rail">
+        {c.agentStages.map(([index, title, state, body], stageIndex) => <li className={stageIndex === 0 ? 'done' : 'blocked'} key={title}><i>{stageIndex === 0 ? '✓' : stageIndex === 1 ? '●' : '→'}</i><strong>{index} · {title}</strong><small>{state} · {body}</small></li>)}
+      </ol>
+      <div className="research-engineering-boundary"><strong>{c.agentBoundary}</strong><p>{c.agentBoundaryBody}</p></div>
+      <details className="research-factor-details research-screen-details">
+        <summary>{c.agentInspect}</summary>
+        <div className="research-screen-protocol research-agent-role-grid">
+          {multiAgentGovernance.role_policies.map((role, index) => <article key={role.role_id}><strong>{c.agentRoleNames[index]}</strong><p>{humanize(role.maximum_data_access)} · {humanize(role.required_handoff)}</p></article>)}
+        </div>
       </details>
     </section>
 
@@ -579,24 +621,18 @@ export function QuantResearchLabPage(): JSX.Element {
       <details className="research-factor-details">
         <summary>{c.factorInspect}</summary>
         <div className="research-factor-definition-grid">{factorQualification.definitions.map((factor) => <article key={factor.factor_id}>
-          <header><span>{FACTOR_TAXONOMY[locale][factor.family]}</span><strong>{FACTOR_NAMES[locale][factor.factor_id]}</strong><code>{factor.factor_id}</code></header>
+          <header><span>{FACTOR_TAXONOMY[locale][factor.family]}</span><strong>{FACTOR_NAMES[locale][factor.factor_id]}</strong></header>
           <dl>
             <div><dt>{c.factorRole}</dt><dd>{FACTOR_TAXONOMY[locale][factor.role]}</dd></div>
             <div><dt>{c.factorExpectation}</dt><dd>{FACTOR_TAXONOMY[locale][factor.expected_relationship]}</dd></div>
             <div><dt>{c.factorFormula}</dt><dd><code>{factor.exact_formula}</code></dd></div>
-            <div><dt>{c.source}</dt><dd>{factor.source_fields.join(' · ')}</dd></div>
+            <div><dt>{c.source}</dt><dd>{factor.source_fields.map(humanize).join(' · ')}</dd></div>
             <div><dt>{c.factorWindow}</dt><dd>{humanize(factor.source_window)}</dd></div>
             <div><dt>{c.cutoff}</dt><dd>{c.factorCutoffValue}</dd></div>
             <div><dt>{c.missing}</dt><dd>{c.factorMissingValue}</dd></div>
           </dl>
         </article>)}</div>
-        <dl className="research-factor-reproduction">
-          <div><dt>{c.factorWindow}</dt><dd>{factorQualification.first_session} → {factorQualification.last_session}</dd></div>
-          <div><dt>catalog fingerprint</dt><dd><code>{factorQualification.catalog_fingerprint}</code></dd></div>
-          <div><dt>protocol fingerprint</dt><dd><code>{factorQualification.protocol_fingerprint}</code></dd></div>
-          <div><dt>report fingerprint</dt><dd><code>{factorQualification.report_logical_fingerprint}</code></dd></div>
-          <div><dt>report SHA-256</dt><dd><code>{factorQualification.report_sha256}</code></dd></div>
-        </dl>
+        <dl className="research-factor-reproduction"><div><dt>{c.factorWindow}</dt><dd>{factorQualification.first_session} → {factorQualification.last_session}</dd></div></dl>
       </details>
       <div className="research-factor-limit"><strong>{c.factorLimits}</strong><p>{c.factorLimitsBody}</p></div>
     </section>
@@ -632,12 +668,7 @@ export function QuantResearchLabPage(): JSX.Element {
         <div className="research-screen-protocol"><article><strong>{c.screeningV2Protocol}</strong><p>{c.screeningV2ProtocolBody}</p></article><article><strong>{c.screeningV2Limits}</strong><p>{c.screeningV2LimitsBody}</p></article></div>
         <dl className="research-factor-reproduction">
           <div><dt>Development window</dt><dd>{factorScreeningV2.first_signal_session} → {factorScreeningV2.last_signal_session}</dd></div>
-          <div><dt>incremental control</dt><dd><code>{factorScreeningV2.incremental_baseline_factor_id}</code></dd></div>
-          <div><dt>protocol fingerprint</dt><dd><code>{factorScreeningV2.protocol_fingerprint}</code></dd></div>
-          <div><dt>registered ledger</dt><dd><code>{factorScreeningV2.registered_ledger_fingerprint}</code></dd></div>
-          <div><dt>completed ledger</dt><dd><code>{factorScreeningV2.completed_ledger_fingerprint}</code></dd></div>
-          <div><dt>report fingerprint</dt><dd><code>{factorScreeningV2.report_logical_fingerprint}</code></dd></div>
-          <div><dt>report SHA-256</dt><dd><code>{factorScreeningV2.report_sha256}</code></dd></div>
+          <div><dt>incremental control</dt><dd>{FACTOR_NAMES[locale][factorScreeningV2.incremental_baseline_factor_id]}</dd></div>
         </dl>
       </details>
     </section>
@@ -668,10 +699,6 @@ export function QuantResearchLabPage(): JSX.Element {
         <div className="research-screen-protocol"><article><strong>{c.factorScreenProtocol}</strong><p>{c.factorScreenProtocolBody}</p></article><article><strong>{c.factorScreenLimits}</strong><p>{c.factorScreenLimitsBody}</p></article></div>
         <dl className="research-factor-reproduction">
           <div><dt>Development window</dt><dd>{factorScreening.first_signal_session} → {factorScreening.last_signal_session}</dd></div>
-          <div><dt>protocol fingerprint</dt><dd><code>{factorScreening.protocol_fingerprint}</code></dd></div>
-          <div><dt>report fingerprint</dt><dd><code>{factorScreening.report_logical_fingerprint}</code></dd></div>
-          <div><dt>report SHA-256</dt><dd><code>{factorScreening.report_sha256}</code></dd></div>
-          <div><dt>implementation revision</dt><dd><code>{factorScreening.implementation_revision}</code></dd></div>
         </dl>
       </details>
     </section>
@@ -692,9 +719,8 @@ export function QuantResearchLabPage(): JSX.Element {
     <section className="research-card research-model-registry" aria-labelledby="research-model-title">
       <header><span>07</span><div><h2 id="research-model-title">{c.registry}</h2><p>{c.featured}</p></div></header>
       <article className="research-model-summary">
-        <div className="research-model-heading"><div><span>{modelRecord.model_id}</span><h3>{modelName}</h3><p>{modelRecord.hypothesis}</p></div><div className="research-model-badges"><b>{c.methodOnly}</b><b>{c.noCandidate}</b><b>{c.notAssessed}</b></div></div>
+        <div className="research-model-heading"><div><h3>{modelName}</h3><p>{modelRecord.hypothesis}</p></div><div className="research-model-badges"><b>{c.methodOnly}</b><b>{c.noCandidate}</b><b>{c.notAssessed}</b></div></div>
         <dl className="research-model-facts">
-          <div><dt>{c.version}</dt><dd>{modelRecord.model_version}</dd></div>
           <div><dt>{c.lifecycleState}</dt><dd>{humanize(modelRecord.lifecycle_state)}</dd></div>
           <div><dt>{c.evidence}</dt><dd>{humanize(modelRecord.evidence_scope)}</dd></div>
           <div><dt>{c.applicability}</dt><dd>{humanize(modelRecord.applicability_state)}</dd></div>
@@ -710,7 +736,7 @@ export function QuantResearchLabPage(): JSX.Element {
           {[[c.decisionUse,modelRecord.decision_use],[c.hypothesis,modelRecord.hypothesis],[c.rationale,modelRecord.economic_rationale],[c.signal,modelRecord.signal_rule],[c.ranking,modelRecord.ranking_rule]].map(([term, value]) => <div key={term}><dt>{term}</dt><dd>{value}</dd></div>)}
         </dl></div>
 
-        <div className="research-record-section"><h3>{c.features}</h3><div className="research-feature-grid">{modelRecord.feature_disclosures.map((feature) => <article key={feature.feature_id}><header><span>{humanize(feature.role)}</span><strong>{humanize(feature.feature_id)}</strong></header><code>{feature.exact_formula}</code><dl><div><dt>{c.source}</dt><dd>{feature.requirement_source_family} → {feature.raw_source_families.join(' + ')} · {feature.source_fields.join(', ')}</dd></div><div><dt>{c.cutoff}</dt><dd>{humanize(feature.availability_cutoff)}</dd></div><div><dt>{c.lookback}</dt><dd>{feature.lookback_sessions} {c.sessions}</dd></div><div><dt>{c.transform}</dt><dd>{humanize(feature.transform)}</dd></div><div><dt>{c.expected}</dt><dd>{humanize(feature.expected_direction)}</dd></div><div><dt>{c.missing}</dt><dd>{humanize(feature.missingness_rule)}</dd></div></dl></article>)}</div></div>
+        <div className="research-record-section"><h3>{c.features}</h3><div className="research-feature-grid">{modelRecord.feature_disclosures.map((feature) => <article key={feature.feature_id}><header><span>{humanize(feature.role)}</span><strong>{humanize(feature.feature_id)}</strong></header><code>{feature.exact_formula}</code><dl><div><dt>{c.source}</dt><dd>{humanize(feature.requirement_source_family)} → {feature.raw_source_families.map(humanize).join(' + ')} · {feature.source_fields.map(humanize).join(', ')}</dd></div><div><dt>{c.cutoff}</dt><dd>{humanize(feature.availability_cutoff)}</dd></div><div><dt>{c.lookback}</dt><dd>{feature.lookback_sessions} {c.sessions}</dd></div><div><dt>{c.transform}</dt><dd>{humanize(feature.transform)}</dd></div><div><dt>{c.expected}</dt><dd>{humanize(feature.expected_direction)}</dd></div><div><dt>{c.missing}</dt><dd>{humanize(feature.missingness_rule)}</dd></div></dl></article>)}</div></div>
 
         <div className="research-record-section"><h3>{c.parameters}</h3><div className="research-parameter-records">{modelRecord.parameter_disclosures.map((parameter) => <article key={parameter.parameter_id}><strong>{humanize(parameter.parameter_id)}</strong><p>{parameter.rationale}</p><span>{c.candidates}</span><code>{parameter.candidate_values.join(' | ')}</code><small>{c.selection}: {humanize(parameter.selection_scope)}</small></article>)}</div></div>
 
@@ -729,9 +755,6 @@ export function QuantResearchLabPage(): JSX.Element {
 
         <div className="research-record-section"><h3>{c.gates}</h3><RecordList items={modelRecord.decision_gates} /></div>
         <div className="research-record-section research-record-risk"><h3>{c.failure}</h3><div><article><strong>{c.counter}</strong><RecordList items={modelRecord.counterevidence_requirements} /></article><article><strong>{c.invalidation}</strong><RecordList items={modelRecord.invalidation_conditions} /></article><article><strong>{c.blockers}</strong><RecordList items={modelRecord.blocker_codes} /></article><article><strong>{c.risks}</strong><RecordList items={modelRecord.risk_disclosure_codes} /></article></div></div>
-        <div className="research-record-section"><h3>{c.reproduction}</h3><dl className="research-fingerprint-ledger">
-          <div><dt>contract</dt><dd><code>{modelRecord.contract_version}</code></dd></div><div><dt>record</dt><dd><code>{modelRecord.logical_fingerprint}</code></dd></div><div><dt>method contract</dt><dd><code>{modelRecord.source_method_contract_version}</code></dd></div><div><dt>method</dt><dd><code>{modelRecord.source_method_fingerprint}</code></dd></div><div><dt>diagnostic contract</dt><dd><code>{engineering.report_contract_version}</code></dd></div><div><dt>diagnostic report</dt><dd><code>{engineering.report_logical_fingerprint}</code></dd></div><div><dt>experiment ID</dt><dd><code>{modelRecord.source_experiment_id}</code></dd></div><div><dt>experiment</dt><dd><code>{modelRecord.source_experiment_fingerprint}</code></dd></div><div><dt>features</dt><dd><code>{modelRecord.input_feature_fingerprint}</code></dd></div><div><dt>evaluation</dt><dd><code>{modelRecord.evaluation_policy_fingerprint}</code></dd></div><div><dt>implementation revision</dt><dd>{modelRecord.implementation_revision ?? modelRecord.implementation_revision_reason}</dd></div><div><dt>result publication</dt><dd>{modelRecord.result_publication_id ?? c.none}</dd></div>
-        </dl></div>
       </details>
     </section>
 

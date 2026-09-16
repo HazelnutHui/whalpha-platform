@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-09-15
+Status date: 2026-09-16
 
 This is the concise actual-capability summary. Exact volatile identities belong
 in [current context](current-context.md), future sequencing in the
@@ -46,6 +46,12 @@ ADRs, and audits.
   factor campaign is the next design boundary; it is not yet registered. ADR
   0284 now makes the long-run discovery program renewable while keeping each
   campaign finite, deduplicated, stage-isolated, preregistered, and replayed.
+  ADR 0287 defines the first manually supervised, outcome-blind multi-agent
+  pilot with one authoritative ledger and deterministic serial gates. ADR 0288
+  implements the point-in-time market-state vector and its exact 287-session
+  qualification/replay boundary. Source code and tests are ready; no real
+  qualification report, Campaign Three registration, or new outcome access
+  exists yet.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -80,6 +86,13 @@ the current return to hypothesis intake, the 2 completed campaigns / 14 formal
 trials, seven-dimensional duplicate identity, finite preregistration budget,
 stage isolation, and automatic pause conditions. It is a research-control
 surface, not evidence that an unattended factor miner is already running.
+
+The current source tree also contains the reviewed trilingual multi-agent pilot
+surface. It exposes human-readable roles, isolation, current qualification,
+and locked downstream gates while withholding internal fingerprints, raw IDs,
+and custody identifiers from the website. Public infrastructure wording uses
+"workstation" rather than a hardware brand. This source milestone is tested
+and build-ready but is not part of the Production release identified above.
 
 The reusable research-input registry is implemented and visible at
 `contract_ready_not_materialized`: five content-addressed panel families, zero
@@ -350,6 +363,8 @@ measured budget breach.
 9. Design the next finite factor campaign outcome-blind. First define reusable
    point-in-time market-state inputs and economically distinct hypotheses, then
    qualify data and preregister every outcome trial in a new ledger version.
+   The market-state vector, real-data runner, custody, and qualification gates
+   are implemented; real materialization plus independent replay is next.
 10. Use the ADR 0284 cycle for every successor campaign: deduplicate before
     implementation, close and append before another campaign reads outcomes,
     and return to intake after either success or failure.

@@ -205,9 +205,14 @@ calculation and gates are deterministic on Dell; narrative or agent consensus
 cannot override chronology, cost, multiplicity, fingerprint, Validation, or
 Holdout failures.
 
-Factory work begins only after one complete factor-to-model-to-expression path
-survives locked evaluation and prospective shadow review. The first success
-criterion is reliable rejection and reproduction, not a high-return chart.
+ADR 0287 permits one manually supervised, stage-isolated multi-Agent pilot for
+Campaign Three's outcome-blind qualification. It cannot read Development,
+Validation, or Holdout outcomes, register trials, activate a model, deploy, or
+trade. Development evaluation remains a single deterministic boundary after a
+separately frozen protocol. Wider autonomous Factory operation still begins
+only after one complete factor-to-model-to-expression path survives locked
+evaluation and prospective shadow review. The first success criterion is
+reliable rejection and reproduction, not a high-return chart.
 
 ## Candidate promotion
 

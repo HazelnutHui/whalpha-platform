@@ -143,11 +143,14 @@ before returning to intake.
 
 Sequence:
 
-1. implement ADR 0283 reuse boundaries for population, feature,
-   market-state, control, and label panels; measure before parallelizing;
-2. define an outcome-blind point-in-time market-state feature vector and its
-   permitted applicability role;
-3. propose and deduplicate a finite set of economically distinct factor and
+1. preserve the completed ADR 0283 reuse boundaries for population, feature,
+   market-state, control, and label panels; materialize only when a registered
+   consumer exists;
+2. materialize the implemented ADR 0288 outcome-blind point-in-time
+   market-state qualification once and reproduce it independently before any
+   Campaign Three registration;
+3. under the ADR 0287 pilot, propose and deduplicate a finite set of
+   economically distinct factor and
    interaction hypotheses, including explicit null and failure conditions;
 4. implement formulas and complete zero-outcome coverage, timing,
    concentration, redundancy, and exact-replay qualification;
@@ -217,7 +220,8 @@ Only after one full three-layer path survives evaluation and shadow:
 2. deduplicate related ideas and retain true trial counts;
 3. isolate development, Validation, Holdout, red-team, reproduction, and
    shadow access;
-4. pilot a small number of specialized agent roles on Dell;
+4. expand the small outcome-blind multi-agent pilot beyond its current
+   manually supervised scope only after measured evidence justifies it;
 5. measure rejection quality, leakage detection, reproducibility, compute
    cost, and Holdout integrity before scaling; and
 6. keep activation, capital, broker access, and order execution outside agent

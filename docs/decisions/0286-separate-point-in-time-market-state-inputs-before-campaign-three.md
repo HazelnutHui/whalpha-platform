@@ -8,6 +8,10 @@ Accepted
 
 2026-09-15
 
+ADR 0288 supersedes only the never-materialized Vector 1.0 breadth definition
+and freezes the hardened 1.1 qualification boundary. The separation, timing,
+and no-outcome decisions below remain accepted.
+
 ## Context
 
 Factor Discovery V1 and V2 are closed with no admitted Alpha. The next finite

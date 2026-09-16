@@ -6,6 +6,23 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-16 — Bound the first multi-agent pilot and harden market-state qualification
+
+- Accepted ADR 0287 and defined a manually supervised, outcome-blind
+  multi-agent pilot with role-specific access, typed handoffs, one controller,
+  one cumulative ledger, deterministic serial gates, and no downstream model,
+  publication, broker, or trading authority.
+- Accepted ADR 0288; upgraded the market-state vector to continuous
+  outcome-blind inputs and implemented exact 287-session population,
+  chronology, availability, persistence, redundancy, custody, and replay
+  qualification. No real report or Campaign Three has been materialized.
+- Added a trilingual Lab pilot surface while removing raw fingerprints,
+  internal IDs, reason codes, and custody identities from website display.
+  Formulae, parameters, evidence, sample sizes, diagnostics, and limitations
+  remain visible; public hardware wording now uses "workstation".
+- Kept the Production release unchanged pending the real qualification,
+  independent replay, full repository verification, and reviewed deployment.
+
 ## 2026-09-15 — Prepare reusable research inputs and add a bounded guest-entry metric
 
 - Implemented the content-addressed reusable-artifact registry required by ADR

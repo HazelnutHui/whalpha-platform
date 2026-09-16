@@ -205,7 +205,7 @@ function SectorRotationContent({ data, universeId }: { data: SectorRotationRespo
         <article><span>{t('sector.themeEyebrow')}</span><h2>{t('sector.themeUnavailable')}</h2><p>{t('sector.themeReason')}</p></article>
         <article><span>{t('sector.useEyebrow')}</span><h2>{t('sector.howToUse')}</h2><p>{t('sector.howToUseBody')}</p></article>
       </section>
-      <details className="sector-method"><summary>{t('sector.methodTitle')}</summary><p>{t('sector.methodBody', { count: data.input_session_count })}</p><dl><div><dt>{t('sector.productFingerprint')}</dt><dd>{data.product_logical_fingerprint}</dd></div><div><dt>{t('sector.auditFingerprint')}</dt><dd>{data.audit_logical_fingerprint}</dd></div></dl></details>
+      <details className="sector-method"><summary>{t('sector.methodTitle')}</summary><p>{t('sector.methodBody', { count: data.input_session_count })}</p></details>
     </main>
   );
 }

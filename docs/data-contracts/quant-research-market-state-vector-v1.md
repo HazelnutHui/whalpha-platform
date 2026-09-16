@@ -2,7 +2,7 @@
 
 ## Purpose
 
-`quant-research-market-state-vector/1.0` defines the outcome-blind market-state
+`quant-research-market-state-vector/1.1` defines the outcome-blind market-state
 input that must be qualified before the third finite Factor Discovery campaign
 is registered. It is a research input, not the Product Market Regime and not a
 forecast.
@@ -17,7 +17,12 @@ ending at `t`:
 - QQQ minus SPY 20-session log return;
 - IWM minus SPY 20-session log return;
 - DIA minus SPY 20-session log return; and
-- share of SPY, QQQ, IWM, and DIA closing above their own 20-session mean.
+- mean log distance of SPY, QQQ, IWM, and DIA from their own 20-session mean.
+
+The benchmark breadth component is continuous. The never-materialized 1.0
+draft used a five-level above-mean share; implementation review replaced it
+before real-data qualification because it contradicted the continuous-input
+contract and could not satisfy a meaningful diversity gate.
 
 ## Reconstructed cross-sectional block
 

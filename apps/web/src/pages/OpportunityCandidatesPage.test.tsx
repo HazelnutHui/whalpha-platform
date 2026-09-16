@@ -144,7 +144,7 @@ describe('strategy-channel workspace', () => {
     expect(screen.getByText(/current trend-continuation baseline overlaps heavily/)).toBeInTheDocument();
     expect(screen.getByText(/separate audited shadow layer now describes the prior 10-session base/)).toBeInTheDocument();
     expect(screen.getByText(/45% normalized 5-session stock return versus SPY/)).toBeInTheDocument();
-    expect(screen.getByText('All Advance results come before all Watch results. Within each status: channel score descending, then ticker and stable instrument ID as deterministic tie-breakers.')).toBeInTheDocument();
+    expect(screen.getByText('All Advance results come before all Watch results. Within each status: channel score descending, then ticker and governed security identity as deterministic tie-breakers.')).toBeInTheDocument();
     fireEvent.click(screen.getAllByText('ABCD')[0].closest('button')!);
     expect(await screen.findByRole('dialog')).toHaveTextContent('ABCD · Momentum breakout');
     expect(getOpportunityCandidateDetail).toHaveBeenCalledTimes(1);

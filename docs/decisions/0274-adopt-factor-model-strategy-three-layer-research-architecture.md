@@ -134,9 +134,11 @@ expression lineage.
   version. A future three-layer catalog requires a new version rather than an
   in-place semantic change.
 - ADR 0194's bounded AI Research Factory remains accepted and maps its agents
-  to these three layers. It remains deferred until at least one complete
-  factor-to-model-to-expression path survives locked evaluation and
-  prospective shadow review.
+  to these three layers. Wider autonomous Factory operation remains deferred
+  until at least one complete factor-to-model-to-expression path survives
+  locked evaluation and prospective shadow review. ADR 0287 supersedes only
+  this timing boundary for one manually supervised, outcome-blind Campaign
+  Three qualification pilot; it opens no Development outcome access.
 
 ## Consequences
 

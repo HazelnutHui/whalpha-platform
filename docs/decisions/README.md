@@ -360,6 +360,13 @@ accepted ADR was deployed unless current operational evidence says so.
 - [ADR 0286](0286-separate-point-in-time-market-state-inputs-before-campaign-three.md):
   separates raw benchmark and reconstructed cross-sectional market-state
   evidence before Campaign Three registers any interaction or outcome access.
+- [ADR 0287](0287-pilot-stage-isolated-multi-agent-research-governance.md):
+  permits one manually supervised, outcome-blind Campaign Three collaboration
+  pilot while keeping outcome, Validation, Product, deployment, and trading
+  authority closed.
+- [ADR 0288](0288-harden-market-state-qualification-before-materialization.md):
+  replaces the unmaterialized discrete breadth draft and freezes exact
+  stable-ID, chronology, temporal-support, source-binding, and replay gates.
 ## Data-governance decisions
 
 - ADRs 0011–0048 establish EOD, Identity, stable-ID, security classification,

@@ -7,7 +7,10 @@ from pydantic import ValidationError
 
 from tip_api.contracts.analytics.v1.quant_research_market_state_vector import (
     QUANT_RESEARCH_MARKET_STATE_METRIC_ORDER,
+    QuantResearchMarketStateAvailability,
+    QuantResearchMarketStateMetricValueV1,
     QuantResearchMarketStateVectorDefinitionV1,
+    market_state_metric_definition_fingerprint,
     market_state_vector_definition_fingerprint,
     quant_research_market_state_vector_definition_v1,
 )
@@ -48,3 +51,27 @@ def test_market_state_vector_rejects_metric_or_authority_tamper() -> None:
     changed["development_outcome_read_authorized"] = True
     with pytest.raises(ValidationError):
         QuantResearchMarketStateVectorDefinitionV1.model_validate(changed)
+
+
+def test_market_state_metric_rejects_false_coverage_or_share_range() -> None:
+    metric_id = "reconstructed_member_positive_log_return_5s_share"
+    common = {
+        "metric_id": metric_id,
+        "definition_fingerprint": market_state_metric_definition_fingerprint(
+            metric_id
+        ),
+        "availability": QuantResearchMarketStateAvailability.AVAILABLE,
+        "actual_observations": 500,
+        "expected_observations": 600,
+        "coverage_ratio": "0.8333333333",
+    }
+    with pytest.raises(ValidationError):
+        QuantResearchMarketStateMetricValueV1(
+            **common,
+            value="1.1000000000",
+        )
+    with pytest.raises(ValidationError):
+        QuantResearchMarketStateMetricValueV1(
+            **{**common, "coverage_ratio": "1.0000000000"},
+            value="0.5000000000",
+        )

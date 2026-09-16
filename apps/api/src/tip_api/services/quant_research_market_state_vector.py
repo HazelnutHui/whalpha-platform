@@ -36,85 +36,107 @@ class QuantResearchMarketStateMemberSeriesV1:
     bars: tuple[QuantResearchMarketStateBarV1, ...]
 
 
+@dataclass(frozen=True, slots=True)
+class QuantResearchMarketStateUnavailableMemberV1:
+    instrument_id: str
+    reason_codes: tuple[str, ...]
+
+
 def calculate_quant_research_market_state_vector_v1(
     *,
+    expected_sessions: tuple[date, ...],
     benchmark_series: dict[str, tuple[QuantResearchMarketStateBarV1, ...]],
+    benchmark_unavailable_reasons: dict[str, tuple[str, ...]],
+    declared_member_ids: tuple[str, ...],
     member_series: tuple[QuantResearchMarketStateMemberSeriesV1, ...],
-    declared_member_count: int,
+    unavailable_members: tuple[QuantResearchMarketStateUnavailableMemberV1, ...],
 ) -> tuple[QuantResearchMarketStateMetricValueV1, ...]:
     """Calculate raw state metrics without accepting a forward outcome."""
 
     with localcontext(_context()):
         return _calculate(
+            expected_sessions=expected_sessions,
             benchmark_series=benchmark_series,
+            benchmark_unavailable_reasons=benchmark_unavailable_reasons,
+            declared_member_ids=declared_member_ids,
             member_series=member_series,
-            declared_member_count=declared_member_count,
+            unavailable_members=unavailable_members,
         )
 
 
-def _calculate(*, benchmark_series, member_series, declared_member_count):
-    if set(benchmark_series) != {"SPY", "QQQ", "IWM", "DIA"}:
+def _calculate(
+    *,
+    expected_sessions,
+    benchmark_series,
+    benchmark_unavailable_reasons,
+    declared_member_ids,
+    member_series,
+    unavailable_members,
+):
+    benchmark_tickers = ("SPY", "QQQ", "IWM", "DIA")
+    if (
+        len(expected_sessions) != 21
+        or expected_sessions != tuple(sorted(set(expected_sessions)))
+        or set(benchmark_series) != set(benchmark_tickers)
+        or set(benchmark_unavailable_reasons) - set(benchmark_tickers)
+    ):
         raise QuantResearchMarketStateCalculationError(
-            "benchmark identity set differs"
+            "market-state source-session or benchmark identity set differs"
         )
-    sessions = _validate_series(benchmark_series["SPY"], label="SPY")
-    for ticker in ("QQQ", "IWM", "DIA"):
-        if _validate_series(benchmark_series[ticker], label=ticker) != sessions:
+    for ticker in benchmark_tickers:
+        series = benchmark_series[ticker]
+        reasons = benchmark_unavailable_reasons.get(ticker, ())
+        if (
+            (series and reasons)
+            or (not series and not reasons)
+            or reasons != tuple(sorted(set(reasons)))
+        ):
+            raise QuantResearchMarketStateCalculationError(
+                "benchmark availability reconciliation differs"
+            )
+        if series and _validate_series(series, label=ticker) != expected_sessions:
             raise QuantResearchMarketStateCalculationError(
                 "benchmark sessions are not exactly aligned"
             )
-    if declared_member_count < 0 or len(member_series) > declared_member_count:
-        raise QuantResearchMarketStateCalculationError("member counts differ")
-    ids = tuple(item.instrument_id for item in member_series)
-    if ids != tuple(sorted(set(ids))):
+    if declared_member_ids != tuple(sorted(set(declared_member_ids))):
+        raise QuantResearchMarketStateCalculationError(
+            "declared member identities must be uniquely sorted"
+        )
+    complete_ids = tuple(item.instrument_id for item in member_series)
+    unavailable_ids = tuple(item.instrument_id for item in unavailable_members)
+    if complete_ids != tuple(sorted(set(complete_ids))):
         raise QuantResearchMarketStateCalculationError(
             "member series must be uniquely sorted"
         )
+    if unavailable_ids != tuple(sorted(set(unavailable_ids))):
+        raise QuantResearchMarketStateCalculationError(
+            "unavailable members must be uniquely sorted"
+        )
+    if (
+        set(complete_ids) & set(unavailable_ids)
+        or tuple(sorted((*complete_ids, *unavailable_ids))) != declared_member_ids
+        or any(
+            not item.reason_codes
+            or item.reason_codes != tuple(sorted(set(item.reason_codes)))
+            for item in unavailable_members
+        )
+    ):
+        raise QuantResearchMarketStateCalculationError(
+            "declared member reconciliation differs"
+        )
     for item in member_series:
-        if _validate_series(item.bars, label=item.instrument_id) != sessions:
+        if _validate_series(item.bars, label=item.instrument_id) != expected_sessions:
             raise QuantResearchMarketStateCalculationError(
                 "member sessions are not exactly aligned"
             )
 
-    spy = benchmark_series["SPY"]
-    computations = {
-        "spy_log_return_20s": _log_return(spy, 0, 20),
-        "spy_realized_volatility_20s": Decimal(252).sqrt()
-        * _sample_std(_daily_log_returns(spy)),
-        "qqq_spy_relative_log_return_20s": _log_return(
-            benchmark_series["QQQ"], 0, 20
-        )
-        - _log_return(spy, 0, 20),
-        "iwm_spy_relative_log_return_20s": _log_return(
-            benchmark_series["IWM"], 0, 20
-        )
-        - _log_return(spy, 0, 20),
-        "dia_spy_relative_log_return_20s": _log_return(
-            benchmark_series["DIA"], 0, 20
-        )
-        - _log_return(spy, 0, 20),
-        "broad_etf_above_sma20_share": sum(
-            Decimal(
-                benchmark_series[ticker][-1].close
-                > _mean(
-                    tuple(bar.close for bar in benchmark_series[ticker][-20:])
-                )
-            )
-            for ticker in ("SPY", "QQQ", "IWM", "DIA")
-        )
-        / Decimal(4),
-    }
-    result = [
-        _available(
-            metric_id,
-            value,
-            actual=(20 if metric_id == "spy_realized_volatility_20s" else 21),
-            expected=(20 if metric_id == "spy_realized_volatility_20s" else 21),
-        )
-        for metric_id, value in computations.items()
-    ]
+    result = _benchmark_metrics(
+        benchmark_series=benchmark_series,
+        unavailable_reasons=benchmark_unavailable_reasons,
+    )
 
     complete = len(member_series)
+    declared_member_count = len(declared_member_ids)
     coverage = (
         Decimal(complete) / Decimal(declared_member_count)
         if declared_member_count
@@ -170,6 +192,67 @@ def _calculate(*, benchmark_series, member_series, declared_member_count):
             "market-state implementation is incomplete"
         )
     return tuple(result)
+
+
+def _benchmark_metrics(*, benchmark_series, unavailable_reasons):
+    dependencies = (
+        ("spy_log_return_20s", ("SPY",), 21),
+        ("spy_realized_volatility_20s", ("SPY",), 20),
+        ("qqq_spy_relative_log_return_20s", ("SPY", "QQQ"), 21),
+        ("iwm_spy_relative_log_return_20s", ("SPY", "IWM"), 21),
+        ("dia_spy_relative_log_return_20s", ("SPY", "DIA"), 21),
+        (
+            "broad_etf_mean_log_distance_to_sma20",
+            ("SPY", "QQQ", "IWM", "DIA"),
+            21,
+        ),
+    )
+    output = []
+    for metric_id, tickers, expected in dependencies:
+        reasons = tuple(
+            sorted(
+                {
+                    reason
+                    for ticker in tickers
+                    for reason in unavailable_reasons.get(ticker, ())
+                }
+            )
+        )
+        if reasons:
+            output.append(
+                _unavailable(metric_id, reasons=reasons, actual=0, expected=expected)
+            )
+            continue
+        spy = benchmark_series["SPY"]
+        if metric_id == "spy_log_return_20s":
+            value = _log_return(spy, 0, 20)
+        elif metric_id == "spy_realized_volatility_20s":
+            value = Decimal(252).sqrt() * _sample_std(_daily_log_returns(spy))
+        elif metric_id == "broad_etf_mean_log_distance_to_sma20":
+            value = sum(
+                (
+                    benchmark_series[ticker][-1].close
+                    / _mean(
+                        tuple(
+                            bar.close for bar in benchmark_series[ticker][-20:]
+                        )
+                    )
+                ).ln()
+                for ticker in tickers
+            ) / Decimal(4)
+        else:
+            comparison = {
+                "qqq_spy_relative_log_return_20s": "QQQ",
+                "iwm_spy_relative_log_return_20s": "IWM",
+                "dia_spy_relative_log_return_20s": "DIA",
+            }[metric_id]
+            value = _log_return(benchmark_series[comparison], 0, 20) - _log_return(
+                spy, 0, 20
+            )
+        output.append(
+            _available(metric_id, value, actual=expected, expected=expected)
+        )
+    return output
 
 
 def _validate_series(series, *, label: str) -> tuple[date, ...]:

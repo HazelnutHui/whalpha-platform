@@ -643,6 +643,9 @@ h2 {
   border-right: 0;
 }
 
+.research-agent-pilot { border-top-color: #3a7a83; }
+@media (min-width: 981px) { .research-agent-stats { grid-template-columns: repeat(4,minmax(0,1fr)); } .research-agent-rail { grid-template-columns: repeat(5,minmax(0,1fr)); } }
+
 /* Model-driven equity selection */
 
 .candidate-hero {

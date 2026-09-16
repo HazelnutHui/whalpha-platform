@@ -237,6 +237,28 @@ budget before Development outcomes. Cycle logical fingerprint is
 `55c1eaccbd5ef5c8ef6dd695c4e4e010ed0e11c6483e55f1a2ce6b70898f8218`.
 The trilingual cycle panel is deployed in the release identified above.
 
+ADR 0287 fixes the first multi-agent pilot as a manually supervised,
+outcome-blind research team. Five current roles may inspect governance,
+evidence, hypotheses, implementation, and method risk; Development evaluation,
+Validation, Holdout, model activation, publication, broker access, and trading
+remain closed. One deterministic controller, one cumulative ledger, exact
+handoffs, and serial data gates remain authoritative; agent agreement is not a
+research gate.
+
+ADR 0288 hardens the unmaterialized market-state input to contract version 1.1
+and adds a network-disabled qualification runner. It requires the exact 287
+XNYS sessions from 2025-06-23 through 2026-08-12, a 21-session source warm-up,
+complete population reconciliation, explicit benchmark quarantine, joint
+coverage and temporal diagnostics, pairwise redundancy checks, owner-only
+custody, and canonical-byte replay. Source and tests are ready, but no real
+report has been materialized and Campaign Three is still unregistered.
+
+The source Lab projection now presents this pilot without exposing internal
+fingerprints, raw IDs, or custody identifiers. Formulas, parameters, sample
+sizes, coverage, outcomes, limitations, and gates remain visible. Public copy
+uses the generic term "workstation"; exact host and alias details remain only
+in operational documentation. This source projection is not yet deployed.
+
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility
 behavior. They are not expected-return models and do not define the future

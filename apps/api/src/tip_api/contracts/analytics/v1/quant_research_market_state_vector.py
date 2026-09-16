@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 from datetime import date
-from decimal import Decimal, InvalidOperation
+from decimal import Context, Decimal, InvalidOperation, ROUND_HALF_EVEN, localcontext
 from enum import StrEnum
 from functools import lru_cache
 from typing import Literal
@@ -19,10 +19,10 @@ from .quant_research_reusable_artifacts import (
 
 
 QUANT_RESEARCH_MARKET_STATE_VECTOR_CONTRACT_VERSION = (
-    "quant-research-market-state-vector/1.0"
+    "quant-research-market-state-vector/1.1"
 )
 QUANT_RESEARCH_MARKET_STATE_VECTOR_VERSION = (
-    "whalpha.quant-research.market-state-vector/1.0.0"
+    "whalpha.quant-research.market-state-vector/1.1.0"
 )
 QUANT_RESEARCH_MARKET_STATE_SOURCE_SESSION_COUNT = 21
 QUANT_RESEARCH_MARKET_STATE_METRIC_ORDER = (
@@ -31,7 +31,7 @@ QUANT_RESEARCH_MARKET_STATE_METRIC_ORDER = (
     "qqq_spy_relative_log_return_20s",
     "iwm_spy_relative_log_return_20s",
     "dia_spy_relative_log_return_20s",
-    "broad_etf_above_sma20_share",
+    "broad_etf_mean_log_distance_to_sma20",
     "reconstructed_member_positive_log_return_5s_share",
     "reconstructed_member_above_sma20_share",
     "reconstructed_member_log_return_dispersion_5s",
@@ -93,7 +93,7 @@ class QuantResearchMarketStateVectorDefinitionV1(FrozenModel):
     vector_version: Literal[
         QUANT_RESEARCH_MARKET_STATE_VECTOR_VERSION
     ] = QUANT_RESEARCH_MARKET_STATE_VECTOR_VERSION
-    accepted_date: Literal[date(2026, 9, 15)] = date(2026, 9, 15)
+    accepted_date: Literal[date(2026, 9, 16)] = date(2026, 9, 16)
     source_cycle_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
     source_reusable_artifact_registry_fingerprint: str = Field(
         pattern=r"^[0-9a-f]{64}$"
@@ -127,6 +127,7 @@ class QuantResearchMarketStateVectorDefinitionV1(FrozenModel):
             != registry.logical_fingerprint
             or tuple(item.metric_id for item in self.definitions)
             != QUANT_RESEARCH_MARKET_STATE_METRIC_ORDER
+            or self.required_benchmark_tickers != ("SPY", "QQQ", "IWM", "DIA")
             or len({item.logical_fingerprint for item in self.definitions}) != 10
             or market_state_vector_definition_fingerprint(self)
             != self.logical_fingerprint
@@ -152,16 +153,40 @@ class QuantResearchMarketStateMetricValueV1(FrozenModel):
             raise ValueError("market-state metric identity differs")
         if self.reason_codes != tuple(sorted(set(self.reason_codes))):
             raise ValueError("market-state reason codes must be unique and sorted")
+        if self.actual_observations > self.expected_observations:
+            raise ValueError("market-state observations exceed expected count")
         if self.availability is QuantResearchMarketStateAvailability.AVAILABLE:
             if self.value is None or self.reason_codes:
                 raise ValueError("available market-state value differs")
         elif self.value is not None or not self.reason_codes:
             raise ValueError("unavailable market-state value differs")
         coverage = _require_fixed_decimal(self.coverage_ratio, "coverage ratio")
+        with localcontext(Context(prec=50, rounding=ROUND_HALF_EVEN)):
+            expected_coverage = (
+                Decimal(self.actual_observations)
+                / Decimal(self.expected_observations)
+            ).quantize(Decimal("0.0000000001"))
+        if coverage != expected_coverage:
+            raise ValueError("market-state coverage ratio differs")
         if coverage < Decimal("0") or coverage > Decimal("1"):
             raise ValueError("market-state coverage ratio is outside [0,1]")
         if self.value is not None:
-            _require_fixed_decimal(self.value, "metric value")
+            numeric = _require_fixed_decimal(self.value, "metric value")
+            if (
+                self.metric_id.endswith("_share")
+                and not Decimal("0") <= numeric <= Decimal("1")
+            ):
+                raise ValueError("market-state share is outside [0,1]")
+            if (
+                self.metric_id
+                in {
+                    "spy_realized_volatility_20s",
+                    "reconstructed_member_log_return_dispersion_5s",
+                    "reconstructed_member_log_return_dispersion_20s",
+                }
+                and numeric < Decimal("0")
+            ):
+                raise ValueError("market-state risk metric is negative")
         return self
 
 
@@ -291,11 +316,9 @@ _METRIC_PAYLOADS = (
         lookback=20,
     ),
     _metric(
-        "broad_etf_above_sma20_share",
+        "broad_etf_mean_log_distance_to_sma20",
         evidence_tier=_B,
-        formula=(
-            "mean(C_j[t]>mean(C_j[t-19:t]),j in {SPY,QQQ,IWM,DIA})"
-        ),
+        formula="mean(ln(C_j[t]/SMA20_j[t]),j in {SPY,QQQ,IWM,DIA})",
         fields=("spy_close", "qqq_close", "iwm_close", "dia_close"),
         lookback=19,
     ),
