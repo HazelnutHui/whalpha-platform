@@ -55,5 +55,7 @@ The immutable definition and pure calculator are implemented. The frozen
 benchmark metrics cover all 287 sessions and the reconstructed block is
 jointly available for 267 sessions. No state threshold or interaction is
 selected, Campaign Three is not registered, and Development outcomes remain
-inaccessible. Five hypothesis cards are now frozen under ADR 0289; four designs
-proceed to outcome-blind factor-state alignment and eligibility qualification.
+inaccessible. Five hypothesis cards are frozen under ADR 0289. ADR 0290's
+outcome-blind input qualification and exact replay advance two Alpha
+interactions and one risk guard to protocol freeze; one Alpha design stops
+before outcomes.

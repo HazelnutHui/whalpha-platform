@@ -6,6 +6,25 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-16 — Qualify Campaign Three inputs without opening outcomes
+
+- Accepted ADR 0290 and implemented a network-disabled, outcome-blind input
+  qualification over the exact 106 Development sessions and two 53-session
+  chronological halves. The bounded replay verifies complete source identity
+  while stopping bar reads at the final Development date.
+- Retained one formal report and one independent canonical-byte-identical
+  replay under owner-only custody outside `/data`. Both record zero outcome
+  reads, network requests, canonical writes, and Production writes.
+- Qualified breakout-breadth and volume-participation as candidate-Alpha
+  interactions and residual-risk volatility as a risk guard for protocol
+  review. Rejected defensive resilience before outcomes because its natural-
+  zero state is too sparse and concentrated, including in the first half; no
+  post-hoc threshold was introduced.
+- Kept Campaign Three unregistered, cumulative formal trials at 14, and all
+  Development outcomes, Validation, Holdout, model, Candidate, publication,
+  and trading authority closed. The next boundary is the three-trial protocol
+  plus append-only Ledger V4, followed by a separate Development-access gate.
+
 ## 2026-09-16 — Freeze Campaign Three hypothesis intake without opening outcomes
 
 - Added reusable-artifact registry V2 and registered the first qualified,

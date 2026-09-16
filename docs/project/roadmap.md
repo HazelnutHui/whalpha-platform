@@ -152,12 +152,14 @@ Sequence:
    of economically distinct interactions;~~ ADR 0289 retains five cards,
    advances three candidate-Alpha and one risk-guard design, and rejects one
    near-duplicate before outcomes;
-4. implement only those four accepted designs and complete zero-outcome
-   alignment, coverage, timing,
-   concentration, redundancy, and exact-replay qualification;
+4. ~~implement only those four accepted designs and complete zero-outcome
+   alignment, coverage, timing, concentration, redundancy, and exact-replay
+   qualification;~~ complete under ADR 0290: two Alpha interactions and one
+   risk guard qualify; the defensive-resilience Alpha interaction stops before
+   outcomes because its state support is sparse and concentrated;
 5. append the exact trial family, horizons, costs, multiplicity, stability,
-   selection cap, and stopping rule to a new cumulative ledger before reading
-   outcomes; and
+   selection cap, and stopping rule for only the three qualified designs to a
+   new cumulative ledger before reading outcomes; and
 6. execute once, replay once, retain every failure, and either open a separately
    frozen Model Construction protocol or close the campaign.
 

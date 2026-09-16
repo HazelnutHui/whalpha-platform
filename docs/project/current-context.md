@@ -266,17 +266,23 @@ logical fingerprint is
 `20b496eb76ba6597b6937bf2e79924a65491631767e7e1c4ac186281bba04ee3`.
 Campaign Three is still unregistered and all outcomes remain closed.
 
-ADR 0289 and `quant-research-campaign-hypothesis-registry/1.0` now close the
-outcome-blind hypothesis-intake and deduplication gate under logical fingerprint
-`490559d080b0c33f905b393a6ae9a419367f5f089b3a9da17e4e711c69f97a7f`.
-Five proposals are retained: three candidate-Alpha interactions and one risk-
-guard interaction advance to input qualification; the ATR-compression and
-broad-trend proposal is recorded as a near-duplicate and consumes no
-prospective trial. Formal Campaign Three registration, Ledger V4, Development
-outcomes, Validation, Holdout, model inputs, and Candidate activation remain
-closed. The next gate is a deterministic outcome-blind alignment and
-eligibility report plus exact replay over only the frozen Development
-intersection.
+ADR 0289 and `quant-research-campaign-hypothesis-registry/1.0` close the
+outcome-blind hypothesis-intake and deduplication gate. Five proposals are
+retained: four advanced to input qualification, while the ATR-compression and
+broad-trend proposal remains a rejected near-duplicate and consumes no trial.
+
+ADR 0290 now closes the subsequent outcome-blind input gate. One formal report
+and one independent replay over the exact 106-session Development intersection
+are canonical-byte identical. The breakout-breadth and volume-participation
+Alpha interactions plus the residual-risk volatility guard qualify for
+screening-protocol review. The defensive-resilience Alpha interaction is
+rejected before outcomes because its natural-zero state has insufficient and
+overly concentrated positive-side support, including in the first
+chronological half. No threshold was moved to rescue it. Campaign Three,
+Ledger V4, Development outcomes, Validation, Holdout, model inputs, and
+Candidate activation remain closed. The next gate is to freeze exactly those
+three qualified trials, their evaluation protocol, and append-only Ledger V4
+before any separate Development-access decision.
 
 The source Lab projection now presents this pilot without exposing internal
 fingerprints, raw IDs, or custody identifiers. Formulas, parameters, sample

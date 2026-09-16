@@ -12,8 +12,10 @@ ADRs, and audits.
 - **Production:** live and serving the verified trilingual V2 qualification
   pass, completed six-trial Development result, three-layer research UI, one
   qualified Campaign Three Market-State panel, and the five-card hypothesis /
-  dedup milestone to equal guest/credential flows; underlying data is stale by
-  two completed sessions at the 2026-09-16 operational review.
+  dedup milestone to equal guest/credential flows; the newer Campaign Three
+  input-qualification result is verified on the workstation but not yet
+  deployed. Underlying data is stale by two completed sessions at the
+  2026-09-16 operational review.
 - **Five-year source depth:** EOD price and stable Identity complete.
 - **Professional performance foundation:** the strict exact/as-operated gate
   remains `data_blocked`; reconstructed-research V2 is separately
@@ -55,9 +57,12 @@ ADRs, and audits.
   all four reconstructed metrics are jointly available for 267 sessions, and
   canonical report bytes match. The resulting Market-State artifact is now
   registered for exact outcome-blind reuse. ADR 0289 then froze five Campaign
-  Three hypothesis cards: three candidate-Alpha interactions and one risk-
-  guard interaction advance to input qualification, while one near-duplicate
-  is retained and rejected before outcomes. Campaign Three remains
+  Three hypothesis cards: four advanced and one near-duplicate was rejected
+  before outcomes. ADR 0290's outcome-blind input qualification and exact
+  replay are now complete over the exact 106 Development sessions. Two
+  candidate-Alpha interactions and one risk guard qualify for protocol review;
+  the defensive-resilience Alpha interaction is rejected before outcomes for
+  sparse and concentrated natural-zero state support. Campaign Three remains
   unregistered, the formal-trial count remains 14, and no new outcome access
   exists.
 - **External source:** no commercial lifecycle source is selected or required
@@ -103,10 +108,11 @@ Public infrastructure wording uses "workstation" rather than a hardware brand.
 
 The reusable research-input policy remains preserved in V1, while registry V2
 now records one qualified, exactly replayed Market-State panel and zero
-outcome-bearing panels. The Lab also records the five-card Campaign Three
-intake and its four-design prospective input-qualification set. There is still
-no active third campaign, registered outcome trial, or new outcome access. The
-Lab accepts factor/strategy hypotheses through the public `@whalphalab`
+outcome-bearing panels. The source Lab is being aligned to the completed
+Campaign Three input gate: two Alpha interactions and one risk guard qualify
+for protocol review, while one Alpha interaction stopped before outcomes.
+There is still no active third campaign, registered outcome trial, or new
+outcome access. The Lab accepts factor/strategy hypotheses through the public `@whalphalab`
 contact. The protected workspace footer now shows a persistent cumulative
 guest-entry count without retaining IP addresses, user agents, fingerprints,
 or browsing paths; it is not a unique-visitor metric or research evidence.
@@ -370,10 +376,11 @@ measured budget breach.
    trials, and ledger V3. Do not alter their gates, treat V2 risk evidence as
    Alpha, open Validation/Holdout, or preselect a named strategy.
 9. Preserve the completed Market-State qualification, reusable-artifact V2
-   registration, and Campaign Three hypothesis/dedup registry. Next qualify
-   the exact factor-state alignment and eligibility of the four accepted
-   designs without outcomes; only then freeze the finite screening protocol
-   and append-only Ledger V4. Outcomes remain closed.
+   registration, Campaign Three hypothesis registry, and exact input-
+   qualification report/replay. Freeze only the two qualified Alpha
+   interactions and one qualified risk guard in the finite screening protocol
+   and append-only Ledger V4. Do not rescue the rejected defensive-resilience
+   design or read Development outcomes without a separate exact authorization.
 10. Use the ADR 0284 cycle for every successor campaign: deduplicate before
     implementation, close and append before another campaign reads outcomes,
     and return to intake after either success or failure.

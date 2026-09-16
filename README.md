@@ -39,9 +39,11 @@ also completed frozen, exactly replayed Development screens. Across the two
 campaigns, all nine candidate-Alpha trials failed; three risk guards qualified
 as risk evidence, but none can open a model by itself. These are retained,
 reproducible failures rather than templates to retune. Validation, Holdout,
-Candidate use, and performance publication remain closed. The next research
-stage is a separately registered, finite factor-discovery campaign, not a
-preselected named strategy.
+Candidate use, and performance publication remain closed. Campaign Three has
+completed outcome-blind intake and input qualification: two Alpha interactions
+and one risk guard may enter a separately frozen finite protocol, while one
+Alpha design stopped before outcomes. It is not a preselected named strategy,
+and no new return trial is open.
 
 Dell is the authority for code, data, and computation. OCI serves only bounded
 static product artifacts and the localhost authentication boundary. The

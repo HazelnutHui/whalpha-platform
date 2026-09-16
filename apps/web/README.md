@@ -128,10 +128,11 @@ guide.
   result and retained risk guard, protocol identities, limitations, and
   continuing model/Product lock
   without presenting a score as validated performance
-- completed market-state input qualification and exact replay for the first
-  manually supervised multi-Agent pilot; one reusable Market-State panel and
-  five deduplicated hypothesis cards are recorded, four designs are in outcome-
-  blind input review, Campaign Three remains unregistered, and all Development,
+- completed market-state and Campaign Three input qualification with exact
+  replays for the first manually supervised multi-Agent pilot; five
+  deduplicated hypothesis cards are recorded, two Alpha interactions and one
+  risk guard advance to protocol freeze, one Alpha design stopped before
+  outcomes, Campaign Three remains unregistered, and all Development,
   Validation, and Holdout outcomes stay closed
 - Logout in snapshot mode
 - Trilingual hypothesis-submission contact link and cumulative guest-entry

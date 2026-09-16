@@ -40,9 +40,11 @@ Exact and near duplicates are rejected or grouped before outcome access.
 
 ## Pilot state
 
-The governance contract is ready for the third-campaign pilot. Campaign Three
+The governance contract is active for the third-campaign pilot. Campaign Three
 itself remains unregistered. The market-state input passed its frozen
 outcome-blind qualification and one exact independent replay. The pilot then
-froze and deduplicated five hypothesis cards under ADR 0289; four designs are
-now eligible only for outcome-blind input qualification. Zero new outcome
-trials have been opened; Development, Validation, and Holdout remain closed.
+froze and deduplicated five hypothesis cards under ADR 0289 and completed ADR
+0290 input qualification with an exact replay. Two Alpha interactions and one
+risk guard may proceed to protocol freeze; one Alpha design stopped before
+outcomes. Zero new outcome trials have been opened; Development, Validation,
+and Holdout remain closed.

@@ -63,6 +63,7 @@ Read this bounded set before new Lab research:
 - [ADR 0290: frozen Campaign Three input qualification](decisions/0290-freeze-campaign-three-input-qualification-before-outcomes.md)
 - [Closed V2 screening result](audits/quant-research-factor-screening-v2-2026-09-15.md)
 - [Qualified Campaign Three market-state input](audits/quant-research-market-state-qualification-2026-09-16.md)
+- [Campaign Three outcome-blind input qualification](audits/quant-research-campaign-three-input-qualification-2026-09-16.md)
 
 The Pullback contracts, operations, and intermediate audits remain immutable
 historical evidence, but are no longer part of default recovery. Use the
