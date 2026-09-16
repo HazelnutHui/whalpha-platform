@@ -1,8 +1,8 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-16T02:44:53Z
+Operational state verified at: 2026-09-16T05:31:17Z
 
-Deployment state verified at: 2026-09-16T02:44:53Z
+Deployment state verified at: 2026-09-16T05:31:17Z
 
 Repository context updated at: 2026-09-16 UTC
 
@@ -20,8 +20,8 @@ ADRs, and dated audits.
 | Branch | `main`; verify live HEAD before mutation |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Active OCI release | `2026-09-16T031253Z-3d03b961de62` |
-| Deployed source | `3d03b961de62a6c3cd5d3e96bcf5c02514561ab1` |
+| Active OCI release | `2026-09-16T053000Z-9ed201a` |
+| Deployed source | `9ed201a4da5cd6424c1ea82ece9be2f9cf42ba9c` |
 
 Dell owns code, canonical data, governance, and heavy computation. OCI is the
 bounded public-serving tier. A newer clean repository commit does not imply a
@@ -50,8 +50,10 @@ residue checks. The public entry dossier and protected Lab expose the completed 
 Development result: four candidate-Alpha trials failed, two risk guards
 qualified as risk evidence but were not selected, the exact replay matched,
 and no model opened. The Lab also exposes one qualified reusable Market-State
-panel, five frozen hypothesis cards, four designs in outcome-blind input
-review, and links hypothesis submissions to `@whalphalab`. The protected
+panel, five frozen hypothesis cards, the completed Campaign Three input
+qualification and exact replay, two Alpha interactions plus one risk guard at
+protocol freeze, and one Alpha design rejected before outcomes. It links
+hypothesis submissions to `@whalphalab`. The protected
 workspace now
 shows an identifier-free cumulative guest-entry counter; the internal baseline
 is 1,050 and the first actual guest workspace entry displays 1,051. English,

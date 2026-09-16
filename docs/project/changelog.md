@@ -24,6 +24,12 @@ and dated [audits](../audits/). Current capability and next work belong in
   Development outcomes, Validation, Holdout, model, Candidate, publication,
   and trading authority closed. The next boundary is the three-trial protocol
   plus append-only Ledger V4, followed by a separate Development-access gate.
+- Synchronized the trilingual Lab and deployed OCI release
+  `2026-09-16T053000Z-9ed201a` from source `9ed201a4da5c`. Independent
+  postflight matched release, source, manifest, checksums, guest Session,
+  protected routes, equal guest/credential policy, services, localhost-only
+  listener, and zero failed/staging residue. Password login and final browser
+  appearance remain manual checks; the 2026-09-11 Snapshot was not refreshed.
 
 ## 2026-09-16 — Freeze Campaign Three hypothesis intake without opening outcomes
 

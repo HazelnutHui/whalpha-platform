@@ -12,10 +12,9 @@ ADRs, and audits.
 - **Production:** live and serving the verified trilingual V2 qualification
   pass, completed six-trial Development result, three-layer research UI, one
   qualified Campaign Three Market-State panel, and the five-card hypothesis /
-  dedup milestone to equal guest/credential flows; the newer Campaign Three
-  input-qualification result is verified on the workstation but not yet
-  deployed. Underlying data is stale by two completed sessions at the
-  2026-09-16 operational review.
+  dedup milestone plus the completed Campaign Three input qualification to
+  equal guest/credential flows. Underlying data is stale by two completed
+  sessions at the 2026-09-16 operational review.
 - **Five-year source depth:** EOD price and stable Identity complete.
 - **Professional performance foundation:** the strict exact/as-operated gate
   remains `data_blocked`; reconstructed-research V2 is separately
@@ -108,9 +107,9 @@ Public infrastructure wording uses "workstation" rather than a hardware brand.
 
 The reusable research-input policy remains preserved in V1, while registry V2
 now records one qualified, exactly replayed Market-State panel and zero
-outcome-bearing panels. The source Lab is being aligned to the completed
-Campaign Three input gate: two Alpha interactions and one risk guard qualify
-for protocol review, while one Alpha interaction stopped before outcomes.
+outcome-bearing panels. Production Lab now presents the completed Campaign
+Three input gate: two Alpha interactions and one risk guard qualify for
+protocol review, while one Alpha interaction stopped before outcomes.
 There is still no active third campaign, registered outcome trial, or new
 outcome access. The Lab accepts factor/strategy hypotheses through the public `@whalphalab`
 contact. The protected workspace footer now shows a persistent cumulative
