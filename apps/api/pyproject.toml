@@ -26,6 +26,10 @@ dev = [
 flat-files = [
     "boto3>=1.35,<2.0",
 ]
+china-a-share = [
+    "akshare>=1.18.95,<1.19",
+    "baostock>=0.9.3,<0.10",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]

@@ -32,6 +32,7 @@ panels, and product publications remain separate.
 - [Universe Membership Canonical Publication V1](universe-membership-canonical-publication-v1.md)
 - [Dashboard Universe Activation V2](dashboard-universe-activation-v2.md)
 - [Historical Research Foundation V1](historical-research-foundation-v1.md)
+- [China A-Share Daily Research Foundation V1](china-a-share-daily-research-foundation-v1.md)
 - [Strong-Leader Pullback Terminal Gap Census V4](strong-leader-pullback-terminal-gap-census-v4.md)
 - [Strong-Leader Pullback Pre-Research Admission Review V1](strong-leader-pullback-pre-research-admission-review-v1.md)
 - [Strong-Leader Pullback Method-Engineering Launch Review V1](strong-leader-pullback-method-engineering-launch-review-v1.md)

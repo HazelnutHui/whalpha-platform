@@ -6,6 +6,23 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-16 — Start the isolated China A-share research foundation
+
+- Accepted ADR 0294 and added the 13-family daily-research admission contract,
+  unadjusted price/state/adjustment observations, effective-dated rule and
+  Universe decisions, and a separate `china_a_share` market namespace.
+- Added offline-testable BaoStock and AKShare-mediated official-list adapters
+  plus an explicit BaoStock connection lifecycle. Codes and names cannot grant
+  stable identity; adjustment observations cannot grant return authority.
+- Completed bounded, read-only availability probes without retaining payloads
+  or writing `/data`: BaoStock returned 7,378 SSE/SZSE all-security rows for
+  2026-09-15, while current exchange lists returned 5,565 SSE/SZSE/BSE common
+  stocks by board. Every observation remained quarantined.
+- Passed 32 focused offline tests and the complete 3,106-test backend suite.
+  No real pilot package, stable-ID registry,
+  historical Universe, five-year coverage, research admission, Product
+  change, publication, deployment, or Production write exists.
+
 ## 2026-09-16 — Deploy the completed Campaign Three result
 
 - Built OCI release `2026-09-16T141001Z-250f423b01cb` from clean source

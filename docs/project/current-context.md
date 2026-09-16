@@ -342,6 +342,19 @@ behavior. They are not expected-return models and do not define the future
 research taxonomy. Quant Research Lab is the sole core workspace; Model-Driven
 Equity Selection is its future downstream consumer.
 
+## China A-share foundation
+
+ADR 0294 isolates a future five-year China A-share daily research foundation
+from all U.S. data, calendars, rules, Universes, research panels, and Product
+state. Provider-neutral contracts, a BaoStock adapter, an AKShare-mediated
+official-list adapter, explicit connection lifecycle, and 32 offline tests are
+implemented. One read-only availability audit confirmed live free-source
+routes, including current SSE/SZSE/BSE common-stock lists, without retaining
+payloads or writing `/data`. All real observations remain unpersisted and
+quarantined; no stable identity, historical coverage, backtest admission,
+website change, or Production authority exists. See the
+[source audit](../audits/china-a-share-free-source-availability-2026-09-16.md).
+
 ## Automation and standing boundaries
 
 The installed daily wake timer is read-only. It performs no fetch, Apply,

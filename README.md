@@ -1,7 +1,9 @@
 # Trading Intelligence Platform
 
-WH Alpha is a personal U.S. equity market-intelligence and quantitative
-research platform. It supports discretionary decisions through the chain:
+WH Alpha is a personal multi-market equity-intelligence and quantitative
+research platform. Current Production tools cover U.S. equities; a strictly
+isolated China A-share daily research foundation is under construction. It
+supports discretionary decisions through the chain:
 
 ```text
 market state -> strength direction -> sector/theme -> stock candidate
@@ -45,6 +47,13 @@ trials across three closed campaigns, with zero admitted Alpha and zero model
 inputs. These are retained, reproducible failures rather than templates to
 retune. Validation, Holdout, Candidate use, and performance publication remain
 closed; the renewable program has returned to outcome-blind hypothesis intake.
+
+The China A-share path shares the same governed research method but not the
+same data. Its stable identities, calendars, price limits, suspensions,
+risk-warning states, corporate actions, fees, Universe decisions, research
+panels, and admissions remain in a separate `china_a_share` namespace. Current
+implementation proves contracts and free-source routes only; it has no
+backtest-ready session or Product surface.
 
 Dell is the authority for code, data, and computation. OCI serves only bounded
 static product artifacts and the localhost authentication boundary. The
@@ -119,6 +128,7 @@ See:
 - [Professional Quantitative Research Action Framework](docs/research/professional-quantitative-research-action-framework-v1.md)
 - [Three-Layer Quant Research Architecture](docs/product/quant-research-three-layer-architecture-v1.md)
 - [Historical Research Data Foundation](docs/architecture/historical-research-data-foundation-v1.md)
+- [China A-Share Research Foundation](docs/architecture/china-a-share-research-foundation-v1.md)
 - [Quant Research Lab V1](docs/product/quant-research-lab-v1.md)
 - [Candidate Strategy Evaluation V1](docs/data-contracts/candidate-strategy-evaluation-v1.md)
 - [ADR 0191: validated model promotion](docs/decisions/0191-promote-validated-research-models-into-stock-candidates.md)
@@ -127,6 +137,7 @@ See:
 - [ADR 0275: outcome-blind factor qualification](docs/decisions/0275-freeze-outcome-blind-factor-qualification-protocol.md)
 - [ADR 0195: reconstructed development admission](docs/decisions/0195-require-complete-session-cross-sections-for-reconstructed-development.md)
 - [ADR 0196: five-year point-in-time foundation](docs/decisions/0196-build-a-five-year-point-in-time-research-foundation-on-dell.md)
+- [ADR 0294: isolated China A-share foundation](docs/decisions/0294-isolate-china-a-share-daily-research-foundation.md)
 
 ## Application entry points
 

@@ -1,8 +1,10 @@
 # Product Vision
 
-WH Alpha is a personal U.S. equity market-intelligence and professional
-quantitative-research platform. It helps a human move through one decision
-chain:
+WH Alpha is a personal multi-market equity-intelligence and professional
+quantitative-research platform. Current Production decision tools cover U.S.
+equities. China A-share research uses the same professional method inside a
+strictly separate data, rule, Universe, evidence, and admission boundary. The
+platform helps a human move through one decision chain:
 
 ```text
 market state -> strength direction -> sector/theme -> validated stock candidate
@@ -30,6 +32,12 @@ Strategy Expression. Named setups such as breakout or reversal are hypothesis
 territories, not a fixed model catalog. New measurements and models may emerge
 from governed research over time, while every outcome-reading campaign remains
 finite, trial-counted, reproducible, and capable of returning no selection.
+
+Market is an explicit dimension of every research lineage. A U.S. factor,
+model, result, or strategy expression does not transfer to A-shares merely
+because a formula can be calculated there. Cross-market research must first
+admit each market's point-in-time inputs and preserve calendars, currencies,
+costs, execution rules, and outcome semantics.
 
 The Lab's future AI Quant Research Factory is a governed backend, not another
 product workspace. Specialized agents may broaden hypothesis generation,

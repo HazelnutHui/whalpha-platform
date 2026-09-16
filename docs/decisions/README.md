@@ -11,6 +11,10 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0294](0294-isolate-china-a-share-daily-research-foundation.md):
+  isolates a five-year China A-share daily research foundation, composes free
+  sources without silent fallback, and keeps all backtest and Product authority
+  closed until an exact 13-family admission passes.
 - [ADR 0293](0293-close-campaign-three-without-alpha-and-append-ledger-v5.md):
   closes all three Campaign Three trials after a byte-identical formal/replay
   pair, appends Ledger V5, keeps Model Construction locked, and returns the

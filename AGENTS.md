@@ -28,10 +28,14 @@ Every new AI/Codex session must read these files before making material changes:
 
 ## 2. Project Mission
 
-Trading Intelligence Platform is a personal, practical U.S. equity market
-intelligence and professional quantitative-research platform. It helps the
-user understand current market structure, develop transparent personal
-models, and support discretionary research and trading decisions.
+Trading Intelligence Platform is a personal, practical multi-market equity
+intelligence and professional quantitative-research platform. Current
+Production market tools and Candidates cover U.S. equities. China A-share
+research is a separately governed foundation and must not share data,
+calendars, rules, Universes, results, or Product authority implicitly. The
+platform helps the user understand current market structure, develop
+transparent personal models, and support discretionary research and trading
+decisions.
 
 It is not an automated trading or order-execution system. Quantitative
 research must remain governed, reproducible, falsifiable, and explainable; a

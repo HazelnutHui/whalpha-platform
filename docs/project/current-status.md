@@ -77,6 +77,13 @@ ADRs, and audits.
   are retained and hash-verified; all 11 preregistered source facts matched.
 - **Automation:** guarded manual daily operation works; unattended write-
   capable operation is not active.
+- **China A-share foundation:** an isolated daily-research contract, BaoStock
+  source adapter, AKShare-mediated official-list adapter, and 32 offline tests
+  are implemented. Read-only availability probes reached BaoStock SSE/SZSE
+  source observations and 5,565 current three-exchange official-list common
+  stocks. Every real row remains unpersisted and quarantined; stable identity,
+  BSE price history, lifecycle, actions, rules, fees, five-year coverage, and
+  research admission are not complete.
 
 ## Product capability
 
@@ -155,6 +162,12 @@ The five-year database is therefore a strong source and engineering foundation,
 not a complete professional backtest database. Later-retrieved evidence may be
 used only at its declared knowledge-time tier; it cannot silently become
 historically `as_operated`.
+
+The China A-share foundation is a separate market namespace and is earlier in
+its lifecycle. It currently has implemented contracts and verified free-source
+routes only; it has no persisted real pilot, stable-ID registry, admitted
+historical Universe, return-authorized adjustment family, or backtest-ready
+session. It must not be combined with the U.S. readiness table above.
 
 ## Pre-architecture research record (internal audit only)
 

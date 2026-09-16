@@ -178,6 +178,32 @@ marketing name or promised stock-selection role before evidence earns it.
 
 Exit: closed without a model at `closed_no_candidate_alpha`.
 
+## Parallel gated foundation — China A-share daily research
+
+ADR 0294 permits a separate A-share data foundation to progress without
+changing the U.S. research ledger or opening a new outcome campaign. Current
+code proves contracts and free-source availability only.
+
+Sequence:
+
+1. retain and exactly reread one small, varied source package covering all
+   exchanges and major boards plus suspension, risk-warning, action, and
+   lifecycle edge cases;
+2. establish append-only stable-ID assignments from retained exchange/listing
+   evidence and quarantine code reuse or ambiguous lineage;
+3. qualify raw EOD, calendar, trading state, price limits, adjustment,
+   lifecycle, actions, rules, fees, and daily Universe decisions over the
+   pilot;
+4. expand in bounded partitions to five years with source-repeat and
+   cross-source conflict reports;
+5. publish the exact 13-family Historical Coverage and admission decision; and
+6. only after admission, register the first A-share outcome-blind factor batch
+   under the same three-layer research governance.
+
+Exit: a reproducible daily-research admission for an exact interval and
+population, or an explicit blocker report. Intraday, live model, Product,
+publication, deployment, broker, and trading authority remain closed.
+
 ## Current gated phase — Successor outcome-blind intake
 
 No campaign is active. The next cycle may begin only with a new finite set of

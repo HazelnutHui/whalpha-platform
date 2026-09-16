@@ -11,6 +11,8 @@
 
 ## Active development scope
 
+- build a separately admitted five-year China A-share daily research
+  foundation before opening any A-share factor outcome campaign;
 - use Quant Research Lab as the transparent factor, model, strategy-expression,
   validation, failure, and lifecycle authority;
 - implement the three-layer research structure defined by ADR 0274 rather than
