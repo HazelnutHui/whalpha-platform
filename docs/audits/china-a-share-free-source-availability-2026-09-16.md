@@ -65,6 +65,29 @@ must not be subtracted or treated as a disagreement census. A valid
 cross-source reconciliation requires a common cutoff, retained payloads,
 declared population, and exact business keys.
 
+## Lifecycle semantics follow-up
+
+The live lifecycle probe returned 159 SSE rows and 208 SZSE rows. The SSE
+interface uses company code plus a field described as a pause-listing date and
+contains six duplicated company/date pairs with different listing dates. It
+therefore remains issuer-level, pause-or-termination evidence: all 159 rows
+carry no listed-security ID. The SZSE route explicitly returned 208 terminated-
+listing security-code rows. Both families remain unadjudicated source evidence.
+
+## Temporary normalized reference package
+
+A bounded seven-request capture wrote only to owner-only custody below `/tmp`
+and passed a complete byte/hash/schema/mode/file-set reread. The final plan
+covered SSE Main, STAR, SZSE Main, ChiNext, and BSE current anchors plus one SSE
+issuer-lifecycle and one SZSE security-lifecycle subject. Current official
+lists covered all five anchors and both lifecycle subjects. BaoStock covered
+the four SSE/SZSE anchors but not BSE.
+
+The first attempted BSE anchor used an obsolete `430xxx` assumption and was
+absent from the current official list. The failed package remained an immutable
+diagnostic; the plan was corrected to a current official `920xxx` anchor and
+rerun. Neither package retained raw upstream bytes or touched `/data`.
+
 ## Decision
 
 - BaoStock remains the first free raw daily-observation route for SSE/SZSE.
@@ -72,13 +95,14 @@ declared population, and exact business keys.
   board/form source and the initial BSE identity route.
 - BSE daily-price history still requires a qualified primary/corroborating
   route; no source is promoted merely because the current list is available.
-- Delisted securities, suspensions, risk-warning history, corporate actions,
-  effective-dated rules, fees, and exact availability clocks remain separate
-  work.
-- The next safe milestone is an immutable, small pilot source package and
-  identity adjudication over a deliberately varied sample. Full-market
-  backfill remains closed until that pilot rereads exactly.
+- The normalized reference/lifecycle slice now rereads exactly, but raw source
+  retention and stable-identity adjudication remain separate work.
+- Suspensions, risk-warning history, corporate actions, effective-dated rules,
+  fees, exact availability clocks, and BSE daily history remain incomplete.
+- The next safe milestone is stable-identity adjudication followed by bounded
+  five-year SSE/SZSE daily/state/adjustment capture. Full-market backfill
+  remains closed.
 
 ## Verdict
 
-`SOURCE_ROUTES_AVAILABLE_PILOT_NOT_YET_PERSISTED`
+`NORMALIZED_REFERENCE_PILOT_EXACT_FOUNDATION_INCOMPLETE`

@@ -7,9 +7,10 @@ daily research. It is not a statement that real coverage is complete and does
 not authorize a live acquisition, `/data` write, research outcome read,
 Candidate activation, website publication, or deployment.
 
-The implementation currently contains provider-neutral contracts and an
-offline-tested BaoStock source adapter. It does not yet contain a persisted
-real pilot.
+The implementation contains provider-neutral contracts, BaoStock and
+AKShare-mediated adapters, and an owner-only temporary normalized-reference
+pilot that rereads exactly. That package is not a raw provider archive,
+canonical dataset, or completed historical pilot.
 
 ## Logical layers
 
@@ -32,12 +33,23 @@ Retain exact provider payload identity, request interval, retrieval time,
 provider/version, declared permission, content hash, and request outcome. A
 failed or partial response is evidence of failure, not an empty market day.
 
+The current temporary reference package explicitly declares
+`normalized_library_observations` and `raw_upstream_payload_retained=false`.
+It qualifies adapter semantics only and cannot satisfy the later raw-source
+archive requirement by itself.
+
 ### Normalized observations
 
 Normalize provider fields into typed observations while preserving source
 identity and uncertainty. BaoStock emits unadjusted daily bars, daily trading
 state, instrument snapshots, and adjustment-factor observations. It does not
 resolve stable identity from a code or name.
+
+Provider-keyed snapshot trading state is retained even before stable identity
+exists. Lifecycle observations distinguish listed-security codes from issuer
+codes. The SSE delisting interface currently exposes company codes and a
+pause/termination-conflated status, so those rows cannot claim a listed-
+security identity or a definitive termination without adjudication.
 
 ### Reconciliation and quarantine
 
@@ -90,6 +102,11 @@ board, and security form are bound. Source codes use provider-native
 Ticker changes generally preserve an instrument; reorganizations, new share
 classes, or successor securities may require distinct instruments and explicit
 relationships. Ambiguous cases remain quarantined.
+
+The first live reference pilot also demonstrated why this boundary is needed:
+the current BSE code namespace uses `920xxx`, while an earlier assumed `430xxx`
+anchor was absent from the current official list. The obsolete assumption was
+replaced in the plan, not silently joined across time.
 
 ## Required foundation families
 

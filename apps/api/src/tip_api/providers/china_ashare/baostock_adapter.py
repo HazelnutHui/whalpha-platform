@@ -24,12 +24,14 @@ from tip_api.contracts.china_ashare.v1 import (
     ChinaAsharePriceLimitRegime,
     ChinaAshareRiskWarningStatus,
     ChinaAshareSecurityForm,
+    ChinaAshareSourceSecuritySnapshotStateV1,
     ChinaAshareTradingStatus,
 )
 from tip_api.contracts.common import QualityStatus
 from tip_api.providers.china_ashare.protocol import (
     ChinaAshareDailySourceBatchV1,
     ChinaAshareIdentityBindingV1,
+    ChinaAshareInstrumentSourceBatchV1,
     ChinaAshareSourceCapability,
     ChinaAshareSourceDailyQuery,
     ChinaAshareSourceInstrumentQuery,
@@ -130,6 +132,17 @@ class BaoStockAshareSourceAdapter:
         *,
         identity_bindings: tuple[ChinaAshareIdentityBindingV1, ...] = (),
     ) -> tuple[ChinaAshareInstrumentSourceObservationV1, ...]:
+        return self.get_instrument_snapshot(
+            query,
+            identity_bindings=identity_bindings,
+        ).instruments
+
+    def get_instrument_snapshot(
+        self,
+        query: ChinaAshareSourceInstrumentQuery,
+        *,
+        identity_bindings: tuple[ChinaAshareIdentityBindingV1, ...] = (),
+    ) -> ChinaAshareInstrumentSourceBatchV1:
         bindings = _binding_map(identity_bindings)
         rows = self._read_cursor(
             self._session.query_all_stock(day=query.as_of_date.isoformat()),
@@ -142,6 +155,7 @@ class BaoStockAshareSourceAdapter:
             )
         ingested_at = self._utc_now()
         observations: list[ChinaAshareInstrumentSourceObservationV1] = []
+        source_states: list[ChinaAshareSourceSecuritySnapshotStateV1] = []
         seen: set[str] = set()
         for row in rows:
             source_id = _source_security_id(row["code"])
@@ -186,8 +200,37 @@ class BaoStockAshareSourceAdapter:
                     reason_codes=reasons,
                 )
             )
-        return tuple(
-            sorted(observations, key=lambda item: item.source_security_id)
+            trading_status = _trading_status(row["tradeStatus"])
+            source_states.append(
+                ChinaAshareSourceSecuritySnapshotStateV1(
+                    source_security_id=source_id,
+                    session_date=query.as_of_date,
+                    trading_status=trading_status,
+                    source=self.provider_id,
+                    source_available_at=None,
+                    ingested_at=ingested_at,
+                    quality_status=(
+                        QualityStatus.WARNING
+                        if trading_status is ChinaAshareTradingStatus.UNKNOWN
+                        else QualityStatus.VALID
+                    ),
+                    reason_codes=(
+                        ("source_available_time_unreported", "trading_status_unavailable")
+                        if trading_status is ChinaAshareTradingStatus.UNKNOWN
+                        else ("source_available_time_unreported",)
+                    ),
+                )
+            )
+        return ChinaAshareInstrumentSourceBatchV1(
+            provider_id=self.provider_id,
+            query=query,
+            instruments=tuple(
+                sorted(observations, key=lambda item: item.source_security_id)
+            ),
+            source_states=tuple(
+                sorted(source_states, key=lambda item: item.source_security_id)
+            ),
+            source_request_count=1,
         )
 
     def get_daily_observations(

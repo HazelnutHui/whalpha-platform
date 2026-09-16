@@ -16,6 +16,7 @@ from tip_api.providers.china_ashare.baostock_session import BaoStockClientSessio
 from tip_api.providers.china_ashare.protocol import (
     ChinaAshareDailySourceBatchV1,
     ChinaAshareIdentityBindingV1,
+    ChinaAshareInstrumentSourceBatchV1,
     ChinaAshareSourceCapability,
     ChinaAshareSourceDailyQuery,
     ChinaAshareSourceInstrumentQuery,
@@ -33,6 +34,7 @@ __all__ = [
     "BaoStockSession",
     "ChinaAshareDailySourceBatchV1",
     "ChinaAshareIdentityBindingV1",
+    "ChinaAshareInstrumentSourceBatchV1",
     "ChinaAshareSourceCapability",
     "ChinaAshareSourceDailyQuery",
     "ChinaAshareSourceInstrumentQuery",

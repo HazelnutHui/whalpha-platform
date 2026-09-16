@@ -196,6 +196,20 @@ def test_instrument_name_and_code_do_not_create_positive_identity() -> None:
     assert "stable_identity_unproven" in rows[0].reason_codes
 
 
+def test_instrument_snapshot_preserves_provider_keyed_trading_state() -> None:
+    adapter = BaoStockAshareSourceAdapter(session=_session(), clock=lambda: NOW)
+
+    batch = adapter.get_instrument_snapshot(
+        ChinaAshareSourceInstrumentQuery(as_of_date=date(2026, 9, 16))
+    )
+
+    assert len(batch.instruments) == 1
+    assert len(batch.source_states) == 1
+    assert batch.source_states[0].source_security_id == "sh.600519"
+    assert batch.source_states[0].trading_status is ChinaAshareTradingStatus.TRADING
+    assert batch.source_request_count == 1
+
+
 def test_separately_proven_binding_can_resolve_source_observation() -> None:
     adapter = BaoStockAshareSourceAdapter(session=_session(), clock=lambda: NOW)
 

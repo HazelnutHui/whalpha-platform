@@ -14,14 +14,24 @@ and dated [audits](../audits/). Current capability and next work belong in
 - Added offline-testable BaoStock and AKShare-mediated official-list adapters
   plus an explicit BaoStock connection lifecycle. Codes and names cannot grant
   stable identity; adjustment observations cannot grant return authority.
+- Added provider-keyed pre-identity trading state and lifecycle-subject
+  evidence. SSE company-code rows cannot claim listed-security identity or
+  definitive termination; SZSE security-code termination remains source
+  evidence pending stable-ID adjudication.
 - Completed bounded, read-only availability probes without retaining payloads
   or writing `/data`: BaoStock returned 7,378 SSE/SZSE all-security rows for
   2026-09-15, while current exchange lists returned 5,565 SSE/SZSE/BSE common
   stocks by board. Every observation remained quarantined.
-- Passed 32 focused offline tests and the complete 3,106-test backend suite.
-  No real pilot package, stable-ID registry,
-  historical Universe, five-year coverage, research admission, Product
-  change, publication, deployment, or Production write exists.
+- The initial foundation passed 32 focused offline tests and the complete
+  3,106-test backend suite.
+- Added an owner-only normalized `/tmp` reference package for five board
+  anchors and two lifecycle subjects, with canonical JSON, atomic publication,
+  exact reread, and all downstream authority false. Current official evidence
+  covered all planned anchors; BaoStock retained the explicit BSE gap.
+- Passed 41 focused A-share tests and all 3,115 backend tests. No raw upstream
+  archive, stable-ID registry, historical Universe, five-year coverage,
+  research admission, Product change, publication, deployment, or Production
+  write exists.
 
 ## 2026-09-16 — Deploy the completed Campaign Three result
 

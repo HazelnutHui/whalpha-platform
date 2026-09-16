@@ -33,6 +33,7 @@ CHINA_ASHARE_INITIAL_UNIVERSE_ID = "china-a-share-common-stock-research-v1"
 ADMISSION_CONTRACT_VERSION = "china-ashare-daily-research-admission/1.0"
 _SHA256 = r"^[0-9a-f]{64}$"
 _SOURCE_CODE = re.compile(r"^[0-9]{6}$")
+_SOURCE_SECURITY_ID = re.compile(r"^(?:sh|sz|bj)\.[0-9]{6}$")
 _REASON_CODE = re.compile(r"^[a-z][a-z0-9_]*$")
 
 
@@ -71,6 +72,16 @@ class ChinaAshareIdentityResolutionStatus(StrEnum):
     RESOLVED = "resolved"
     UNRESOLVED = "unresolved"
     QUARANTINED = "quarantined"
+
+
+class ChinaAshareLifecycleEventType(StrEnum):
+    TERMINATED_LISTING = "terminated_listing"
+    PAUSED_OR_TERMINATED_LISTING = "paused_or_terminated_listing"
+
+
+class ChinaAshareLifecycleSubjectKind(StrEnum):
+    ISSUER_CODE = "issuer_code"
+    SECURITY_CODE = "security_code"
 
 
 class ChinaAshareTradingStatus(StrEnum):
@@ -268,6 +279,194 @@ class ChinaAshareInstrumentSourceObservationV1(FrozenContract):
                 raise ValueError("unresolved identity must not carry instrument_id")
             if not self.reason_codes:
                 raise ValueError("unresolved identity requires reason codes")
+        if self.source_available_at is not None and self.source_available_at > self.ingested_at:
+            raise ValueError("source availability cannot follow ingestion")
+        return self
+
+
+class ChinaAshareSourceSecuritySnapshotStateV1(FrozenContract):
+    """Provider-keyed trading state before a stable identity is established."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    market_id: Literal["china_a_share"] = MARKET_ID
+    source_security_id: str
+    session_date: date
+    trading_status: ChinaAshareTradingStatus
+    source: str
+    source_available_at: datetime | None = None
+    ingested_at: datetime
+    quality_status: QualityStatus
+    reason_codes: tuple[str, ...] = ()
+
+    @field_validator("source_security_id", mode="before")
+    @classmethod
+    def source_id_is_canonical(cls, value: str) -> str:
+        normalized = normalize_required_string(
+            value,
+            field_name="source_security_id",
+        ).lower()
+        if not _SOURCE_SECURITY_ID.fullmatch(normalized):
+            raise ValueError("source_security_id must use sh|sz|bj plus six digits")
+        return normalized
+
+    @field_validator("session_date", mode="before")
+    @classmethod
+    def session_is_date(cls, value: Any) -> Any:
+        if isinstance(value, datetime):
+            raise ValueError("session_date must not receive a datetime")
+        return value
+
+    @field_validator("source", mode="before")
+    @classmethod
+    def source_is_present(cls, value: str) -> str:
+        return normalize_required_string(value, field_name="source")
+
+    @field_validator("source_available_at", "ingested_at")
+    @classmethod
+    def times_are_utc(cls, value: datetime | None) -> datetime | None:
+        return None if value is None else normalize_utc_datetime(value)
+
+    @field_validator("reason_codes", mode="before")
+    @classmethod
+    def reasons_are_canonical(cls, value: Any) -> tuple[str, ...]:
+        return _normalize_reason_codes(value)
+
+    @model_validator(mode="after")
+    def source_state_reconciles(self) -> "ChinaAshareSourceSecuritySnapshotStateV1":
+        if self.trading_status is ChinaAshareTradingStatus.UNKNOWN and not self.reason_codes:
+            raise ValueError("unknown source trading state requires reason codes")
+        if self.source_available_at is not None and self.source_available_at > self.ingested_at:
+            raise ValueError("source availability cannot follow ingestion")
+        return self
+
+
+class ChinaAshareLifecycleSourceObservationV1(FrozenContract):
+    """Source-keyed lifecycle evidence before stable-identity adjudication."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    market_id: Literal["china_a_share"] = MARKET_ID
+    source_subject_key: str
+    source_subject_code: str
+    subject_kind: ChinaAshareLifecycleSubjectKind
+    source_security_id: str | None = None
+    display_ticker: str | None = None
+    source_row_sequence: int = Field(ge=1)
+    name: str
+    exchange: ChinaAshareExchange
+    event_type: ChinaAshareLifecycleEventType
+    list_date: date | None = None
+    event_date: date
+    as_of_date: date
+    source: str
+    source_available_at: datetime | None = None
+    ingested_at: datetime
+    quality_status: QualityStatus
+    reason_codes: tuple[str, ...] = ()
+
+    @field_validator("source_subject_key", mode="before")
+    @classmethod
+    def subject_key_is_canonical(cls, value: str) -> str:
+        normalized = normalize_required_string(
+            value,
+            field_name="source_subject_key",
+        ).lower()
+        if not re.fullmatch(
+            r"(?:sse_issuer|sse_security|szse_security|bse_security)\.[0-9]{6}",
+            normalized,
+        ):
+            raise ValueError("source_subject_key is invalid")
+        return normalized
+
+    @field_validator("source_subject_code", mode="before")
+    @classmethod
+    def code_is_six_digits(cls, value: str) -> str:
+        normalized = normalize_required_string(value, field_name="source_subject_code")
+        if not _SOURCE_CODE.fullmatch(normalized):
+            raise ValueError("source_subject_code must contain exactly six digits")
+        return normalized
+
+    @field_validator("source_security_id", mode="before")
+    @classmethod
+    def optional_source_id_is_canonical(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        normalized = normalize_required_string(
+            value,
+            field_name="source_security_id",
+        ).lower()
+        if not _SOURCE_SECURITY_ID.fullmatch(normalized):
+            raise ValueError("source_security_id must use sh|sz|bj plus six digits")
+        return normalized
+
+    @field_validator("display_ticker", mode="before")
+    @classmethod
+    def optional_ticker_is_upper(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        return normalize_required_string(value, field_name="display_ticker", uppercase=True)
+
+    @field_validator("name", "source", mode="before")
+    @classmethod
+    def required_text(cls, value: str, info: Any) -> str:
+        return normalize_required_string(value, field_name=info.field_name)
+
+    @field_validator("list_date", "event_date", "as_of_date", mode="before")
+    @classmethod
+    def dates_are_dates(cls, value: Any) -> Any:
+        if isinstance(value, datetime):
+            raise ValueError("lifecycle date fields must not receive datetime values")
+        return value
+
+    @field_validator("source_available_at", "ingested_at")
+    @classmethod
+    def times_are_utc(cls, value: datetime | None) -> datetime | None:
+        return None if value is None else normalize_utc_datetime(value)
+
+    @field_validator("reason_codes", mode="before")
+    @classmethod
+    def reasons_are_canonical(cls, value: Any) -> tuple[str, ...]:
+        return _normalize_reason_codes(value)
+
+    @model_validator(mode="after")
+    def lifecycle_reconciles(self) -> "ChinaAshareLifecycleSourceObservationV1":
+        subject_prefix = {
+            (ChinaAshareExchange.SSE, ChinaAshareLifecycleSubjectKind.ISSUER_CODE): (
+                "sse_issuer"
+            ),
+            (ChinaAshareExchange.SSE, ChinaAshareLifecycleSubjectKind.SECURITY_CODE): (
+                "sse_security"
+            ),
+            (ChinaAshareExchange.SZSE, ChinaAshareLifecycleSubjectKind.SECURITY_CODE): (
+                "szse_security"
+            ),
+            (ChinaAshareExchange.BSE, ChinaAshareLifecycleSubjectKind.SECURITY_CODE): (
+                "bse_security"
+            ),
+        }.get((self.exchange, self.subject_kind))
+        if subject_prefix is None:
+            raise ValueError("lifecycle subject kind is incompatible with exchange")
+        if self.source_subject_key != f"{subject_prefix}.{self.source_subject_code}":
+            raise ValueError("source subject key differs from exchange, kind, and code")
+        if self.subject_kind is ChinaAshareLifecycleSubjectKind.ISSUER_CODE:
+            if self.source_security_id is not None or self.display_ticker is not None:
+                raise ValueError("issuer lifecycle evidence cannot claim security identity")
+            if "issuer_security_identity_unproven" not in self.reason_codes:
+                raise ValueError("issuer lifecycle evidence requires identity warning")
+        else:
+            prefix, suffix = {
+                ChinaAshareExchange.SSE: ("sh", "SH"),
+                ChinaAshareExchange.SZSE: ("sz", "SZ"),
+                ChinaAshareExchange.BSE: ("bj", "BJ"),
+            }[self.exchange]
+            if self.source_security_id != f"{prefix}.{self.source_subject_code}":
+                raise ValueError("source security identifier differs from exchange and code")
+            if self.display_ticker != f"{self.source_subject_code}.{suffix}":
+                raise ValueError("display ticker differs from exchange and code")
+        if self.list_date is not None and self.event_date < self.list_date:
+            raise ValueError("lifecycle event cannot precede listing")
+        if self.event_type is ChinaAshareLifecycleEventType.PAUSED_OR_TERMINATED_LISTING:
+            if "source_status_conflates_pause_and_termination" not in self.reason_codes:
+                raise ValueError("ambiguous lifecycle event requires ambiguity reason")
         if self.source_available_at is not None and self.source_available_at > self.ingested_at:
             raise ValueError("source availability cannot follow ingestion")
         return self

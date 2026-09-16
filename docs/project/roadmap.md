@@ -181,8 +181,9 @@ Exit: closed without a model at `closed_no_candidate_alpha`.
 ## Parallel gated foundation — China A-share daily research
 
 ADR 0294 permits a separate A-share data foundation to progress without
-changing the U.S. research ledger or opening a new outcome campaign. Current
-code proves contracts and free-source availability only.
+changing the U.S. research ledger or opening a new outcome campaign. The
+current temporary package proves the reference/lifecycle slice and exact
+reread only; it is not a completed historical pilot.
 
 Sequence:
 
@@ -199,6 +200,12 @@ Sequence:
 5. publish the exact 13-family Historical Coverage and admission decision; and
 6. only after admission, register the first A-share outcome-blind factor batch
    under the same three-layer research governance.
+
+Current checkpoint: the five-board current-reference and two-subject lifecycle
+slice of step 1 is complete under temporary normalized custody. Stable identity,
+SSE/SZSE five-year daily history, suspension/risk-warning selection, adjustment
+semantics, actions, and a qualified BSE daily route remain before step 1 can be
+called complete.
 
 Exit: a reproducible daily-research admission for an exact interval and
 population, or an explicit blocker report. Intraday, live model, Product,

@@ -77,13 +77,16 @@ ADRs, and audits.
   are retained and hash-verified; all 11 preregistered source facts matched.
 - **Automation:** guarded manual daily operation works; unattended write-
   capable operation is not active.
-- **China A-share foundation:** an isolated daily-research contract, BaoStock
-  source adapter, AKShare-mediated official-list adapter, and 32 offline tests
-  are implemented. Read-only availability probes reached BaoStock SSE/SZSE
-  source observations and 5,565 current three-exchange official-list common
-  stocks. Every real row remains unpersisted and quarantined; stable identity,
-  BSE price history, lifecycle, actions, rules, fees, five-year coverage, and
-  research admission are not complete.
+- **China A-share foundation:** isolated daily-research, source-state,
+  lifecycle-subject, and temporary-pilot contracts plus BaoStock and
+  AKShare-mediated adapters are implemented. Forty-one focused tests and all
+  3,115 backend tests pass. A
+  normalized, owner-only `/tmp` reference package was captured and exactly
+  reread for five board anchors and two lifecycle subjects. Current official
+  evidence covered all five anchors; BaoStock covered the four SSE/SZSE
+  anchors and not the BSE anchor. The package deliberately retains no raw
+  upstream bytes and grants no stable identity, canonical Apply, research,
+  Product, or deployment authority.
 
 ## Product capability
 
@@ -164,10 +167,12 @@ used only at its declared knowledge-time tier; it cannot silently become
 historically `as_operated`.
 
 The China A-share foundation is a separate market namespace and is earlier in
-its lifecycle. It currently has implemented contracts and verified free-source
-routes only; it has no persisted real pilot, stable-ID registry, admitted
-historical Universe, return-authorized adjustment family, or backtest-ready
-session. It must not be combined with the U.S. readiness table above.
+its lifecycle. Its first normalized reference/lifecycle pilot exists only
+under temporary owner-only custody and rereads exactly. It is not a raw source
+archive or canonical database. It has no stable-ID registry, admitted
+historical Universe, BSE daily-price route, return-authorized adjustment
+family, or backtest-ready session. It must not be combined with the U.S.
+readiness table above.
 
 ## Pre-architecture research record (internal audit only)
 

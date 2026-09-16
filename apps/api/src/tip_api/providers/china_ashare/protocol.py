@@ -17,6 +17,7 @@ from tip_api.contracts.china_ashare.v1 import (
     ChinaAshareDailyTradingStateV1,
     ChinaAshareInstrumentSourceObservationV1,
     ChinaAshareSecurityForm,
+    ChinaAshareSourceSecuritySnapshotStateV1,
 )
 
 
@@ -158,6 +159,42 @@ class ChinaAshareDailySourceBatchV1(FrozenContract):
         return self
 
 
+class ChinaAshareInstrumentSourceBatchV1(FrozenContract):
+    provider_id: str
+    query: ChinaAshareSourceInstrumentQuery
+    instruments: tuple[ChinaAshareInstrumentSourceObservationV1, ...]
+    source_states: tuple[ChinaAshareSourceSecuritySnapshotStateV1, ...]
+    source_request_count: int = Field(ge=1)
+
+    @field_validator("provider_id", mode="before")
+    @classmethod
+    def provider_is_present(cls, value: str) -> str:
+        normalized = str(value).strip()
+        if not normalized:
+            raise ValueError("provider_id must not be empty")
+        return normalized
+
+    @model_validator(mode="after")
+    def batch_reconciles(self) -> "ChinaAshareInstrumentSourceBatchV1":
+        if self.source_request_count != 1:
+            raise ValueError("instrument snapshot requires exactly one source request")
+        instrument_ids = tuple(item.source_security_id for item in self.instruments)
+        state_ids = tuple(item.source_security_id for item in self.source_states)
+        if instrument_ids != tuple(sorted(set(instrument_ids))):
+            raise ValueError("instrument observations must be unique and sorted")
+        if state_ids != tuple(sorted(set(state_ids))):
+            raise ValueError("source states must be unique and sorted")
+        if instrument_ids != state_ids:
+            raise ValueError("instrument observations and source states must align")
+        for item in self.instruments:
+            if item.source != self.provider_id or item.as_of_date != self.query.as_of_date:
+                raise ValueError("instrument observation differs from batch scope")
+        for item in self.source_states:
+            if item.source != self.provider_id or item.session_date != self.query.as_of_date:
+                raise ValueError("source state differs from batch scope")
+        return self
+
+
 @runtime_checkable
 class ChinaAshareSourceProvider(Protocol):
     @property
@@ -174,6 +211,14 @@ class ChinaAshareSourceProvider(Protocol):
         *,
         identity_bindings: tuple[ChinaAshareIdentityBindingV1, ...] = (),
     ) -> tuple[ChinaAshareInstrumentSourceObservationV1, ...]:
+        ...
+
+    def get_instrument_snapshot(
+        self,
+        query: ChinaAshareSourceInstrumentQuery,
+        *,
+        identity_bindings: tuple[ChinaAshareIdentityBindingV1, ...] = (),
+    ) -> ChinaAshareInstrumentSourceBatchV1:
         ...
 
     def get_daily_observations(

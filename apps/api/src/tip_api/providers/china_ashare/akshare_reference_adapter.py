@@ -11,6 +11,9 @@ from tip_api.contracts.china_ashare.v1 import (
     ChinaAshareExchange,
     ChinaAshareIdentityResolutionStatus,
     ChinaAshareInstrumentSourceObservationV1,
+    ChinaAshareLifecycleEventType,
+    ChinaAshareLifecycleSourceObservationV1,
+    ChinaAshareLifecycleSubjectKind,
     ChinaAshareListingStatus,
     ChinaAshareSecurityForm,
 )
@@ -39,6 +42,12 @@ class AkshareReferenceModule(Protocol):
     def stock_info_bj_name_code(self) -> TabularResult:
         ...
 
+    def stock_info_sh_delist(self, symbol: str) -> TabularResult:
+        ...
+
+    def stock_info_sz_delist(self, symbol: str) -> TabularResult:
+        ...
+
 
 class AkshareAshareReferenceAdapter:
     """Read current exchange lists without creating stable identity authority."""
@@ -61,12 +70,7 @@ class AkshareAshareReferenceAdapter:
         query: ChinaAshareSourceInstrumentQuery,
     ) -> tuple[ChinaAshareInstrumentSourceObservationV1, ...]:
         observed_at = self._utc_now()
-        current_china_date = observed_at.astimezone(_SHANGHAI).date()
-        if query.as_of_date != current_china_date:
-            raise ProviderDataError(
-                self.provider_id,
-                "current-list endpoint cannot be backdated",
-            )
+        self._require_current_date(query.as_of_date, observed_at)
         calls = (
             (
                 "akshare_sse_main_a_list",
@@ -161,6 +165,124 @@ class AkshareAshareReferenceAdapter:
             sorted(observations, key=lambda item: item.source_security_id)
         )
 
+    def get_lifecycle_observations(
+        self,
+        query: ChinaAshareSourceInstrumentQuery,
+    ) -> tuple[ChinaAshareLifecycleSourceObservationV1, ...]:
+        observed_at = self._utc_now()
+        self._require_current_date(query.as_of_date, observed_at)
+        calls = (
+            (
+                "akshare_sse_official_delist",
+                self._call("stock_info_sh_delist", symbol="全部"),
+                ChinaAshareExchange.SSE,
+                ChinaAshareLifecycleEventType.PAUSED_OR_TERMINATED_LISTING,
+                ChinaAshareLifecycleSubjectKind.ISSUER_CODE,
+                "公司代码",
+                "公司简称",
+                "上市日期",
+                "暂停上市日期",
+            ),
+            (
+                "akshare_szse_official_delist",
+                self._call("stock_info_sz_delist", symbol="终止上市公司"),
+                ChinaAshareExchange.SZSE,
+                ChinaAshareLifecycleEventType.TERMINATED_LISTING,
+                ChinaAshareLifecycleSubjectKind.SECURITY_CODE,
+                "证券代码",
+                "证券简称",
+                "上市日期",
+                "终止上市日期",
+            ),
+        )
+        observations: list[ChinaAshareLifecycleSourceObservationV1] = []
+        for (
+            source,
+            rows,
+            exchange,
+            event_type,
+            subject_kind,
+            code_field,
+            name_field,
+            list_date_field,
+            event_date_field,
+        ) in calls:
+            prefix, suffix = {
+                ChinaAshareExchange.SSE: ("sh", "SH"),
+                ChinaAshareExchange.SZSE: ("sz", "SZ"),
+                ChinaAshareExchange.BSE: ("bj", "BJ"),
+            }[exchange]
+            subject_prefix = (
+                "sse_issuer"
+                if subject_kind is ChinaAshareLifecycleSubjectKind.ISSUER_CODE
+                else {
+                    ChinaAshareExchange.SSE: "sse_security",
+                    ChinaAshareExchange.SZSE: "szse_security",
+                    ChinaAshareExchange.BSE: "bse_security",
+                }[exchange]
+            )
+            for source_row_sequence, row in enumerate(rows, start=1):
+                code = _code(row, code_field, self.provider_id)
+                event_date = _required_date(row.get(event_date_field), self.provider_id)
+                reasons: list[str] = []
+                if event_type is ChinaAshareLifecycleEventType.PAUSED_OR_TERMINATED_LISTING:
+                    reasons.append("source_status_conflates_pause_and_termination")
+                if subject_kind is ChinaAshareLifecycleSubjectKind.ISSUER_CODE:
+                    reasons.append("issuer_security_identity_unproven")
+                observations.append(
+                    ChinaAshareLifecycleSourceObservationV1(
+                        source_subject_key=f"{subject_prefix}.{code}",
+                        source_subject_code=code,
+                        subject_kind=subject_kind,
+                        source_security_id=(
+                            None
+                            if subject_kind is ChinaAshareLifecycleSubjectKind.ISSUER_CODE
+                            else f"{prefix}.{code}"
+                        ),
+                        display_ticker=(
+                            None
+                            if subject_kind is ChinaAshareLifecycleSubjectKind.ISSUER_CODE
+                            else f"{code}.{suffix}"
+                        ),
+                        source_row_sequence=source_row_sequence,
+                        name=_text(row, name_field, self.provider_id),
+                        exchange=exchange,
+                        event_type=event_type,
+                        list_date=_optional_date(row.get(list_date_field), self.provider_id),
+                        event_date=event_date,
+                        as_of_date=query.as_of_date,
+                        source=source,
+                        source_available_at=observed_at,
+                        ingested_at=observed_at,
+                        quality_status=(
+                            QualityStatus.WARNING
+                            if event_type
+                            is ChinaAshareLifecycleEventType.PAUSED_OR_TERMINATED_LISTING
+                            else QualityStatus.PENDING_REVIEW
+                        ),
+                        reason_codes=tuple(reasons),
+                    )
+                )
+        return tuple(
+            sorted(
+                observations,
+                key=lambda item: (
+                    item.source_subject_key,
+                    item.event_date,
+                    item.list_date or date.min,
+                    item.source_row_sequence,
+                ),
+            )
+        )
+
+    def _require_current_date(self, as_of_date: date, observed_at: datetime) -> None:
+        current_china_date = observed_at.astimezone(_SHANGHAI).date()
+        if as_of_date != current_china_date:
+            raise ProviderDataError(
+                self.provider_id,
+                "current source endpoint cannot be backdated",
+            )
+
     def _call(self, method_name: str, **kwargs: object) -> tuple[Mapping[str, Any], ...]:
         try:
             method = getattr(self._module, method_name)
@@ -212,6 +334,13 @@ def _optional_date(value: Any, provider_id: str) -> date | None:
         return date.fromisoformat(str(value).strip()[:10])
     except ValueError as exc:
         raise ProviderDataError(provider_id, "official-list listing date is invalid") from exc
+
+
+def _required_date(value: Any, provider_id: str) -> date:
+    result = _optional_date(value, provider_id)
+    if result is None:
+        raise ProviderDataError(provider_id, "lifecycle event date is missing")
+    return result
 
 
 def _szse_board(row: Mapping[str, Any], provider_id: str) -> ChinaAshareBoard:

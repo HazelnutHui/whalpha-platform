@@ -22,10 +22,14 @@ from tip_api.contracts.china_ashare.v1 import (
     ChinaAshareIdentityResolutionStatus,
     ChinaAshareInstrumentSourceObservationV1,
     ChinaAshareListingStatus,
+    ChinaAshareLifecycleEventType,
+    ChinaAshareLifecycleSourceObservationV1,
+    ChinaAshareLifecycleSubjectKind,
     ChinaAsharePriceLimitRegime,
     ChinaAshareResearchAdmissionStatus,
     ChinaAshareRiskWarningStatus,
     ChinaAshareSecurityForm,
+    ChinaAshareSourceSecuritySnapshotStateV1,
     ChinaAshareTradingRuleV1,
     ChinaAshareTradingStatus,
     ChinaAshareUniverseDecisionV1,
@@ -166,6 +170,55 @@ def test_resolved_identity_requires_source_proven_board_and_security_form() -> N
         _instrument(board=ChinaAshareBoard.UNKNOWN)
     with pytest.raises(ValidationError, match="source-proven security form"):
         _instrument(security_form=ChinaAshareSecurityForm.UNKNOWN)
+
+
+def test_source_security_state_does_not_require_a_stable_identity() -> None:
+    row = ChinaAshareSourceSecuritySnapshotStateV1(
+        source_security_id="sh.600519",
+        session_date=date(2026, 9, 16),
+        trading_status=ChinaAshareTradingStatus.SUSPENDED,
+        source="source-a",
+        source_available_at=AVAILABLE,
+        ingested_at=INGESTED,
+        quality_status=QualityStatus.VALID,
+    )
+
+    assert row.source_security_id == "sh.600519"
+
+
+def test_ambiguous_lifecycle_source_requires_an_explicit_reason() -> None:
+    payload = {
+        "source_subject_key": "sse_issuer.600001",
+        "source_subject_code": "600001",
+        "subject_kind": ChinaAshareLifecycleSubjectKind.ISSUER_CODE,
+        "source_security_id": None,
+        "display_ticker": None,
+        "source_row_sequence": 1,
+        "name": "示例沪退",
+        "exchange": ChinaAshareExchange.SSE,
+        "event_type": ChinaAshareLifecycleEventType.PAUSED_OR_TERMINATED_LISTING,
+        "list_date": date(1998, 1, 22),
+        "event_date": date(2009, 12, 29),
+        "as_of_date": date(2026, 9, 16),
+        "source": "source-a",
+        "source_available_at": AVAILABLE,
+        "ingested_at": INGESTED,
+        "quality_status": QualityStatus.WARNING,
+        "reason_codes": ("issuer_security_identity_unproven",),
+    }
+    with pytest.raises(ValidationError, match="requires ambiguity reason"):
+        ChinaAshareLifecycleSourceObservationV1(**payload)
+
+    row = ChinaAshareLifecycleSourceObservationV1(
+        **{
+            **payload,
+            "reason_codes": (
+            "issuer_security_identity_unproven",
+            "source_status_conflates_pause_and_termination",
+            ),
+        },
+    )
+    assert row.event_date == date(2009, 12, 29)
 
 
 def test_exchange_board_and_ticker_must_agree() -> None:

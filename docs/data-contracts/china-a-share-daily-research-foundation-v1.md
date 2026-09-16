@@ -2,8 +2,9 @@
 
 ## Status
 
-Implemented contract and offline provider-adapter tests; real persisted pilot
-and five-year coverage remain absent.
+Implemented contracts, provider adapters, and an exactly reread temporary
+normalized-reference pilot; canonical pilot data and five-year coverage remain
+absent.
 
 ## Scope
 
@@ -38,6 +39,16 @@ relationships are validated.
 a source security to a stable ID. It requires separate evidence fingerprints
 and rejects unknown board or form. Provider code prefixes and names cannot
 construct this binding.
+
+`ChinaAshareSourceSecuritySnapshotStateV1` preserves provider-keyed trading
+state before an `instrument_id` exists. It prevents a suspension observation
+from being discarded merely because identity adjudication has not completed.
+
+`ChinaAshareLifecycleSourceObservationV1` separates issuer codes from listed-
+security codes. SSE company-code rows carry no `source_security_id` and require
+both issuer/security-identity and pause/termination ambiguity warnings. SZSE
+security-code rows may retain a provider security ID but still do not resolve a
+stable local identity.
 
 ## Raw daily bar
 
@@ -105,6 +116,20 @@ The BaoStock adapter requests daily history with `adjustflag=3`, maps a
 suspended record to state-only evidence, and labels unavailable source clocks,
 exact price limits, and detailed ST subtype explicitly. It neither logs in nor
 opens a network connection by itself.
+
+## Temporary pilot package
+
+`ChinaAsharePilotPlanV1` fixes five board anchors, two lifecycle subject keys,
+separate official-reference and BaoStock-snapshot dates, a five-year target
+interval, provider identities, and a request ceiling. The temporary publisher
+stores only typed normalized observations below a dedicated `/tmp` boundary,
+uses canonical JSON, owner-only file modes, atomic rename, physical hashes,
+logical fingerprints, and a complete exact reread.
+
+The reference quality report exposes missing official, BaoStock, and lifecycle
+keys. Raw upstream retention, stable identity, daily history, adjustment
+semantics, canonical Apply, backtesting, Product publication, and deployment
+all remain explicitly false.
 
 ## Foundation census and admission
 

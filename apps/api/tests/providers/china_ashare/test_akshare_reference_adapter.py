@@ -55,6 +55,18 @@ class FakeAkshareModule:
             [{"证券代码": "430017", "证券简称": "星昊医药", "上市日期": "2023-05-31"}]
         )
 
+    def stock_info_sh_delist(self, symbol: str) -> FakeTable:
+        assert symbol == "全部"
+        return FakeTable(
+            [{"公司代码": "600001", "公司简称": "示例沪退", "上市日期": "1998-01-22", "暂停上市日期": "2009-12-29"}]
+        )
+
+    def stock_info_sz_delist(self, symbol: str) -> FakeTable:
+        assert symbol == "终止上市公司"
+        return FakeTable(
+            [{"证券代码": "000003", "证券简称": "示例深退", "上市日期": "1991-07-03", "终止上市日期": "2002-06-14"}]
+        )
+
 
 def test_official_lists_prove_form_and_board_but_not_stable_identity() -> None:
     adapter = AkshareAshareReferenceAdapter(
@@ -90,6 +102,32 @@ def test_current_list_endpoint_cannot_be_backdated() -> None:
         adapter.get_current_instrument_observations(
             ChinaAshareSourceInstrumentQuery(as_of_date=date(2026, 9, 15))
         )
+
+
+def test_lifecycle_sources_preserve_ambiguous_sse_semantics() -> None:
+    adapter = AkshareAshareReferenceAdapter(
+        module=FakeAkshareModule(),
+        clock=lambda: NOW,
+    )
+
+    rows = adapter.get_lifecycle_observations(
+        ChinaAshareSourceInstrumentQuery(as_of_date=date(2026, 9, 16))
+    )
+
+    assert len(rows) == 2
+    by_key = {row.source_subject_key: row for row in rows}
+    assert by_key["sse_issuer.600001"].event_type.value == (
+        "paused_or_terminated_listing"
+    )
+    assert by_key["sse_issuer.600001"].source_security_id is None
+    assert "source_status_conflates_pause_and_termination" in (
+        by_key["sse_issuer.600001"].reason_codes
+    )
+    assert "issuer_security_identity_unproven" in (
+        by_key["sse_issuer.600001"].reason_codes
+    )
+    assert by_key["szse_security.000003"].event_type.value == "terminated_listing"
+    assert by_key["szse_security.000003"].source_security_id == "sz.000003"
 
 
 def test_unknown_szse_board_fails_closed() -> None:
