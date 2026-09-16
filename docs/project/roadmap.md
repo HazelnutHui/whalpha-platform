@@ -146,9 +146,8 @@ Sequence:
 1. preserve the completed ADR 0283 reuse boundaries for population, feature,
    market-state, control, and label panels; materialize only when a registered
    consumer exists;
-2. materialize the implemented ADR 0288 outcome-blind point-in-time
-   market-state qualification once and reproduce it independently before any
-   Campaign Three registration;
+2. preserve the completed ADR 0288 outcome-blind market-state qualification
+   and exact replay; do not change its gates after observing the report;
 3. under the ADR 0287 pilot, propose and deduplicate a finite set of
    economically distinct factor and
    interaction hypotheses, including explicit null and failure conditions;

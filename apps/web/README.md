@@ -18,8 +18,11 @@ the three established market-context workspaces as free supporting tools. Its
 current dossier identifies Factor Discovery V2, the byte-identical 98.59%
 data-qualification pass, its completed six-trial Development screen, four
 rejected Alpha trials, two qualified-but-unselected risk guards, the completed
-14-trial ledger, and the next unregistered campaign design boundary; V1 and Strong-Leader Pullback
-remain historical failed research. The first viewport keeps account/password sign-in as the
+14-trial ledger, and the next unregistered campaign design boundary. Its
+outcome-blind market-state input now also shows the completed 287-session
+qualification, 267 jointly available reconstructed sessions, and matching
+independent replay without exposing internal report identities. V1 and
+Strong-Leader Pullback remain historical failed research. The first viewport keeps account/password sign-in as the
 primary entry, places equal-capability guest access immediately below it, and
 uses a persistent continuation cue to expose the research narrative below.
 
@@ -125,6 +128,9 @@ guide.
   result and retained risk guard, protocol identities, limitations, and
   continuing model/Product lock
   without presenting a score as validated performance
+- completed market-state input qualification and exact replay for the first
+  manually supervised multi-Agent pilot, with Campaign Three still
+  unregistered and all Development, Validation, and Holdout outcomes closed
 - Logout in snapshot mode
 - Trilingual hypothesis-submission contact link and cumulative guest-entry
   footer in snapshot mode

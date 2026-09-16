@@ -49,9 +49,11 @@ ADRs, and audits.
   ADR 0287 defines the first manually supervised, outcome-blind multi-agent
   pilot with one authoritative ledger and deterministic serial gates. ADR 0288
   implements the point-in-time market-state vector and its exact 287-session
-  qualification/replay boundary. Source code and tests are ready; no real
-  qualification report, Campaign Three registration, or new outcome access
-  exists yet.
+  qualification/replay boundary. The real 287-session report and its complete
+  independent replay now pass: all six benchmark metrics cover 287 sessions,
+  all four reconstructed metrics are jointly available for 267 sessions, and
+  canonical report bytes match. Campaign Three remains unregistered and no
+  new outcome access exists.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -363,8 +365,8 @@ measured budget breach.
 9. Design the next finite factor campaign outcome-blind. First define reusable
    point-in-time market-state inputs and economically distinct hypotheses, then
    qualify data and preregister every outcome trial in a new ledger version.
-   The market-state vector, real-data runner, custody, and qualification gates
-   are implemented; real materialization plus independent replay is next.
+   The market-state qualification and independent replay now pass. Finite,
+   deduplicated hypothesis and protocol design is next; outcomes remain closed.
 10. Use the ADR 0284 cycle for every successor campaign: deduplicate before
     implementation, close and append before another campaign reads outcomes,
     and return to intake after either success or failure.

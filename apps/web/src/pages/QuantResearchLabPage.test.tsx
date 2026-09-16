@@ -33,9 +33,9 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('Current position').parentElement).toHaveTextContent('READY FOR A NEW QUESTION');
     expect(screen.getByText('Why the loop continues').parentElement).toHaveTextContent('FAILURE DOES NOT END DISCOVERY');
     expect(screen.getByRole('heading', { name: 'Stage-isolated research team' })).toBeInTheDocument();
-    expect(screen.getByText('Pilot roles').parentElement).toHaveTextContent('5 ACTIVE');
-    expect(screen.getByText('Development outcomes').parentElement).toHaveTextContent('CLOSED');
-    expect(screen.getByText(/Market-state qualification/).parentElement).toHaveTextContent('CURRENT');
+    expect(screen.getByText('Market-state qualification').parentElement).toHaveTextContent('PASSED · 267 / 287');
+    expect(screen.getByText('Exact replay').parentElement).toHaveTextContent('MATCHED');
+    expect(screen.getByText(/02 · Market-state qualification/).parentElement).toHaveTextContent('COMPLETED');
     expect(screen.getByText(/not an unattended Alpha miner/i)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Evidence ladder' })).toBeInTheDocument();
     expect(screen.getByText('Three-layer architecture').parentElement).toHaveTextContent('ACCEPTED');
@@ -125,8 +125,8 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('运行模式').parentElement).toHaveTextContent('持续循环');
     expect(screen.getByText('当前位置').parentElement).toHaveTextContent('可以开始提出新问题');
     expect(screen.getByRole('heading', { name: '阶段隔离的研究协作组' })).toBeInTheDocument();
-    expect(screen.getByText('当前试点角色').parentElement).toHaveTextContent('5 个启用');
-    expect(screen.getByText(/市场状态资格审查/).parentElement).toHaveTextContent('当前');
+    expect(screen.getByText('市场状态资格').parentElement).toHaveTextContent('通过 · 267 / 287');
+    expect(screen.getByText(/02 · 市场状态资格审查/).parentElement).toHaveTextContent('已完成');
     expect(screen.getByText(/不是无人监管的 Alpha 挖掘器/)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '证据阶梯' })).toBeInTheDocument();
     expect(screen.getByText('三层研究架构').parentElement).toHaveTextContent('已生效');
@@ -174,8 +174,8 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('Modo operativo').parentElement).toHaveTextContent('RENOVABLE');
     expect(screen.getByText('Posición actual').parentElement).toHaveTextContent('LISTO PARA UNA NUEVA PREGUNTA');
     expect(screen.getByRole('heading', { name: 'Equipo de investigación aislado por etapas' })).toBeInTheDocument();
-    expect(screen.getByText('Roles del piloto').parentElement).toHaveTextContent('5 ACTIVOS');
-    expect(screen.getByText(/Calificación del estado de mercado/).parentElement).toHaveTextContent('ACTUAL');
+    expect(screen.getByText('Calificación de mercado').parentElement).toHaveTextContent('SUPERADA · 267 / 287');
+    expect(screen.getByText(/02 · Calificación del estado de mercado/).parentElement).toHaveTextContent('COMPLETADA');
     expect(screen.getByText(/No es un minero de Alpha autónomo/)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Escalera de evidencia' })).toBeInTheDocument();
     expect(screen.getByText('Arquitectura de tres capas').parentElement).toHaveTextContent('ACEPTADA');
@@ -183,7 +183,7 @@ describe('Quant Research Lab', () => {
     expect(screen.getAllByText('Catálogo de factores V2')[0].parentElement).toHaveTextContent('EVALUADO');
     expect(screen.getByText('Calificación de datos V2').parentElement).toHaveTextContent('SUPERADA');
     expect(screen.getByText('Selección en Desarrollo').parentElement).toHaveTextContent('COMPLETADA');
-    expect(screen.getByText('Reproducción exacta').parentElement).toHaveTextContent('VERIFICADA');
+    expect(screen.getAllByText('Reproducción exacta')[1].parentElement).toHaveTextContent('VERIFICADA');
     expect(screen.getByRole('heading', { name: 'Resumen de la base de investigación' })).toBeInTheDocument();
     expect(screen.getByText('Ciclo de vida y terminal').parentElement).toHaveTextContent('219 + 83');
     expect(screen.getByText(/no se combinan en un único porcentaje de avance/)).toBeInTheDocument();

@@ -15,11 +15,20 @@ and dated [audits](../audits/). Current capability and next work belong in
 - Accepted ADR 0288; upgraded the market-state vector to continuous
   outcome-blind inputs and implemented exact 287-session population,
   chronology, availability, persistence, redundancy, custody, and replay
-  qualification. No real report or Campaign Three has been materialized.
+  qualification. The real report and complete replay now pass with 267 / 287
+  reconstructed sessions jointly available and identical canonical bytes;
+  Campaign Three remains unregistered and outcomes remain closed.
+- Corrected the explicit empty-population boundary for the first 20 target
+  sessions and reduced runner memory by retaining validated member identities
+  rather than complete Membership rows. The failed pre-report attempt wrote no
+  report, `/data`, Production state, or outcome evidence.
 - Added a trilingual Lab pilot surface while removing raw fingerprints,
   internal IDs, reason codes, and custody identities from website display.
   Formulae, parameters, evidence, sample sizes, diagnostics, and limitations
   remain visible; public hardware wording now uses "workstation".
+- Passed 3,027 backend tests, 129 frontend tests, the focused trilingual Lab
+  tests, and the production frontend build after recording the real
+  qualification and replay.
 - Kept the Production release unchanged pending the real qualification,
   independent replay, full repository verification, and reviewed deployment.
 

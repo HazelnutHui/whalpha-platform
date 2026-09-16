@@ -59,6 +59,7 @@ Read this bounded set before new Lab research:
 - [ADR 0287: stage-isolated multi-Agent pilot](decisions/0287-pilot-stage-isolated-multi-agent-research-governance.md)
 - [ADR 0288: hardened market-state qualification](decisions/0288-harden-market-state-qualification-before-materialization.md)
 - [Closed V2 screening result](audits/quant-research-factor-screening-v2-2026-09-15.md)
+- [Qualified Campaign Three market-state input](audits/quant-research-market-state-qualification-2026-09-16.md)
 
 The Pullback contracts, operations, and intermediate audits remain immutable
 historical evidence, but are no longer part of default recovery. Use the

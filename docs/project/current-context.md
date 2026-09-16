@@ -245,19 +245,28 @@ remain closed. One deterministic controller, one cumulative ledger, exact
 handoffs, and serial data gates remain authoritative; agent agreement is not a
 research gate.
 
-ADR 0288 hardens the unmaterialized market-state input to contract version 1.1
+ADR 0288 hardens the market-state input to contract version 1.1
 and adds a network-disabled qualification runner. It requires the exact 287
-XNYS sessions from 2025-06-23 through 2026-08-12, a 21-session source warm-up,
+XNYS sessions from 2025-06-23 through 2026-08-12 and an exact 21-session source
+window for each rolling calculation, supplied by the target session plus 20
+preceding XNYS sessions,
 complete population reconciliation, explicit benchmark quarantine, joint
 coverage and temporal diagnostics, pairwise redundancy checks, owner-only
-custody, and canonical-byte replay. Source and tests are ready, but no real
-report has been materialized and Campaign Three is still unregistered.
+custody, and canonical-byte replay. The real report and complete independent
+replay now pass: 287 / 287 benchmark sessions, 267 / 287 jointly available
+reconstructed sessions split 123 / 144 across the frozen halves, and identical
+canonical report bytes. Report SHA-256 is
+`8f3ec454b2626b3a2feab79e8f38e3ae014c0d853e7698d9266a32dca224b02a`;
+logical fingerprint is
+`20b496eb76ba6597b6937bf2e79924a65491631767e7e1c4ac186281bba04ee3`.
+Campaign Three is still unregistered and all outcomes remain closed.
 
 The source Lab projection now presents this pilot without exposing internal
 fingerprints, raw IDs, or custody identifiers. Formulas, parameters, sample
 sizes, coverage, outcomes, limitations, and gates remain visible. Public copy
 uses the generic term "workstation"; exact host and alias details remain only
-in operational documentation. This source projection is not yet deployed.
+in operational documentation. This updated source projection is not yet
+deployed.
 
 The deployed Candidate score, Entry Geometry, and six technical Strategy
 Channels remain frozen, transparent, unvalidated **Baseline V1** compatibility
