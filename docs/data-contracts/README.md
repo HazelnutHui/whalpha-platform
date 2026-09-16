@@ -162,6 +162,12 @@ see [ADR 0274](../decisions/0274-adopt-factor-model-strategy-three-layer-researc
 - [Campaign Three Input Qualification V1](quant-research-campaign-three-input-qualification-v1.md)
   freezes factor/state support, chronological-balance, and exact Development-
   alignment gates before any Campaign Three outcome trial is registered.
+- [Campaign Three Screening Protocol V1](quant-research-campaign-three-screening-v1.md)
+  freezes the three interaction trials, session-level estimand, labels,
+  inference, multiplicity, stability, selection, and stop rules.
+- [Quant Research Discovery Trial Ledger V4](quant-research-discovery-trial-ledger-v4.md)
+  carries all 14 consumed trials forward and registers three unread Campaign
+  Three trials without granting Development access.
 - [Quant Research Factor Screening V1](quant-research-factor-screening-v1.md)
   freezes the first Development screen; its completed no-Alpha result and exact
   replay are recorded in the [screening audit](../audits/quant-research-factor-screening-2026-09-15.md).

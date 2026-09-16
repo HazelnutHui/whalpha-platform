@@ -62,8 +62,9 @@ ADRs, and audits.
   candidate-Alpha interactions and one risk guard qualify for protocol review;
   the defensive-resilience Alpha interaction is rejected before outcomes for
   sparse and concentrated natural-zero state support. Campaign Three remains
-  unregistered, the formal-trial count remains 14, and no new outcome access
-  exists.
+  outcome-unread. ADR 0291 now registers only the three qualified designs in
+  the finite protocol and Ledger V4. The cumulative formal-trial count is 17;
+  the three new trials have no result, and no new outcome access exists.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -109,9 +110,10 @@ The reusable research-input policy remains preserved in V1, while registry V2
 now records one qualified, exactly replayed Market-State panel and zero
 outcome-bearing panels. Production Lab now presents the completed Campaign
 Three input gate: two Alpha interactions and one risk guard qualify for
-protocol review, while one Alpha interaction stopped before outcomes.
-There is still no active third campaign, registered outcome trial, or new
-outcome access. The Lab accepts factor/strategy hypotheses through the public `@whalphalab`
+the frozen protocol, while one Alpha interaction stopped before outcomes.
+Ledger V4 registers the three unread trials and retains the cumulative count of
+17. There is still no new outcome access or active model. The Lab accepts
+factor/strategy hypotheses through the public `@whalphalab`
 contact. The protected workspace footer now shows a persistent cumulative
 guest-entry count without retaining IP addresses, user agents, fingerprints,
 or browsing paths; it is not a unique-visitor metric or research evidence.
@@ -376,10 +378,10 @@ measured budget breach.
    Alpha, open Validation/Holdout, or preselect a named strategy.
 9. Preserve the completed Market-State qualification, reusable-artifact V2
    registration, Campaign Three hypothesis registry, and exact input-
-   qualification report/replay. Freeze only the two qualified Alpha
-   interactions and one qualified risk guard in the finite screening protocol
-   and append-only Ledger V4. Do not rescue the rejected defensive-resilience
-   design or read Development outcomes without a separate exact authorization.
+   qualification report/replay, the three-trial protocol, and Ledger V4. Do not
+   rescue the rejected defensive-resilience design. Build and review the
+   deterministic evaluator and clean-revision typed access boundary, then stop
+   before Development outcomes for separate exact authorization.
 10. Use the ADR 0284 cycle for every successor campaign: deduplicate before
     implementation, close and append before another campaign reads outcomes,
     and return to intake after either success or failure.

@@ -1,0 +1,264 @@
+"""Append-only registration of Campaign Three before Development outcomes."""
+
+from __future__ import annotations
+
+import hashlib
+import json
+from datetime import date
+from functools import lru_cache
+from typing import Literal, Mapping
+
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from .quant_research_campaign_three_hypotheses import CampaignThreeHypothesisRole
+from .quant_research_campaign_three_screening import (
+    CAMPAIGN_THREE_INPUT_QUALIFICATION_FINGERPRINT,
+    CAMPAIGN_THREE_INPUT_QUALIFICATION_SHA256,
+    QUANT_RESEARCH_CAMPAIGN_THREE_SCREENING_VERSION,
+    CampaignThreeScreeningHypothesisV1,
+    quant_research_campaign_three_screening_protocol_v1,
+)
+from .quant_research_discovery_trial_ledger import QuantResearchDiscoveryCampaignV1
+from .quant_research_discovery_trial_ledger_v3 import (
+    QuantResearchDiscoveryCampaignV3,
+    quant_research_discovery_trial_ledger_v3,
+)
+
+
+QUANT_RESEARCH_DISCOVERY_TRIAL_LEDGER_V4_CONTRACT_VERSION = (
+    "quant-research-discovery-trial-ledger/4.0"
+)
+QUANT_RESEARCH_DISCOVERY_TRIAL_LEDGER_V4_VERSION = (
+    "whalpha.quant-research.discovery-trial-ledger/4.0.0"
+)
+
+
+class FrozenModel(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+
+class QuantResearchDiscoveryTrialV4(FrozenModel):
+    trial_id: str = Field(
+        pattern=r"^whalpha\.discovery-trial\.campaign-three\.[a-z0-9-]+\.h3$"
+    )
+    campaign_id: Literal["whalpha.factor-discovery.market-state-interactions-v1"] = (
+        "whalpha.factor-discovery.market-state-interactions-v1"
+    )
+    hypothesis_id: str = Field(
+        pattern=r"^whalpha\.hypothesis\.campaign-three\.[a-z0-9-]+$"
+    )
+    hypothesis_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    role: CampaignThreeHypothesisRole
+    related_hypothesis_family: str = Field(pattern=r"^[a-z0-9][a-z0-9_]*$")
+    primary_horizon_sessions: Literal[3] = 3
+    formal_trial_count: Literal[1] = 1
+    outcome_partition: Literal["development"] = "development"
+    disposition: Literal["registered_pending_development_screen"] = (
+        "registered_pending_development_screen"
+    )
+    outcome_accessed: Literal[False] = False
+    outcome_access_date: Literal[None] = None
+    report_fingerprint: Literal[None] = None
+    validation_accessed: Literal[False] = False
+    holdout_accessed: Literal[False] = False
+    model_input_authorized: Literal[False] = False
+    candidate_activation_authorized: Literal[False] = False
+
+    @model_validator(mode="after")
+    def trial_reconciles(self) -> "QuantResearchDiscoveryTrialV4":
+        protocol = quant_research_campaign_three_screening_protocol_v1()
+        source = next(
+            (item for item in protocol.formal_hypotheses if item.trial_id == self.trial_id),
+            None,
+        )
+        if source is None or not _trial_matches_hypothesis(self, source):
+            raise ValueError("registered Campaign Three trial differs")
+        return self
+
+
+class QuantResearchDiscoveryCampaignV4(FrozenModel):
+    campaign_id: Literal["whalpha.factor-discovery.market-state-interactions-v1"] = (
+        "whalpha.factor-discovery.market-state-interactions-v1"
+    )
+    registered_date: Literal[date(2026, 9, 16)] = date(2026, 9, 16)
+    completed_date: Literal[None] = None
+    status: Literal["registered_pending_development_authorization"] = (
+        "registered_pending_development_authorization"
+    )
+    hypothesis_registry_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    input_qualification_fingerprint: Literal[
+        CAMPAIGN_THREE_INPUT_QUALIFICATION_FINGERPRINT
+    ] = CAMPAIGN_THREE_INPUT_QUALIFICATION_FINGERPRINT
+    input_qualification_sha256: Literal[
+        CAMPAIGN_THREE_INPUT_QUALIFICATION_SHA256
+    ] = CAMPAIGN_THREE_INPUT_QUALIFICATION_SHA256
+    input_qualification_exact_replay_verified: Literal[True] = True
+    screening_protocol_version: Literal[
+        QUANT_RESEARCH_CAMPAIGN_THREE_SCREENING_VERSION
+    ] = QUANT_RESEARCH_CAMPAIGN_THREE_SCREENING_VERSION
+    screening_protocol_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    formal_trials: tuple[QuantResearchDiscoveryTrialV4, ...] = Field(
+        min_length=3, max_length=3
+    )
+    formal_trial_count: Literal[3] = 3
+    candidate_alpha_trial_count: Literal[2] = 2
+    risk_guard_trial_count: Literal[1] = 1
+    rejected_before_outcomes_count: Literal[2] = 2
+    outcomes_read: Literal[False] = False
+    development_access_authorized: Literal[False] = False
+    validation_accessed: Literal[False] = False
+    holdout_accessed: Literal[False] = False
+    model_construction_authorized: Literal[False] = False
+
+    @model_validator(mode="after")
+    def campaign_reconciles(self) -> "QuantResearchDiscoveryCampaignV4":
+        protocol = quant_research_campaign_three_screening_protocol_v1()
+        if (
+            self.hypothesis_registry_fingerprint
+            != protocol.source_hypothesis_registry_fingerprint
+            or self.screening_protocol_fingerprint != protocol.logical_fingerprint
+            or self.formal_trials != _registered_campaign_three_trials()
+            or len({item.trial_id for item in self.formal_trials}) != 3
+            or sum(item.formal_trial_count for item in self.formal_trials) != 3
+        ):
+            raise ValueError("registered Campaign Three campaign differs")
+        return self
+
+
+class QuantResearchDiscoveryTrialLedgerV4(FrozenModel):
+    schema_version: Literal["4.0"] = "4.0"
+    contract_version: Literal[
+        QUANT_RESEARCH_DISCOVERY_TRIAL_LEDGER_V4_CONTRACT_VERSION
+    ] = QUANT_RESEARCH_DISCOVERY_TRIAL_LEDGER_V4_CONTRACT_VERSION
+    ledger_version: Literal[QUANT_RESEARCH_DISCOVERY_TRIAL_LEDGER_V4_VERSION] = (
+        QUANT_RESEARCH_DISCOVERY_TRIAL_LEDGER_V4_VERSION
+    )
+    registered_date: Literal[date(2026, 9, 16)] = date(2026, 9, 16)
+    accounting_scope: Literal[
+        "factor_and_registered_factor_interaction_outcome_trials"
+    ] = "factor_and_registered_factor_interaction_outcome_trials"
+    campaign_accounting_rule: Literal[
+        "append_new_version_never_rewrite_consumed_campaign"
+    ] = "append_new_version_never_rewrite_consumed_campaign"
+    development_evidence_rule: Literal[
+        "campaign_adjusted_screening_not_global_independent_alpha_claim"
+    ] = "campaign_adjusted_screening_not_global_independent_alpha_claim"
+    prior_ledger_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+    prior_strategy_programs_separate: tuple[
+        Literal["whalpha.strong-leader-pullback"]
+    ] = ("whalpha.strong-leader-pullback",)
+    campaigns: tuple[
+        QuantResearchDiscoveryCampaignV1,
+        QuantResearchDiscoveryCampaignV3,
+        QuantResearchDiscoveryCampaignV4,
+    ]
+    completed_campaign_count: Literal[2] = 2
+    registered_unread_campaign_count: Literal[1] = 1
+    cumulative_formal_trial_count: Literal[17] = 17
+    cumulative_candidate_alpha_trial_count: Literal[11] = 11
+    cumulative_risk_guard_trial_count: Literal[6] = 6
+    cumulative_candidate_alpha_admitted_count: Literal[0] = 0
+    cumulative_qualified_risk_evidence_count: Literal[3] = 3
+    cumulative_model_input_authorized_factor_count: Literal[0] = 0
+    development_screen_execution_authorized: Literal[False] = False
+    development_access_requires_separate_typed_grant: Literal[True] = True
+    validation_access_authorized: Literal[False] = False
+    holdout_access_authorized: Literal[False] = False
+    model_construction_authorized: Literal[False] = False
+    strategy_expression_authorized: Literal[False] = False
+    candidate_activation_authorized: Literal[False] = False
+    logical_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
+
+    @model_validator(mode="after")
+    def ledger_reconciles(self) -> "QuantResearchDiscoveryTrialLedgerV4":
+        prior = quant_research_discovery_trial_ledger_v3()
+        campaign = _registered_campaign_three()
+        all_trials = tuple(
+            trial for item in self.campaigns for trial in item.formal_trials
+        )
+        if (
+            self.prior_ledger_fingerprint != prior.logical_fingerprint
+            or self.campaigns != (*prior.campaigns, campaign)
+            or len({item.trial_id for item in all_trials}) != 17
+            or sum(item.formal_trial_count for item in all_trials) != 17
+            or discovery_trial_ledger_v4_fingerprint(self) != self.logical_fingerprint
+        ):
+            raise ValueError("Campaign Three cumulative trial accounting differs")
+        return self
+
+
+def discovery_trial_ledger_v4_fingerprint(
+    value: BaseModel | Mapping[str, object],
+) -> str:
+    payload = (
+        value.model_dump(mode="json", exclude={"logical_fingerprint"})
+        if isinstance(value, BaseModel)
+        else {key: item for key, item in value.items() if key != "logical_fingerprint"}
+    )
+    return hashlib.sha256(
+        json.dumps(
+            payload,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=True,
+            allow_nan=False,
+            default=str,
+        ).encode("utf-8")
+    ).hexdigest()
+
+
+@lru_cache(maxsize=1)
+def quant_research_discovery_trial_ledger_v4() -> (
+    QuantResearchDiscoveryTrialLedgerV4
+):
+    prior = quant_research_discovery_trial_ledger_v3()
+    payload: dict[str, object] = {
+        "prior_ledger_fingerprint": prior.logical_fingerprint,
+        "campaigns": (*prior.campaigns, _registered_campaign_three()),
+    }
+    provisional = QuantResearchDiscoveryTrialLedgerV4.model_construct(
+        **payload, logical_fingerprint="0" * 64
+    )
+    return QuantResearchDiscoveryTrialLedgerV4.model_validate(
+        {
+            **payload,
+            "logical_fingerprint": discovery_trial_ledger_v4_fingerprint(provisional),
+        }
+    )
+
+
+@lru_cache(maxsize=1)
+def _registered_campaign_three() -> QuantResearchDiscoveryCampaignV4:
+    protocol = quant_research_campaign_three_screening_protocol_v1()
+    return QuantResearchDiscoveryCampaignV4(
+        hypothesis_registry_fingerprint=protocol.source_hypothesis_registry_fingerprint,
+        screening_protocol_fingerprint=protocol.logical_fingerprint,
+        formal_trials=_registered_campaign_three_trials(),
+    )
+
+
+@lru_cache(maxsize=1)
+def _registered_campaign_three_trials() -> tuple[QuantResearchDiscoveryTrialV4, ...]:
+    return tuple(
+        QuantResearchDiscoveryTrialV4(
+            trial_id=item.trial_id,
+            hypothesis_id=item.hypothesis_id,
+            hypothesis_fingerprint=item.hypothesis_fingerprint,
+            role=item.role,
+            related_hypothesis_family=item.related_hypothesis_family,
+        )
+        for item in quant_research_campaign_three_screening_protocol_v1().formal_hypotheses
+    )
+
+
+def _trial_matches_hypothesis(
+    trial: QuantResearchDiscoveryTrialV4,
+    hypothesis: CampaignThreeScreeningHypothesisV1,
+) -> bool:
+    return (
+        trial.hypothesis_id == hypothesis.hypothesis_id
+        and trial.hypothesis_fingerprint == hypothesis.hypothesis_fingerprint
+        and trial.role is hypothesis.role
+        and trial.related_hypothesis_family == hypothesis.related_hypothesis_family
+        and trial.primary_horizon_sessions == hypothesis.primary_horizon_sessions
+    )

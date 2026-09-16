@@ -211,11 +211,11 @@ qualification and one exact independent replay. ADR 0289 freezes five
 hypothesis cards; ADR 0290 completes outcome-blind input qualification and its
 exact replay. Two Alpha interactions and one risk guard advance to protocol
 freeze, one Alpha design stops before outcomes, and the near-duplicate remains
-rejected. No formal Campaign Three trial is registered. Agents still cannot
-independently authorize trial registration, read Development, Validation, or
+rejected. ADR 0291 now freezes the three-trial protocol and registers all three
+as unread in Ledger V4. Agents still cannot independently read Development, Validation, or
 Holdout outcomes, activate a model, deploy, or trade. Development evaluation
-remains a single deterministic boundary after protocol freeze, Ledger V4, and
-a separate exact authorization.
+remains a single deterministic boundary after a typed grant bound to a clean
+implementation revision and a separate exact authorization.
 Wider autonomous Factory operation still begins only after one complete
 factor-to-model-to-expression path survives locked evaluation and prospective
 shadow review. The first success criterion is reliable rejection and

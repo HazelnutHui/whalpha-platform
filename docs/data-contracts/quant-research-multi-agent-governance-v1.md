@@ -45,6 +45,7 @@ itself remains unregistered. The market-state input passed its frozen
 outcome-blind qualification and one exact independent replay. The pilot then
 froze and deduplicated five hypothesis cards under ADR 0289 and completed ADR
 0290 input qualification with an exact replay. Two Alpha interactions and one
-risk guard may proceed to protocol freeze; one Alpha design stopped before
-outcomes. Zero new outcome trials have been opened; Development, Validation,
-and Holdout remain closed.
+risk guard are now frozen in ADR 0291 and registered unread in Ledger V4; one
+Alpha design stopped before outcomes. Zero new outcomes have been read;
+Development, Validation, and Holdout remain closed behind a separate typed
+grant.

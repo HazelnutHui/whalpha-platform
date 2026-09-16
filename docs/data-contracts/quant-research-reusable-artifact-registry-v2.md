@@ -31,7 +31,8 @@ finding, model input, or Product signal.
 
 ## Authority boundary
 
-Campaign Three remains unregistered. Development outcomes, Validation,
-Holdout, canonical writes, cleanup, and deletion remain unauthorized. The
-registry permits only exact content-addressed reuse in later outcome-blind
-design and input-qualification stages.
+Campaign Three is registered unread under ADR 0291 and Ledger V4. That
+registration does not change this registry's authority: Development outcomes,
+Validation, Holdout, canonical writes, cleanup, and deletion remain
+unauthorized. The registry permits only exact content-addressed reuse under a
+separately governed research stage.

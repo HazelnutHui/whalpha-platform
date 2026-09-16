@@ -6,6 +6,24 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-16 — Register Campaign Three protocol without reading outcomes
+
+- Accepted ADR 0291 and froze exactly two candidate-Alpha interactions and one
+  risk-guard interaction over the 106-session Development cohort. The primary
+  question is a session-level rank-IC interaction slope at three sessions;
+  one/five sessions remain diagnostics.
+- Froze 10-session primary and 20-session sensitivity circular block
+  bootstraps, 10,000 replicates, positive one-sided 90% lower bounds, both-half
+  stability, Alpha favorable-state support, separate Holm families, and a
+  maximum of one selected Alpha plus one risk guard.
+- Added append-only Ledger V4. It carries the 14 completed V1/V2 trials
+  unchanged and registers three unread Campaign Three trials, raising the
+  cumulative count to 17 while retaining both before-outcomes rejections.
+- Kept Development execution, Validation, Holdout, model, Candidate,
+  publication, broker, and trading authority closed. The next boundary is a
+  deterministic evaluator plus a typed clean-revision access grant for one
+  formal run and one exact replay.
+
 ## 2026-09-16 — Qualify Campaign Three inputs without opening outcomes
 
 - Accepted ADR 0290 and implemented a network-disabled, outcome-blind input

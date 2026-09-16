@@ -286,6 +286,17 @@ Candidate activation remain closed. The next gate is to freeze exactly those
 three qualified trials, their evaluation protocol, and append-only Ledger V4
 before any separate Development-access decision.
 
+ADR 0291 now freezes that three-trial protocol and append-only Ledger V4. The
+ledger carries all 14 prior consumed trials unchanged and registers two unread
+candidate-Alpha interactions plus one unread risk guard, for 17 cumulative
+formal trials. Evaluation is session-level: same-session Spearman `q(t)` is
+regressed on the preregistered point-in-time state; 3 sessions is primary,
+1/5 sessions are diagnostics, circular block bootstraps use 10-session primary
+and 20-session sensitivity blocks, and Holm correction is separate across the
+two-Alpha and one-risk families. At most one Alpha and one risk guard may be
+selected, and risk cannot open a model alone. Registration does not authorize
+Development access; a clean-revision typed grant is the next boundary.
+
 The source Lab projection now presents this pilot without exposing internal
 fingerprints, raw IDs, or custody identifiers. Formulas, parameters, sample
 sizes, coverage, outcomes, limitations, and gates remain visible. Public copy

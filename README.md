@@ -40,10 +40,11 @@ campaigns, all nine candidate-Alpha trials failed; three risk guards qualified
 as risk evidence, but none can open a model by itself. These are retained,
 reproducible failures rather than templates to retune. Validation, Holdout,
 Candidate use, and performance publication remain closed. Campaign Three has
-completed outcome-blind intake and input qualification: two Alpha interactions
-and one risk guard may enter a separately frozen finite protocol, while one
-Alpha design stopped before outcomes. It is not a preselected named strategy,
-and no new return trial is open.
+completed outcome-blind intake and input qualification. Its separately frozen
+finite protocol and Ledger V4 now register two Alpha interactions and one risk
+guard as unread trials, while one Alpha design stopped before outcomes. It is
+not a preselected named strategy, and a separate typed grant is still required
+before any new Development result can be read.
 
 Dell is the authority for code, data, and computation. OCI serves only bounded
 static product artifacts and the localhost authentication boundary. The

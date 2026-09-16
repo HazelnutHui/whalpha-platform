@@ -373,6 +373,9 @@ accepted ADR was deployed unless current operational evidence says so.
 - [ADR 0290](0290-freeze-campaign-three-input-qualification-before-outcomes.md):
   freezes exact Development-alignment and factor/state support gates plus a
   bounded V2 input replay before any Campaign Three outcome access.
+- [ADR 0291](0291-freeze-campaign-three-screening-protocol-and-ledger-v4.md):
+  registers exactly two Alpha interactions and one risk guard in append-only
+  Ledger V4 while keeping Development outcomes behind a separate typed grant.
 
 ## Data-governance decisions
 
