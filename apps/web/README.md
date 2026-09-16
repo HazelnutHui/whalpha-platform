@@ -129,8 +129,10 @@ guide.
   continuing model/Product lock
   without presenting a score as validated performance
 - completed market-state input qualification and exact replay for the first
-  manually supervised multi-Agent pilot, with Campaign Three still
-  unregistered and all Development, Validation, and Holdout outcomes closed
+  manually supervised multi-Agent pilot; one reusable Market-State panel and
+  five deduplicated hypothesis cards are recorded, four designs are in outcome-
+  blind input review, Campaign Three remains unregistered, and all Development,
+  Validation, and Holdout outcomes stay closed
 - Logout in snapshot mode
 - Trilingual hypothesis-submission contact link and cumulative guest-entry
   footer in snapshot mode

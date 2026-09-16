@@ -367,6 +367,9 @@ accepted ADR was deployed unless current operational evidence says so.
 - [ADR 0288](0288-harden-market-state-qualification-before-materialization.md):
   replaces the unmaterialized discrete breadth draft and freezes exact
   stable-ID, chronology, temporal-support, source-binding, and replay gates.
+- [ADR 0289](0289-freeze-campaign-three-hypothesis-intake-before-input-qualification.md):
+  freezes a four-design prospective Campaign Three budget after seven-
+  dimensional deduplication, without opening outcomes or formal trials.
 ## Data-governance decisions
 
 - ADRs 0011–0048 establish EOD, Identity, stable-ID, security classification,

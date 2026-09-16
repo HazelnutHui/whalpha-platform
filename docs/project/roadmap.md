@@ -143,15 +143,17 @@ before returning to intake.
 
 Sequence:
 
-1. preserve the completed ADR 0283 reuse boundaries for population, feature,
-   market-state, control, and label panels; materialize only when a registered
-   consumer exists;
-2. preserve the completed ADR 0288 outcome-blind market-state qualification
-   and exact replay; do not change its gates after observing the report;
-3. under the ADR 0287 pilot, propose and deduplicate a finite set of
-   economically distinct factor and
-   interaction hypotheses, including explicit null and failure conditions;
-4. implement formulas and complete zero-outcome coverage, timing,
+1. ~~preserve the ADR 0283 reuse boundaries and register the first qualified
+   Market-State artifact without opening outcome-bearing panels;~~ complete in
+   reusable-artifact registry V2;
+2. ~~preserve the completed ADR 0288 outcome-blind market-state qualification
+   and exact replay;~~ complete without changed gates;
+3. ~~under ADR 0287, propose and seven-dimensionally deduplicate a finite set
+   of economically distinct interactions;~~ ADR 0289 retains five cards,
+   advances three candidate-Alpha and one risk-guard design, and rejects one
+   near-duplicate before outcomes;
+4. implement only those four accepted designs and complete zero-outcome
+   alignment, coverage, timing,
    concentration, redundancy, and exact-replay qualification;
 5. append the exact trial family, horizons, costs, multiplicity, stability,
    selection cap, and stopping rule to a new cumulative ledger before reading

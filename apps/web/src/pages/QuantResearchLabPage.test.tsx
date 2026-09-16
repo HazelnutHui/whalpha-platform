@@ -27,10 +27,10 @@ describe('Quant Research Lab', () => {
     expect(screen.getByRole('link', { name: 'Contact · @whalphalab' })).toHaveAttribute('href', 'https://x.com/whalphalab');
     expect(screen.getByRole('heading', { name: 'Renewable factor-discovery loop' })).toBeInTheDocument();
     expect(screen.getByText('Operating mode').parentElement).toHaveTextContent('RENEWABLE');
-    expect(screen.getByText('Current stage').parentElement).toHaveTextContent('HYPOTHESIS INTAKE');
+    expect(screen.getByText('Current stage').parentElement).toHaveTextContent('INPUT QUALIFICATION');
     expect(screen.getByText('Completed campaigns').parentElement).toHaveTextContent('2');
     expect(screen.getByText('Formal trials consumed').parentElement).toHaveTextContent('14');
-    expect(screen.getByText('Current position').parentElement).toHaveTextContent('READY FOR A NEW QUESTION');
+    expect(screen.getByText('Current position').parentElement).toHaveTextContent('4 DESIGNS · INPUT REVIEW');
     expect(screen.getByText('Why the loop continues').parentElement).toHaveTextContent('FAILURE DOES NOT END DISCOVERY');
     expect(screen.getByRole('heading', { name: 'Stage-isolated research team' })).toBeInTheDocument();
     expect(screen.getByText('Market-state qualification').parentElement).toHaveTextContent('PASSED · 267 / 287');
@@ -44,7 +44,8 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('V2 data qualification').parentElement).toHaveTextContent('PASSED');
     expect(screen.getByText('Development screen').parentElement).toHaveTextContent('COMPLETED');
     expect(screen.getByText('Exact reproduction').parentElement).toHaveTextContent('VERIFIED');
-    expect(screen.getByText('Next discovery campaign').parentElement).toHaveTextContent('DESIGN BOUNDARY');
+    expect(screen.getByText('Reusable research inputs').parentElement).toHaveTextContent('1 PANEL QUALIFIED');
+    expect(screen.getByText('Next discovery campaign').parentElement).toHaveTextContent('INPUT QUALIFICATION');
     expect(screen.getByText('Model, strategy & Product').parentElement).toHaveTextContent('LOCKED');
     expect(screen.getByRole('heading', { name: 'Research foundation snapshot' })).toBeInTheDocument();
     expect(screen.getByText('Five-year market base').parentElement).toHaveTextContent('1,255');
@@ -68,7 +69,7 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('Candidate Alpha decision').parentElement).toHaveTextContent('0 / 4 admitted');
     expect(screen.getByText('Risk evidence').parentElement).toHaveTextContent('2 qualified · 0 selected');
     expect(screen.getAllByText('Risk evidence · not selected')).toHaveLength(2);
-    expect(screen.getByText('Next governed question').parentElement).toHaveTextContent('NEW FACTOR BATCH · NOT YET REGISTERED');
+    expect(screen.getByText('Next governed question').parentElement).toHaveTextContent('4 DESIGNS · INPUT REVIEW');
     expect(screen.getByRole('heading', { name: 'Historical Development Screen · Factor Catalog V1' })).toBeInTheDocument();
     expect(screen.getByText('Formal hypotheses').parentElement).toHaveTextContent('8');
     expect(screen.getAllByText('Forward labels')[1].parentElement).toHaveTextContent('503,580');
@@ -123,7 +124,7 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText(/欢迎提交可证伪的因子或策略假设/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: '联系 · @whalphalab' })).toHaveAttribute('href', 'https://x.com/whalphalab');
     expect(screen.getByText('运行模式').parentElement).toHaveTextContent('持续循环');
-    expect(screen.getByText('当前位置').parentElement).toHaveTextContent('可以开始提出新问题');
+    expect(screen.getByText('当前位置').parentElement).toHaveTextContent('4项设计 · 输入审查');
     expect(screen.getByRole('heading', { name: '阶段隔离的研究协作组' })).toBeInTheDocument();
     expect(screen.getByText('市场状态资格').parentElement).toHaveTextContent('通过 · 267 / 287');
     expect(screen.getByText(/02 · 市场状态资格审查/).parentElement).toHaveTextContent('已完成');
@@ -135,7 +136,7 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('V2 数据资格诊断').parentElement).toHaveTextContent('已通过');
     expect(screen.getByText('开发期筛选').parentElement).toHaveTextContent('已完成');
     expect(screen.getByText('精确复现').parentElement).toHaveTextContent('已验证');
-    expect(screen.getByText('下一批因子发现').parentElement).toHaveTextContent('设计边界');
+    expect(screen.getByText('下一批因子发现').parentElement).toHaveTextContent('输入资格审查');
     expect(screen.getByRole('heading', { name: '研究基础快照' })).toBeInTheDocument();
     expect(screen.getByText('公司行动').parentElement).toHaveTextContent('4,623 / 4,643');
     expect(screen.getByText(/不会把不同证据强行合成为一个“总完成度”/)).toBeInTheDocument();
@@ -172,7 +173,7 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText(/Se aceptan hipótesis refutables de factores o estrategias/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Contacto · @whalphalab' })).toHaveAttribute('href', 'https://x.com/whalphalab');
     expect(screen.getByText('Modo operativo').parentElement).toHaveTextContent('RENOVABLE');
-    expect(screen.getByText('Posición actual').parentElement).toHaveTextContent('LISTO PARA UNA NUEVA PREGUNTA');
+    expect(screen.getByText('Posición actual').parentElement).toHaveTextContent('4 DISEÑOS · REVISIÓN DE ENTRADAS');
     expect(screen.getByRole('heading', { name: 'Equipo de investigación aislado por etapas' })).toBeInTheDocument();
     expect(screen.getByText('Calificación de mercado').parentElement).toHaveTextContent('SUPERADA · 267 / 287');
     expect(screen.getByText(/02 · Calificación del estado de mercado/).parentElement).toHaveTextContent('COMPLETADA');

@@ -53,8 +53,13 @@ ADRs, and audits.
   qualification/replay boundary. The real 287-session report and its complete
   independent replay now pass: all six benchmark metrics cover 287 sessions,
   all four reconstructed metrics are jointly available for 267 sessions, and
-  canonical report bytes match. Campaign Three remains unregistered and no
-  new outcome access exists.
+  canonical report bytes match. The resulting Market-State artifact is now
+  registered for exact outcome-blind reuse. ADR 0289 then froze five Campaign
+  Three hypothesis cards: three candidate-Alpha interactions and one risk-
+  guard interaction advance to input qualification, while one near-duplicate
+  is retained and rejected before outcomes. Campaign Three remains
+  unregistered, the formal-trial count remains 14, and no new outcome access
+  exists.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -96,9 +101,11 @@ qualification and replay, and locked downstream gates while withholding
 internal fingerprints, raw IDs, and custody identifiers from the website.
 Public infrastructure wording uses "workstation" rather than a hardware brand.
 
-The reusable research-input registry is implemented and visible at
-`contract_ready_not_materialized`: five content-addressed panel families, zero
-materialized panels, no active third campaign, and no new outcome access. The
+The reusable research-input policy remains preserved in V1, while registry V2
+now records one qualified, exactly replayed Market-State panel and zero
+outcome-bearing panels. The Lab also records the five-card Campaign Three
+intake and its four-design prospective input-qualification set. There is still
+no active third campaign, registered outcome trial, or new outcome access. The
 Lab accepts factor/strategy hypotheses through the public `@whalphalab`
 contact. The protected workspace footer now shows a persistent cumulative
 guest-entry count without retaining IP addresses, user agents, fingerprints,
@@ -362,11 +369,11 @@ measured budget breach.
 8. Preserve the completed V1 and V2 campaigns, exact replays, all 14 consumed
    trials, and ledger V3. Do not alter their gates, treat V2 risk evidence as
    Alpha, open Validation/Holdout, or preselect a named strategy.
-9. Design the next finite factor campaign outcome-blind. First define reusable
-   point-in-time market-state inputs and economically distinct hypotheses, then
-   qualify data and preregister every outcome trial in a new ledger version.
-   The market-state qualification and independent replay now pass. Finite,
-   deduplicated hypothesis and protocol design is next; outcomes remain closed.
+9. Preserve the completed Market-State qualification, reusable-artifact V2
+   registration, and Campaign Three hypothesis/dedup registry. Next qualify
+   the exact factor-state alignment and eligibility of the four accepted
+   designs without outcomes; only then freeze the finite screening protocol
+   and append-only Ledger V4. Outcomes remain closed.
 10. Use the ADR 0284 cycle for every successor campaign: deduplicate before
     implementation, close and append before another campaign reads outcomes,
     and return to intake after either success or failure.

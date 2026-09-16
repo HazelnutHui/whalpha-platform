@@ -207,11 +207,13 @@ Holdout failures.
 
 ADR 0287 permits one manually supervised, stage-isolated multi-Agent pilot for
 Campaign Three. Its outcome-blind market-state input has passed the frozen
-qualification and one exact independent replay, so the pilot may now design a
-finite, deduplicated hypothesis set and protocol. Agents still cannot
-independently authorize trial registration, read Development, Validation, or
-Holdout outcomes, activate a model, deploy, or trade. Development evaluation
-remains a single deterministic boundary after a separately frozen protocol.
+qualification and one exact independent replay. ADR 0289 now freezes five
+hypothesis cards: four designs proceed to outcome-blind input qualification
+and one near-duplicate is retained and rejected. No formal Campaign Three
+trial is registered. Agents still cannot independently authorize trial
+registration, read Development, Validation, or Holdout outcomes, activate a
+model, deploy, or trade. Development evaluation remains a single deterministic
+boundary after input qualification, protocol freeze, and a new ledger version.
 Wider autonomous Factory operation still begins only after one complete
 factor-to-model-to-expression path survives locked evaluation and prospective
 shadow review. The first success criterion is reliable rejection and

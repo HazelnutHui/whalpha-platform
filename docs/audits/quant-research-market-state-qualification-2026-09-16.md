@@ -5,8 +5,9 @@
 `ready_for_campaign_protocol_design`
 
 The outcome-blind Market-State Vector passed its frozen qualification and one
-complete independent replay. This permits finite Campaign Three protocol
-design only. It does not authorize Development outcomes, factor admission,
+complete independent replay. This permits finite Campaign Three outcome-blind
+design and input qualification only. It does not authorize Development
+outcomes, factor admission,
 model construction, Candidate activation, publication, broker access, or
 trading.
 
@@ -65,7 +66,8 @@ or gates.
 
 ## Next boundary
 
-Campaign Three remains unregistered. The next action is outcome-blind design of
-a finite, deduplicated hypothesis set, trial budget, nulls, multiplicity,
-stability gates, selection cap, and stop rule under ADR 0287. Validation and
-Holdout remain sealed.
+Campaign Three remains unregistered. ADR 0289 subsequently froze five
+hypothesis cards, advanced four designs to outcome-blind input qualification,
+and rejected one near-duplicate without reading outcomes. The next action is
+to qualify the exact factor-state alignment and eligibility, then freeze the
+finite protocol and Ledger V4. Validation and Holdout remain sealed.

@@ -6,6 +6,21 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-16 — Freeze Campaign Three hypothesis intake without opening outcomes
+
+- Added reusable-artifact registry V2 and registered the first qualified,
+  exactly replayed Market-State artifact while retaining V1 as immutable
+  pre-materialization policy history.
+- Accepted ADR 0289 and added a typed five-card Campaign Three hypothesis and
+  seven-dimensional deduplication registry. Three candidate-Alpha interactions
+  and one risk-guard interaction advance to outcome-blind input qualification;
+  one Pullback/ATR-compression near-duplicate is retained and rejected.
+- Kept Campaign Three unregistered, the formal trial ledger at 14, and all
+  Development outcome, Validation, Holdout, model, Candidate, canonical-write,
+  and trading authority closed.
+- Corrected the website source to show one qualified Market-State panel and
+  the input-qualification stage without exposing internal hashes or IDs.
+
 ## 2026-09-16 — Bound the first multi-agent pilot and harden market-state qualification
 
 - Accepted ADR 0287 and defined a manually supervised, outcome-blind

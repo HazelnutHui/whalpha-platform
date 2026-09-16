@@ -223,9 +223,12 @@ audits, the trilingual Lab projection, and tests. Production deployment remains
 a separately verified state. The reusable-artifact registry is now implemented
 at `contract_ready_not_materialized` with logical fingerprint
 `70a88ceaa6e2294cc4795f1909fc18717327c27a32fa109cb44e46e160dec68a`.
-It contains five family policies and zero materialized panels, active campaigns,
-new outcome access, physical data writes, or new services. This source milestone
-is deployed in the release identified above.
+It contains five family policies and remains the immutable pre-materialization
+baseline. Registry V2 now records one qualified Market-State artifact with
+logical fingerprint
+`54a6de97b9e8d2693e7b926ffb9948ed266e5490b51fae45ff6b843546e84922`;
+all other artifact families remain at zero. This changes no campaign, outcome,
+physical-data-write, or service authority.
 
 ADR 0284 and `quant-research-discovery-cycle/1.0` make Factor Discovery a
 renewable sequence of finite campaigns. The current cycle is
@@ -260,6 +263,18 @@ canonical report bytes. Report SHA-256 is
 logical fingerprint is
 `20b496eb76ba6597b6937bf2e79924a65491631767e7e1c4ac186281bba04ee3`.
 Campaign Three is still unregistered and all outcomes remain closed.
+
+ADR 0289 and `quant-research-campaign-hypothesis-registry/1.0` now close the
+outcome-blind hypothesis-intake and deduplication gate under logical fingerprint
+`490559d080b0c33f905b393a6ae9a419367f5f089b3a9da17e4e711c69f97a7f`.
+Five proposals are retained: three candidate-Alpha interactions and one risk-
+guard interaction advance to input qualification; the ATR-compression and
+broad-trend proposal is recorded as a near-duplicate and consumes no
+prospective trial. Formal Campaign Three registration, Ledger V4, Development
+outcomes, Validation, Holdout, model inputs, and Candidate activation remain
+closed. The next gate is a deterministic outcome-blind alignment and
+eligibility report plus exact replay over only the frozen Development
+intersection.
 
 The source Lab projection now presents this pilot without exposing internal
 fingerprints, raw IDs, or custody identifiers. Formulas, parameters, sample
