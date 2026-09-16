@@ -64,8 +64,12 @@ def test_campaign_three_input_decision_rejects_unsupported_state() -> None:
 
 def test_campaign_three_input_report_accepts_two_alpha_and_one_risk() -> None:
     report = _report()
+    reread = CampaignThreeInputQualificationReportV1.model_validate_json(
+        report.model_dump_json()
+    )
 
     assert report.status is CampaignThreeInputQualificationStatus.READY_FOR_PROTOCOL_FREEZE
+    assert reread == report
     assert report.qualified_candidate_alpha_count == 2
     assert report.rejected_candidate_alpha_count == 1
     assert report.qualified_risk_guard_count == 1

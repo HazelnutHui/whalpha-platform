@@ -261,8 +261,8 @@ class CampaignThreeInputQualificationReportV1(FrozenModel):
         MARKET_STATE_QUALIFICATION_REPORT_SHA256
     ] = MARKET_STATE_QUALIFICATION_REPORT_SHA256
     development_session_partition_fingerprint: str = Field(pattern=r"^[0-9a-f]{64}$")
-    development_first_session: Literal[date(2025, 7, 22)] = date(2025, 7, 22)
-    development_last_session: Literal[date(2026, 1, 7)] = date(2026, 1, 7)
+    development_first_session: date = date(2025, 7, 22)
+    development_last_session: date = date(2026, 1, 7)
     development_session_count: Literal[106] = 106
     decisions: tuple[CampaignThreeInputQualificationDecisionV1, ...] = Field(
         min_length=4, max_length=4
@@ -331,6 +331,8 @@ class CampaignThreeInputQualificationReportV1(FrozenModel):
             self.protocol_fingerprint != protocol.logical_fingerprint
             or self.source_hypothesis_registry_fingerprint
             != registry.logical_fingerprint
+            or self.development_first_session != protocol.development_first_session
+            or self.development_last_session != protocol.development_last_session
             or tuple(item.hypothesis_id for item in self.decisions) != accepted_ids
             or (
                 qualified_alpha,
