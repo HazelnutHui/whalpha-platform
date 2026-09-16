@@ -39,8 +39,9 @@ search after two completed campaigns and 14 consumed trials.
    not replace the primary endpoint.
 5. Require positive interaction beta, a positive one-sided 90% lower bound,
    positive beta in both chronological halves, at least 80 primary sessions
-   and 40 per half, and sign consistency under both 10-session primary and
-   20-session sensitivity circular block bootstraps with 10,000 replicates.
+   and 40 per half, and a positive one-sided 90% lower bound under both
+   10-session primary and 20-session sensitivity circular block bootstraps with
+   10,000 replicates.
 6. Candidate Alpha additionally requires positive mean `q(t)` in the
    preregistered favorable state above natural zero. The continuous volatility
    state for the risk guard is not forced through an economically false zero-

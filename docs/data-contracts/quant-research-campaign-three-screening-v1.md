@@ -26,7 +26,7 @@ retained before-outcomes failures and are not registered trials.
 - third-session primary endpoint with one- and five-session diagnostics;
 - 10,000 deterministic circular block-bootstrap replicates using 10 sessions
   as primary and 20 sessions as sensitivity;
-- positive beta, positive one-sided 90% lower bound, positive beta in both
+- positive beta, positive one-sided 90% lower bounds under both block lengths, positive beta in both
   halves, Alpha favorable-state support, and Holm correction at 0.05 within
   the two-Alpha and one-risk families;
 - 0/10/25/50 basis-point-per-side non-gating cost diagnostics; and

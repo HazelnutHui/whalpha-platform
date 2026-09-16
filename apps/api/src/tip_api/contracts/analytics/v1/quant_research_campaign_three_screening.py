@@ -216,7 +216,7 @@ class CampaignThreeScreeningProtocolV1(FrozenModel):
         "not_applied_continuous_volatility_interaction_uses_beta_gate"
     ] = "not_applied_continuous_volatility_interaction_uses_beta_gate"
     primary_block_required: Literal[True] = True
-    sensitivity_block_sign_consistency_required: Literal[True] = True
+    sensitivity_block_lower_bound_positive_required: Literal[True] = True
     diagnostic_horizons_cannot_replace_primary: Literal[True] = True
     cost_scenarios_bps_per_side: tuple[
         Literal[0], Literal[10], Literal[25], Literal[50]

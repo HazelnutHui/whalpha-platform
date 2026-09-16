@@ -41,6 +41,7 @@ def test_campaign_three_protocol_is_finite_registered_and_outcomes_closed() -> N
     ) == 1
     assert first.primary_bootstrap_block_sessions == 10
     assert first.sensitivity_bootstrap_block_sessions == 20
+    assert first.sensitivity_block_lower_bound_positive_required is True
     assert first.bootstrap_replicates == 10_000
     assert first.maximum_selected_candidate_alpha == 1
     assert first.maximum_selected_risk_guard == 1
