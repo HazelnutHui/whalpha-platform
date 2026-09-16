@@ -303,7 +303,11 @@ def run_campaign_three_input_qualification(
             )
         evidence = _replay_v2_factor_sessions(
             repository=repository,
-            source_sessions=source_sessions,
+            source_sessions=tuple(
+                item
+                for item in source_sessions
+                if item <= development_sessions[-1]
+            ),
             memberships=memberships,
             development_sessions=frozenset(development_sessions),
             split_evidence=split_evidence,

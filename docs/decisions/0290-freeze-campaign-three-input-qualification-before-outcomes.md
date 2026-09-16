@@ -40,7 +40,8 @@ Development availability.
    chronological support instead.
 6. Reuse the V1 outcome-blind session and pairwise evidence. Replay only the
    two required V2 factors over the exact Development intersection from the
-   qualification-bound sources.
+   qualification-bound sources, and stop bar reads at the final Development
+   session after the full source identity has been verified.
 7. Require one formal report and one canonical-byte-identical replay under
    owner-only custody outside `/data`.
 8. A ready result authorizes only screening-protocol and Ledger V4

@@ -49,7 +49,9 @@ scripts/admin/run-quant-research-campaign-three-input-qualification.sh \
 ```
 
 The implementation revision must be the current clean commit. The runner
-disables network access before reading sources.
+disables network access before reading sources. It verifies the full V2 source
+identity, but the bar replay stops at the last required Development session;
+later signal partitions are not reread for this bounded task.
 
 ## Replay and verification
 
