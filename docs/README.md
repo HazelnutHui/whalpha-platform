@@ -73,6 +73,14 @@ historical evidence, but are no longer part of default recovery. Use the
 [data-contract index](data-contracts/README.md), [ADR index](decisions/README.md),
 or dated [audits](audits/) when reproducing that program.
 
+## Internal research thinking
+
+- [Quantitative Research Thinking Notebook / 量化研究思考簿](research/quantitative-research-thinking-notebook.md):
+  non-authoritative human and quantitative-research ideas. Entries require
+  explicit user review before they can change data acquisition, experiments,
+  code, Product, publication, or deployment, and are never published to the
+  website merely because they were recorded.
+
 ## Architecture and data
 
 - [Application Architecture](architecture/application-architecture.md)
