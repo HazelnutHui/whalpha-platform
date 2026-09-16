@@ -1,8 +1,8 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-16T05:31:17Z
+Operational state verified at: 2026-09-16T06:04:43Z
 
-Deployment state verified at: 2026-09-16T05:31:17Z
+Deployment state verified at: 2026-09-16T06:04:43Z
 
 Repository context updated at: 2026-09-16 UTC
 
@@ -20,8 +20,8 @@ ADRs, and dated audits.
 | Branch | `main`; verify live HEAD before mutation |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Active OCI release | `2026-09-16T053000Z-9ed201a` |
-| Deployed source | `9ed201a4da5cd6424c1ea82ece9be2f9cf42ba9c` |
+| Active OCI release | `2026-09-16T060322Z-bd530f40ed45` |
+| Deployed source | `bd530f40ed45d42617e83f77741e1091fe95a311` |
 
 Dell owns code, canonical data, governance, and heavy computation. OCI is the
 bounded public-serving tier. A newer clean repository commit does not imply a
@@ -46,19 +46,20 @@ network-disabled reread. Run project Python through
 
 The current release passed independent release, source, bundle, checksum,
 service, protected-route, guest-flow, Candidate-route, logout, listener, and
-residue checks. The public entry dossier and protected Lab expose the completed V2
-Development result: four candidate-Alpha trials failed, two risk guards
-qualified as risk evidence but were not selected, the exact replay matched,
-and no model opened. The Lab also exposes one qualified reusable Market-State
-panel, five frozen hypothesis cards, the completed Campaign Three input
-qualification and exact replay, two Alpha interactions plus one risk guard at
-protocol freeze, and one Alpha design rejected before outcomes. It links
-hypothesis submissions to `@whalphalab`. The protected
-workspace now
+residue checks. The public entry dossier and protected Lab now show the governed
+three-layer lineage: the first two factor campaigns closed without candidate
+Alpha; Campaign Three has two Alpha interactions and one risk guard registered
+as unread trials; the cumulative ledger contains 17 formal trials; and active
+Alpha, model, and strategy counts remain zero. The qualified Market-State
+panel, frozen hypothesis intake, completed input qualification, exact replay,
+and one Alpha design rejected before outcomes remain visible. The
+pre-architecture Strong-Leader Pullback name and method record are no longer
+rendered publicly; their immutable contracts and audits remain internal
+anti-retesting evidence. The Lab links hypothesis submissions to
+`@whalphalab`. The protected workspace
 shows an identifier-free cumulative guest-entry counter; the internal baseline
 is 1,050 and the first actual guest workspace entry displays 1,051. English,
-Chinese, and Spanish agree on that state. V1 screening and
-Strong-Leader Pullback remain historical failed research; all model, strategy,
+Chinese, and Spanish agree on that state. All model, strategy,
 Validation, Holdout, Candidate, and option-performance authority stays locked.
 An unauthenticated Dashboard request redirects to Session entry. Password
 login and final visual appearance remain manual checks. Production Market

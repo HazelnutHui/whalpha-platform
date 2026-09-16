@@ -24,6 +24,12 @@ and dated [audits](../audits/). Current capability and next work belong in
   or write authority closed until a separate exact authorization.
 - Tightened the frozen sensitivity-bootstrap gate wording: the one-sided 90%
   lower bound must be positive under both registered block lengths.
+- Deployed OCI release `2026-09-16T060322Z-bd530f40ed45` from source
+  `bd530f40ed45`. Independent postflight matched release, source, manifest,
+  checksums, equal guest/credential policy, guest Session, protected routes,
+  services, localhost-only listener, and zero failed/staging residue. Password
+  login and final browser appearance remain manual checks; the 2026-09-11
+  Snapshot and Market Intelligence publication were not refreshed.
 
 ## 2026-09-16 — Register Campaign Three protocol without reading outcomes
 
