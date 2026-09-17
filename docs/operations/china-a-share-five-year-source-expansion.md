@@ -32,6 +32,26 @@ Rows for unresolved occurrences remain keyed only by provider security ID.
 They may be retained for later recovery but cannot receive a stable identity
 or enter a research panel until separate evidence resolves them.
 
+Normalize every currently complete raw partition into separately governed
+stable-ID source observations with:
+
+```bash
+scripts/admin/normalize-china-ashare-five-year-source-expansion.sh \
+  --population-package /absolute/population-package \
+  --plan-root /absolute/private/source-expansion-custody/plan=FINGERPRINT \
+  --custody-root /absolute/private/normalized-expansion-custody \
+  --maximum-new-partitions 0
+```
+
+This command may run while later raw partitions are still being acquired. It
+exactly rereads and skips existing normalized partitions, processes each next
+complete raw partition, and stops at the first unavailable raw partition.
+Resolved targets become typed unadjusted bars, daily states, and provider
+adjustment observations. Quarantined targets remain source-keyed in raw
+custody and contribute only explicit quarantine counts. Normalization does not
+resolve official price limits, adjustment economics, canonical data, return
+labels, research admission, Product publication, or deployment.
+
 After every planned partition is present, finalize the source-only census:
 
 ```bash

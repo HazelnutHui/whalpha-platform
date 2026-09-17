@@ -292,6 +292,10 @@ unrelated partitions into an infinite repair loop.
   one session at a time: a bounded two-process check produced a source request
   failure and invalid logout state in one process. CPU parallelism does not
   defeat provider limits.
+- Raw expansion normalization is an independent content-addressed follower.
+  It may process complete immutable raw partitions while acquisition continues,
+  but only resolved population occurrences receive stable-ID observations;
+  quarantined occurrences remain source-keyed and excluded.
 - Normalization, reconciliation, feature materialization, and reporting may
   use workstation cores on immutable partitions.
 - Parquet and small manifests remain the default research store. A service

@@ -7,6 +7,20 @@ and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md), [current work](current-work.md), and the
 [roadmap](roadmap.md), not here.
 
+## 2026-09-17 — Add restartable A-share expansion normalization
+
+- Added a source-bound normalized-partition contract, pure stable-identity
+  transformation, compressed Parquet custody, exact reread, resume CLI, tests,
+  and operations guidance without changing canonical or research authority.
+- Preserved all unresolved population occurrences exclusively in source-keyed
+  raw custody; only resolved occurrences can emit typed bars, daily states, or
+  adjustment observations.
+- The first seven real partitions exactly reread with 401,191 unadjusted bars,
+  402,607 daily states, 6,998 adjustment observations, 350 resolved targets,
+  owner-only files, and zero symlinks. Full expansion and 13-family admission
+  remain incomplete.
+- Passed 76 focused A-share/BaoStock tests and all 3,150 backend tests.
+
 ## 2026-09-17 — Implement restartable A-share source expansion
 
 - Added a deterministic 5,409-target, 109-partition, 10,818-request plan plus

@@ -412,6 +412,13 @@ raw daily rows, 3,234 listing-to-end adjustment rows, and zero empty targets.
 A two-process check was rejected after one BaoStock adjustment request and
 logout state failed; only the successful independent partition published.
 Expansion therefore resumes serially and skips every completed partition.
+The separately governed normalized-expansion run has logical fingerprint
+`a7d24928a464b20632c44d6c92ac7aea3b99bfc22e077ced13073781c63682b4`.
+Its first seven exact real partitions retain 401,191 unadjusted bars, 402,607
+daily states, and 6,998 adjustment observations for 350 resolved targets.
+Normalization preserves unresolved targets only in raw source-keyed custody
+and does not grant return, research, canonical, Product, or deployment
+authority.
 The account rate is user-reported and its all-in/minimum/history assumptions
 remain unconfirmed by a broker statement. Issuer-level lifecycle rows remain
 separate and cannot claim listed-security termination. No raw upstream archive

@@ -149,6 +149,14 @@ from tip_api.contracts.china_ashare.v1.market_mechanics import (
     market_mechanics_manifest_fingerprint,
     market_mechanics_report_fingerprint,
 )
+from tip_api.contracts.china_ashare.v1.normalized_expansion import (
+    NORMALIZED_EXPANSION_METHOD_VERSION,
+    NORMALIZED_EXPANSION_PARTITION_VERSION,
+    ChinaAshareNormalizedExpansionPartitionManifestV1,
+    build_normalized_expansion_partition_manifest,
+    normalized_expansion_partition_manifest_fingerprint,
+    normalized_expansion_run_fingerprint,
+)
 from tip_api.contracts.china_ashare.v1.population import (
     POPULATION_METHOD_VERSION,
     POPULATION_PACKAGE_VERSION,
@@ -217,6 +225,8 @@ __all__ = [
     "SOURCE_EXPANSION_COMPLETION_VERSION",
     "MARKET_MECHANICS_METHOD_VERSION",
     "MARKET_MECHANICS_PACKAGE_VERSION",
+    "NORMALIZED_EXPANSION_METHOD_VERSION",
+    "NORMALIZED_EXPANSION_PARTITION_VERSION",
     "ChinaAshareAccountCostScenarioV1",
     "ChinaAshareAdjustmentFactorObservationV1",
     "ChinaAshareAdjustmentActionReconciliationV1",
@@ -254,6 +264,7 @@ __all__ = [
     "ChinaAshareMarketMechanicsArtifactKind",
     "ChinaAshareMarketMechanicsArtifactV1",
     "ChinaAshareMarketMechanicsManifestV1",
+    "ChinaAshareNormalizedExpansionPartitionManifestV1",
     "ChinaAshareLifecycleEventType",
     "ChinaAshareLifecycleSourceObservationV1",
     "ChinaAshareLifecycleSubjectKind",
@@ -320,6 +331,7 @@ __all__ = [
     "build_account_cost_scenario",
     "build_market_mechanics_report",
     "build_market_mechanics_manifest",
+    "build_normalized_expansion_partition_manifest",
     "build_five_year_population_package_manifest",
     "build_five_year_population_report",
     "build_population_occurrence",
@@ -358,6 +370,8 @@ __all__ = [
     "official_calendar_evidence_report_fingerprint",
     "market_mechanics_report_fingerprint",
     "market_mechanics_manifest_fingerprint",
+    "normalized_expansion_partition_manifest_fingerprint",
+    "normalized_expansion_run_fingerprint",
     "population_occurrence_set_fingerprint",
     "research_identity_key",
     "research_instrument_identity_fingerprint",

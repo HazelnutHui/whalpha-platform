@@ -4,7 +4,13 @@ from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from types import SimpleNamespace
+from uuid import UUID
 
+from tip_api.contracts.china_ashare.v1.foundation import (
+    ChinaAshareBoard,
+    ChinaAshareExchange,
+    ChinaAshareTradingStatus,
+)
 from tip_api.contracts.china_ashare.v1.population import (
     ChinaAsharePopulationDisposition,
 )
@@ -13,6 +19,10 @@ from tip_api.persistence.china_ashare_source_expansion_package import (
     publish_china_ashare_source_expansion_partition,
     publish_china_ashare_source_expansion_plan,
     read_china_ashare_source_expansion_partition,
+)
+from tip_api.persistence.china_ashare_normalized_expansion_package import (
+    publish_china_ashare_normalized_expansion_partition,
+    read_china_ashare_normalized_expansion_partition,
 )
 from tip_api.persistence.china_ashare_source_expansion_completion import (
     publish_china_ashare_source_expansion_completion,
@@ -26,6 +36,9 @@ from tip_api.services.china_ashare_source_expansion import (
 )
 from tip_api.services.china_ashare_source_expansion_completion import (
     build_china_ashare_source_expansion_completion,
+)
+from tip_api.services.china_ashare_source_expansion_normalization import (
+    normalize_china_ashare_source_expansion_partition,
 )
 
 
@@ -110,24 +123,102 @@ class FakeSession:
         )
 
 
+class FakeSessionWithQuarantineRows(FakeSession):
+    def query_history_k_data_plus(
+        self,
+        code: str,
+        fields: str,
+        start_date: str = "",
+        end_date: str = "",
+        frequency: str = "d",
+        adjustflag: str = "3",
+    ) -> FakeCursor:
+        if code != "sz.000001":
+            return super().query_history_k_data_plus(
+                code,
+                fields,
+                start_date=start_date,
+                end_date=end_date,
+                frequency=frequency,
+                adjustflag=adjustflag,
+            )
+        return FakeCursor(
+            fields=[
+                "date",
+                "code",
+                "open",
+                "high",
+                "low",
+                "close",
+                "preclose",
+                "volume",
+                "amount",
+                "tradestatus",
+                "isST",
+            ],
+            rows=[
+                [
+                    "2026-09-16",
+                    code,
+                    "8.00",
+                    "8.20",
+                    "7.90",
+                    "8.10",
+                    "8.00",
+                    "2000",
+                    "16100",
+                    "1",
+                    "0",
+                ]
+            ],
+        )
+
+    def query_adjust_factor(
+        self, code: str, start_date: str = "", end_date: str = ""
+    ) -> FakeCursor:
+        if code != "sz.000001":
+            return super().query_adjust_factor(
+                code, start_date=start_date, end_date=end_date
+            )
+        return FakeCursor(
+            fields=[
+                "code",
+                "dividOperateDate",
+                "foreAdjustFactor",
+                "backAdjustFactor",
+                "adjustFactor",
+            ],
+            rows=[[code, "2026-09-16", "1.0", "1.0", "1.0"]],
+        )
+
+
 def _population():
     occurrences = (
         SimpleNamespace(
             source_security_id="sh.600001",
             listing_date=date(2000, 1, 1),
             disposition=ChinaAsharePopulationDisposition.RESOLVED,
+            instrument_id=UUID("00000000-0000-0000-0000-000000000001"),
+            exchange=ChinaAshareExchange.SSE,
+            board=ChinaAshareBoard.SSE_MAIN,
             logical_fingerprint="1" * 64,
         ),
         SimpleNamespace(
             source_security_id="sz.000001",
             listing_date=date(2000, 1, 2),
             disposition=ChinaAsharePopulationDisposition.QUARANTINED,
+            instrument_id=None,
+            exchange=ChinaAshareExchange.SZSE,
+            board=ChinaAshareBoard.UNKNOWN,
             logical_fingerprint="2" * 64,
         ),
         SimpleNamespace(
             source_security_id="sz.000002",
             listing_date=date(2000, 1, 3),
             disposition=ChinaAsharePopulationDisposition.RESOLVED,
+            instrument_id=UUID("00000000-0000-0000-0000-000000000003"),
+            exchange=ChinaAshareExchange.SZSE,
+            board=ChinaAshareBoard.SZSE_MAIN,
             logical_fingerprint="3" * 64,
         ),
     )
@@ -244,3 +335,62 @@ def test_complete_source_expansion_builds_bound_completion_report(
     assert report.adjustment_zero_row_target_count == 2
     assert reread.report == report
     assert reread.file_count == 1
+
+
+def test_source_expansion_normalization_uses_only_resolved_identity(
+    tmp_path: Path,
+) -> None:
+    population = _population()
+    plan = plan_china_ashare_source_expansion(
+        population_package=population, partition_size=2, registered_at=NOW
+    )
+    plan_result = publish_china_ashare_source_expansion_plan(
+        custody_root=tmp_path / "custody", plan=plan
+    )
+    partition = plan_result.plan.partitions[0]
+    captured = capture_baostock_source_expansion_partition(
+        session=FakeSessionWithQuarantineRows(),
+        partition=partition,
+        interval_start=plan.interval_start,
+        interval_end=plan.interval_end,
+        captured_at=NOW,
+    )
+    source_partition = publish_china_ashare_source_expansion_partition(
+        plan_result=plan_result,
+        partition=partition,
+        captured=captured,
+        captured_at=NOW,
+    )
+
+    normalized = normalize_china_ashare_source_expansion_partition(
+        population_package=population,
+        plan_result=plan_result,
+        source_partition=source_partition,
+    )
+
+    assert len(normalized.bars) == 1
+    assert len(normalized.states) == 1
+    assert len(normalized.adjustments) == 1
+    assert normalized.states[0].trading_status is ChinaAshareTradingStatus.TRADING
+    assert normalized.resolved_target_count == 1
+    assert normalized.quarantined_target_ids == ("sz.000001",)
+    assert normalized.quarantined_daily_row_count == 1
+    assert normalized.quarantined_adjustment_row_count == 1
+    result = publish_china_ashare_normalized_expansion_partition(
+        custody_root=tmp_path / "normalized",
+        population_package=population,
+        plan_result=plan_result,
+        source_partition=source_partition,
+        normalized=normalized,
+        normalized_at=NOW,
+    )
+    reread = read_china_ashare_normalized_expansion_partition(
+        custody_root=tmp_path / "normalized",
+        population_package=population,
+        plan_result=plan_result,
+        source_partition=source_partition,
+    )
+
+    assert result.manifest == reread.manifest
+    assert reread.normalized == normalized
+    assert reread.file_count == 4
