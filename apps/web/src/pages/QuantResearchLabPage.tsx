@@ -42,6 +42,120 @@ const ARCHITECTURE_COPY = {
   },
 } as const;
 
+const MARKET_LIFECYCLE_COPY = {
+  en: {
+    title: 'Complete research path by market',
+    note: 'One governance language, two strictly isolated evidence chains. Open a market to see what is complete, active, blocked, or still unauthorized.',
+    nextGate: 'Next gate', denied: 'Not yet authorized',
+    markets: [
+      { code: 'US', name: 'U.S. equities', badge: 'FACTOR DISCOVERY · ACTIVE', summary: 'Five-year research evidence is admitted. Three finite campaigns are closed with no candidate Alpha; the outcome-blind factor-space audit and its exact replay are complete.', next: 'Use the measured redundancy structure to register a new finite and deduplicated hypothesis intake without reopening prior trials.', denied: 'No model, strategy, Candidate ranking, Validation, Holdout, shadow, activation, or trading authority.', stages: [
+        ['Data foundation', 'completed', 'Point-in-time prices, identity, membership, actions, and split evidence are bound for research.'],
+        ['Historical Coverage admission', 'completed', 'The admitted research interval and population passed the required coverage gate.'],
+        ['Factor Discovery', 'active', 'Three finite campaigns and 17 trials closed without candidate Alpha; failures remain counted.'],
+        ['Factor-space diagnostics', 'completed', 'The outcome-blind report and independent exact replay match; it measures redundancy but admits no Alpha.'],
+        ['Finite Development screen', 'completed', 'Prior registered screens were exactly replayed; none produced candidate Alpha.'],
+        ['Model Construction', 'blocked', 'Requires a small admitted set with incremental information and reproducible Development evidence.'],
+        ['Strategy Expression', 'blocked', 'Entry, exit, holding, sizing, costs, capacity, and risk rules require a locked model first.'],
+        ['Locked Validation', 'not-started', 'A later fixed protocol may use Validation once; it remains closed now.'],
+        ['Sealed Holdout', 'not-started', 'One final untouched test remains sealed and cannot guide research.'],
+        ['Prospective shadow', 'not-started', 'Requires a surviving model and strategy with frozen implementation.'],
+        ['Separate activation', 'not-authorized', 'Product activation requires an explicit human decision and separate evidence.'],
+        ['Monitoring', 'not-started', 'Live drift, cost, capacity, and failure monitoring begin only after activation.'],
+        ['Retirement', 'not-started', 'Invalidated or decayed research is retired without deleting its evidence.'],
+      ]},
+      { code: 'CN', name: 'China A-shares', badge: 'DATA FOUNDATION · ACTIVE', summary: 'The isolated five-year source expansion and normalization now cover all 109 partitions; the 13-family admission census remains the active foundation gate.', next: 'Reconcile the complete source census with identity, lifecycle, actions, rules, fees, daily Universe, and Historical Coverage, then exactly replay admission.', denied: 'No factor batch, model, strategy, A-share ranking, Product result, broker, or trading authority.', stages: [
+        ['Data foundation', 'active', 'All 109 source and normalized partitions are complete; cross-family reconciliation and admission remain open.'],
+        ['Historical Coverage admission', 'blocked', 'Admission waits for all required evidence families and exact replay; unknown records remain quarantined.'],
+        ['Factor Discovery', 'not-started', 'The first outcome-blind batch opens only after Historical Coverage admission.'],
+        ['Factor-space diagnostics', 'not-started', 'A-share factors receive a separate diagnostic; U.S. geometry cannot be reused as evidence.'],
+        ['Finite Development screen', 'not-started', 'No A-share outcome-reading campaign has been registered.'],
+        ['Model Construction', 'blocked', 'No A-share factor has model-input authority.'],
+        ['Strategy Expression', 'blocked', 'Price limits, T+1, fees, capacity, and execution rules must be explicit.'],
+        ['Locked Validation', 'not-started', 'Validation remains unavailable until a registered strategy survives Development.'],
+        ['Sealed Holdout', 'not-started', 'Holdout remains sealed and cannot influence discovery or tuning.'],
+        ['Prospective shadow', 'not-started', 'No A-share shadow portfolio exists.'],
+        ['Separate activation', 'not-authorized', 'A-share Product activation is a separate human decision.'],
+        ['Monitoring', 'not-started', 'Monitoring starts only after an independently activated A-share expression.'],
+        ['Retirement', 'not-started', 'Retirement rules preserve rejected and invalidated evidence.'],
+      ]},
+    ],
+  },
+  zh: {
+    title: '按市场展开的完整研究流程',
+    note: '统一研究治理语言，两条证据链严格隔离。展开市场即可查看哪些阶段已完成、正在进行、被阻塞或尚未授权。',
+    nextGate: '下一道准入门', denied: '尚未获得的权限',
+    markets: [
+      { code: 'US', name: '美国股票', badge: '因子发现 · 进行中', summary: '五年研究证据已经准入。三批有限研究均未产生候选 Alpha；结果盲因子空间审计及独立精确重放已经完成。', next: '依据实测冗余结构登记一批新的、有限且完成去重的研究假设，不重开既有试验。', denied: '尚无模型、策略、候选排名、Validation、Holdout、影子运行、正式激活或交易权限。', stages: [
+        ['数据基础', 'completed', '点时价格、证券身份、历史成员、公司行动与拆股证据已绑定研究用途。'],
+        ['历史覆盖准入', 'completed', '研究区间与研究总体已通过所需覆盖门槛。'],
+        ['因子发现', 'active', '三批有限研究共17项试验均已关闭，没有候选 Alpha；失败永久计数。'],
+        ['因子空间诊断', 'completed', '结果盲报告与独立精确重放逐字节一致；它只度量冗余，不授予 Alpha 资格。'],
+        ['有限 Development 筛选', 'completed', '既有预登记筛选和精确重放均已完成，没有产生候选 Alpha。'],
+        ['模型构建', 'blocked', '必须先获得少量具备增量信息且可复现的合格输入。'],
+        ['策略表达', 'blocked', '锁定模型后才可定义入场、退出、持有、仓位、成本、容量与风险。'],
+        ['锁定 Validation', 'not-started', '未来可按固定协议使用一次；当前保持关闭。'],
+        ['封存 Holdout', 'not-started', '最终未触碰检验集保持封存，不得反向指导研究。'],
+        ['前瞻影子运行', 'not-started', '需要先有通过验证且实现冻结的模型与策略。'],
+        ['独立正式激活', 'not-authorized', '进入产品必须由人单独审批，研究通过不会自动上线。'],
+        ['持续监控', 'not-started', '只有激活后才监控漂移、成本、容量与失效。'],
+        ['退役', 'not-started', '失效或衰减的研究会退役，但证据不会被删除。'],
+      ]},
+      { code: 'CN', name: '中国 A 股', badge: '数据基础 · 进行中', summary: '独立的五年来源扩展与标准化已覆盖全部109个分区；13类准入清单仍是当前数据基础门禁。', next: '把完整来源清单与身份、生命周期、公司行动、规则、费用、每日 Universe 和历史覆盖逐项核对，再进行精确准入重放。', denied: '尚无因子批次、模型、策略、A股排名、产品结果、券商或交易权限。', stages: [
+        ['数据基础', 'active', '109个原始与标准化分区均已完成；跨证据族核对和正式准入仍未完成。'],
+        ['历史覆盖准入', 'blocked', '需等全部证据家族和精确重放完成；未知记录继续隔离。'],
+        ['因子发现', 'not-started', '只有通过历史覆盖准入后，才开放第一批结果盲因子研究。'],
+        ['因子空间诊断', 'not-started', 'A股因子必须独立诊断，不能把美股结构当作A股证据。'],
+        ['有限 Development 筛选', 'not-started', '尚未登记任何读取A股收益结果的研究批次。'],
+        ['模型构建', 'blocked', '目前没有任何A股因子获得模型输入资格。'],
+        ['策略表达', 'blocked', '必须明确处理涨跌停、T+1、费用、容量与成交规则。'],
+        ['锁定 Validation', 'not-started', '策略通过 Development 前，Validation 不开放。'],
+        ['封存 Holdout', 'not-started', 'Holdout 保持封存，不得影响发现和调参。'],
+        ['前瞻影子运行', 'not-started', '当前不存在A股影子组合。'],
+        ['独立正式激活', 'not-authorized', 'A股产品激活需要单独的人类审批。'],
+        ['持续监控', 'not-started', '仅在独立激活A股策略表达后开始。'],
+        ['退役', 'not-started', '退役规则将保留所有被拒绝和失效证据。'],
+      ]},
+    ],
+  },
+  es: {
+    title: 'Proceso completo por mercado',
+    note: 'Un mismo gobierno y dos cadenas de evidencia aisladas. Abra cada mercado para ver lo completado, activo, bloqueado o no autorizado.',
+    nextGate: 'Próxima puerta', denied: 'Aún no autorizado',
+    markets: [
+      { code: 'US', name: 'Acciones de EE. UU.', badge: 'FACTORES · ACTIVO', summary: 'La evidencia de cinco años está admitida. Tres campañas cerraron sin Alpha candidato; el diagnóstico factorial sin resultados y su reproducción exacta están completos.', next: 'Usar la redundancia medida para registrar una nueva entrada finita y deduplicada sin reabrir pruebas anteriores.', denied: 'Sin modelo, estrategia, ranking, Validación, Holdout, sombra, activación ni negociación.', stages: [
+        ['Base de datos', 'completed', 'Precios puntuales, identidad, membresía, acciones y splits están vinculados a investigación.'],
+        ['Admisión histórica', 'completed', 'El intervalo y la población superaron la cobertura requerida.'],
+        ['Descubrimiento de factores', 'active', 'Tres campañas y 17 pruebas cerraron sin Alpha candidato; los fallos siguen contabilizados.'],
+        ['Diagnóstico factorial', 'completed', 'El informe sin resultados y su reproducción independiente coinciden exactamente; mide redundancia, no admite Alpha.'],
+        ['Cribado finito en Desarrollo', 'completed', 'Los cribados registrados fueron reproducidos y no produjeron Alpha candidato.'],
+        ['Construcción del modelo', 'blocked', 'Requiere pocas entradas admitidas, incrementales y reproducibles.'],
+        ['Expresión de estrategia', 'blocked', 'Entrada, salida, tenencia, tamaño, costes, capacidad y riesgo exigen un modelo bloqueado.'],
+        ['Validación bloqueada', 'not-started', 'Podrá usarse una vez con protocolo fijo; hoy sigue cerrada.'],
+        ['Holdout sellado', 'not-started', 'La prueba final permanece intacta y no guía la investigación.'],
+        ['Sombra prospectiva', 'not-started', 'Requiere modelo y estrategia supervivientes con implementación congelada.'],
+        ['Activación separada', 'not-authorized', 'La activación exige una decisión humana explícita.'],
+        ['Monitorización', 'not-started', 'Deriva, costes, capacidad y fallos se vigilan solo tras activar.'],
+        ['Retirada', 'not-started', 'La evidencia se conserva aunque la investigación sea retirada.'],
+      ]},
+      { code: 'CN', name: 'Acciones A de China', badge: 'BASE DE DATOS · ACTIVA', summary: 'La expansión y normalización aisladas de cinco años cubren ya las 109 particiones; el censo de admisión de 13 familias sigue activo.', next: 'Conciliar el censo completo con identidad, ciclo de vida, acciones, reglas, costes, Universo diario y cobertura histórica; después reproducir la admisión.', denied: 'Sin campaña factorial, modelo, estrategia, ranking chino, Producto, bróker ni negociación.', stages: [
+        ['Base de datos', 'active', 'Las 109 particiones fuente y normalizadas están completas; faltan conciliación entre familias y admisión.'],
+        ['Admisión histórica', 'blocked', 'Espera todas las familias de evidencia y reproducción; lo desconocido queda en cuarentena.'],
+        ['Descubrimiento de factores', 'not-started', 'La primera campaña ciega a resultados solo abre tras la admisión.'],
+        ['Diagnóstico factorial', 'not-started', 'Los factores chinos tendrán diagnóstico propio; la geometría estadounidense no es evidencia.'],
+        ['Cribado finito en Desarrollo', 'not-started', 'No existe campaña china registrada con acceso a resultados.'],
+        ['Construcción del modelo', 'blocked', 'Ningún factor chino tiene autoridad como entrada de modelo.'],
+        ['Expresión de estrategia', 'blocked', 'Debe formalizar límites, T+1, costes, capacidad y ejecución locales.'],
+        ['Validación bloqueada', 'not-started', 'No abre hasta que una estrategia sobreviva Desarrollo.'],
+        ['Holdout sellado', 'not-started', 'Sigue sellado y no guía descubrimiento ni ajuste.'],
+        ['Sombra prospectiva', 'not-started', 'No existe cartera sombra china.'],
+        ['Activación separada', 'not-authorized', 'La activación china requiere decisión humana separada.'],
+        ['Monitorización', 'not-started', 'Comienza solo tras una expresión china activada.'],
+        ['Retirada', 'not-started', 'Se conservará la evidencia rechazada o invalidada.'],
+      ]},
+    ],
+  },
+} as const;
+
 const FACTOR_NAMES: Record<string, Record<string, string>> = {
   en: {
     relative_return_spy_20s: '20-session relative return versus SPY',
@@ -144,12 +258,13 @@ const COPY = {
     statusNote: 'Campaign Three completed one frozen Development screen and a byte-identical replay. Both Alpha interactions and the risk guard failed; no model or strategy was opened.',
     coverage: 'Evidence state', coverageNote: 'Method completeness and model effectiveness are separate questions.',
     coverageBoundary: 'A published method is not a validated strategy, current-market recommendation, or option-return forecast.',
-    factorSpace: 'Factor-space diagnostics for the next campaign', factorSpaceNote: 'The next intake must prove how many independent information directions exist before any factor is allowed to read outcomes.', factorSpaceBadge: 'REQUIRED · NOT YET COMPUTED',
+    factorSpace: 'Completed factor-space diagnostic', factorSpaceNote: 'Twenty stock inputs and ten Market-State metrics were measured without reading outcomes, then reproduced byte for byte.', factorSpaceBadge: 'COMPLETED · EXACT REPLAY',
+    factorSpaceStats: ['Stock inputs', 'Effective stock dimensions', 'Components for 90%', 'Market-State dimensions'],
     factorSpaceItems: [
-      ['Point-in-time standardization', 'Robust ranks or z-scores will be fit only on the eligible cross-section or frozen Development segment; no full-sample normalization.'],
-      ['Economic families and clusters', 'Economic taxonomy, Pearson/Spearman structure, missingness co-occurrence, hierarchical clusters, and multicollinearity diagnostics will be shown together.'],
-      ['PCA and effective dimension', 'Explained variance, loadings, effective dimension, and a two-dimensional loading map will be published after a registered Development-only fit. PCA is a redundancy diagnostic, not Alpha evidence.'],
-      ['Selection accountability', 'Every retained or rejected input will show its formula, transformation, cluster, incremental information, uncertainty, and decision reason.'],
+      ['Point-in-time standardization', 'The stock panel used same-session ranks and Development-only scaling; the Market-State panel used Development-only robust scaling. No full-sample fit or missing-value fill was used.'],
+      ['Measured redundancy', 'The 20 stock inputs contain about 9.14 effective dimensions. Residual volatility and downside semideviation, plus two short-reversal measures, form the strongest overlapping pairs.'],
+      ['PCA and effective dimension', 'Ten components explain 80% and thirteen explain 90% of stock-panel variance. The separate ten-metric Market-State panel contains about 4.53 effective dimensions. PCA diagnoses redundancy; it is not Alpha evidence.'],
+      ['Next decision', 'The next finite intake must avoid mechanically duplicating the measured clusters. No input has been promoted, no prior failed trial is reopened, and Model Construction remains locked.'],
     ],
     submission: 'Submit a falsifiable factor or strategy hypothesis for independent registration and testing under the same governed workflow. If an idea ultimately enters a usable model and future commercial use, WH Alpha will contact the contributor and report the outcome.',
     submissionContact: 'Contact',
@@ -256,12 +371,13 @@ const COPY = {
     statusNote: '第三批已完成一次冻结的开发期筛选和逐字节一致的精确重放。2项 Alpha 交互与1项风险护栏全部失败，没有开放模型或策略。',
     coverage: '证据状态', coverageNote: '方法是否完整与模型是否有效，是两个不同问题。',
     coverageBoundary: '公开方法不代表策略已验证，不代表适合当前市场，也不预测期权收益。',
-    factorSpace: '下一批研究的因子空间诊断', factorSpaceNote: '任何因子读取收益结果之前，必须先回答表面上的多个因子实际包含多少个独立信息方向。', factorSpaceBadge: '必需步骤 · 尚未计算',
+    factorSpace: '已完成的因子空间诊断', factorSpaceNote: '20项个股输入与10项市场状态指标在不读取收益结果的条件下完成测量，并通过逐字节一致的独立重放。', factorSpaceBadge: '已完成 · 精确重放一致',
+    factorSpaceStats: ['个股输入', '个股有效维度', '解释90%所需成分', '市场状态有效维度'],
     factorSpaceItems: [
-      ['点时标准化', '稳健排名或 z-score 只在当时合格横截面或冻结的 Development 区间拟合，禁止全样本标准化后再切分。'],
-      ['经济因子族与数据聚类', '同时公开经济分类、Pearson／Spearman 结构、缺失共现、层次聚类和多重共线性诊断。'],
-      ['PCA 与有效维度', '完成登记并仅在 Development 拟合后，公开解释方差、载荷、有效维度和二维载荷图；PCA 只诊断冗余，不证明 Alpha。'],
-      ['选择责任链', '每个保留或淘汰的输入都展示公式、变换、所属簇、增量信息、不确定性和决策原因。'],
+      ['点时标准化', '个股面板使用同日横截面排名与仅在 Development 拟合的尺度；市场状态面板使用 Development 稳健尺度。没有全样本拟合，也没有填补缺失值。'],
+      ['实测冗余', '20项个股输入约含9.14个有效维度。残差波动与下行半偏差，以及两项短期反转度量，是重叠最强的两组。'],
+      ['PCA 与有效维度', '个股面板需要10个成分解释80%方差、13个解释90%；独立的10项市场状态面板约含4.53个有效维度。PCA只诊断冗余，不证明 Alpha。'],
+      ['下一步决策', '下一批有限研究必须避开已测得的机械重复簇。目前没有任何输入被晋升，既有失败试验不会重开，模型构建仍保持锁定。'],
     ],
     submission: '欢迎提交可证伪的因子或策略假设。WH Alpha 将按统一研究流程独立登记、测试并保留失败记录；若建议最终进入可用模型并产生未来商业用途，将联系贡献者并反馈结果。',
     submissionContact: '联系',
@@ -368,12 +484,13 @@ const COPY = {
     statusNote: 'La tercera campaña completó una selección de Desarrollo congelada y una reproducción idéntica byte a byte. Las dos interacciones Alpha y la salvaguarda de riesgo fallaron; no se abrió ningún modelo ni estrategia.',
     coverage: 'Estado de la evidencia', coverageNote: 'La integridad del método y la eficacia del modelo son cuestiones distintas.',
     coverageBoundary: 'Publicar un método no convierte la estrategia en validada, adecuada para el mercado actual ni predictiva de rentabilidades de opciones.',
-    factorSpace: 'Diagnóstico del espacio de factores para la próxima campaña', factorSpaceNote: 'Antes de consultar resultados, la siguiente entrada debe demostrar cuántas direcciones de información independientes contienen sus factores.', factorSpaceBadge: 'OBLIGATORIO · AÚN NO CALCULADO',
+    factorSpace: 'Diagnóstico del espacio de factores completado', factorSpaceNote: 'Se midieron veinte entradas de acciones y diez métricas de estado de mercado sin consultar resultados, con reproducción exacta byte a byte.', factorSpaceBadge: 'COMPLETADO · REPRODUCCIÓN EXACTA',
+    factorSpaceStats: ['Entradas de acciones', 'Dimensiones efectivas', 'Componentes para 90 %', 'Dimensiones de mercado'],
     factorSpaceItems: [
-      ['Estandarización point-in-time', 'Los rangos robustos o z-scores se ajustarán solo sobre el corte transversal apto o el tramo de Desarrollo congelado, nunca sobre toda la muestra.'],
-      ['Familias económicas y clústeres', 'Se mostrarán conjuntamente la taxonomía económica, la estructura Pearson/Spearman, la coincidencia de ausencias, los clústeres jerárquicos y la multicolinealidad.'],
-      ['PCA y dimensión efectiva', 'Tras un ajuste registrado solo en Desarrollo se publicarán varianza explicada, cargas, dimensión efectiva y mapa bidimensional. PCA diagnostica redundancia; no demuestra Alpha.'],
-      ['Responsabilidad de selección', 'Cada entrada conservada o rechazada mostrará fórmula, transformación, clúster, información incremental, incertidumbre y motivo de decisión.'],
+      ['Estandarización point-in-time', 'El panel de acciones usó rangos por sesión y escalado ajustado solo en Desarrollo; el panel de mercado usó escalado robusto de Desarrollo. No hubo ajuste global ni imputación.'],
+      ['Redundancia medida', 'Las 20 entradas bursátiles contienen unas 9,14 dimensiones efectivas. La volatilidad residual con la semidesviación bajista y dos medidas de reversión corta son los solapamientos más fuertes.'],
+      ['PCA y dimensión efectiva', 'Diez componentes explican el 80 % y trece el 90 % de la varianza bursátil. El panel separado de diez métricas de mercado contiene unas 4,53 dimensiones efectivas. PCA diagnostica redundancia; no demuestra Alpha.'],
+      ['Próxima decisión', 'La siguiente entrada finita debe evitar duplicar mecánicamente los clústeres medidos. Ninguna entrada ha sido promovida y Construcción del modelo sigue bloqueada.'],
     ],
     submission: 'Se aceptan hipótesis refutables de factores o estrategias para su registro y evaluación independiente bajo el mismo proceso gobernado. Si una propuesta llega a un modelo utilizable y a un futuro uso comercial, WH Alpha contactará a la persona colaboradora y comunicará el resultado.',
     submissionContact: 'Contacto',
@@ -482,6 +599,7 @@ export function QuantResearchLabPage(): JSX.Element {
   const { locale } = useI18n();
   const c = COPY[locale];
   const architecture = ARCHITECTURE_COPY[locale];
+  const lifecycle = MARKET_LIFECYCLE_COPY[locale];
   const numberFormat = new Intl.NumberFormat(locale === 'zh' ? 'zh-CN' : locale === 'es' ? 'es-ES' : 'en-US');
   const decimalFormat = new Intl.NumberFormat(locale === 'zh' ? 'zh-CN' : locale === 'es' ? 'es-ES' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const correlationFormat = new Intl.NumberFormat(locale === 'zh' ? 'zh-CN' : locale === 'es' ? 'es-ES' : 'en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
@@ -521,6 +639,7 @@ export function QuantResearchLabPage(): JSX.Element {
     numberFormat.format(discoveryCycle.cumulative_formal_trial_count),
     c.cycleStatValues[4],
   ];
+  const factorSpaceStats = ['20', '9.14', '13 / 20', '4.53'];
   const foundationValues = [
     numberFormat.format(1_255),
     `${numberFormat.format(1_253)} / ${numberFormat.format(1_255)}`,
@@ -560,6 +679,9 @@ export function QuantResearchLabPage(): JSX.Element {
 
     <section className="research-card research-engineering-evidence" aria-labelledby="research-factor-space-title">
       <header><span>FS</span><div><h2 id="research-factor-space-title">{c.factorSpace}</h2><p>{c.factorSpaceNote}</p></div><b>{c.factorSpaceBadge}</b></header>
+      <div className="research-factor-stats">
+        {c.factorSpaceStats.map((label, index) => <article key={label}><span>{label}</span><strong>{factorSpaceStats[index]}</strong></article>)}
+      </div>
       <div className="research-screen-protocol">
         {c.factorSpaceItems.map(([title, body]) => <article key={title}><strong>{title}</strong><p>{body}</p></article>)}
       </div>
@@ -739,7 +861,19 @@ export function QuantResearchLabPage(): JSX.Element {
 
     <section className="research-boundary-grid"><article><span>{c.owner}</span><strong>{c.ownerValue}</strong></article><article><span>{c.boundary}</span><p>{c.boundaryBody}</p></article></section>
 
-    <section className="research-card research-lifecycle"><header><span>06</span><h2>{c.lifecycle}</h2></header><ol>{c.stages.map((stage, index) => <li className={index === 0 ? 'active' : 'locked'} key={stage}><i>{index + 1}</i><strong>{stage}</strong><small>{index === 0 ? c.current : c.locked}</small></li>)}</ol></section>
+    <section className="research-card research-lifecycle research-market-lifecycle" aria-labelledby="research-market-lifecycle-title">
+      <header><span>06</span><div><h2 id="research-market-lifecycle-title">{lifecycle.title}</h2><p>{lifecycle.note}</p></div></header>
+      <div>
+        {lifecycle.markets.map((market, marketIndex) => <details className="research-factor-details" open={marketIndex === 0} key={market.code}>
+          <summary>{market.code} · {market.name} · {market.badge}</summary>
+          <p className="research-factor-coverage">{market.summary}</p>
+          <ol className="research-engineering-rail">
+            {market.stages.map(([stage, state, body], index) => <li className={state === 'completed' ? '' : 'blocked'} key={stage}><i>{String(index + 1).padStart(2, '0')}</i><strong>{stage}</strong><small>{state.split('-').join(' ')} · {body}</small></li>)}
+          </ol>
+          <div className="research-screen-protocol"><article><strong>{lifecycle.nextGate}</strong><p>{market.next}</p></article><article><strong>{lifecycle.denied}</strong><p>{market.denied}</p></article></div>
+        </details>)}
+      </div>
+    </section>
 
     <section className="research-card research-results"><header><span>07</span><div><h2>{c.results}</h2><p>{c.resultsNote}</p></div></header><div className="research-result-grid">{c.resultCards.map(([name, state]) => <article key={name}><b aria-hidden="true">—</b><strong>{name}</strong><span>{state}</span></article>)}</div></section>
 

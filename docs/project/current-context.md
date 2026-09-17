@@ -261,6 +261,15 @@ The deployed cycle panel in the release identified above shows the completed
 Campaign Three result and returns the renewable cycle to outcome-blind
 hypothesis intake with no active campaign.
 
+ADR 0295's outcome-blind factor-space diagnostic and one independent exact
+replay are complete and byte-identical. The 167,860-row stock panel has 165,430
+complete cases across 20 registered inputs and about 9.14 effective dimensions;
+the separate 106-session Market-State panel has ten inputs and about 4.53
+effective dimensions. Both runs read zero outcomes, Validation, or Holdout
+records and wrote no canonical or Production data. The result authorizes only
+deduplication for a new finite hypothesis intake; it does not admit Alpha or
+open Model Construction.
+
 ADR 0287 fixes the first multi-agent pilot as a manually supervised,
 outcome-blind research team. Five current roles may inspect governance,
 evidence, hypotheses, implementation, and method risk; Development evaluation,
@@ -410,15 +419,17 @@ The population binds a deterministic 109-partition raw-source plan with
 logical fingerprint
 `bc78c1273a4de46b11abd4e85f1232b116dd01d727b0cd44031acc0f61f2db61`.
 Each partition holds at most 50 securities and exactly two bounded source
-requests per target. Initial partitions 0, 1, and 2 exactly reread with 172,870
-raw daily rows, 3,234 listing-to-end adjustment rows, and zero empty targets.
+requests per target. All 109 raw and all 109 normalized partitions now exactly
+reread. The immutable completion report binds 5,409 targets, 6,061,082 raw
+daily rows, 63,331 listing-to-end adjustment observations, and zero empty
+targets.
 A two-process check was rejected after one BaoStock adjustment request and
 logout state failed; only the successful independent partition published.
 Expansion therefore resumes serially and skips every completed partition.
 The separately governed normalized-expansion run has logical fingerprint
 `a7d24928a464b20632c44d6c92ac7aea3b99bfc22e077ced13073781c63682b4`.
-It exactly rereads immutable raw partitions, skips completed normalized
-partitions, and resumes from the first gap. Normalization preserves unresolved
+It exactly reread the first 84 immutable outputs and published the final 25
+partitions. Normalization preserves unresolved
 targets only in raw source-keyed custody and does not grant return, research,
 canonical, Product, or deployment authority. Live BaoStock sessions now bound
 socket reads and convert peer-close EOF into the existing finite partition
@@ -455,6 +466,8 @@ The exact expansion population is in the
 [five-year population audit](../audits/china-a-share-five-year-population-2026-09-17.md).
 The restartable acquisition procedure is in the
 [source-expansion operation](../operations/china-a-share-five-year-source-expansion.md).
+The exact completion facts are retained in the
+[source-expansion completion audit](../audits/china-a-share-five-year-source-expansion-completion-2026-09-17.md).
 
 ## Automation and standing boundaries
 

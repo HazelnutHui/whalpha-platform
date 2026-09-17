@@ -241,15 +241,6 @@
 .research-record-list li::marker { color: var(--accent); }
 .research-record-risk > div { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
 .research-record-risk article > strong { display: block; margin-bottom: 10px; }
-.research-lifecycle ol { display: grid; grid-template-columns: repeat(7, 1fr); margin: 0; padding: 0; list-style: none; }
-.research-lifecycle li { position: relative; display: grid; gap: 7px; padding: 18px 12px 8px 0; color: var(--muted); }
-.research-lifecycle li::before { content: ''; position: absolute; top: 10px; left: 20px; right: 0; height: 1px; background: var(--border); }
-.research-lifecycle li:last-child::before { right: 75%; }
-.research-lifecycle li i { position: relative; z-index: 1; display: grid; width: 21px; height: 21px; place-items: center; border: 1px solid var(--border-strong); border-radius: 50%; background: var(--surface); font-size: .65rem; font-style: normal; }
-.research-lifecycle li.done i { border-color: var(--positive); color: var(--positive); }
-.research-lifecycle li.active i { border-color: var(--warning); color: var(--warning); box-shadow: 0 0 0 5px rgba(221,182,101,.09); }
-.research-lifecycle li strong { color: var(--text); font-size: .86rem; }
-.research-lifecycle li small { font-size: .7rem; }
 .research-result-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 .research-result-grid article { display: grid; gap: 8px; padding: 15px; border: 1px dashed var(--border-strong); border-radius: 9px; background: var(--surface-2); }
 .research-result-grid article > b { color: var(--muted-2); font-size: 2.2rem; font-weight: 400; line-height: 1; }

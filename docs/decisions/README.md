@@ -11,6 +11,11 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0295](0295-freeze-us-factor-space-diagnostic-before-successor-intake.md):
+  freezes separate stock-cross-section and Market-State factor-space panels,
+  Development-only transforms, multivariate redundancy diagnostics,
+  deterministic PCA, effective-dimension reporting, and exact replay before a
+  successor U.S. campaign.
 - [ADR 0294](0294-isolate-china-a-share-daily-research-foundation.md):
   isolates a five-year China A-share daily research foundation, composes free
   sources without silent fallback, and keeps all backtest and Product authority

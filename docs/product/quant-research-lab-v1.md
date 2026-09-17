@@ -48,6 +48,23 @@ product policy explicitly changes.
 
 ## Lab information architecture
 
+The Lab must also provide one complete, market-specific lifecycle map rather
+than exposing only the currently interesting fragment. For each supported
+market it shows, in order: data foundation, Historical Coverage admission,
+Factor Discovery, factor-space/redundancy diagnostics, finite Development
+screening, Model Construction, Strategy Expression, locked Validation, sealed
+Holdout, prospective shadow, separate activation, monitoring, and retirement.
+Every stage states `completed`, `active`, `blocked`, `not started`, or
+`not authorized`; links to its human-readable evidence; names the next gate;
+and lists the authority it does not possess. U.S. and China A-share maps share
+the governance vocabulary but never share data, calendars, Universes, costs,
+results, or admission implicitly.
+
+The public map is a reviewed milestone projection, not a live process log. It
+must omit private paths, host names, hashes, opaque IDs, credentials, and raw
+operational events while retaining formulas, method boundaries, material
+sample/coverage facts, failures, blockers, and reproducibility status.
+
 ### 1. Factor registry
 
 Shows exact definitions, economic role, coverage, missingness, redundancy,

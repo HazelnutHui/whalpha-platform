@@ -145,6 +145,9 @@ see [ADR 0274](../decisions/0274-adopt-factor-model-strategy-three-layer-researc
 - [Quant Research Discovery Cycle State V2](quant-research-discovery-cycle-state-v2.md)
   projects the completed three-campaign, 17-trial Ledger V5 state back to
   outcome-blind hypothesis intake without rewriting the Cycle V1 policy.
+- [U.S. Quant Research Factor-Space Diagnostic V1](quant-research-factor-space-diagnostic-v1.md)
+  freezes separate stock and Market-State multivariate diagnostics before the
+  successor outcome-blind intake.
 - [Quant Research Reusable Artifact Registry V1](quant-research-reusable-artifact-registry-v1.md)
   defines exact content-addressed reuse and separate outcome-blind versus
   outcome-bearing custody for the next campaign's common research panels.

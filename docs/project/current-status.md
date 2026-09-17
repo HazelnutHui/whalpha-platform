@@ -75,7 +75,7 @@ ADRs, and audits.
   permanently records all 17 trials with zero admitted Alpha and zero model
   inputs. The cycle is back at outcome-blind hypothesis intake; Validation,
   Holdout, Model Construction, and all Product authority remain closed. All
-  3,153 backend tests, 135 frontend tests, and the Production frontend build
+  3,159 backend tests, 135 frontend tests, and the Production frontend build
   pass in repository source.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
@@ -118,16 +118,16 @@ ADRs, and audits.
   occurrences into 5,296 stable resolved identities, 113 quarantined
   acquisition targets, and 179 outside-scope records. The exact five-year
   expansion target is 5,409; three listing-date conflicts are retained with
-  official dates primary. A deterministic 109-partition source-expansion plan
-  is registered and exactly reread raw partitions are accumulating through its
-  restartable serial operation. A separate bounded-memory finalizer will bind
-  the complete source census only after all 109 partitions exist. A separate
-  restartable normalization follower exactly rereads complete raw partitions,
-  skips its completed immutable outputs, and resumes from the first gap; it
-  grants no return or research authority. BaoStock reads now have a bounded
+  official dates primary. The deterministic 109-partition source-expansion
+  plan and all 109 separately governed normalized partitions are now complete.
+  The immutable source census binds 5,409 targets, 6,061,082 daily rows, and
+  63,331 adjustment observations with zero zero-row targets. The restartable
+  normalization follower verified the prior 84 immutable outputs and published
+  the remaining 25 without granting return or research authority. BaoStock reads have a bounded
   timeout and peer-close detection so the existing finite partition retry can
   recover instead of allowing the vendor receive loop to spin indefinitely.
-  Remaining partitions are still in progress.
+  Cross-family reconciliation and the complete 13-family Historical Coverage
+  admission remain pending.
   No canonical Apply, research, Product, or deployment authority is granted.
   The offline XSHG calendar and all six source-state
   histories align
@@ -159,12 +159,15 @@ rendered publicly; their immutable contracts and audits remain internal anti-
 retesting evidence. This result changes no market analytics, Baseline Candidate
 calculation, model authority, or Candidate activation.
 
-The successor outcome-blind intake now requires an explicit factor-space
-diagnostic before outcomes: point-in-time standardization, economic factor
-families, data-driven clustering, multicollinearity checks, and Development-
-only PCA. The public Lab must distinguish that registered method from computed
-evidence and later show explained variance, loadings, effective dimension, and
-retained/rejected input reasons. PCA is a redundancy diagnostic, not Alpha.
+The successor outcome-blind factor-space diagnostic and its independent exact
+replay are complete. Across 167,860 stock observations, 20 registered inputs
+contain about 9.14 effective dimensions; 10 components explain 80% and 13
+explain 90% of complete-case variance. The separate 106-session, ten-metric
+Market-State panel contains about 4.53 effective dimensions. The strongest
+overlaps identify risk, short-reversal, path, and breadth clusters that must
+inform deduplication of the next finite intake. This is redundancy evidence,
+not Alpha, and no input, model, Candidate, Validation, or Holdout authority was
+opened.
 
 Production additionally contains the reviewed renewable-cycle panel in its
 completed Campaign Three state: three completed campaigns, 17 closed formal

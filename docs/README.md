@@ -52,6 +52,7 @@ Read this bounded set before new Lab research:
 - [Closed Factor Discovery Trial Ledger V5](data-contracts/quant-research-discovery-trial-ledger-v5.md)
 - [Renewable Factor Discovery Cycle V1](data-contracts/quant-research-discovery-cycle-v1.md)
 - [Current Factor Discovery Cycle State V2](data-contracts/quant-research-discovery-cycle-state-v2.md)
+- [U.S. Factor-Space Diagnostic V1](data-contracts/quant-research-factor-space-diagnostic-v1.md)
 - [Reusable Research Artifact Registry V2](data-contracts/quant-research-reusable-artifact-registry-v2.md)
 - [Market-State Vector V1.1](data-contracts/quant-research-market-state-vector-v1.md)
 - [Market-State Qualification V1](data-contracts/quant-research-market-state-qualification-v1.md)
@@ -70,10 +71,12 @@ Read this bounded set before new Lab research:
 - [ADR 0291: Campaign Three screening protocol and Ledger V4](decisions/0291-freeze-campaign-three-screening-protocol-and-ledger-v4.md)
 - [ADR 0292: Campaign Three evaluator and execution custody](decisions/0292-freeze-campaign-three-evaluator-and-execution-custody.md)
 - [ADR 0293: close Campaign Three and append Ledger V5](decisions/0293-close-campaign-three-without-alpha-and-append-ledger-v5.md)
+- [ADR 0295: freeze the successor factor-space diagnostic](decisions/0295-freeze-us-factor-space-diagnostic-before-successor-intake.md)
 - [Closed V2 screening result](audits/quant-research-factor-screening-v2-2026-09-15.md)
 - [Qualified Campaign Three market-state input](audits/quant-research-market-state-qualification-2026-09-16.md)
 - [Campaign Three outcome-blind input qualification](audits/quant-research-campaign-three-input-qualification-2026-09-16.md)
 - [Closed Campaign Three Development screen](audits/quant-research-campaign-three-screening-2026-09-16.md)
+- [Completed U.S. factor-space diagnostic](audits/quant-research-factor-space-diagnostic-2026-09-17.md)
 
 The Pullback contracts, operations, and intermediate audits remain immutable
 historical evidence, but are no longer part of default recovery. Use the
@@ -101,6 +104,7 @@ or dated [audits](audits/) when reproducing that program.
 - [China A-Share Stable Identity and Lifecycle Audit](audits/china-a-share-identity-lifecycle-2026-09-17.md)
 - [China A-Share Daily Universe Audit](audits/china-a-share-daily-universe-2026-09-17.md)
 - [China A-Share Five-Year Population Audit](audits/china-a-share-five-year-population-2026-09-17.md)
+- [China A-Share Five-Year Source Expansion Completion](audits/china-a-share-five-year-source-expansion-completion-2026-09-17.md)
 - [China A-Share Five-Year Population Operation](operations/china-a-share-five-year-population.md)
 - [China A-Share Five-Year Source Expansion Operation](operations/china-a-share-five-year-source-expansion.md)
 - [China A-Share Foundation UI Deployment Audit](audits/china-a-share-foundation-ui-deployment-2026-09-17.md)

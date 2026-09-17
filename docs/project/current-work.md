@@ -30,103 +30,67 @@ are never sufficient evidence by themselves.
 
 ## Active objective
 
-Prepare the isolated five-year China A-share daily foundation for the first
-governed **outcome-blind Factor Discovery** batch. Stop at the point where the
-exact admitted interval and population may compute factor inputs; do not read
-future-return outcomes, register a Development screen, construct a model,
+Complete the reviewed Product projection of ADR 0295's exactly replayed U.S.
+factor-space diagnostic, then register a separately finite and deduplicated
+outcome-blind successor hypothesis intake. Do not read future-return outcomes,
+reopen a closed campaign, register a Development screen, construct a model,
 publish rankings, or change Product authority.
+
+The previously authorized China A-share five-year source acquisition remains a
+bounded background operation. It may continue its serial provider-limited raw
+capture and restartable normalization, but it is not the active implementation
+objective and cannot share data, contracts, results, or authority with this
+U.S. diagnostic.
 
 ## Current checkpoint
 
-The bounded six-security SSE/SZSE pilot has passed source-repeat, official
-calendar, trading-rule, price-limit, statutory-fee, provisional account-cost,
-corporate-action/adjustment-economic, stable research identity, and listed-
-security lifecycle checks, plus the point-in-time daily-Universe check. The
-five-year acquisition population is now frozen: 5,588 official occurrences
-partition into 5,296 stable resolved identities, 113 quarantined acquisition
-targets, and 179 outside-scope records, leaving exactly 5,409 expansion
-targets. It has not completed full-market observations or the final 13-family
-admission. Canonical Product Apply remains outside this research-foundation
-objective.
+Campaign Three is closed at `closed_no_candidate_alpha`; Ledger V5 permanently
+counts 17 formal trials and admits zero Alpha or model input. ADR 0295's two
+non-combinable diagnostic panels are now materialized and independently
+replayed with byte-identical reports. The 20-input stock panel contains about
+9.14 effective dimensions and the separate ten-input Market-State panel about
+4.53. No outcome, Validation, or Holdout data was read and no Alpha or model
+input was admitted. Repository Product copy now projects the reviewed result;
+all 3,159 backend tests, 135 frontend tests, and the Production build pass.
+Commit, merge, and deployment review are the current gate.
 
-The exact population is bound to a 109-partition / 10,818-request acquisition
-plan. Raw partitions continue serially because a bounded two-process trial
-caused one provider request and logout-state failure; no failed partition was
-published. Live sessions bound socket reads and convert peer-close EOF into
-the existing finite retry path. A separate restartable normalization follower
-exactly rereads completed raw partitions while preserving every quarantined
-target in raw source-keyed custody. Recovery revalidates and skips completed
-work before continuing the first gap.
-
-The current step is **bounded full-population five-year expansion**:
-
-- capture source observations in restartable partitions with request ceilings,
-  immutable manifests, and per-partition exact reread;
-- retain missing, delisted, code-reused, conflicting, and source-unavailable
-  records as explicit dispositions rather than silently dropping them;
-- reuse the qualified calendar, action, mechanics, identity, lifecycle, and
-  Universe semantics without weakening them for scale; and
-- stop expansion on systemic schema drift or unexplained coverage loss while
-  allowing isolated records to quarantine.
-
-Verified entry evidence:
-
-- six pilot-only SSE/SZSE bindings; BSE remains quarantined;
-- 1,211 pilot sessions from 2021-09-16 through 2026-09-16;
-- 7,255 raw bars, 7,266 daily states, and 28 adjustment observations;
-- 27 implemented distributions matched to exact CNINFO source bytes,
-  independent Tonghuashun terms, raw close/ex-date reference prices, and both
-  cumulative factor directions;
-- one BaoStock 2023-07-03 `sh.600519` provider correction with unchanged
-  cumulative fore/back factors, represented explicitly as a no-op rather than
-  a second action; and
-- zero left-boundary, action-only, factor-only, or conflicting pilot rows after
-  retaining complete predecessor-factor history;
-- six append-only stable listed-occurrence identities that exactly reproduce
-  the pilot bindings without using ticker as a permanent key; and
-- six complete lifecycle intervals with one trading or suspended state for
-  each of 1,211 sessions, zero target delist hits, and exact current/delist
-  exchange-source bytes retained; and
-- exactly 7,266 daily Universe decisions: 7,007 included, 259 risk-warning
-  exclusions, zero quarantine, and 6,997 performance-eligible observations;
-  and
-- one exactly reread, owner-only population package with 5,409 acquisition
-  targets and no Product or backtest authority.
-
-The corporate-action, stable-identity, lifecycle, and daily-Universe families
-are complete only for this bounded pilot. Their packages grant no canonical
-Apply or research-backtest authority.
+The bounded A-share acquisition and normalization completed independently in
+workstation custody at 109/109 partitions each. Its immutable source census
+binds 5,409 targets, 6,061,082 daily rows, and 63,331 adjustment observations.
+Those facts complete only source acquisition and normalization; 13-family
+admission and all A-share research authority remain pending.
 
 ## Ordered remaining gates
 
-1. Expand source observations in bounded, resumable five-year partitions;
-   retain source-repeat and cross-source conflict reports.
-2. Build the 13-family Historical Coverage report and independently reproduce
-   its admission decision.
-3. If and only if the exact scope reaches `research_backtest_ready`, register
-   the first finite, outcome-blind A-share factor-input campaign. Future
-   returns and Development outcomes remain a later separately governed step.
+1. Commit and merge the reviewed implementation, then deploy only the
+   reviewed, identifier-free result after repository tests pass. The Lab must
+   show the complete market-specific lifecycle around the result, not an
+   isolated PCA or partial workflow fragment.
+2. Use the result to deduplicate and register a separately finite successor
+   hypothesis intake. Outcome access remains a later gate.
 
-Isolated record conflicts may be quarantined without blocking unrelated
-partitions. Systemic schema drift, unexplained coverage loss, fingerprint
-mismatch, or a critical family without a defensible source stops admission.
+Observed workstation capacity supports parallel U.S. numerical computation
+while the A-share provider request is idle or waiting: 16 logical CPUs, about
+60 GiB available memory, negligible load, and 2% `/data` utilization at the
+2026-09-17 check. Parallelism is bounded by determinism and observed resource
+pressure, not by the mere existence of the serial A-share request.
 
 ## Routed authority for this objective
 
-Read this bounded set before changing the A-share foundation:
+Read this bounded set before changing the U.S. factor-space diagnostic:
 
-- `docs/decisions/0294-isolate-china-a-share-daily-research-foundation.md`
-- `docs/architecture/china-a-share-research-foundation-v1.md`
-- `docs/data-contracts/china-a-share-daily-research-foundation-v1.md`
+- `docs/decisions/0295-freeze-us-factor-space-diagnostic-before-successor-intake.md`;
+- `docs/data-contracts/quant-research-factor-space-diagnostic-v1.md`;
 - `docs/research/professional-quantitative-research-action-framework-v1.md`
 - `docs/product/quant-research-three-layer-architecture-v1.md`
-- the latest A-share source, calendar, mechanics, and deployment audits linked
-  from `current-context.md`; and
+- the V1/V2 factor catalogs, qualified Market-State vector, Cycle State V2,
+  and Ledger V5 contracts; and
 - the exact source, contract, persistence, service, CLI, and tests touched by
   the current gate.
 
-Read another document only when a concrete field, operation, or decision
-routes to it. Do not load every historical ADR or audit by default.
+For background A-share recovery, use ADR 0294 and the source-expansion
+operation linked from `current-context.md`; do not copy that execution history
+back into this active-objective page.
 
 ## Invariants and non-goals
 
@@ -134,10 +98,12 @@ routes to it. Do not load every historical ADR or audit by default.
   only the bounded serving tier.
 - U.S. and A-share identities, calendars, rules, Universes, data, results, and
   Product authority remain separate.
-- Stable `instrument_id`, not ticker, is the historical join key.
-- Unknown or insufficient evidence is quarantined, never silently inferred.
-- The website may report readiness facts only; it must not present pilot
-  anchors as a stock pool or imply an admitted A-share factor/model/ranking.
+- The two U.S. diagnostic panels remain statistically separate; session-level
+  state must not be repeated across stocks to inflate sample size.
+- Missing values remain explicit and no Validation, Holdout, or outcome data
+  may enter standardization, clustering, PCA, or input selection.
+- A diagnostic component or cluster is not Alpha and cannot open Model
+  Construction or change Stock Candidates.
 - No automated trading, order execution, HFT, opaque ML, broker connection,
   Validation/Holdout access, or Product activation is part of this objective.
 

@@ -7,6 +7,21 @@ and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md), [current work](current-work.md), and the
 [roadmap](roadmap.md), not here.
 
+## 2026-09-17 — Complete U.S. factor-space replay and A-share source expansion
+
+- Materialized and exactly replayed the outcome-blind U.S. factor-space
+  diagnostic over 167,860 stock observations and 106 Market-State sessions.
+  The byte-identical reports measure about 9.14 and 4.53 effective dimensions,
+  respectively, while reading no outcomes, Validation, or Holdout data.
+- Completed all 109 A-share raw-source and normalized partitions for 5,409
+  targets. The immutable source census binds 6,061,082 daily rows and 63,331
+  adjustment observations with zero zero-row targets.
+- Advanced neither line beyond its evidence: the U.S. result authorizes only a
+  new deduplicated outcome-blind intake, and the A-share result still requires
+  complete 13-family Historical Coverage admission and exact replay.
+- Updated the trilingual Lab source to show the reviewed results and next gates
+  without exposing private paths, raw identifiers, or internal fingerprints.
+
 ## 2026-09-17 — Add transparent factor-space diagnostics to the next intake
 
 - Added point-in-time standardization, economic-family grouping, hierarchical
