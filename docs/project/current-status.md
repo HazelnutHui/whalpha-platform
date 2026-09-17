@@ -75,7 +75,7 @@ ADRs, and audits.
   permanently records all 17 trials with zero admitted Alpha and zero model
   inputs. The cycle is back at outcome-blind hypothesis intake; Validation,
   Holdout, Model Construction, and all Product authority remain closed. All
-  3,139 backend tests, 135 frontend tests, and the Production frontend build
+  3,146 backend tests, 135 frontend tests, and the Production frontend build
   pass in repository source.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
@@ -113,7 +113,12 @@ ADRs, and audits.
   the bounded pilot only. A linked 3-file daily-Universe package partitions all
   7,266 pilot instrument/session pairs into 7,007 included and 259 excluded
   decisions with zero quarantine; 6,997 are performance-eligible and ten
-  included suspension sessions are not. No canonical Apply, research, Product, or deployment
+  included suspension sessions are not. A separate persistent 9-file
+  population package now partitions 5,588 official SSE/SZSE listed
+  occurrences into 5,296 stable resolved identities, 113 quarantined
+  acquisition targets, and 179 outside-scope records. The exact five-year
+  expansion target is 5,409; three listing-date conflicts are retained with
+  official dates primary. No canonical Apply, research, Product, or deployment
   authority is granted. The offline XSHG calendar and all six source-state
   histories align
   over exactly 1,211 sessions with zero missing or unexpected dates. Ninety-four
@@ -222,9 +227,10 @@ The reference/daily packages
 are not raw source archives or a canonical database. The six pilot IDs now
 reproduce append-only research-foundation listed-occurrence identities, but
 they are not canonical Product identities. The daily Universe is admitted only
-for the six pilot anchors, not a historical full-market population. There is
-no BSE daily-price route, full-market return-authorized adjustment family, or
-backtest-ready session. It must not be combined with the U.S.
+for the six pilot anchors. The full-market population is frozen for source
+acquisition but has not yet completed daily observations or admission. There
+is no BSE daily-price route, full-market return-authorized adjustment family,
+or backtest-ready session. It must not be combined with the U.S.
 readiness table above.
 
 ## Pre-architecture research record (internal audit only)

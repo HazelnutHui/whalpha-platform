@@ -7,6 +7,21 @@ and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md), [current work](current-work.md), and the
 [roadmap](roadmap.md), not here.
 
+## 2026-09-17 — Freeze the five-year A-share expansion population
+
+- Added deterministic full-population contracts, BaoStock security-basic
+  capture, immutable owner-only custody, exact reread, CLI, and regression
+  tests before bulk five-year acquisition.
+- Partitioned 5,588 official SSE/SZSE candidate occurrences into 5,296 stable
+  resolved identities, 113 quarantined historical SZSE delist occurrences,
+  and 179 outside-scope records. The exact expansion population is 5,409.
+- Retained three listing-date conflicts and every unresolved-board record
+  without ticker-pattern promotion or silent loss. Current and delisted
+  resolved counts are 5,220 and 76.
+- Exact reread passed with owner-only modes, zero symlinks, 72 focused tests,
+  and all 3,146 backend tests. Research, canonical Apply, Product, publication,
+  and deployment authority remain false.
+
 ## 2026-09-17 — Partition the pilot point-in-time daily Universe
 
 - Added the deterministic daily-Universe report and package contracts,

@@ -15,7 +15,7 @@ class BaoStockClientSession:
     """Open BaoStock only inside an explicit context manager.
 
     Constructing this object does not import BaoStock, connect, log in, query,
-    retry, sleep, or write.  This class intentionally exposes only the three
+    retry, sleep, or write.  This class intentionally exposes only the bounded
     bounded methods required by the source adapter.
     """
 
@@ -94,6 +94,13 @@ class BaoStockClientSession:
             start_date=start_date,
             end_date=end_date,
         )
+
+    def query_stock_basic(
+        self,
+        code: str = "",
+        code_name: str = "",
+    ) -> BaoStockCursor:
+        return self._call("query_stock_basic", code=code, code_name=code_name)
 
     def _call(self, method_name: str, *args: object, **kwargs: object) -> BaoStockCursor:
         if not self._connected or self._module is None:

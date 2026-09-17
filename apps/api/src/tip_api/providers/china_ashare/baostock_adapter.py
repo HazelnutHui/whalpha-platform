@@ -98,6 +98,13 @@ class BaoStockSession(Protocol):
     ) -> BaoStockCursor:
         ...
 
+    def query_stock_basic(
+        self,
+        code: str = "",
+        code_name: str = "",
+    ) -> BaoStockCursor:
+        ...
+
 
 class BaoStockAshareSourceAdapter:
     _capabilities = frozenset(

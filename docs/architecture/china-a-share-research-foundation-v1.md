@@ -244,6 +244,14 @@ partition and its deterministic replay pass with zero quarantine. Its source
 clock is later-retrieved, not historically as-operated, and full-population
 expansion remains a separate gate.
 
+The expansion population is now frozen before bulk acquisition. Five exact
+official current/delist artifacts plus one fresh BaoStock stock-basic census
+produce 5,296 stable resolved occurrences, 113 quarantined source-keyed
+targets, and 179 outside-scope records. The exact acquisition population is
+5,409. Missing official board evidence for historical SZSE delist records is
+not inferred from ticker patterns; those observations may be captured but
+cannot join a stable-ID research panel until resolved.
+
 The calendar diagnostic uses `XSHG` with an explicit `Asia/Shanghai` timezone;
 passing another exchange ID or the shared U.S. default timezone fails closed.
 For the bounded pilot, its 1,211 sessions match every bound security's source-

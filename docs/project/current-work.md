@@ -41,14 +41,16 @@ publish rankings, or change Product authority.
 The bounded six-security SSE/SZSE pilot has passed source-repeat, official
 calendar, trading-rule, price-limit, statutory-fee, provisional account-cost,
 corporate-action/adjustment-economic, stable research identity, and listed-
-security lifecycle checks, plus the point-in-time daily-Universe check. It has
-not passed full-market expansion or the final 13-family admission. Canonical
-Product Apply remains outside this research-foundation objective.
+security lifecycle checks, plus the point-in-time daily-Universe check. The
+five-year acquisition population is now frozen: 5,588 official occurrences
+partition into 5,296 stable resolved identities, 113 quarantined acquisition
+targets, and 179 outside-scope records, leaving exactly 5,409 expansion
+targets. It has not completed full-market observations or the final 13-family
+admission. Canonical Product Apply remains outside this research-foundation
+objective.
 
 The current step is **bounded full-population five-year expansion**:
 
-- freeze the evaluated SSE/SZSE listed-occurrence population before bulk
-  acquisition;
 - capture source observations in restartable partitions with request ceilings,
   immutable manifests, and per-partition exact reread;
 - retain missing, delisted, code-reused, conflicting, and source-unavailable
@@ -77,7 +79,10 @@ Verified entry evidence:
   each of 1,211 sessions, zero target delist hits, and exact current/delist
   exchange-source bytes retained; and
 - exactly 7,266 daily Universe decisions: 7,007 included, 259 risk-warning
-  exclusions, zero quarantine, and 6,997 performance-eligible observations.
+  exclusions, zero quarantine, and 6,997 performance-eligible observations;
+  and
+- one exactly reread, owner-only population package with 5,409 acquisition
+  targets and no Product or backtest authority.
 
 The corporate-action, stable-identity, lifecycle, and daily-Universe families
 are complete only for this bounded pilot. Their packages grant no canonical

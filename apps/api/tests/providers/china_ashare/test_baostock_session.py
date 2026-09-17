@@ -33,6 +33,10 @@ class FakeModule:
         self.calls.append(("query_all_stock", args, kwargs))
         return Result()
 
+    def query_stock_basic(self, *args: object, **kwargs: object) -> Result:
+        self.calls.append(("query_stock_basic", args, kwargs))
+        return Result()
+
 
 def test_session_connects_and_disconnects_only_inside_context() -> None:
     module = FakeModule()
@@ -52,6 +56,16 @@ def test_session_rejects_calls_when_not_open() -> None:
 
     with pytest.raises(ProviderUnavailableError, match="not open"):
         session.query_all_stock(day="2026-09-16")
+
+
+def test_session_exposes_security_basic_only_while_open() -> None:
+    module = FakeModule()
+
+    with BaoStockClientSession(module=module) as session:
+        result = session.query_stock_basic(code="", code_name="")
+
+    assert result.error_code == "0"
+    assert module.calls == [("query_stock_basic", (), {"code": "", "code_name": ""})]
 
 
 def test_failed_login_never_marks_session_open() -> None:

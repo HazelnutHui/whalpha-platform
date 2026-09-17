@@ -394,6 +394,15 @@ zero quarantine, and 6,997 performance-eligible observations. Ten included
 suspension sessions correctly remain performance-ineligible. Its exact replay
 matches and package logical fingerprint is
 `a33e2c0a52806b5dde0969a6403aebc302d74774992d272d068c8ae918b44f5d`.
+The subsequent persistent population package retains the same five official
+identity artifacts plus a fresh 5,557-row BaoStock stock-basic census. It
+partitions 5,588 official occurrences into 5,296 resolved, 113 quarantined,
+and 179 outside-scope records, producing exactly 5,409 five-year acquisition
+targets. The 113 historical SZSE delist occurrences remain source-keyed and
+quarantined because official board evidence is absent; code patterns cannot
+promote them. Three listing-date conflicts retain the official date and an
+explicit reason. The package exactly rereads with logical fingerprint
+`13595c0645aa36acc5fea8d818509b484582ad13d7def53d377b984d549c02c0`.
 The account rate is user-reported and its all-in/minimum/history assumptions
 remain unconfirmed by a broker statement. Issuer-level lifecycle rows remain
 separate and cannot claim listed-security termination. No raw upstream archive
@@ -422,6 +431,8 @@ The stable listed-occurrence result is in the
 [identity/lifecycle audit](../audits/china-a-share-identity-lifecycle-2026-09-17.md).
 The exact membership partition is in the
 [daily-Universe audit](../audits/china-a-share-daily-universe-2026-09-17.md).
+The exact expansion population is in the
+[five-year population audit](../audits/china-a-share-five-year-population-2026-09-17.md).
 
 ## Automation and standing boundaries
 
