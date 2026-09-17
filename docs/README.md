@@ -77,6 +77,7 @@ Read this bounded set before new Lab research:
 - [Campaign Three outcome-blind input qualification](audits/quant-research-campaign-three-input-qualification-2026-09-16.md)
 - [Closed Campaign Three Development screen](audits/quant-research-campaign-three-screening-2026-09-16.md)
 - [Completed U.S. factor-space diagnostic](audits/quant-research-factor-space-diagnostic-2026-09-17.md)
+- [Factor-space and A-share source UI deployment](audits/factor-space-and-a-share-source-ui-deployment-2026-09-17.md)
 
 The Pullback contracts, operations, and intermediate audits remain immutable
 historical evidence, but are no longer part of default recovery. Use the

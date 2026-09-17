@@ -30,11 +30,10 @@ are never sufficient evidence by themselves.
 
 ## Active objective
 
-Complete the reviewed Product projection of ADR 0295's exactly replayed U.S.
-factor-space diagnostic, then register a separately finite and deduplicated
-outcome-blind successor hypothesis intake. Do not read future-return outcomes,
-reopen a closed campaign, register a Development screen, construct a model,
-publish rankings, or change Product authority.
+Register a separately finite and deduplicated, outcome-blind U.S. successor
+hypothesis intake using ADR 0295's exactly replayed factor-space result. Do not
+read future-return outcomes, reopen a closed campaign, register a Development
+screen, construct a model, publish rankings, or change Product authority.
 
 The previously authorized China A-share five-year source acquisition remains a
 bounded background operation. It may continue its serial provider-limited raw
@@ -50,9 +49,10 @@ non-combinable diagnostic panels are now materialized and independently
 replayed with byte-identical reports. The 20-input stock panel contains about
 9.14 effective dimensions and the separate ten-input Market-State panel about
 4.53. No outcome, Validation, or Holdout data was read and no Alpha or model
-input was admitted. Repository Product copy now projects the reviewed result;
-all 3,159 backend tests, 135 frontend tests, and the Production build pass.
-Commit, merge, and deployment review are the current gate.
+input was admitted. All 3,159 backend tests, 135 frontend tests, and the
+Production build pass. OCI release `2026-09-17T202230Z-566c335817f8` serves the
+reviewed trilingual result and completed A-share source counts; independent
+postflight passed while credential login and visual review remain manual.
 
 The bounded A-share acquisition and normalization completed independently in
 workstation custody at 109/109 partitions each. Its immutable source census
@@ -62,12 +62,14 @@ admission and all A-share research authority remain pending.
 
 ## Ordered remaining gates
 
-1. Commit and merge the reviewed implementation, then deploy only the
-   reviewed, identifier-free result after repository tests pass. The Lab must
-   show the complete market-specific lifecycle around the result, not an
-   isolated PCA or partial workflow fragment.
-2. Use the result to deduplicate and register a separately finite successor
-   hypothesis intake. Outcome access remains a later gate.
+1. Propose a bounded set of new economic hypotheses and compare each with the
+   measured risk, reversal, path, leadership, liquidity, and breadth clusters
+   plus all 17 consumed trials.
+2. Reject exact and near duplicates before any outcome access, freeze a finite
+   intake budget, and materialize the outcome-blind hypothesis registry.
+3. Qualify source availability and implementation only. Development outcome
+   access, protocol registration, and every downstream stage remain later
+   gates.
 
 Observed workstation capacity supports parallel U.S. numerical computation
 while the A-share provider request is idle or waiting: 16 logical CPUs, about
