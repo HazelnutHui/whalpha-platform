@@ -110,7 +110,10 @@ ADRs, and audits.
   artifacts, promotes six append-only listed-occurrence identities without
   ticker-only joins, and completes six 1,211-session lifecycle intervals with
   zero quarantine. Stable identity and lifecycle are therefore complete for
-  the bounded pilot only. No canonical Apply, research, Product, or deployment
+  the bounded pilot only. A linked 3-file daily-Universe package partitions all
+  7,266 pilot instrument/session pairs into 7,007 included and 259 excluded
+  decisions with zero quarantine; 6,997 are performance-eligible and ten
+  included suspension sessions are not. No canonical Apply, research, Product, or deployment
   authority is granted. The offline XSHG calendar and all six source-state
   histories align
   over exactly 1,211 sessions with zero missing or unexpected dates. Ninety-four
@@ -212,15 +215,16 @@ The China A-share foundation is a separate market namespace and is earlier in
 its lifecycle. Its normalized reference/lifecycle package and linked five-year
 SSE/SZSE daily pilot exist only under temporary owner-only custody and reread
 exactly; a second capture produced a zero-delta economic source-repeat report.
-The separate exact-byte calendar, market-mechanics, corporate-action, and
-identity/lifecycle packages pass their bounded reconciliations for the
-SSE/SZSE pilot interval.
+The separate exact-byte calendar, market-mechanics, corporate-action,
+identity/lifecycle, and daily-Universe packages pass their bounded
+reconciliations for the SSE/SZSE pilot interval.
 The reference/daily packages
 are not raw source archives or a canonical database. The six pilot IDs now
 reproduce append-only research-foundation listed-occurrence identities, but
-they are not canonical Product identities. There is no admitted historical
-Universe, BSE daily-price route, full-market return-authorized adjustment
-family, or backtest-ready session. It must not be combined with the U.S.
+they are not canonical Product identities. The daily Universe is admitted only
+for the six pilot anchors, not a historical full-market population. There is
+no BSE daily-price route, full-market return-authorized adjustment family, or
+backtest-ready session. It must not be combined with the U.S.
 readiness table above.
 
 ## Pre-architecture research record (internal audit only)

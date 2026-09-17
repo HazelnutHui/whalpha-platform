@@ -239,6 +239,19 @@ anchors and reconciles all 7,266 instrument/session states with zero
 quarantine. This closes only the bounded pilot identity/lifecycle families;
 daily Universe and research authority remain closed.
 
+## Daily Universe package
+
+`china-ashare-daily-universe-package/1.0` materializes exactly one included,
+excluded, or quarantined `ChinaAshareUniverseDecisionV1` per stable
+instrument/session. The baseline includes listed common stocks without risk
+warnings, excludes risk-warning securities, and preserves suspended members
+while withholding performance eligibility. Unknown critical state quarantines
+rather than disappearing. The real pilot partitions all 7,266 expected keys
+with zero quarantine and reproduces exactly from its two immutable inputs.
+Historical source availability is not reported by BaoStock; every row therefore
+retains a later-retrieved/not-as-operated limitation. Pilot-family completion
+does not authorize research.
+
 ## Foundation census and admission
 
 `ChinaAshareFoundationFamilyCensusV1` records coverage and evidence tier for

@@ -388,11 +388,18 @@ listing date, while reproducing the existing UUIDs. All six lifecycle
 intervals contain one trading or suspended state for every one of 1,211
 sessions and no target delist hit. Package logical fingerprint is
 `406da4a55c0866c9087a48f6228bff235e788db0ae212cf37d3882b633f50249`.
+A linked daily-Universe package emits exactly one disposition for all 7,266
+pilot instrument/session pairs: 7,007 included, 259 risk-warning exclusions,
+zero quarantine, and 6,997 performance-eligible observations. Ten included
+suspension sessions correctly remain performance-ineligible. Its exact replay
+matches and package logical fingerprint is
+`a33e2c0a52806b5dde0969a6403aebc302d74774992d272d068c8ae918b44f5d`.
 The account rate is user-reported and its all-in/minimum/history assumptions
 remain unconfirmed by a broker statement. Issuer-level lifecycle rows remain
 separate and cannot claim listed-security termination. No raw upstream archive
 exists for the reference/daily source families; the action, stable-identity,
-and lifecycle results complete only their bounded pilot families. The stable
+lifecycle, and daily-Universe results complete only their bounded pilot
+families. The stable
 identity is a research-foundation identity, not canonical Product Apply. No
 canonical Apply, admitted historical Universe, overall backtest admission, or
 Product authority exists. The deployed Market / Universe selector reports this
@@ -413,6 +420,8 @@ and the exact action/factor result is in the
 [corporate-action audit](../audits/china-a-share-corporate-action-reconciliation-2026-09-17.md).
 The stable listed-occurrence result is in the
 [identity/lifecycle audit](../audits/china-a-share-identity-lifecycle-2026-09-17.md).
+The exact membership partition is in the
+[daily-Universe audit](../audits/china-a-share-daily-universe-2026-09-17.md).
 
 ## Automation and standing boundaries
 

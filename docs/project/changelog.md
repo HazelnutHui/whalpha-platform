@@ -7,6 +7,20 @@ and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md), [current work](current-work.md), and the
 [roadmap](roadmap.md), not here.
 
+## 2026-09-17 — Partition the pilot point-in-time daily Universe
+
+- Added the deterministic daily-Universe report and package contracts,
+  builder, immutable owner-only custody, exact reread, CLI, and tamper tests.
+- Emitted exactly 7,266 decisions across six stable instruments and 1,211
+  sessions: 7,007 included, 259 risk-warning exclusions, zero quarantine, and
+  6,997 performance-eligible observations. Ten included suspensions correctly
+  remain performance-ineligible.
+- Retained the later-retrieved/not-as-operated source-clock limitation and
+  kept every canonical Apply, research, Product, and deployment flag false.
+- Independently replayed every decision and report from the exact input
+  packages, passed 68 focused A-share tests, and passed all 3,142 backend
+  tests.
+
 ## 2026-09-17 — Reconcile pilot stable identity and lifecycle
 
 - Added append-only A-share research identity and listed-lifecycle contracts,

@@ -236,6 +236,14 @@ all six pilot IDs, and reconciles one state for every instrument/session.
 Issuer-only evidence remains incapable of asserting security termination.
 This result still grants no daily-Universe or research authority.
 
+A fifth immutable pilot package applies the point-in-time Universe semantics
+to the complete six-instrument/session cross product. Risk-warning securities
+are explicitly excluded, suspensions preserve membership but not performance
+eligibility, and unknown critical evidence quarantines. The exact 7,266-row
+partition and its deterministic replay pass with zero quarantine. Its source
+clock is later-retrieved, not historically as-operated, and full-population
+expansion remains a separate gate.
+
 The calendar diagnostic uses `XSHG` with an explicit `Asia/Shanghai` timezone;
 passing another exchange ID or the shared U.S. default timezone fails closed.
 For the bounded pilot, its 1,211 sessions match every bound security's source-

@@ -99,6 +99,7 @@ or dated [audits](audits/) when reproducing that program.
 - [China A-Share Pilot Market-Mechanics Audit](audits/china-a-share-market-mechanics-2026-09-17.md)
 - [China A-Share Corporate-Action Reconciliation Audit](audits/china-a-share-corporate-action-reconciliation-2026-09-17.md)
 - [China A-Share Stable Identity and Lifecycle Audit](audits/china-a-share-identity-lifecycle-2026-09-17.md)
+- [China A-Share Daily Universe Audit](audits/china-a-share-daily-universe-2026-09-17.md)
 - [China A-Share Foundation UI Deployment Audit](audits/china-a-share-foundation-ui-deployment-2026-09-17.md)
 - [China A-Share Market Selector Deployment Audit](audits/china-a-share-market-selector-deployment-2026-09-17.md)
 - [Canonical Market Data Query Boundary](architecture/canonical-market-data-query-boundary.md)
