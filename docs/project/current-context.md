@@ -18,6 +18,7 @@ ADRs, and dated audits.
 | Workstation / user | `dell5820` / `hui` |
 | Canonical repository | `/home/hui/projects/trading-intelligence-platform` |
 | Branch | `main`; verify live HEAD before mutation |
+| Public GitHub mirror | `https://github.com/HazelnutHui/whalpha-platform`; `main` only at initial publication |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
 | Active OCI release | `2026-09-17T054505Z-a3bd55bff60d` |
@@ -25,7 +26,9 @@ ADRs, and dated audits.
 
 Dell owns code, canonical data, governance, and heavy computation. OCI is the
 bounded public-serving tier. A newer clean repository commit does not imply a
-deployment.
+deployment. GitHub is a public reviewed mirror for code, documentation, tests,
+schemas, and compact research evidence; it is not authoritative for data,
+credentials, computation, publication, or deployment.
 
 Use `scripts/admin/report-current-context.sh` for a credential-free,
 network-disabled reread. Run project Python through

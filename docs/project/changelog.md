@@ -7,6 +7,21 @@ and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md), [current work](current-work.md), and the
 [roadmap](roadmap.md), not here.
 
+## 2026-09-17 — Publish the reviewed project mirror to GitHub
+
+- Published the complete reviewed `main` history to the public
+  `HazelnutHui/whalpha-platform` repository after checking the clean worktree,
+  tracked paths, tracked content, history, and object sizes for common secret,
+  private-key, dataset, and oversized-artifact risks.
+- Added explicit ignore coverage for common columnar, database, array, and
+  serialized research artifacts before publication. Raw provider data,
+  canonical databases, credentials, private keys, caches, and machine-local
+  state remain outside Git.
+- Bound workstation Git access to a repository-specific identity rather than
+  reusing the OCI deployment identity. The workstation remains authoritative
+  for code, data, computation, and governance; GitHub is a public versioned
+  mirror and OCI remains the bounded serving tier.
+
 ## 2026-09-17 — Bound BaoStock socket failure and resume expansion
 
 - Diagnosed a stalled adjustment request as the vendor receive loop repeatedly

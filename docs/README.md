@@ -113,6 +113,7 @@ or dated [audits](audits/) when reproducing that program.
 
 ## Operations
 
+- [Deployment and Public GitHub Boundary](operations/deployment-boundary.md)
 - [Infrastructure](operations/infrastructure.md)
 - [Daily EOD Automation](operations/daily-eod-automation.md)
 - [Five-Year EOD and Identity Backfill](operations/five-year-eod-identity-backfill.md)

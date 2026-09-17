@@ -4,6 +4,21 @@
 
 The development source of truth is the workstation. No desktop folder or manual copy should become authoritative.
 
+The public GitHub repository
+`https://github.com/HazelnutHui/whalpha-platform` is the versioned code,
+documentation, test, schema, and compact research-evidence mirror. It is not a
+data store, computation authority, credential store, deployment target, or
+substitute for workstation custody. Only reviewed Git-tracked content may be
+pushed. Provider source data, canonical datasets, database files, model
+artifacts, caches, local configuration, credentials, private keys, and other
+restricted or machine-local state remain outside Git.
+
+The workstation uses a repository-specific GitHub authentication identity.
+Never reuse the OCI deployment identity for GitHub and never document or copy
+private-key material into the repository. Before every public push, require a
+clean worktree and inspect both current tracked content and Git history for
+credentials, private keys, disallowed datasets, and oversized artifacts.
+
 OCI is a deployment target, not a development source of truth. It serves the
 versioned static Dashboard through Nginx and a localhost-only Session Auth
 Service; no production market-data API runs there.
