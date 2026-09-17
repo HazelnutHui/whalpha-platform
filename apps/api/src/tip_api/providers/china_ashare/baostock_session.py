@@ -11,6 +11,32 @@ from tip_api.providers.market_data import ProviderUnavailableError
 from .baostock_adapter import BAOSTOCK_ASHARE_PROVIDER_ID, BaoStockCursor
 
 
+_DEFAULT_SOCKET_READ_TIMEOUT_SECONDS = 30.0
+
+
+class _BaoStockSocketGuard:
+    """Bound BaoStock reads and turn a closed peer into a retryable failure.
+
+    BaoStock's ``send_msg`` loop does not stop when ``recv`` returns ``b\"\"``.
+    Wrapping the connected socket keeps the vendor dependency untouched while
+    ensuring an EOF or read timeout can reach the operation's existing bounded
+    retry policy.
+    """
+
+    def __init__(self, socket: Any, *, read_timeout_seconds: float) -> None:
+        self._socket = socket
+        self._socket.settimeout(read_timeout_seconds)
+
+    def recv(self, *args: object, **kwargs: object) -> bytes:
+        payload = self._socket.recv(*args, **kwargs)
+        if payload == b"":
+            raise ConnectionError("BaoStock peer closed the socket")
+        return payload
+
+    def __getattr__(self, name: str) -> Any:
+        return getattr(self._socket, name)
+
+
 class BaoStockClientSession:
     """Open BaoStock only inside an explicit context manager.
 
@@ -19,8 +45,19 @@ class BaoStockClientSession:
     bounded methods required by the source adapter.
     """
 
-    def __init__(self, *, module: ModuleType | Any | None = None) -> None:
+    def __init__(
+        self,
+        *,
+        module: ModuleType | Any | None = None,
+        socket_context: ModuleType | Any | None = None,
+        socket_read_timeout_seconds: float = _DEFAULT_SOCKET_READ_TIMEOUT_SECONDS,
+    ) -> None:
+        if socket_read_timeout_seconds <= 0:
+            raise ValueError("socket_read_timeout_seconds must be positive")
         self._module = module
+        self._socket_context = socket_context
+        self._socket_read_timeout_seconds = socket_read_timeout_seconds
+        self._socket_guard: _BaoStockSocketGuard | None = None
         self._connected = False
 
     def __enter__(self) -> "BaoStockClientSession":
@@ -48,6 +85,7 @@ class BaoStockClientSession:
                 BAOSTOCK_ASHARE_PROVIDER_ID,
                 "BaoStock login failed",
             )
+        self._install_socket_guard()
         self._connected = True
         return self
 
@@ -58,6 +96,11 @@ class BaoStockClientSession:
             assert self._module is not None
             self._module.logout()
         finally:
+            if self._socket_guard is not None:
+                try:
+                    self._socket_guard.close()
+                finally:
+                    self._socket_guard = None
             self._connected = False
 
     def query_all_stock(self, day: str = "") -> BaoStockCursor:
@@ -116,3 +159,39 @@ class BaoStockClientSession:
                 BAOSTOCK_ASHARE_PROVIDER_ID,
                 "BaoStock source call failed",
             ) from exc
+
+    def _install_socket_guard(self) -> None:
+        context = self._socket_context
+        if context is None:
+            module_name = str(getattr(self._module, "__name__", ""))
+            if module_name != "baostock":
+                return
+            try:
+                context = importlib.import_module("baostock.common.context")
+            except ImportError as exc:
+                raise ProviderUnavailableError(
+                    BAOSTOCK_ASHARE_PROVIDER_ID,
+                    "BaoStock socket context is unavailable",
+                ) from exc
+            self._socket_context = context
+        socket = getattr(context, "default_socket", None)
+        if socket is None:
+            raise ProviderUnavailableError(
+                BAOSTOCK_ASHARE_PROVIDER_ID,
+                "BaoStock login created no socket",
+            )
+        try:
+            guard = _BaoStockSocketGuard(
+                socket,
+                read_timeout_seconds=self._socket_read_timeout_seconds,
+            )
+        except Exception as exc:
+            try:
+                socket.close()
+            finally:
+                raise ProviderUnavailableError(
+                    BAOSTOCK_ASHARE_PROVIDER_ID,
+                    "BaoStock socket guard installation failed",
+                ) from exc
+        setattr(context, "default_socket", guard)
+        self._socket_guard = guard

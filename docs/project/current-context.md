@@ -414,11 +414,12 @@ logout state failed; only the successful independent partition published.
 Expansion therefore resumes serially and skips every completed partition.
 The separately governed normalized-expansion run has logical fingerprint
 `a7d24928a464b20632c44d6c92ac7aea3b99bfc22e077ced13073781c63682b4`.
-Its first seven exact real partitions retain 401,191 unadjusted bars, 402,607
-daily states, and 6,998 adjustment observations for 350 resolved targets.
-Normalization preserves unresolved targets only in raw source-keyed custody
-and does not grant return, research, canonical, Product, or deployment
-authority.
+It exactly rereads immutable raw partitions, skips completed normalized
+partitions, and resumes from the first gap. Normalization preserves unresolved
+targets only in raw source-keyed custody and does not grant return, research,
+canonical, Product, or deployment authority. Live BaoStock sessions now bound
+socket reads and convert peer-close EOF into the existing finite partition
+retry path; the installed provider package remains unchanged.
 The account rate is user-reported and its all-in/minimum/history assumptions
 remain unconfirmed by a broker statement. Issuer-level lifecycle rows remain
 separate and cannot claim listed-security termination. No raw upstream archive

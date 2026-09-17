@@ -7,6 +7,21 @@ and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md), [current work](current-work.md), and the
 [roadmap](roadmap.md), not here.
 
+## 2026-09-17 — Bound BaoStock socket failure and resume expansion
+
+- Diagnosed a stalled adjustment request as the vendor receive loop repeatedly
+  accepting an empty socket read after the peer closed the connection.
+- Added a project-owned socket guard with a 30-second read timeout, explicit
+  EOF failure, guaranteed connection close, and coverage proving the failure
+  reaches the existing finite per-partition retry. The installed BaoStock
+  package remains unchanged.
+- Recovered from the immutable first gap without rebuilding prior work.
+  Partition 54 published 57,520 daily rows and 858 adjustment observations for
+  50 targets, followed by a complete source-plan reread at 55 / 109 partitions
+  and zero partial staging residue.
+- Passed 11 focused session/source-expansion tests and all 3,153 backend tests.
+  Full source expansion and all research authority remain incomplete.
+
 ## 2026-09-17 — Add restartable A-share expansion normalization
 
 - Added a source-bound normalized-partition contract, pure stable-identity

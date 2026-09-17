@@ -75,7 +75,7 @@ ADRs, and audits.
   permanently records all 17 trials with zero admitted Alpha and zero model
   inputs. The cycle is back at outcome-blind hypothesis intake; Validation,
   Holdout, Model Construction, and all Product authority remain closed. All
-  3,150 backend tests, 135 frontend tests, and the Production frontend build
+  3,153 backend tests, 135 frontend tests, and the Production frontend build
   pass in repository source.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
@@ -122,10 +122,12 @@ ADRs, and audits.
   is registered and exactly reread raw partitions are accumulating through its
   restartable serial operation. A separate bounded-memory finalizer will bind
   the complete source census only after all 109 partitions exist. A separate
-  restartable normalization follower has exactly reread the first seven raw
-  partitions and retained 401,191 unadjusted bars, 402,607 daily states, and
-  6,998 adjustment observations for 350 resolved targets; it grants no return
-  or research authority. Remaining partitions are still in progress.
+  restartable normalization follower exactly rereads complete raw partitions,
+  skips its completed immutable outputs, and resumes from the first gap; it
+  grants no return or research authority. BaoStock reads now have a bounded
+  timeout and peer-close detection so the existing finite partition retry can
+  recover instead of allowing the vendor receive loop to spin indefinitely.
+  Remaining partitions are still in progress.
   No canonical Apply, research, Product, or deployment authority is granted.
   The offline XSHG calendar and all six source-state
   histories align

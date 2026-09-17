@@ -22,6 +22,14 @@ completed partitions. Each partition permits at most three connection attempts
 by default and remains absent unless every request, Parquet file, manifest,
 hash, scope, key, row count, permission, and closed file-set check passes.
 
+Every live BaoStock session installs a project-owned guard around the vendor
+socket after login. Reads have a 30-second timeout, and a peer-close EOF is
+converted into a provider failure rather than allowing the vendor receive loop
+to spin indefinitely. The session closes the underlying socket on every exit;
+the existing per-partition retry policy then starts a new connection. Do not
+patch the installed BaoStock package or increase the retry count to conceal a
+systemic outage.
+
 Run only one acquisition process. A bounded two-process experiment caused one
 BaoStock adjustment request and logout state to fail while the other process
 completed; the failed partition was never published. The source therefore
