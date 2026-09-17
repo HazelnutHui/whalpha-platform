@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-09-16
+Status date: 2026-09-17
 
 This is the concise actual-capability summary. Exact volatile identities belong
 in [current context](current-context.md), future sequencing in the
@@ -70,7 +70,7 @@ ADRs, and audits.
   permanently records all 17 trials with zero admitted Alpha and zero model
   inputs. The cycle is back at outcome-blind hypothesis intake; Validation,
   Holdout, Model Construction, and all Product authority remain closed. All
-  3,120 backend tests, 129 frontend tests, and the Production frontend build
+  3,122 backend tests, 129 frontend tests, and the Production frontend build
   pass in repository source.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
@@ -88,10 +88,13 @@ ADRs, and audits.
   observations. A subsequent same-scope source repeat matched all 14,549
   economic observations with zero changed, added, or removed rows after
   ignoring only ingestion time. All packages and the repeat report exactly
-  reread; all 46 focused A-share tests and all 3,120 backend tests pass. No raw
+  reread; all 48 focused A-share tests and all 3,122 backend tests pass. No raw
   upstream bytes are retained, and no
   canonical identity, Apply, research, Product, or deployment authority is
-  granted.
+  granted. The offline XSHG calendar and all six source-state histories align
+  over exactly 1,211 sessions with zero missing or unexpected dates. Calendar
+  authority remains false until exact SSE/SZSE annual closure notices are
+  retained and machine-reconciled.
 
 ## Product capability
 

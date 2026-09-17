@@ -153,6 +153,19 @@ same temporary plan boundary and exactly reread. A zero-delta report grants
 only bounded source-repeat qualification. Canonical identity, Apply, backtest,
 Product, publication, and deployment authority remain false.
 
+## Calendar coverage diagnostic
+
+`ChinaAsharePilotCalendarCoverageReportV1` compares the exact date set from an
+offline `XSHG` calendar in `Asia/Shanghai` with both the source-state union and
+every bound pilot instrument. It reports missing and unexpected dates rather
+than treating either as a suspension. The expected-session set is fingerprinted
+and every instrument count must reconcile.
+
+Even exact library/source alignment cannot set `calendar_reconciled=true`.
+That field remains false until exact official SSE/SZSE closure notices are
+retained and their effective dates are machine-reconciled. BSE is excluded
+while its daily anchor remains quarantined.
+
 ## Foundation census and admission
 
 `ChinaAshareFoundationFamilyCensusV1` records coverage and evidence tier for

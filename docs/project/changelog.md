@@ -6,6 +6,20 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-17 — Establish the A-share pilot calendar boundary
+
+- Added a fail-closed calendar coverage contract and diagnostic fixed to
+  `XSHG` in `Asia/Shanghai`; it keeps official-notice, calendar, canonical,
+  research, Product, and deployment authority false.
+- The real five-year pilot aligns exactly over 1,211 sessions: all six bound
+  securities have complete state-date coverage with zero missing or unexpected
+  dates.
+- Recorded the official SSE/SZSE annual-closure evidence boundary. Exact notice
+  retention and machine reconciliation remain required before calendar-family
+  admission.
+- Passed all 48 focused A-share tests and all 3,122 backend tests after the
+  calendar diagnostic implementation.
+
 ## 2026-09-16 — Start the isolated China A-share research foundation
 
 - Accepted ADR 0294 and added the 13-family daily-research admission contract,

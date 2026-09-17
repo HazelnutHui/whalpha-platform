@@ -4,6 +4,7 @@ from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from pathlib import Path
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 import pytest
 
@@ -37,6 +38,9 @@ from tip_api.services.china_ashare_pilot_source_repeat import (
     compare_china_ashare_pilot_daily_packages,
     read_china_ashare_pilot_source_repeat,
 )
+from tip_api.services.china_ashare_pilot_calendar import (
+    build_china_ashare_pilot_calendar_coverage,
+)
 
 
 NOW = datetime(2026, 9, 17, 1, 0, tzinfo=UTC)
@@ -55,6 +59,24 @@ INSTRUMENT_IDS = {
     "sz.000001": UUID("90f99aa4-53f9-5097-b50d-89630dd67fca"),
     "sz.300001": UUID("70ed8677-a2bd-50c4-8da3-d3bb667e8186"),
 }
+
+
+class FixtureCalendar:
+    calendar_id = "XSHG"
+    calendar_version = "fixture-1"
+    timezone = ZoneInfo("Asia/Shanghai")
+
+    def __init__(self, sessions: tuple[date, ...]) -> None:
+        self._sessions = sessions
+
+    def sessions_in_range(
+        self,
+        start_date: date,
+        end_date: date,
+    ) -> tuple[date, ...]:
+        assert start_date == date(2021, 9, 16)
+        assert end_date == date(2026, 9, 16)
+        return self._sessions
 
 
 def _plan():
@@ -288,3 +310,44 @@ def test_source_repeat_rejects_same_package(tmp_path: Path) -> None:
             repeat_package_path=package.package_path,
             compared_at=NOW + timedelta(hours=1),
         )
+
+
+def test_calendar_diagnostic_requires_every_bound_instrument_session(
+    tmp_path: Path,
+) -> None:
+    package = _publish_daily(tmp_path, created_at=NOW)
+
+    report = build_china_ashare_pilot_calendar_coverage(
+        daily_package=package,
+        evaluated_at=NOW + timedelta(hours=1),
+        calendar=FixtureCalendar((package.plan.history_start_date,)),
+    )
+
+    assert report.expected_session_count == 1
+    assert report.observed_union_session_count == 1
+    assert len(report.instrument_coverage) == 4
+    assert report.library_source_alignment_complete is True
+    assert all(item.source_alignment_complete for item in report.instrument_coverage)
+    assert report.official_exchange_notice_retained is False
+    assert report.calendar_reconciled is False
+    assert report.research_backtest_authorized is False
+
+
+def test_calendar_diagnostic_reports_missing_session(tmp_path: Path) -> None:
+    package = _publish_daily(tmp_path, created_at=NOW)
+    missing_date = package.plan.history_start_date + timedelta(days=1)
+
+    report = build_china_ashare_pilot_calendar_coverage(
+        daily_package=package,
+        evaluated_at=NOW + timedelta(hours=1),
+        calendar=FixtureCalendar(
+            (package.plan.history_start_date, missing_date),
+        ),
+    )
+
+    assert report.library_source_alignment_complete is False
+    assert report.missing_union_session_dates == (missing_date,)
+    assert all(
+        item.missing_session_dates == (missing_date,)
+        for item in report.instrument_coverage
+    )

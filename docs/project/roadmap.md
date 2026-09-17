@@ -207,9 +207,12 @@ SSE/SZSE identity bindings now link to an exactly reread five-year package of
 unadjusted daily bars, daily states, and all three provider factor fields. The
 BSE anchor remains quarantined. The first same-scope source-repeat comparison
 is zero-delta across all retained economic observations. Canonical stable
-identity, qualified calendars and price-limit rules, adjustment semantics,
-corporate-action economics, historical Universe decisions, fees, and a
-qualified BSE daily route remain before the historical pilot can be admitted.
+identity, official-notice-qualified calendars, price-limit rules, adjustment
+semantics, corporate-action economics, historical Universe decisions, fees,
+and a qualified BSE daily route remain before the historical pilot can be
+admitted. The offline XSHG calendar already aligns with all six source-state
+histories over 1,211 sessions; exact SSE/SZSE annual notice retention and
+machine reconciliation are the remaining calendar boundary.
 
 Exit: a reproducible daily-research admission for an exact interval and
 population, or an explicit blocker report. Intraday, live model, Product,

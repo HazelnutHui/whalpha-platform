@@ -191,6 +191,13 @@ changed, added, or removed economic rows. This qualifies repeat stability for
 the bounded pilot observation, not future source behavior, historical
 completeness, adjustment economics, or research admission.
 
+The calendar diagnostic uses `XSHG` with an explicit `Asia/Shanghai` timezone;
+passing another exchange ID or the shared U.S. default timezone fails closed.
+For the bounded pilot, its 1,211 sessions match every bound security's source-
+state dates exactly. This alignment is not calendar authority. Exact annual SSE
+and SZSE closure notices must be retained and machine-reconciled before the
+calendar family can be admitted.
+
 Expansion stops on systemic schema drift, unexplained coverage loss,
 unbounded rate failure, fingerprint mismatch, or a critical family with no
 defensible source. Isolated record conflicts are quarantined and do not force

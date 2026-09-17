@@ -567,6 +567,174 @@ class ChinaAsharePilotDailyQualityReportV1(FrozenContract):
         return self
 
 
+class ChinaAsharePilotCalendarInstrumentCoverageV1(FrozenContract):
+    source_security_id: str
+    pilot_instrument_id: UUID
+    exchange: ChinaAshareExchange
+    board: ChinaAshareBoard
+    expected_session_count: int = Field(ge=1)
+    observed_state_count: int = Field(ge=0)
+    missing_session_dates: tuple[date, ...] = ()
+    unexpected_state_dates: tuple[date, ...] = ()
+    source_alignment_complete: bool
+
+    @field_validator("source_security_id", mode="before")
+    @classmethod
+    def source_id_is_canonical(cls, value: str) -> str:
+        normalized = normalize_required_string(
+            value,
+            field_name="source_security_id",
+        ).lower()
+        if not _SOURCE_SECURITY_ID.fullmatch(normalized):
+            raise ValueError("source_security_id must use sh|sz|bj plus six digits")
+        return normalized
+
+    @field_validator("missing_session_dates", "unexpected_state_dates", mode="before")
+    @classmethod
+    def dates_are_ordered(cls, value: Any, info: Any) -> tuple[date, ...]:
+        if not isinstance(value, (tuple, list)):
+            raise ValueError(f"{info.field_name} must be an ordered collection")
+        if any(isinstance(item, datetime) for item in value):
+            raise ValueError(f"{info.field_name} must contain dates")
+        normalized = tuple(sorted(set(value)))
+        if len(normalized) != len(value):
+            raise ValueError(f"{info.field_name} contains duplicates")
+        return normalized
+
+    @model_validator(mode="after")
+    def coverage_reconciles(self) -> "ChinaAsharePilotCalendarInstrumentCoverageV1":
+        expected_complete = not self.missing_session_dates and not self.unexpected_state_dates
+        if self.source_alignment_complete is not expected_complete:
+            raise ValueError("calendar instrument source alignment differs")
+        if self.observed_state_count != (
+            self.expected_session_count
+            - len(self.missing_session_dates)
+            + len(self.unexpected_state_dates)
+        ):
+            raise ValueError("calendar instrument coverage count differs")
+        prefix = self.source_security_id.split(".", maxsplit=1)[0]
+        expected_exchange = {
+            "sh": ChinaAshareExchange.SSE,
+            "sz": ChinaAshareExchange.SZSE,
+            "bj": ChinaAshareExchange.BSE,
+        }[prefix]
+        if self.exchange is not expected_exchange:
+            raise ValueError("calendar instrument exchange differs from source ID")
+        return self
+
+
+class ChinaAsharePilotCalendarCoverageReportV1(FrozenContract):
+    schema_version: Literal["1.0"] = "1.0"
+    market_id: Literal["china_a_share"] = MARKET_ID
+    plan_fingerprint: str
+    daily_package_fingerprint: str
+    evaluated_at: datetime
+    calendar_id: Literal["XSHG"] = "XSHG"
+    calendar_version: str
+    calendar_timezone: Literal["Asia/Shanghai"] = "Asia/Shanghai"
+    start_date: date
+    end_date: date
+    expected_session_count: int = Field(ge=1)
+    expected_sessions_fingerprint: str
+    observed_union_session_count: int = Field(ge=0)
+    missing_union_session_dates: tuple[date, ...] = ()
+    unexpected_union_state_dates: tuple[date, ...] = ()
+    instrument_coverage: tuple[
+        ChinaAsharePilotCalendarInstrumentCoverageV1, ...
+    ] = Field(min_length=1)
+    library_source_alignment_complete: bool
+    official_exchange_notice_retained: Literal[False] = False
+    calendar_reconciled: Literal[False] = False
+    canonical_apply_authorized: Literal[False] = False
+    research_backtest_authorized: Literal[False] = False
+    product_publication_authorized: Literal[False] = False
+    deployment_authorized: Literal[False] = False
+    reason_codes: tuple[str, ...] = Field(min_length=1)
+    logical_fingerprint: str
+
+    @field_validator(
+        "plan_fingerprint",
+        "daily_package_fingerprint",
+        "expected_sessions_fingerprint",
+        "logical_fingerprint",
+    )
+    @classmethod
+    def hashes_are_sha256(cls, value: str, info: Any) -> str:
+        return _sha(value, info.field_name)
+
+    @field_validator("calendar_version", mode="before")
+    @classmethod
+    def calendar_version_is_present(cls, value: str) -> str:
+        return normalize_required_string(value, field_name="calendar_version")
+
+    @field_validator("evaluated_at")
+    @classmethod
+    def evaluated_time_is_utc(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @field_validator("start_date", "end_date", mode="before")
+    @classmethod
+    def range_fields_are_dates(cls, value: Any) -> Any:
+        if isinstance(value, datetime):
+            raise ValueError("calendar range fields must contain dates")
+        return value
+
+    @field_validator(
+        "missing_union_session_dates",
+        "unexpected_union_state_dates",
+        mode="before",
+    )
+    @classmethod
+    def union_dates_are_ordered(cls, value: Any, info: Any) -> tuple[date, ...]:
+        if not isinstance(value, (tuple, list)):
+            raise ValueError(f"{info.field_name} must be an ordered collection")
+        if any(isinstance(item, datetime) for item in value):
+            raise ValueError(f"{info.field_name} must contain dates")
+        normalized = tuple(sorted(set(value)))
+        if len(normalized) != len(value):
+            raise ValueError(f"{info.field_name} contains duplicates")
+        return normalized
+
+    @field_validator("reason_codes", mode="before")
+    @classmethod
+    def reasons_are_canonical(cls, value: Any) -> tuple[str, ...]:
+        return _canonical_reason_codes(value, field_name="reason_codes")
+
+    @model_validator(mode="after")
+    def report_reconciles(self) -> "ChinaAsharePilotCalendarCoverageReportV1":
+        if self.end_date < self.start_date:
+            raise ValueError("calendar coverage range is reversed")
+        source_ids = tuple(item.source_security_id for item in self.instrument_coverage)
+        instrument_ids = tuple(
+            str(item.pilot_instrument_id) for item in self.instrument_coverage
+        )
+        if source_ids != tuple(sorted(set(source_ids))):
+            raise ValueError("calendar coverage source IDs must be unique and ordered")
+        if len(instrument_ids) != len(set(instrument_ids)):
+            raise ValueError("calendar coverage pilot IDs must be unique")
+        if any(
+            item.expected_session_count != self.expected_session_count
+            for item in self.instrument_coverage
+        ):
+            raise ValueError("calendar coverage expected session counts differ")
+        expected_complete = (
+            not self.missing_union_session_dates
+            and not self.unexpected_union_state_dates
+            and all(item.source_alignment_complete for item in self.instrument_coverage)
+        )
+        if self.library_source_alignment_complete is not expected_complete:
+            raise ValueError("calendar library/source alignment status differs")
+        if self.observed_union_session_count != (
+            self.expected_session_count
+            - len(self.missing_union_session_dates)
+            + len(self.unexpected_union_state_dates)
+        ):
+            raise ValueError("calendar union coverage count differs")
+        if china_ashare_pilot_calendar_coverage_fingerprint(self) != self.logical_fingerprint:
+            raise ValueError("calendar coverage report fingerprint differs")
+        return self
+
+
 class ChinaAsharePilotDailyPackageManifestV1(FrozenContract):
     schema_version: Literal["1.0"] = "1.0"
     package_version: Literal["china-ashare-foundation-pilot-daily-package/1.0"] = (
@@ -722,6 +890,23 @@ def build_china_ashare_pilot_daily_package_manifest(
     )
 
 
+def build_china_ashare_pilot_calendar_coverage_report(
+    **values: Any,
+) -> ChinaAsharePilotCalendarCoverageReportV1:
+    provisional = ChinaAsharePilotCalendarCoverageReportV1.model_construct(
+        **values,
+        logical_fingerprint="0" * 64,
+    )
+    return ChinaAsharePilotCalendarCoverageReportV1.model_validate(
+        {
+            **values,
+            "logical_fingerprint": china_ashare_pilot_calendar_coverage_fingerprint(
+                provisional
+            ),
+        }
+    )
+
+
 def china_ashare_pilot_plan_fingerprint(value: ChinaAsharePilotPlanV1) -> str:
     return _fingerprint(value.model_dump(mode="json", exclude={"logical_fingerprint"}))
 
@@ -756,6 +941,12 @@ def china_ashare_pilot_daily_quality_report_fingerprint(
 
 def china_ashare_pilot_daily_package_fingerprint(
     value: ChinaAsharePilotDailyPackageManifestV1,
+) -> str:
+    return _fingerprint(value.model_dump(mode="json", exclude={"logical_fingerprint"}))
+
+
+def china_ashare_pilot_calendar_coverage_fingerprint(
+    value: ChinaAsharePilotCalendarCoverageReportV1,
 ) -> str:
     return _fingerprint(value.model_dump(mode="json", exclude={"logical_fingerprint"}))
 
