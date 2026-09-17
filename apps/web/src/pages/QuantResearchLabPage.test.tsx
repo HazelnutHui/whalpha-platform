@@ -59,12 +59,6 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('Historical membership').parentElement).toHaveTextContent('RECONSTRUCTED');
     expect(screen.getByText('Lifecycle & terminal').parentElement).toHaveTextContent('219 + 83');
     expect(screen.getByText(/not blended into one readiness percentage/i)).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'China A-share research track' })).toBeInTheDocument();
-    expect(screen.getByText('FOUNDATION PILOT · NOT BACKTEST READY')).toBeInTheDocument();
-    expect(screen.getByText('Official calendar').parentElement).toHaveTextContent('1,211 SESSIONS');
-    expect(screen.getByText('Market mechanics').parentElement).toHaveTextContent('7,266 DECISIONS');
-    expect(screen.getByText('Factor research').parentElement).toHaveTextContent('0 CAMPAIGNS');
-    expect(screen.getByText(/No A-share backtest, Alpha, model/)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Factor qualification V2' })).toBeInTheDocument();
     expect(screen.getByText('98.59%')).toBeInTheDocument();
     expect(screen.getByText('Complete vectors').parentElement).toHaveTextContent('431,249');
@@ -148,10 +142,6 @@ describe('Quant Research Lab', () => {
     expect(screen.getByRole('heading', { name: '研究基础快照' })).toBeInTheDocument();
     expect(screen.getByText('公司行动').parentElement).toHaveTextContent('4,623 / 4,643');
     expect(screen.getByText(/不会把不同证据强行合成为一个“总完成度”/)).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: '中国 A 股研究轨道' })).toBeInTheDocument();
-    expect(screen.getByText('基础试点 · 尚未达到回测准入')).toBeInTheDocument();
-    expect(screen.getByText('市场制度判定').parentElement).toHaveTextContent('7,266 条');
-    expect(screen.getByText(/当前没有任何 A 股回测、Alpha、模型/)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '因子资格诊断 V2' })).toBeInTheDocument();
     expect(screen.getByText('完整向量').parentElement).toHaveTextContent('431,249');
     expect(screen.getByText(/不代表存在预测价值/)).toBeInTheDocument();
@@ -182,9 +172,6 @@ describe('Quant Research Lab', () => {
     expect(screen.getAllByText('Expresión de estrategia')[0].parentElement).toHaveTextContent('BLOQUEADA');
     expect(screen.getByRole('heading', { name: 'Ciclo renovable de descubrimiento de factores' })).toBeInTheDocument();
     expect(screen.getByText(/Se aceptan hipótesis refutables de factores o estrategias/)).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Línea de investigación de acciones A de China' })).toBeInTheDocument();
-    expect(screen.getByText('PILOTO DE BASE · AÚN NO APTO PARA BACKTEST')).toBeInTheDocument();
-    expect(screen.getByText('Reglas de mercado').parentElement).toHaveTextContent('7.266 DECISIONES');
     expect(screen.getByRole('link', { name: 'Contacto · @whalphalab' })).toHaveAttribute('href', 'https://x.com/whalphalab');
     expect(screen.getByText('Modo operativo').parentElement).toHaveTextContent('RENOVABLE');
     expect(screen.getByText('Fase actual').parentElement).toHaveTextContent('ENTRADA SIN RESULTADOS');

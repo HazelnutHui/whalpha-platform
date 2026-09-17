@@ -91,6 +91,29 @@ Shared utilities may provide hashing, immutable manifests, exact decimals,
 atomic publication, and statistical methods. Shared utilities must not embed
 U.S.-specific exchange, symbol, settlement, adjustment, or eligibility rules.
 
+## Product projection boundary
+
+The protected workspace may expose `china_a_share` as a separate research
+market before research admission, provided the selector states that the
+foundation is not admitted. The control is therefore **Market / Universe**,
+not a claim that every option is already an investable stock pool.
+
+While A-share admission remains incomplete:
+
+- Quant Research Lab renders the A-share foundation, market mechanics, real
+  evidence counts, and blocked gates in a dedicated market view;
+- Model-Driven Equity Selection renders an intentionally empty readiness view
+  with zero admitted Universe, ranking, and model;
+- the six pilot securities remain evidence anchors and never become a
+  candidate list;
+- U.S.-only Regime, Sector Rotation, Market Structure, Candidate rows, and
+  their API requests are unavailable under the A-share selection; and
+- no row-level A-share source data enters the serving bundle.
+
+Switching markets changes presentation authority only. It cannot merge
+calendars, data, rules, research results, or activation state, and it cannot
+advance any of the 13 admission families.
+
 ## Source roles
 
 | Source role | Initial route | Permitted use | Not sufficient for |

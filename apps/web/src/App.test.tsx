@@ -19,6 +19,9 @@ vi.mock('./pages/SectorRotationPage', () => ({
 vi.mock('./pages/QuantResearchLabPage', () => ({
   QuantResearchLabPage: () => <main data-testid="research-workspace">research</main>,
 }));
+vi.mock('./pages/ChinaAshareResearchPage', () => ({
+  ChinaAshareResearchPage: ({ view }: { view: 'research' | 'candidates' }) => <main data-testid="ashare-workspace">ashare:{view}</main>,
+}));
 
 describe('primary workspace shell', () => {
   beforeEach(() => {
@@ -45,7 +48,8 @@ describe('primary workspace shell', () => {
     expect(await screen.findByTestId('research-workspace')).toHaveTextContent('research');
     expect(screen.getAllByText('Research system')).toHaveLength(2);
     expect(screen.getByText('Free market tools')).toBeInTheDocument();
-    expect(screen.getByLabelText('Active Universe')).toHaveValue('provider_classified_common_shares_v1');
+    expect(screen.getByLabelText('Research market and Universe')).toHaveValue('provider_classified_common_shares_v1');
+    expect(screen.getByRole('option', { name: 'China A-shares · foundation (not admitted)' })).toBeInTheDocument();
     expect(screen.getByText('Protected Session')).toBeInTheDocument();
     expect(document.querySelector('.workspace-brand img')).toHaveAttribute('src', '/favicon.png');
   });
@@ -56,12 +60,12 @@ describe('primary workspace shell', () => {
     fireEvent.click(screen.getByRole('button', { name: /Quant Research Lab/ }));
     expect(await screen.findByTestId('research-workspace')).toBeInTheDocument();
     expect(new URLSearchParams(window.location.search).get('view')).toBe('research');
-    expect(screen.getByLabelText('Active Universe')).toHaveValue('provider_classified_common_shares_v1');
+    expect(screen.getByLabelText('Research market and Universe')).toHaveValue('provider_classified_common_shares_v1');
   });
 
   it('preserves Universe across workspace navigation and browser history', async () => {
     render(<I18nProvider><App /></I18nProvider>);
-    fireEvent.change(screen.getByLabelText('Active Universe'), { target: { value: 'provider_classified_common_shares_plus_adrs_v1' } });
+    fireEvent.change(screen.getByLabelText('Research market and Universe'), { target: { value: 'provider_classified_common_shares_plus_adrs_v1' } });
     expect(new URLSearchParams(window.location.search).get('universe')).toBe('provider_classified_common_shares_plus_adrs_v1');
     fireEvent.click(screen.getByRole('button', { name: /Market Structure & Activity/ }));
     expect(await screen.findByTestId('market-workspace')).toHaveTextContent('market:true');
@@ -73,7 +77,7 @@ describe('primary workspace shell', () => {
       window.dispatchEvent(new PopStateEvent('popstate'));
     });
     expect(await screen.findByTestId('regime-workspace')).toBeInTheDocument();
-    expect(screen.getByLabelText('Active Universe')).toHaveValue('provider_classified_common_shares_v1');
+    expect(screen.getByLabelText('Research market and Universe')).toHaveValue('provider_classified_common_shares_v1');
   });
 
   it('keeps Sector Rotation in the free market-tool group', async () => {
@@ -90,7 +94,7 @@ describe('primary workspace shell', () => {
     expect(screen.getByRole('button', { name: /量化研究实验室/ })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /模型驱动美股筛选/ })).toBeInTheDocument();
     expect(screen.getByText('免费市场工具')).toBeInTheDocument();
-    expect(screen.getByLabelText('当前股票池')).toHaveValue('provider_classified_common_shares_v1');
+    expect(screen.getByLabelText('研究市场与股票池')).toHaveValue('provider_classified_common_shares_v1');
     expect(new URLSearchParams(window.location.search).get('lang')).toBe('zh');
   });
 
@@ -100,7 +104,7 @@ describe('primary workspace shell', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: /Laboratorio de investigación cuantitativa/ })).toBeInTheDocument());
     expect(screen.getByRole('button', { name: /Selección de acciones basada en modelos/ })).toBeInTheDocument();
     expect(screen.getByText('Herramientas de mercado gratuitas')).toBeInTheDocument();
-    expect(screen.getByLabelText('Universo activo')).toHaveValue('provider_classified_common_shares_v1');
+    expect(screen.getByLabelText('Mercado y Universo de investigación')).toHaveValue('provider_classified_common_shares_v1');
     expect(new URLSearchParams(window.location.search).get('lang')).toBe('es');
   });
 
@@ -124,5 +128,34 @@ describe('primary workspace shell', () => {
       method: 'POST',
       credentials: 'same-origin',
     }));
+  });
+
+  it('routes the A-share market to its isolated research pages without loading U.S. workspaces', async () => {
+    render(<I18nProvider><App /></I18nProvider>);
+    fireEvent.click(screen.getByRole('button', { name: /Market Structure & Activity/ }));
+    expect(await screen.findByTestId('market-workspace')).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText('Research market and Universe'), { target: { value: 'china_a_share_research_foundation_v1' } });
+    expect(await screen.findByTestId('ashare-workspace')).toHaveTextContent('ashare:research');
+    expect(screen.queryByTestId('market-workspace')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('candidate-workspace')).not.toBeInTheDocument();
+    expect(new URLSearchParams(window.location.search).get('view')).toBe('research');
+    expect(new URLSearchParams(window.location.search).get('universe')).toBe('china_a_share_research_foundation_v1');
+    expect(screen.getByRole('button', { name: /Regime & Opportunities/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Sector Rotation/ })).toBeDisabled();
+    expect(screen.getByRole('button', { name: /Market Structure & Activity/ })).toBeDisabled();
+
+    fireEvent.click(screen.getByRole('button', { name: /Model-Driven Equity Selection/ }));
+    expect(await screen.findByTestId('ashare-workspace')).toHaveTextContent('ashare:candidates');
+    expect(screen.queryByTestId('candidate-workspace')).not.toBeInTheDocument();
+    expect(new URLSearchParams(window.location.search).get('view')).toBe('candidates');
+  });
+
+  it('normalizes a direct A-share free-tool URL before any U.S. page is rendered', async () => {
+    window.history.replaceState({}, '', '/dashboard/?view=sector&lang=en&universe=china_a_share_research_foundation_v1');
+    render(<I18nProvider><App /></I18nProvider>);
+    expect(await screen.findByTestId('ashare-workspace')).toHaveTextContent('ashare:research');
+    expect(screen.queryByTestId('sector-workspace')).not.toBeInTheDocument();
+    await waitFor(() => expect(new URLSearchParams(window.location.search).get('view')).toBe('research'));
   });
 });

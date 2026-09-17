@@ -11,12 +11,14 @@ const loadMarketRegime = () => import('./pages/MarketRegimeOpportunityMapPage');
 const loadOpportunityCandidates = () => import('./pages/OpportunityCandidatesPage');
 const loadSectorRotation = () => import('./pages/SectorRotationPage');
 const loadQuantResearchLab = () => import('./pages/QuantResearchLabPage');
+const loadChinaAshareResearch = () => import('./pages/ChinaAshareResearchPage');
 
 const MarketDashboardPage = lazy(() => loadMarketDashboard().then((module) => ({ default: module.MarketDashboardPage })));
 const MarketRegimeOpportunityMapPage = lazy(() => loadMarketRegime().then((module) => ({ default: module.MarketRegimeOpportunityMapPage })));
 const OpportunityCandidatesPage = lazy(() => loadOpportunityCandidates().then((module) => ({ default: module.OpportunityCandidatesPage })));
 const SectorRotationPage = lazy(() => loadSectorRotation().then((module) => ({ default: module.SectorRotationPage })));
 const QuantResearchLabPage = lazy(() => loadQuantResearchLab().then((module) => ({ default: module.QuantResearchLabPage })));
+const ChinaAshareResearchPage = lazy(() => loadChinaAshareResearch().then((module) => ({ default: module.ChinaAshareResearchPage })));
 
 type Workspace = 'market' | 'regime' | 'sector' | 'candidates' | 'research';
 
@@ -38,8 +40,13 @@ const WORKSPACE_LABELS: Record<Workspace, MessageKey> = {
 
 const PRIMARY_UNIVERSE = 'provider_classified_common_shares_v1';
 const SECONDARY_UNIVERSE = 'provider_classified_common_shares_plus_adrs_v1';
-const UNIVERSES = [PRIMARY_UNIVERSE, SECONDARY_UNIVERSE] as const;
+const CHINA_ASHARE_FOUNDATION = 'china_a_share_research_foundation_v1';
+const UNIVERSES = [PRIMARY_UNIVERSE, SECONDARY_UNIVERSE, CHINA_ASHARE_FOUNDATION] as const;
 type UniverseId = (typeof UNIVERSES)[number];
+
+function isResearchWorkspace(value: Workspace): boolean {
+  return value === 'research' || value === 'candidates';
+}
 
 function requestedWorkspace(): Workspace {
   const value = new URLSearchParams(window.location.search).get('view');
@@ -75,6 +82,7 @@ export default function App(): JSX.Element {
   const [universe, setUniverse] = useState(requestedUniverse);
   const [guestVisitorCount, setGuestVisitorCount] = useState<number | null>(null);
   const snapshotMode = import.meta.env.VITE_MARKET_DATA_MODE === 'snapshot';
+  const isChinaAshare = universe === CHINA_ASHARE_FOUNDATION;
 
   useEffect(() => {
     if (!snapshotMode) return;
@@ -91,26 +99,40 @@ export default function App(): JSX.Element {
   }, [universe]);
 
   useEffect(() => {
+    if (!isChinaAshare || isResearchWorkspace(workspace)) return;
+    setWorkspace('research');
+    writeQuery({ view: 'research' }, true);
+  }, [isChinaAshare, workspace]);
+
+  useEffect(() => {
     const handler = () => {
-      setWorkspace(requestedWorkspace());
-      setUniverse(requestedUniverse());
+      const nextUniverse = requestedUniverse();
+      const nextWorkspace = requestedWorkspace();
+      setUniverse(nextUniverse);
+      setWorkspace(nextUniverse === CHINA_ASHARE_FOUNDATION && !isResearchWorkspace(nextWorkspace) ? 'research' : nextWorkspace);
     };
     window.addEventListener('popstate', handler);
     return () => window.removeEventListener('popstate', handler);
   }, []);
 
   const navigate = (next: Workspace) => {
+    if (isChinaAshare && !isResearchWorkspace(next)) return;
     writeQuery({ view: next });
     setWorkspace(next);
   };
   const preloadWorkspace = (next: Workspace) => {
+    if (isChinaAshare && isResearchWorkspace(next)) {
+      void loadChinaAshareResearch();
+      return;
+    }
     void WORKSPACE_PRELOADERS[next]();
   };
   const selectUniverse = (next: string) => {
     if (!isUniverse(next)) return;
-    writeQuery({ universe: next });
+    const nextWorkspace = next === CHINA_ASHARE_FOUNDATION && !isResearchWorkspace(workspace) ? 'research' : workspace;
+    writeQuery({ universe: next, view: nextWorkspace });
     setUniverse(next);
-    window.dispatchEvent(new PopStateEvent('popstate'));
+    setWorkspace(nextWorkspace);
   };
 
   return (
@@ -141,17 +163,17 @@ export default function App(): JSX.Element {
           <div className="workspace-nav-divider" aria-hidden="true"><span>{t('app.freeToolsGroup')}</span><b>{t('app.freeBadge')}</b></div>
 
           <div className="workspace-nav-group workspace-nav-group--tools" role="group" aria-label={t('app.freeToolsGroup')}>
-            <button type="button" className={workspace === 'regime' ? 'active' : ''} aria-current={workspace === 'regime' ? 'page' : undefined} onPointerEnter={() => preloadWorkspace('regime')} onFocus={() => preloadWorkspace('regime')} onClick={() => navigate('regime')}>
+            <button type="button" disabled={isChinaAshare} className={workspace === 'regime' ? 'active' : ''} aria-current={workspace === 'regime' ? 'page' : undefined} onPointerEnter={() => preloadWorkspace('regime')} onFocus={() => preloadWorkspace('regime')} onClick={() => navigate('regime')}>
               <span className="workspace-tool-mark" aria-hidden="true"><i /></span>
               <strong>{t('app.regimeMap')}</strong>
               <small>{t('app.regimeMapDescription')}</small>
             </button>
-            <button type="button" className={workspace === 'sector' ? 'active' : ''} aria-current={workspace === 'sector' ? 'page' : undefined} onPointerEnter={() => preloadWorkspace('sector')} onFocus={() => preloadWorkspace('sector')} onClick={() => navigate('sector')}>
+            <button type="button" disabled={isChinaAshare} className={workspace === 'sector' ? 'active' : ''} aria-current={workspace === 'sector' ? 'page' : undefined} onPointerEnter={() => preloadWorkspace('sector')} onFocus={() => preloadWorkspace('sector')} onClick={() => navigate('sector')}>
               <span className="workspace-tool-mark" aria-hidden="true"><i /></span>
               <strong>{t('app.sectorRotation')}</strong>
               <small>{t('app.sectorRotationDescription')}</small>
             </button>
-            <button type="button" className={workspace === 'market' ? 'active' : ''} aria-current={workspace === 'market' ? 'page' : undefined} onPointerEnter={() => preloadWorkspace('market')} onFocus={() => preloadWorkspace('market')} onClick={() => navigate('market')}>
+            <button type="button" disabled={isChinaAshare} className={workspace === 'market' ? 'active' : ''} aria-current={workspace === 'market' ? 'page' : undefined} onPointerEnter={() => preloadWorkspace('market')} onFocus={() => preloadWorkspace('market')} onClick={() => navigate('market')}>
               <span className="workspace-tool-mark" aria-hidden="true"><i /></span>
               <strong>{t('app.marketDashboard')}</strong>
               <small>{t('app.marketDashboardDescription')}</small>
@@ -167,7 +189,7 @@ export default function App(): JSX.Element {
             <strong>{t(WORKSPACE_LABELS[workspace])}</strong>
           </div>
           <label className="workspace-universe">
-            <span>{t('common.universe')}</span>
+            <span>{t('app.marketUniverse')}</span>
             <select aria-label={t('app.universeAria')} value={universe} onChange={(event) => selectUniverse(event.target.value)}>
               {UNIVERSES.map((universeId) => <option key={universeId} value={universeId}>{universeName(t, universeId)}</option>)}
             </select>
@@ -181,7 +203,7 @@ export default function App(): JSX.Element {
         </header>
         <div className="workspace-view" data-workspace={workspace}>
           <Suspense fallback={<div className="workspace-route-loading" role="status">{t('common.loading')}</div>}>
-            {workspace === 'regime' ? <MarketRegimeOpportunityMapPage withinWorkspaceShell /> : workspace === 'sector' ? <SectorRotationPage universeId={universe} /> : workspace === 'market' ? <MarketDashboardPage withinWorkspaceShell /> : workspace === 'candidates' ? <OpportunityCandidatesPage /> : <QuantResearchLabPage />}
+            {isChinaAshare ? <ChinaAshareResearchPage view={workspace === 'candidates' ? 'candidates' : 'research'} /> : workspace === 'regime' ? <MarketRegimeOpportunityMapPage withinWorkspaceShell /> : workspace === 'sector' ? <SectorRotationPage universeId={universe} /> : workspace === 'market' ? <MarketDashboardPage withinWorkspaceShell /> : workspace === 'candidates' ? <OpportunityCandidatesPage /> : <QuantResearchLabPage />}
           </Suspense>
         </div>
         {guestVisitorCount !== null ? <footer className="workspace-boundary" aria-live="polite"><span>{t('app.cumulativeGuestEntries')} · </span><strong>{new Intl.NumberFormat(locale === 'zh' ? 'zh-CN' : locale === 'es' ? 'es-ES' : 'en-US').format(guestVisitorCount)}</strong></footer> : null}

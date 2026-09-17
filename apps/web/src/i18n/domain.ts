@@ -4,10 +4,12 @@ import type { Translate } from './I18nProvider';
 const UNIVERSE_KEYS: Record<string, MessageKey> = {
   provider_classified_common_shares_v1: 'universe.primary',
   provider_classified_common_shares_plus_adrs_v1: 'universe.secondary',
+  china_a_share_research_foundation_v1: 'universe.ashare',
 };
 const UNIVERSE_DESCRIPTION_KEYS: Record<string, MessageKey> = {
   provider_classified_common_shares_v1: 'universe.primaryDescription',
   provider_classified_common_shares_plus_adrs_v1: 'universe.secondaryDescription',
+  china_a_share_research_foundation_v1: 'universe.ashareDescription',
 };
 const STATE_KEYS: Record<string, MessageKey> = {
   risk_on: 'state.risk_on', balanced: 'state.balanced', defensive: 'state.defensive', stress: 'state.stress', unavailable: 'state.unavailable',

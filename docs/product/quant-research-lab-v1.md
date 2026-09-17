@@ -192,6 +192,13 @@ tests together. Deployment remains separately verified. Current decisions stay
 expanded; formulas, parameters, lineage, hashes, limitations, and current
 three-layer campaigns may use disclosure panels without becoming unavailable.
 
+The Market / Universe selector separates the U.S. Lab from the China A-share
+research foundation. The A-share view uses the same Factor Discovery -> Model
+Construction -> Strategy Expression governance, but has separate data,
+calendar, rules, execution mechanics, Universe, and admission. Until all 13
+foundation families pass, it shows readiness and blockers only; it cannot
+render U.S. research as A-share evidence or publish an A-share model or rank.
+
 The Lab also exposes the renewable Factor Discovery cycle. This is a permanent
 process contract, not a third model or a promise that research is unattended:
 the overall program can keep returning to hypothesis intake, while each
