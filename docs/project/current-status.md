@@ -13,7 +13,10 @@ ADRs, and audits.
   UI, completed V1/V2 screens, and completed Campaign Three formal/replay
   result to equal guest/credential flows. All three campaigns closed without
   candidate Alpha; Ledger V5 contains 17 formal trials, and active Alpha,
-  model, and strategy counts remain zero. Underlying data is stale by two
+  model, and strategy counts remain zero. The same release presents the
+  isolated A-share pilot facts and incomplete admission boundary without
+  publishing its underlying records or implying an A-share backtest.
+  Underlying data is stale by two
   completed sessions at the 2026-09-16 operational review.
 - **Five-year source depth:** EOD price and stable Identity complete.
 - **Professional performance foundation:** the strict exact/as-operated gate
@@ -137,6 +140,13 @@ exposes human-readable roles, isolation, the completed market-state
 qualification and replay, and locked downstream gates while withholding
 internal fingerprints, raw IDs, and custody identifiers from the website.
 Public infrastructure wording uses "workstation" rather than a hardware brand.
+
+Production now also contains a trilingual China A-share foundation surface.
+It reports the exact pilot interval, six bound SSE/SZSE securities, 1,211
+calendar sessions, 7,266 market-mechanics decisions, the qualified and blocked
+admission families, strict U.S./China isolation, and zero A-share factor
+campaigns. This is an evidence-status view only: no A-share row-level data,
+backtest, Alpha, model, ranking, strategy, or Product authority is served.
 
 The reusable research-input policy remains preserved in V1, while registry V2
 records one qualified, exactly replayed Market-State panel and zero outcome-

@@ -6,6 +6,22 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-17 — Deploy the A-share foundation status surface
+
+- Built OCI release `2026-09-17T052618Z-34488cb022bd` from clean source
+  `34488cb022bdba3275afcd048637505ec960c786`, reusing the immutable
+  2026-09-11 Snapshot 1.11 / Dashboard 2.8 and Market Intelligence 1.3
+  publication without recalculation or `/data` mutation.
+- Dry-run preflight and atomic apply passed. Independent postflight matched the
+  active release, source, manifest, checksums, equal guest/credential route
+  policy, temporary guest Session, protected routes, services, localhost-only
+  listener, and zero failed/staging residue.
+- Production now presents the identifier-free, trilingual A-share foundation
+  status in both the public entry and protected Lab. It publishes no underlying
+  A-share records and grants no backtest, Alpha, model, ranking, Product, or
+  trading authority. Credential login and final browser appearance remain
+  manual checks.
+
 ## 2026-09-17 — Establish the A-share pilot calendar and mechanics boundaries
 
 - Added a fail-closed calendar coverage contract and diagnostic fixed to

@@ -2,7 +2,7 @@
 
 Operational state verified at: 2026-09-16T14:11:04Z
 
-Deployment state verified at: 2026-09-16T14:11:04Z
+Deployment state verified at: 2026-09-17T05:27:20Z
 
 Repository context updated at: 2026-09-17 UTC
 
@@ -20,8 +20,8 @@ ADRs, and dated audits.
 | Branch | `main`; verify live HEAD before mutation |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Active OCI release | `2026-09-16T141001Z-250f423b01cb` |
-| Deployed source | `250f423b01cbea7ac6ec1f16a43dcecb82b678ac` |
+| Active OCI release | `2026-09-17T052618Z-34488cb022bd` |
+| Deployed source | `34488cb022bdba3275afcd048637505ec960c786` |
 
 Dell owns code, canonical data, governance, and heavy computation. OCI is the
 bounded public-serving tier. A newer clean repository commit does not imply a
@@ -59,7 +59,11 @@ anti-retesting evidence. The Lab links hypothesis submissions to
 `@whalphalab`. The protected workspace
 shows an identifier-free cumulative guest-entry counter; the internal baseline
 is 1,050 and the first actual guest workspace entry displays 1,051. English,
-Chinese, and Spanish agree on that state. All model, strategy,
+Chinese, and Spanish agree on that state. The same three languages now present
+the isolated A-share foundation as a five-year pilot with qualified calendar
+and market-mechanics gates, explicitly incomplete 13-family admission, and
+zero factor campaigns; no underlying A-share data is placed in the serving
+bundle. All model, strategy,
 Validation, Holdout, Candidate, and option-performance authority stays locked.
 An unauthenticated Dashboard request redirects to Session entry. Password
 login and final visual appearance remain manual checks. Production Market
@@ -370,9 +374,10 @@ The account rate is user-reported and its all-in/minimum/history assumptions
 remain unconfirmed by a broker statement. SSE lifecycle rows remain issuer
 evidence and cannot claim listed-security identity. No raw upstream archive
 exists for the reference/daily source families; no canonical stable identity,
-canonical Apply, admitted
-historical Universe, backtest admission, website change, or Production
-authority exists. See the
+canonical Apply, admitted historical Universe, backtest admission, or Product
+authority exists. The deployed website reports this boundary and the verified
+pilot counts as presentation only; it does not publish underlying A-share
+records or grant research authority. See the
 [source audit](../audits/china-a-share-free-source-availability-2026-09-16.md).
 
 The offline XSHG 4.13.2 calendar and each of the six pilot state histories
