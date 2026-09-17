@@ -280,6 +280,15 @@ Candidate, or Product authority. Its next gate is point-in-time source and
 implementation qualification; unavailable inputs stop rather than accept a
 proxy with different semantics.
 
+ADR 0298 closes that exact intake at source qualification with 0 / 3
+candidate-Alpha inputs and 0 / 1 risk guards qualified. No formal trial or
+outcome read occurred. Historical consensus vintages, issue-level published
+short-interest history, and historical earnings-event revisions are absent.
+The SEC as-filed foundation exists for cash earnings quality, but its exact TTM
+formula, amendment lineage, stable listed-security projection, point-in-time
+nonfinancial applicability, joint coverage, and replay are not qualified. A
+later attempt requires new sources and a new immutable intake version.
+
 ADR 0287 fixes the first multi-agent pilot as a manually supervised,
 outcome-blind research team. Five current roles may inspect governance,
 evidence, hypotheses, implementation, and method risk; Development evaluation,

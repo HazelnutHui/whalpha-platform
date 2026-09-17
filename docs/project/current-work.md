@@ -30,12 +30,12 @@ are never sufficient evidence by themselves.
 
 ## Active objective
 
-Advance two strictly isolated outcome-blind gates: qualify the frozen U.S.
-successor cards' point-in-time sources and implementation feasibility, and
-materialize the A-share full-population offline 13-family reconciliation. Do
-not read future-return outcomes, register a Development screen, authorize
-A-share returns, construct a model, publish rankings, or change Product
-authority.
+Advance the A-share full-population offline 13-family reconciliation while the
+U.S. successor intake remains immutably closed at source qualification. A
+separately scoped SEC cash-quality source project may be planned but must not
+read outcomes or silently reopen that U.S. intake. Do not register a
+Development screen, authorize A-share returns, construct a model, publish
+rankings, or change Product authority.
 
 The completed China A-share five-year source acquisition remains a separate
 evidence chain. Its local packages may feed only the bounded offline coverage
@@ -69,21 +69,21 @@ not replace the remaining instrument, transition, rule-gap, provisional-
 membership, and independent replay artifacts.
 
 ADR 0296 freezes the U.S. successor intake at three candidate-Alpha cards and
-one risk guard. It counts zero formal trials and authorizes only source and
-implementation qualification.
+one risk guard. ADR 0298 closes its source gate at 0 / 4 qualified, zero formal
+trials, and zero outcome reads.
 
 ## Ordered remaining gates
 
-1. Qualify the exact point-in-time source, timing, identity, coverage, and
-   implementation requirements of each frozen U.S. card; reject unavailable
-   inputs without substitution or outcomes.
-2. Freeze a deterministic A-share diagnostic plan, then stream the existing
+1. Freeze a deterministic A-share diagnostic plan, then stream the existing
    packages partition by partition into bounded instrument coverage,
    adjustment-transition, rule-gap, and provisional-membership aggregates.
-3. Independently replay the complete A-share diagnostic package and reduce
+2. Independently replay the complete A-share diagnostic package and reduce
    later external evidence work to explicit identity, warning-state,
    corporate-action, price-limit, and terminal-lifecycle queues. Keep admission
    closed.
+3. Only after that A-share gate, separately decide whether to engineer SEC
+   cash-quality inputs or acquire consensus, short-interest, and event-calendar
+   sources for a new U.S. intake version.
 
 Observed workstation capacity supports the two bounded offline lines: 16
 logical CPUs, about 60 GiB available memory, negligible load, and 2% `/data`
@@ -97,6 +97,7 @@ Read this bounded set before changing either active gate:
 - `docs/decisions/0295-freeze-us-factor-space-diagnostic-before-successor-intake.md`;
 - `docs/decisions/0296-freeze-us-successor-hypothesis-intake-before-source-qualification.md`;
 - `docs/decisions/0297-freeze-a-share-full-population-offline-coverage-diagnostic.md`;
+- `docs/decisions/0298-close-us-successor-intake-at-source-qualification.md`;
 - `docs/data-contracts/quant-research-factor-space-diagnostic-v1.md`;
 - `docs/research/professional-quantitative-research-action-framework-v1.md`
 - `docs/product/quant-research-three-layer-architecture-v1.md`

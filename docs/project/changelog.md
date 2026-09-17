@@ -22,6 +22,17 @@ and dated [audits](../audits/). Current capability and next work belong in
 - Deployed the trilingual current-stage projection and passed independent OCI
   postflight; credential login and browser visual review remain manual.
 
+## 2026-09-17 — Close the U.S. successor intake before outcomes
+
+- Audited the exact point-in-time source requirements of all four frozen cards
+  and closed the intake at `0 / 4 qualified`, with zero new formal trials and
+  zero outcome, Validation, or Holdout reads.
+- Retained the SEC source foundation for future cash-earnings-quality
+  engineering while refusing to treat raw concept availability as a qualified
+  TTM feature, identity projection, applicability rule, or joint coverage.
+- Corrected the short-interest card's lineage: dollar-volume surprise is a
+  related setup input, not a consumed formal outcome trial.
+
 ## 2026-09-17 — Complete U.S. factor-space replay and A-share source expansion
 
 - Materialized and exactly replayed the outcome-blind U.S. factor-space

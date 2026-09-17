@@ -177,6 +177,14 @@ inside the three-session holding window. They are research questions, not
 signals. Zero new formal trials are registered, and each card must pass
 point-in-time source and implementation qualification before outcomes.
 
+That source gate is now closed at 0 / 4. The intake registered zero trials and
+read zero outcomes. Current local evidence cannot reproduce historical FY1
+consensus vintages, published short-interest history with a point-in-time
+security denominator, or historical earnings-calendar revisions. SEC cash-
+quality engineering remains possible as a separate outcome-blind source task,
+but raw filings alone do not satisfy its formula, identity, applicability,
+coverage, or replay gates.
+
 Production additionally contains the reviewed renewable-cycle panel in its
 completed Campaign Three state: three completed campaigns, 17 closed formal
 trials, no active campaign, seven-dimensional duplicate

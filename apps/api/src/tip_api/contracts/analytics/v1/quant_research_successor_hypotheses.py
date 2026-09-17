@@ -63,6 +63,7 @@ class SuccessorHypothesisCardV1(FrozenModel):
     prior_trial_comparison: str
     factor_space_comparison: str
     consumed_trial_links: tuple[str, ...]
+    related_input_links: tuple[str, ...]
     input_availability: Literal[
         InputAvailability.REQUIRES_POINT_IN_TIME_SOURCE_QUALIFICATION
     ] = InputAvailability.REQUIRES_POINT_IN_TIME_SOURCE_QUALIFICATION
@@ -262,6 +263,7 @@ _CARD_PAYLOADS = (
         "prior_trial_comparison": "Economically distinct from all 17 price, path, participation, volatility, and Market-State interaction trials.",
         "factor_space_comparison": "Adds expectations information rather than another member of the measured leadership, reversal, path, liquidity, or risk clusters.",
         "consumed_trial_links": (),
+        "related_input_links": (),
     },
     {
         **_COMMON,
@@ -278,6 +280,7 @@ _CARD_PAYLOADS = (
         "prior_trial_comparison": "No consumed trial used filing-time cash-flow or accrual-quality evidence.",
         "factor_space_comparison": "Targets a fundamental-quality direction absent from both completed diagnostic panels.",
         "consumed_trial_links": (),
+        "related_input_links": (),
     },
     {
         **_COMMON,
@@ -293,7 +296,8 @@ _CARD_PAYLOADS = (
         "point_in_time_requirements": ("public_dissemination_timestamp", "settlement_period_identity", "corporate_action_alignment"),
         "prior_trial_comparison": "No consumed trial measured published short positioning; traded-volume surprise is explicitly not fund flow or short interest.",
         "factor_space_comparison": "Adds positioning evidence rather than another turnover or dollar-volume transformation.",
-        "consumed_trial_links": ("whalpha.discovery-trial.daily-behavior-v1.dollar_volume_surprise_1_to_20.h3",),
+        "consumed_trial_links": (),
+        "related_input_links": ("whalpha.factor.daily-behavior-v1.dollar_volume_surprise_1_to_20",),
     },
     {
         **_COMMON,
@@ -310,6 +314,7 @@ _CARD_PAYLOADS = (
         "prior_trial_comparison": "Distinct from the six trailing-price risk trials because it describes known forward event exposure, not a return forecast.",
         "factor_space_comparison": "A calendar guard is not a latent stock-factor component and must remain outside PCA-derived Alpha.",
         "consumed_trial_links": (),
+        "related_input_links": (),
     },
 )
 _CARD_PAYLOAD_BY_ID = {str(item["hypothesis_id"]): item for item in _CARD_PAYLOADS}

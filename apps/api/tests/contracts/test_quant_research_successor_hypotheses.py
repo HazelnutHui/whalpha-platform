@@ -40,6 +40,11 @@ def test_successor_intake_has_three_alpha_cards_and_one_event_guard() -> None:
     event_guard = next(item for item in registry.cards if item.role is SuccessorHypothesisRole.RISK_GUARD)
     assert event_guard.orientation == "true_is_risk_exclusion"
     assert "return forecast" in event_guard.prior_trial_comparison
+    short_interest = next(item for item in registry.cards if item.economic_family == "positioning_pressure")
+    assert short_interest.consumed_trial_links == ()
+    assert short_interest.related_input_links == (
+        "whalpha.factor.daily-behavior-v1.dollar_volume_surprise_1_to_20",
+    )
 
 
 def test_display_id_does_not_change_successor_duplicate_identity() -> None:

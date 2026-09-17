@@ -21,6 +21,20 @@ model input, Candidate authority, or Product authority exists. Daily short
 volume, restated-current fundamentals, and current event calendars are
 explicitly rejected as substitutes for the registered semantics.
 
+The subsequent local source audit closed the intake at 0 / 4 qualified. FY1
+consensus, published short-interest, and historical earnings-event revision
+families have no local source package or adapter. The SEC as-filed foundation
+contains relevant cash-flow, net-income, and asset concepts, but the exact TTM
+derivation, amendment-aware clock, listed-security projection, nonfinancial
+applicability, joint coverage, and deterministic replay remain unqualified.
+Accordingly, the report registers zero formal trials and reads zero outcomes,
+Validation, or Holdout records. A later attempt requires a new immutable
+intake version after suitable point-in-time sources are acquired or authorized.
+
+The audit also corrected a pre-outcome lineage defect: dollar-volume surprise
+is a related setup input for deduplication, not one of the 17 consumed formal
+outcome trials.
+
 ## A-share full-population coverage
 
 A fresh local aggregate over all 109 normalized partition manifests reproduced:
@@ -63,10 +77,10 @@ contract:
 - A-share coverage serialization SHA-256:
   `404f7b79d7d044eb8f1e6ac16a5b50f189057fac0341fb2e52d0838fed8e5618`.
 
-Eight initial focused contract tests, all 3,167 backend tests, all 135 frontend tests,
-and the Production frontend build passed. The two backend warnings are the
-existing Python `crypt` and Starlette/httpx deprecation notices, not failures.
-Six additional A-share verifier/custody tests passed after that regression.
+The final regression passed all 3,173 backend tests, all 135 frontend tests,
+and the Production frontend build. The two backend warnings are the existing
+Python `crypt` and Starlette/httpx deprecation notices, not failures. Focused
+contract, verifier, and custody suites also passed independently.
 
 ## Website deployment
 
