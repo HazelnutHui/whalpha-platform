@@ -128,3 +128,10 @@ implemented owner-only closed-set custody and exact reread for the A-share
 diagnostic plan and bounded aggregate documents. Neither source queries nor the
 real 109-partition diagnostic were executed in that stage; all research and
 Product authority stayed closed.
+
+That declarative query/custody checkpoint was deployed as release
+`2026-09-17T214516Z-aed8120acf8a`, sourced from revision
+`aed8120acf8a7fa1f033074cea10e870b833cf46`. Independent postflight at
+2026-09-17T21:46:11Z passed all automated release, source, checksum, service,
+route, guest, equal-policy, residue, and listener checks. Credential login and
+browser visual inspection remain manual.
