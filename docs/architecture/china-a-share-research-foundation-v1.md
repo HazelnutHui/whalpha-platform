@@ -9,9 +9,11 @@ Candidate activation, website publication, or deployment.
 
 The implementation contains provider-neutral contracts, BaoStock and
 AKShare-mediated adapters, an owner-only temporary normalized-reference
-package, and a linked five-year daily pilot package. Both packages reread
-exactly. They are not raw provider archives, canonical datasets, or completed
-historical admission.
+package, a linked five-year daily pilot package, and a separate official
+calendar-evidence package. All packages reread exactly. The calendar package
+retains exact upstream SSE/SZSE notice bytes; the reference and daily packages
+still do not retain their raw upstream payloads. None is a canonical dataset
+or completed historical admission.
 
 ## Logical layers
 
@@ -194,9 +196,12 @@ completeness, adjustment economics, or research admission.
 The calendar diagnostic uses `XSHG` with an explicit `Asia/Shanghai` timezone;
 passing another exchange ID or the shared U.S. default timezone fails closed.
 For the bounded pilot, its 1,211 sessions match every bound security's source-
-state dates exactly. This alignment is not calendar authority. Exact annual SSE
-and SZSE closure notices must be retained and machine-reconciled before the
-calendar family can be admitted.
+state dates exactly. A second, immutable owner-only package now retains the 12
+exact SSE/SZSE annual notices for 2021–2026 and machine-reconciles 94 weekday
+closures over the pilot interval. SSE versus SZSE, official notices versus
+`XSHG`, and `XSHG` versus all six source-state histories each have zero date
+differences. This admits the SSE/SZSE pilot calendar evidence only; BSE and all
+other foundation families retain their separate gates.
 
 Expansion stops on systemic schema drift, unexplained coverage loss,
 unbounded rate failure, fingerprint mismatch, or a critical family with no

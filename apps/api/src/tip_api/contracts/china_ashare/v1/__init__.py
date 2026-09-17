@@ -1,5 +1,23 @@
 """Version 1 China A-share daily-research contracts."""
 
+from tip_api.contracts.china_ashare.v1.calendar_evidence import (
+    CALENDAR_EVIDENCE_PACKAGE_VERSION,
+    CALENDAR_EVIDENCE_PLAN_VERSION,
+    CALENDAR_NOTICE_PARSER_VERSION,
+    ChinaAshareOfficialCalendarClosureRangeV1,
+    ChinaAshareOfficialCalendarEvidenceManifestV1,
+    ChinaAshareOfficialCalendarEvidencePlanV1,
+    ChinaAshareOfficialCalendarEvidenceReportV1,
+    ChinaAshareOfficialCalendarNoticeSpecV1,
+    ChinaAshareOfficialCalendarNoticeV1,
+    ChinaAshareOfficialCalendarRawArtifactV1,
+    build_official_calendar_evidence_manifest,
+    build_official_calendar_evidence_plan,
+    build_official_calendar_evidence_report,
+    official_calendar_evidence_manifest_fingerprint,
+    official_calendar_evidence_plan_fingerprint,
+    official_calendar_evidence_report_fingerprint,
+)
 from tip_api.contracts.china_ashare.v1.foundation import (
     CHINA_ASHARE_DAILY_REQUIRED_FAMILIES,
     CHINA_ASHARE_FOUNDATION_FAMILY_ORDER,
@@ -65,6 +83,9 @@ from tip_api.contracts.china_ashare.v1.pilot import (
 )
 
 __all__ = [
+    "CALENDAR_EVIDENCE_PACKAGE_VERSION",
+    "CALENDAR_EVIDENCE_PLAN_VERSION",
+    "CALENDAR_NOTICE_PARSER_VERSION",
     "CHINA_ASHARE_DAILY_REQUIRED_FAMILIES",
     "CHINA_ASHARE_FOUNDATION_FAMILY_ORDER",
     "CHINA_ASHARE_INITIAL_UNIVERSE_ID",
@@ -86,6 +107,13 @@ __all__ = [
     "ChinaAshareLifecycleEventType",
     "ChinaAshareLifecycleSourceObservationV1",
     "ChinaAshareLifecycleSubjectKind",
+    "ChinaAshareOfficialCalendarClosureRangeV1",
+    "ChinaAshareOfficialCalendarEvidenceManifestV1",
+    "ChinaAshareOfficialCalendarEvidencePlanV1",
+    "ChinaAshareOfficialCalendarEvidenceReportV1",
+    "ChinaAshareOfficialCalendarNoticeSpecV1",
+    "ChinaAshareOfficialCalendarNoticeV1",
+    "ChinaAshareOfficialCalendarRawArtifactV1",
     "ChinaAsharePriceLimitRegime",
     "ChinaAsharePilotAnchorV1",
     "ChinaAsharePilotArtifactKind",
@@ -108,6 +136,9 @@ __all__ = [
     "ChinaAshareUniverseDecisionV1",
     "ChinaAshareUniverseDisposition",
     "build_china_ashare_daily_research_admission",
+    "build_official_calendar_evidence_manifest",
+    "build_official_calendar_evidence_plan",
+    "build_official_calendar_evidence_report",
     "build_china_ashare_pilot_package_manifest",
     "build_china_ashare_pilot_identity_decision",
     "build_china_ashare_pilot_daily_package_manifest",
@@ -124,4 +155,7 @@ __all__ = [
     "china_ashare_pilot_quality_report_fingerprint",
     "china_ashare_pilot_source_observation_fingerprint",
     "china_ashare_daily_research_admission_fingerprint",
+    "official_calendar_evidence_manifest_fingerprint",
+    "official_calendar_evidence_plan_fingerprint",
+    "official_calendar_evidence_report_fingerprint",
 ]

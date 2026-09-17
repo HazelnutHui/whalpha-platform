@@ -206,13 +206,12 @@ subjects are retained under temporary normalized custody. Six pilot-only
 SSE/SZSE identity bindings now link to an exactly reread five-year package of
 unadjusted daily bars, daily states, and all three provider factor fields. The
 BSE anchor remains quarantined. The first same-scope source-repeat comparison
-is zero-delta across all retained economic observations. Canonical stable
-identity, official-notice-qualified calendars, price-limit rules, adjustment
-semantics, corporate-action economics, historical Universe decisions, fees,
-and a qualified BSE daily route remain before the historical pilot can be
-admitted. The offline XSHG calendar already aligns with all six source-state
-histories over 1,211 sessions; exact SSE/SZSE annual notice retention and
-machine reconciliation are the remaining calendar boundary.
+is zero-delta across all retained economic observations. Twelve exact 2021–
+2026 SSE/SZSE annual notices now reconcile 94 weekday closures, the 1,211
+`XSHG` sessions, and all six source-state histories with zero date differences.
+Canonical stable identity, price-limit rules, adjustment semantics, corporate-
+action economics, historical Universe decisions, fees, and a qualified BSE
+daily route remain before the historical pilot can be admitted.
 
 Exit: a reproducible daily-research admission for an exact interval and
 population, or an explicit blocker report. Intraday, live model, Product,

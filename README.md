@@ -49,11 +49,12 @@ retune. Validation, Holdout, Candidate use, and performance publication remain
 closed; the renewable program has returned to outcome-blind hypothesis intake.
 
 The China A-share path shares the same governed research method but not the
-same data. Its stable identities, calendars, price limits, suspensions,
+same data. Its stable identities, price limits, suspensions,
 risk-warning states, corporate actions, fees, Universe decisions, research
 panels, and admissions remain in a separate `china_a_share` namespace. Current
-implementation proves contracts and free-source routes only; it has no
-backtest-ready session or Product surface.
+implementation proves contracts, free-source routes, and an officially
+reconciled SSE/SZSE pilot calendar only; it has no backtest-ready session or
+Product surface.
 
 Dell is the authority for code, data, and computation. OCI serves only bounded
 static product artifacts and the localhost authentication boundary. The

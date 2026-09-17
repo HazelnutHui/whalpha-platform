@@ -5,8 +5,9 @@
 Implemented contracts, provider adapters, an exactly reread temporary
 normalized-reference package, and a linked five-year daily pilot package for
 six SSE/SZSE securities. An exact same-scope source-repeat comparison also
-passes with zero economic deltas. Canonical pilot data and admitted historical
-coverage remain absent.
+passes with zero economic deltas. A separate exact-byte SSE/SZSE annual-notice
+package now reconciles the pilot calendar. Canonical pilot data and admitted
+historical coverage remain absent.
 
 ## Scope
 
@@ -161,10 +162,14 @@ every bound pilot instrument. It reports missing and unexpected dates rather
 than treating either as a suspension. The expected-session set is fingerprinted
 and every instrument count must reconcile.
 
-Even exact library/source alignment cannot set `calendar_reconciled=true`.
-That field remains false until exact official SSE/SZSE closure notices are
-retained and their effective dates are machine-reconciled. BSE is excluded
-while its daily anchor remains quarantined.
+The original library/source diagnostic cannot set `calendar_reconciled=true`
+by itself. The separate `china-ashare-calendar-evidence-package/1.0` contract
+retains the exact 2021–2026 SSE/SZSE notice bytes, their physical hashes,
+parsed closure ranges, and a deterministic reconciliation report. It compares
+all weekday closures between both exchanges and `XSHG`, then binds that result
+to the daily package's source-state alignment. The real pilot result reconciles
+94 weekday closures and 1,211 sessions with zero differences. BSE remains
+excluded while its daily anchor is quarantined.
 
 ## Foundation census and admission
 

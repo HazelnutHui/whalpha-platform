@@ -355,18 +355,24 @@ five-year package exactly rereads 7,255 unadjusted bars, 7,266 daily states,
 and 28 adjustment observations for those six securities. A subsequent exact
 same-scope capture matched every one of those 14,549 economic observations
 with zero added, removed, or changed rows after excluding only ingestion time.
-All 48 focused A-share tests and all 3,122 backend tests pass. SSE lifecycle
+An owner-only exact-byte package retains all 12 official 2021–2026 SSE/SZSE
+annual closure notices. Its report reconciles 94 weekday closures, the 1,211
+`XSHG` sessions, and all six source-state histories with zero differences;
+report logical fingerprint is
+`8cb38cbe307908ffbe6fdb62e1ce9670053d65cd7982daa28a2dcd30fe270ff7`.
+All 51 focused A-share tests and all 3,125 backend tests pass. SSE lifecycle
 rows remain issuer evidence and cannot claim listed-security identity. No raw
-upstream archive, canonical stable identity, canonical Apply, admitted
+upstream archive exists for the reference/daily source families; no canonical
+stable identity, canonical Apply, admitted
 historical Universe, backtest admission, website change, or Production
 authority exists. See the
 [source audit](../audits/china-a-share-free-source-availability-2026-09-16.md).
 
 The offline XSHG 4.13.2 calendar and each of the six pilot state histories
-contain the same 1,211 sessions with zero missing or unexpected dates. This is
-library/source alignment only: exact SSE/SZSE closure-notice custody and
-machine reconciliation remain pending, so calendar authority stays false. See
-the [calendar audit](../audits/china-a-share-calendar-coverage-2026-09-17.md).
+contain the same 1,211 sessions with zero missing or unexpected dates. Exact
+SSE/SZSE notice custody and machine reconciliation now also pass for the pilot
+scope. See the
+[calendar audit](../audits/china-a-share-calendar-coverage-2026-09-17.md).
 
 ## Automation and standing boundaries
 

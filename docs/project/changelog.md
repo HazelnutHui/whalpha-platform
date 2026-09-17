@@ -15,10 +15,14 @@ and dated [audits](../audits/). Current capability and next work belong in
   securities have complete state-date coverage with zero missing or unexpected
   dates.
 - Recorded the official SSE/SZSE annual-closure evidence boundary. Exact notice
-  retention and machine reconciliation remain required before calendar-family
-  admission.
-- Passed all 48 focused A-share tests and all 3,122 backend tests after the
-  calendar diagnostic implementation.
+  retention and machine reconciliation were then implemented as a separate
+  exact-byte owner-only package.
+- Retained and exactly reread all 12 official 2021–2026 SSE/SZSE annual
+  notices. The report reconciles 94 weekday closures against both exchanges,
+  1,211 `XSHG` sessions, and every pilot source-state history with zero date
+  differences; no broader research authority was granted.
+- Passed all 51 focused A-share tests and all 3,125 backend tests after the
+  official-evidence package.
 
 ## 2026-09-16 — Start the isolated China A-share research foundation
 

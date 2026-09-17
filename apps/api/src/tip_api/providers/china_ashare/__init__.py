@@ -13,6 +13,13 @@ from tip_api.providers.china_ashare.baostock_adapter import (
     BaoStockSession,
 )
 from tip_api.providers.china_ashare.baostock_session import BaoStockClientSession
+from tip_api.providers.china_ashare.official_calendar_adapter import (
+    CapturedOfficialCalendarNoticeV1,
+    OfficialCalendarHttpFetcher,
+    OfficialCalendarHttpResponseV1,
+    UrllibOfficialCalendarHttpFetcher,
+    capture_official_calendar_notice,
+)
 from tip_api.providers.china_ashare.protocol import (
     ChinaAshareDailySourceBatchV1,
     ChinaAshareIdentityBindingV1,
@@ -39,5 +46,10 @@ __all__ = [
     "ChinaAshareSourceDailyQuery",
     "ChinaAshareSourceInstrumentQuery",
     "ChinaAshareSourceProvider",
+    "CapturedOfficialCalendarNoticeV1",
+    "OfficialCalendarHttpFetcher",
+    "OfficialCalendarHttpResponseV1",
     "TabularResult",
+    "UrllibOfficialCalendarHttpFetcher",
+    "capture_official_calendar_notice",
 ]
