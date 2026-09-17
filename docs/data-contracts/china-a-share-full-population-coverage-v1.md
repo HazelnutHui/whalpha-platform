@@ -32,3 +32,17 @@ reconstruction only, or blocked by missing evidence.
 Historical Coverage, adjusted returns, backtesting, Factor Discovery,
 canonical Apply, Product publication, and deployment remain closed. See
 [ADR 0297](../decisions/0297-freeze-a-share-full-population-offline-coverage-diagnostic.md).
+
+## Streaming diagnostic implementation
+
+The next implementation binds the exact population, source plan/completion,
+normalized run, and ordered source/normalized partition manifest identities in
+one deterministic plan. Each exact-reader partition is reduced to bounded
+state, warning, price-limit, source-time, and adjustment-transition counters;
+only ordered aggregate identities are retained across partitions. The verifier
+scans state Parquet in 65,536-row batches and does not materialize the full
+5,997,301-state table or a full daily-Universe cross-product.
+
+These contracts authorize no return read, adjusted return, backtest, canonical
+Apply, or Product publication. The aggregate package, dynamic 13-family gaps,
+and independent exact replay remain separate gates.

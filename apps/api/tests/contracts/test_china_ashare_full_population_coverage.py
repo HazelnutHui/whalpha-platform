@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from datetime import UTC, date, datetime
 
 import pytest
 from pydantic import ValidationError
 
 from tip_api.contracts.china_ashare.v1.full_population_coverage import (
+    ChinaAshareFullPopulationDiagnosticPlanV1,
     ChinaAshareFullPopulationCoverageReportV1,
     CoverageDisposition,
+    build_full_population_diagnostic_plan,
     china_ashare_full_population_coverage_report_v1,
     full_population_coverage_fingerprint,
 )
@@ -53,3 +56,31 @@ def test_full_population_coverage_rejects_authority_or_family_drift() -> None:
     family["logical_fingerprint"] = full_population_coverage_fingerprint(family)
     with pytest.raises(ValidationError, match="coverage report differs"):
         ChinaAshareFullPopulationCoverageReportV1.model_validate(family)
+
+
+def test_diagnostic_plan_rejects_partition_or_authority_drift() -> None:
+    plan = build_full_population_diagnostic_plan(
+        registered_at=datetime(2026, 9, 17, tzinfo=UTC),
+        interval_start=date(2021, 9, 16),
+        interval_end=date(2026, 9, 16),
+        target_session_count=1211,
+        target_count=5409,
+        population_package_fingerprint="1" * 64,
+        source_plan_fingerprint="2" * 64,
+        source_completion_fingerprint="3" * 64,
+        normalized_run_fingerprint="4" * 64,
+        source_partition_manifest_fingerprints=("5" * 64,),
+        normalized_partition_manifest_fingerprints=("6" * 64,),
+    )
+    drifted = plan.model_dump(mode="python")
+    drifted["normalized_partition_manifest_fingerprints"] = (
+        "6" * 64,
+        "7" * 64,
+    )
+    with pytest.raises(ValidationError, match="partition sets differ"):
+        ChinaAshareFullPopulationDiagnosticPlanV1.model_validate(drifted)
+
+    authority = plan.model_dump(mode="python")
+    authority["research_backtest_authorized"] = True
+    with pytest.raises(ValidationError, match="Input should be False"):
+        ChinaAshareFullPopulationDiagnosticPlanV1.model_validate(authority)

@@ -227,6 +227,11 @@ Construction -> Strategy Expression governance, but has separate data,
 calendar, rules, execution mechanics, Universe, and admission. Until all 13
 foundation families pass, it shows readiness and blockers only; it cannot
 render U.S. research as A-share evidence or publish an A-share model or rank.
+The current readiness surface distinguishes completed 109-partition source
+depth, an implemented bounded streaming diagnostic, and the still-pending
+aggregate package/replay. The U.S. view likewise distinguishes its closed 0/4
+source gate from the plan-only SEC cash-quality engineering path; a source
+plan is not an active factor campaign.
 
 The Lab also exposes the renewable Factor Discovery cycle. This is a permanent
 process contract, not a third model or a promise that research is unattended:

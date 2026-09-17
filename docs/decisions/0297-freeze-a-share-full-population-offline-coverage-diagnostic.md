@@ -44,3 +44,9 @@ map rather than another download cycle. Follow-up evidence work is reduced to
 explicit queues: 113 identity/board cases, effective-dated warning states,
 corporate-action terms, special price-limit regimes, and terminal lifecycle
 boundaries. BSE remains outside the current frozen source scope.
+
+The first implementation stage now freezes exact input bindings and bounded
+per-partition/ordered aggregate contracts. It classifies provider adjustment
+observations only as first, changed, or no-op evidence and scans the existing
+state files in bounded batches. It does not infer corporate actions, construct
+returns, materialize a full daily Universe, or change any admission decision.

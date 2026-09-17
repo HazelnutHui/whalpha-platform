@@ -36,6 +36,18 @@ and dated [audits](../audits/). Current capability and next work belong in
   independent OCI postflight; credential login and browser visual review
   remain manual.
 
+## 2026-09-17 — Bound both post-gate engineering paths
+
+- Froze a plan-only SEC cash-earnings-quality source target with exact TTM,
+  filing-time, identity, applicability, coverage, and replay semantics; it
+  leaves the U.S. intake closed and authorizes no source run or outcome read.
+- Implemented deterministic A-share diagnostic-plan, bounded partition, and
+  ordered streaming aggregates. A real partition smoke passed, and the full
+  109-partition verifier now scans in bounded Parquet batches rather than
+  materializing the full state table.
+- Updated the trilingual Lab source to distinguish these implementation steps
+  from factor, backtest, model, Candidate, and Product authority.
+
 ## 2026-09-17 — Complete U.S. factor-space replay and A-share source expansion
 
 - Materialized and exactly replayed the outcome-blind U.S. factor-space

@@ -77,7 +77,7 @@ contract:
 - A-share coverage serialization SHA-256:
   `404f7b79d7d044eb8f1e6ac16a5b50f189057fac0341fb2e52d0838fed8e5618`.
 
-The final regression passed all 3,173 backend tests, all 135 frontend tests,
+The final regression passed all 3,181 backend tests, all 135 frontend tests,
 and the Production frontend build. The two backend warnings are the existing
 Python `crypt` and Starlette/httpx deprecation notices, not failures. Focused
 contract, verifier, and custody suites also passed independently.
@@ -99,3 +99,18 @@ This stage authorizes only U.S. point-in-time source qualification and A-share
 offline reconciliation. It does not authorize any new outcome trial, A-share
 return label, model, strategy, ranking, canonical Apply, deployment of data,
 broker action, or trading.
+
+## Subsequent plan and implementation checkpoint
+
+The U.S. line subsequently froze a plan-only SEC cash-earnings-quality source
+contract. It specifies exact CFO, net-income, Assets, four-quarter TTM,
+amendment, identity, applicability, coverage, and replay semantics while
+leaving the 0 / 4 intake closed and authorizing no execution or result read.
+
+The A-share line subsequently implemented deterministic input bindings and
+bounded partition/streaming aggregates. A real first-partition smoke reconciled
+50 targets, 60,550 states, 60,479 bars, and 1,256 adjustment observations; the
+bounded verifier still reproduced the complete 109-partition frozen census.
+No return, full Universe, Historical Coverage admission, or Product authority
+was created. Persistent aggregate custody, dynamic family gaps, and exact
+replay remain pending.

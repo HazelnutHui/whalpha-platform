@@ -50,10 +50,11 @@ non-combinable diagnostic panels are now materialized and independently
 replayed with byte-identical reports. The 20-input stock panel contains about
 9.14 effective dimensions and the separate ten-input Market-State panel about
 4.53. No outcome, Validation, or Holdout data was read and no Alpha or model
-input was admitted. All 3,159 backend tests, 135 frontend tests, and the
-Production build pass. OCI release `2026-09-17T202230Z-566c335817f8` serves the
-reviewed trilingual result and completed A-share source counts; independent
-postflight passed while credential login and visual review remain manual.
+input was admitted. All 3,181 backend tests, 135 frontend tests, and the
+Production build pass. The current OCI release serves the closed U.S. source
+gate; the newly reviewed plan/streaming-diagnostic presentation is ready for
+the next verified deployment. Credential login and visual review remain
+manual.
 
 The bounded A-share acquisition and normalization completed independently in
 workstation custody at 109/109 partitions each. Its immutable source census
@@ -63,27 +64,31 @@ are resolved, 113 remain quarantined, every price-limit regime is unknown, and
 historical source-availability time is absent. Historical Coverage and all
 A-share research authority remain pending.
 
-The first persistent A-share coverage census now verifies all 109 manifests
-and 327 declared payload hashes and rereads idempotently. It intentionally does
-not replace the remaining instrument, transition, rule-gap, provisional-
-membership, and independent replay artifacts.
+The persistent A-share coverage census verifies all 109 manifests and 327
+declared payload hashes and rereads idempotently. A deterministic diagnostic
+plan plus bounded single-partition and ordered streaming aggregates are now
+implemented; a real first-partition smoke and the bounded 109-partition legacy
+scan pass. Persistent aggregate custody, dynamic family-gap artifacts, and an
+independent replay are still pending.
 
 ADR 0296 freezes the U.S. successor intake at three candidate-Alpha cards and
 one risk guard. ADR 0298 closes its source gate at 0 / 4 qualified, zero formal
-trials, and zero outcome reads.
+trials, and zero outcome reads. ADR 0299 freezes a plan-only SEC cash-quality
+source-engineering target without authorizing source execution or reopening
+the intake.
 
 ## Ordered remaining gates
 
-1. Freeze a deterministic A-share diagnostic plan, then stream the existing
-   packages partition by partition into bounded instrument coverage,
-   adjustment-transition, rule-gap, and provisional-membership aggregates.
-2. Independently replay the complete A-share diagnostic package and reduce
+1. Materialize the frozen A-share diagnostic over all 109 existing packages
+   into bounded instrument coverage, adjustment-transition, rule-gap, and
+   provisional-membership artifacts; persist and exact-reread the closed set.
+2. Independently replay that complete diagnostic package and reduce
    later external evidence work to explicit identity, warning-state,
    corporate-action, price-limit, and terminal-lifecycle queues. Keep admission
    closed.
-3. Only after that A-share gate, separately decide whether to engineer SEC
-   cash-quality inputs or acquire consensus, short-interest, and event-calendar
-   sources for a new U.S. intake version.
+3. Separately review execution of ADR 0299's SEC cash-quality source plan or
+   acquisition of consensus, short-interest, and event-calendar sources. Any
+   later U.S. trial still requires a new immutable intake version.
 
 Observed workstation capacity supports the two bounded offline lines: 16
 logical CPUs, about 60 GiB available memory, negligible load, and 2% `/data`
@@ -98,6 +103,7 @@ Read this bounded set before changing either active gate:
 - `docs/decisions/0296-freeze-us-successor-hypothesis-intake-before-source-qualification.md`;
 - `docs/decisions/0297-freeze-a-share-full-population-offline-coverage-diagnostic.md`;
 - `docs/decisions/0298-close-us-successor-intake-at-source-qualification.md`;
+- `docs/decisions/0299-freeze-sec-cash-earnings-quality-source-engineering-plan.md`;
 - `docs/data-contracts/quant-research-factor-space-diagnostic-v1.md`;
 - `docs/research/professional-quantitative-research-action-framework-v1.md`
 - `docs/product/quant-research-three-layer-architecture-v1.md`

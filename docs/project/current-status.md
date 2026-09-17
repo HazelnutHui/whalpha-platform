@@ -181,9 +181,11 @@ That source gate is now closed at 0 / 4. The intake registered zero trials and
 read zero outcomes. Current local evidence cannot reproduce historical FY1
 consensus vintages, published short-interest history with a point-in-time
 security denominator, or historical earnings-calendar revisions. SEC cash-
-quality engineering remains possible as a separate outcome-blind source task,
-but raw filings alone do not satisfy its formula, identity, applicability,
-coverage, or replay gates.
+quality engineering now has a separate plan-only contract that freezes the
+exact CFO, net-income, Assets, four-quarter TTM, amendment clock, stable-
+security projection, point-in-time applicability, coverage, and exact-replay
+rules. It authorizes no source execution, feature, trial, result, or Product
+write; raw filings alone still do not satisfy those gates.
 
 Production additionally contains the reviewed renewable-cycle panel in its
 completed Campaign Three state: three completed campaigns, 17 closed formal
@@ -207,6 +209,15 @@ shows zero admitted Universe, rankings, and models. U.S.-only market tools and
 Candidate rows are unavailable while A-share is selected. These are readiness
 views only: no A-share row-level data, backtest, Alpha, model, ranking,
 strategy, or Product authority is served.
+
+The A-share full-population diagnostic now has deterministic plan, bounded
+partition-aggregate, and ordered streaming-aggregate contracts. A real first
+partition smoke reconciled 50 targets, 60,550 states, 60,479 bars, and 1,256
+adjustment observations. The legacy all-partition verifier now scans in
+bounded Parquet batches and still reproduces the frozen 109-partition counts.
+This is an implementation milestone, not Historical Coverage admission; full
+package custody, dynamic rule/lifecycle/Universe gaps, and exact replay remain
+open.
 
 The reusable research-input policy remains preserved in V1, while registry V2
 records one qualified, exactly replayed Market-State panel and zero outcome-

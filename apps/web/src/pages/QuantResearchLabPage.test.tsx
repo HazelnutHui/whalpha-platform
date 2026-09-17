@@ -92,9 +92,9 @@ describe('Quant Research Lab', () => {
     expect(screen.queryByText('Historical method-engineering evidence')).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Complete research path by market' })).toBeInTheDocument();
     expect(screen.getByText(/US · U.S. equities · SOURCE GATE · CLOSED 0 \/ 4/)).toBeInTheDocument();
-    expect(screen.getByText(/CN · China A-shares · COVERAGE RECONCILIATION · ACTIVE/)).toBeInTheDocument();
+    expect(screen.getByText(/CN · China A-shares · STREAMING DIAGNOSTIC · ACTIVE/)).toBeInTheDocument();
     expect(screen.getAllByText('Retirement')).toHaveLength(2);
-    expect(screen.getByText(/Run the bounded offline cross-family reconciliation/)).toBeInTheDocument();
+    expect(screen.getByText(/Materialize and exactly replay the 109-partition diagnostic package/)).toBeInTheDocument();
     expect(screen.getByText('First factor campaign').parentElement).toHaveTextContent('Closed · no candidate Alpha');
     expect(screen.getAllByText('Third factor campaign')[1].parentElement).toHaveTextContent('Closed · no candidate Alpha');
     expect(screen.getByText('Active models / strategies').parentElement).toHaveTextContent('None / none');
@@ -171,7 +171,7 @@ describe('Quant Research Lab', () => {
     expect(screen.queryByText('历史方法工程证据')).not.toBeInTheDocument();
     expect(screen.queryByText('强势股回撤')).not.toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '按市场展开的完整研究流程' })).toBeInTheDocument();
-    expect(screen.getByText(/CN · 中国 A 股 · 覆盖核对 · 进行中/)).toBeInTheDocument();
+    expect(screen.getByText(/CN · 中国 A 股 · 流式诊断 · 进行中/)).toBeInTheDocument();
     expect(screen.getAllByText('退役')).toHaveLength(2);
     expect(screen.getByText('已激活模型 / 策略').parentElement).toHaveTextContent('无 / 无');
     expect(screen.getByText(/股票证据不等于期权表现/)).toBeInTheDocument();

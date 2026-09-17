@@ -470,7 +470,13 @@ and returns the same owner-only report on rerun. Report logical fingerprint is
 `1fd2d8fdfd65edb16ebdd91a09d7d6d08594496e59e7d71d233ef6a8e32a0c4d`.
 This closes the manifest-level census only; instrument coverage, adjustment-
 transition, rule-gap, and provisional-membership artifacts plus an independent
-full replay remain pending.
+full replay remain pending. The next diagnostic contract now binds the exact
+population, source plan/completion, and ordered raw/normalized partition
+manifests. Its implementation aggregates one partition at a time and the
+legacy verifier scans Parquet in bounded batches rather than materializing the
+full state table. A real partition smoke and the full 109-partition census
+passed; persistent aggregate custody, dynamic family gaps, and exact replay
+remain pending.
 The account rate is user-reported and its all-in/minimum/history assumptions
 remain unconfirmed by a broker statement. Issuer-level lifecycle rows remain
 separate and cannot claim listed-security termination. No raw upstream archive

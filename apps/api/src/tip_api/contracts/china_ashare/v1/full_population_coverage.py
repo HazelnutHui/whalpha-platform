@@ -4,17 +4,32 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import date
+from datetime import date, datetime
 from enum import StrEnum
 from functools import lru_cache
-from typing import Literal, Mapping
+from typing import Any, Literal, Mapping
 
 from pydantic import Field, field_validator, model_validator
 
-from tip_api.contracts.china_ashare.v1.foundation import MARKET_ID, FrozenContract
+from tip_api.contracts.china_ashare.v1.foundation import (
+    CHINA_ASHARE_FOUNDATION_FAMILY_ORDER,
+    MARKET_ID,
+    ChinaAshareFoundationFamily,
+    FrozenContract,
+)
+from tip_api.contracts.common import normalize_utc_datetime
 
 
 FULL_POPULATION_COVERAGE_VERSION = "china-ashare-full-population-coverage/1.0"
+FULL_POPULATION_DIAGNOSTIC_PLAN_VERSION = (
+    "china-ashare-full-population-diagnostic-plan/1.0"
+)
+FULL_POPULATION_PARTITION_AGGREGATE_VERSION = (
+    "china-ashare-full-population-partition-aggregate/1.0"
+)
+FULL_POPULATION_STREAMING_AGGREGATE_VERSION = (
+    "china-ashare-full-population-streaming-aggregate/1.0"
+)
 POPULATION_PACKAGE_FINGERPRINT = (
     "13595c0645aa36acc5fea8d818509b484582ad13d7def53d377b984d549c02c0"
 )
@@ -32,6 +47,244 @@ class CoverageDisposition(StrEnum):
     BLOCKED_MISSING_EVIDENCE = "blocked_missing_evidence"
 
 
+class ChinaAshareFullPopulationDiagnosticPlanV1(FrozenContract):
+    """Frozen input bindings for an outcome-blind, offline coverage pass."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    plan_version: Literal[
+        "china-ashare-full-population-diagnostic-plan/1.0"
+    ] = FULL_POPULATION_DIAGNOSTIC_PLAN_VERSION
+    market_id: Literal["china_a_share"] = MARKET_ID
+    registered_at: datetime
+    interval_start: date
+    interval_end: date
+    target_session_count: int = Field(ge=1)
+    target_count: int = Field(ge=1)
+    population_package_fingerprint: str
+    source_plan_fingerprint: str
+    source_completion_fingerprint: str
+    normalized_run_fingerprint: str
+    source_partition_manifest_fingerprints: tuple[str, ...] = Field(min_length=1)
+    normalized_partition_manifest_fingerprints: tuple[str, ...] = Field(min_length=1)
+    required_families: tuple[ChinaAshareFoundationFamily, ...] = (
+        CHINA_ASHARE_FOUNDATION_FAMILY_ORDER
+    )
+    future_return_read_count: Literal[0] = 0
+    full_universe_rows_materialized: Literal[False] = False
+    adjusted_return_authorized: Literal[False] = False
+    research_backtest_authorized: Literal[False] = False
+    canonical_apply_authorized: Literal[False] = False
+    product_publication_authorized: Literal[False] = False
+    logical_fingerprint: str
+
+    @field_validator("registered_at")
+    @classmethod
+    def registered_time_is_utc(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @field_validator(
+        "population_package_fingerprint",
+        "source_plan_fingerprint",
+        "source_completion_fingerprint",
+        "normalized_run_fingerprint",
+        "logical_fingerprint",
+    )
+    @classmethod
+    def scalar_fingerprints_are_sha256(cls, value: str, info: Any) -> str:
+        return _sha256(value, info.field_name)
+
+    @field_validator(
+        "source_partition_manifest_fingerprints",
+        "normalized_partition_manifest_fingerprints",
+        mode="before",
+    )
+    @classmethod
+    def partition_fingerprints_are_ordered(cls, value: Any) -> tuple[str, ...]:
+        if not isinstance(value, (tuple, list)):
+            raise ValueError("partition fingerprints must be an ordered collection")
+        normalized = tuple(_sha256(item, "partition_fingerprint") for item in value)
+        if len(set(normalized)) != len(normalized):
+            raise ValueError("partition fingerprints must be unique")
+        return normalized
+
+    @model_validator(mode="after")
+    def plan_reconciles(self) -> "ChinaAshareFullPopulationDiagnosticPlanV1":
+        if self.interval_end < self.interval_start:
+            raise ValueError("diagnostic interval is reversed")
+        if len(self.source_partition_manifest_fingerprints) != len(
+            self.normalized_partition_manifest_fingerprints
+        ):
+            raise ValueError("source and normalized partition sets differ")
+        if self.required_families != CHINA_ASHARE_FOUNDATION_FAMILY_ORDER:
+            raise ValueError("diagnostic foundation family order differs")
+        if full_population_diagnostic_plan_fingerprint(self) != self.logical_fingerprint:
+            raise ValueError("full-population diagnostic plan fingerprint differs")
+        return self
+
+
+class ChinaAshareFullPopulationPartitionAggregateV1(FrozenContract):
+    """Bounded counters derived from exactly one normalized partition."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    aggregate_version: Literal[
+        "china-ashare-full-population-partition-aggregate/1.0"
+    ] = FULL_POPULATION_PARTITION_AGGREGATE_VERSION
+    market_id: Literal["china_a_share"] = MARKET_ID
+    partition_index: int = Field(ge=0)
+    source_partition_manifest_fingerprint: str
+    normalized_partition_manifest_fingerprint: str
+    target_count: int = Field(ge=1)
+    resolved_target_count: int = Field(ge=0)
+    quarantined_target_count: int = Field(ge=0)
+    bar_count: int = Field(ge=0)
+    state_count: int = Field(ge=0)
+    adjustment_count: int = Field(ge=0)
+    trading_state_count: int = Field(ge=0)
+    suspended_state_count: int = Field(ge=0)
+    resumed_state_count: int = Field(ge=0)
+    not_listed_state_count: int = Field(ge=0)
+    unknown_trading_state_count: int = Field(ge=0)
+    risk_warning_none_count: int = Field(ge=0)
+    risk_warning_present_unspecified_count: int = Field(ge=0)
+    risk_warning_detailed_count: int = Field(ge=0)
+    risk_warning_unknown_count: int = Field(ge=0)
+    price_limit_unknown_count: int = Field(ge=0)
+    source_available_at_null_state_count: int = Field(ge=0)
+    adjustment_first_observation_count: int = Field(ge=0)
+    adjustment_changed_observation_count: int = Field(ge=0)
+    adjustment_noop_observation_count: int = Field(ge=0)
+    first_state_session: date | None = None
+    last_state_session: date | None = None
+    full_universe_rows_materialized: Literal[False] = False
+    future_return_read_count: Literal[0] = 0
+    research_backtest_authorized: Literal[False] = False
+    logical_fingerprint: str
+
+    @field_validator(
+        "source_partition_manifest_fingerprint",
+        "normalized_partition_manifest_fingerprint",
+        "logical_fingerprint",
+    )
+    @classmethod
+    def fingerprints_are_sha256(cls, value: str, info: Any) -> str:
+        return _sha256(value, info.field_name)
+
+    @model_validator(mode="after")
+    def aggregate_reconciles(
+        self,
+    ) -> "ChinaAshareFullPopulationPartitionAggregateV1":
+        if self.resolved_target_count + self.quarantined_target_count != self.target_count:
+            raise ValueError("partition aggregate target counts differ")
+        if sum(
+            (
+                self.trading_state_count,
+                self.suspended_state_count,
+                self.resumed_state_count,
+                self.not_listed_state_count,
+                self.unknown_trading_state_count,
+            )
+        ) != self.state_count:
+            raise ValueError("partition aggregate trading-state counts differ")
+        if sum(
+            (
+                self.risk_warning_none_count,
+                self.risk_warning_present_unspecified_count,
+                self.risk_warning_detailed_count,
+                self.risk_warning_unknown_count,
+            )
+        ) != self.state_count:
+            raise ValueError("partition aggregate risk-warning counts differ")
+        if sum(
+            (
+                self.adjustment_first_observation_count,
+                self.adjustment_changed_observation_count,
+                self.adjustment_noop_observation_count,
+            )
+        ) != self.adjustment_count:
+            raise ValueError("partition aggregate adjustment counts differ")
+        if self.source_available_at_null_state_count > self.state_count:
+            raise ValueError("partition aggregate null source times exceed states")
+        if self.price_limit_unknown_count > self.state_count:
+            raise ValueError("partition aggregate unknown limits exceed states")
+        if (self.first_state_session is None) != (self.last_state_session is None):
+            raise ValueError("partition aggregate state-date bounds differ")
+        if (
+            self.first_state_session is not None
+            and self.last_state_session is not None
+            and self.last_state_session < self.first_state_session
+        ):
+            raise ValueError("partition aggregate state-date bounds are reversed")
+        if full_population_partition_aggregate_fingerprint(self) != self.logical_fingerprint:
+            raise ValueError("full-population partition aggregate fingerprint differs")
+        return self
+
+
+class ChinaAshareFullPopulationStreamingAggregateV1(FrozenContract):
+    """Deterministic merge of ordered, independently bounded partitions."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    aggregate_version: Literal[
+        "china-ashare-full-population-streaming-aggregate/1.0"
+    ] = FULL_POPULATION_STREAMING_AGGREGATE_VERSION
+    market_id: Literal["china_a_share"] = MARKET_ID
+    plan_fingerprint: str
+    partition_aggregate_fingerprints: tuple[str, ...] = Field(min_length=1)
+    target_count: int = Field(ge=1)
+    resolved_target_count: int = Field(ge=0)
+    quarantined_target_count: int = Field(ge=0)
+    bar_count: int = Field(ge=0)
+    state_count: int = Field(ge=0)
+    adjustment_count: int = Field(ge=0)
+    suspended_state_count: int = Field(ge=0)
+    risk_warning_present_unspecified_count: int = Field(ge=0)
+    price_limit_unknown_count: int = Field(ge=0)
+    source_available_at_null_state_count: int = Field(ge=0)
+    adjustment_first_observation_count: int = Field(ge=0)
+    adjustment_changed_observation_count: int = Field(ge=0)
+    adjustment_noop_observation_count: int = Field(ge=0)
+    full_universe_rows_materialized: Literal[False] = False
+    future_return_read_count: Literal[0] = 0
+    research_backtest_authorized: Literal[False] = False
+    canonical_apply_authorized: Literal[False] = False
+    product_publication_authorized: Literal[False] = False
+    logical_fingerprint: str
+
+    @field_validator("plan_fingerprint", "logical_fingerprint")
+    @classmethod
+    def aggregate_fingerprints_are_sha256(cls, value: str, info: Any) -> str:
+        return _sha256(value, info.field_name)
+
+    @field_validator("partition_aggregate_fingerprints", mode="before")
+    @classmethod
+    def aggregate_partition_fingerprints_are_ordered(
+        cls, value: Any
+    ) -> tuple[str, ...]:
+        if not isinstance(value, (tuple, list)):
+            raise ValueError("partition aggregate fingerprints must be ordered")
+        normalized = tuple(_sha256(item, "partition_aggregate_fingerprint") for item in value)
+        if len(set(normalized)) != len(normalized):
+            raise ValueError("partition aggregate fingerprints must be unique")
+        return normalized
+
+    @model_validator(mode="after")
+    def streaming_aggregate_reconciles(
+        self,
+    ) -> "ChinaAshareFullPopulationStreamingAggregateV1":
+        if self.resolved_target_count + self.quarantined_target_count != self.target_count:
+            raise ValueError("streaming aggregate target counts differ")
+        if sum(
+            (
+                self.adjustment_first_observation_count,
+                self.adjustment_changed_observation_count,
+                self.adjustment_noop_observation_count,
+            )
+        ) != self.adjustment_count:
+            raise ValueError("streaming aggregate adjustment counts differ")
+        if full_population_streaming_aggregate_fingerprint(self) != self.logical_fingerprint:
+            raise ValueError("full-population streaming aggregate fingerprint differs")
+        return self
+
+
 class ChinaAshareCoverageFamilyV1(FrozenContract):
     ordinal: int = Field(ge=1, le=13)
     family_id: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
@@ -41,6 +294,72 @@ class ChinaAshareCoverageFamilyV1(FrozenContract):
     next_offline_action: str | None = None
     external_evidence_required: bool
     authorizes_backtest: Literal[False] = False
+
+
+def build_full_population_diagnostic_plan(
+    **values: Any,
+) -> ChinaAshareFullPopulationDiagnosticPlanV1:
+    provisional = ChinaAshareFullPopulationDiagnosticPlanV1.model_construct(
+        **values, logical_fingerprint="0" * 64
+    )
+    return ChinaAshareFullPopulationDiagnosticPlanV1.model_validate(
+        {
+            **provisional.model_dump(mode="python"),
+            "logical_fingerprint": full_population_diagnostic_plan_fingerprint(
+                provisional
+            ),
+        }
+    )
+
+
+def build_full_population_partition_aggregate(
+    **values: Any,
+) -> ChinaAshareFullPopulationPartitionAggregateV1:
+    provisional = ChinaAshareFullPopulationPartitionAggregateV1.model_construct(
+        **values, logical_fingerprint="0" * 64
+    )
+    return ChinaAshareFullPopulationPartitionAggregateV1.model_validate(
+        {
+            **provisional.model_dump(mode="python"),
+            "logical_fingerprint": full_population_partition_aggregate_fingerprint(
+                provisional
+            ),
+        }
+    )
+
+
+def build_full_population_streaming_aggregate(
+    **values: Any,
+) -> ChinaAshareFullPopulationStreamingAggregateV1:
+    provisional = ChinaAshareFullPopulationStreamingAggregateV1.model_construct(
+        **values, logical_fingerprint="0" * 64
+    )
+    return ChinaAshareFullPopulationStreamingAggregateV1.model_validate(
+        {
+            **provisional.model_dump(mode="python"),
+            "logical_fingerprint": full_population_streaming_aggregate_fingerprint(
+                provisional
+            ),
+        }
+    )
+
+
+def full_population_diagnostic_plan_fingerprint(
+    value: ChinaAshareFullPopulationDiagnosticPlanV1 | Mapping[str, object],
+) -> str:
+    return _fingerprint(value, exclude={"logical_fingerprint"})
+
+
+def full_population_partition_aggregate_fingerprint(
+    value: ChinaAshareFullPopulationPartitionAggregateV1 | Mapping[str, object],
+) -> str:
+    return _fingerprint(value, exclude={"logical_fingerprint"})
+
+
+def full_population_streaming_aggregate_fingerprint(
+    value: ChinaAshareFullPopulationStreamingAggregateV1 | Mapping[str, object],
+) -> str:
+    return _fingerprint(value, exclude={"logical_fingerprint"})
 
 
 class ChinaAshareFullPopulationCoverageReportV1(FrozenContract):
@@ -127,6 +446,31 @@ def full_population_coverage_fingerprint(
     return hashlib.sha256(
         json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False, default=str).encode()
     ).hexdigest()
+
+
+def _fingerprint(
+    value: FrozenContract | Mapping[str, object], *, exclude: set[str]
+) -> str:
+    payload = (
+        value.model_dump(mode="json", exclude=exclude)
+        if isinstance(value, FrozenContract)
+        else {key: item for key, item in value.items() if key not in exclude}
+    )
+    encoded = json.dumps(
+        payload,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+        default=str,
+    ).encode()
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _sha256(value: object, field_name: str) -> str:
+    normalized = str(value).strip().lower()
+    if len(normalized) != 64 or any(character not in "0123456789abcdef" for character in normalized):
+        raise ValueError(f"{field_name} must be a lowercase SHA-256")
+    return normalized
 
 
 @lru_cache(maxsize=1)
