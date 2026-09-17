@@ -234,8 +234,11 @@ Sequence:
 2. apply the seven-dimensional duplicate and related-family review;
 3. name required point-in-time inputs and reject ideas the current data cannot
    support honestly;
-4. freeze a finite qualification budget before implementation;
-5. qualify inputs without outcomes and independently replay the result;
+4. freeze a finite qualification budget plus the point-in-time
+   standardization, economic-family, clustering, multicollinearity, and PCA
+   diagnostic protocol before implementation;
+5. qualify inputs without outcomes, report their effective dimensionality and
+   incremental information, and independently replay the result;
 6. preregister only qualified trials in the next cumulative ledger edition;
 7. require a new clean implementation, exact authorization, formal run, and
    exact replay before any further Development result is read.

@@ -7,6 +7,21 @@ and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md), [current work](current-work.md), and the
 [roadmap](roadmap.md), not here.
 
+## 2026-09-17 — Add transparent factor-space diagnostics to the next intake
+
+- Added point-in-time standardization, economic-family grouping, hierarchical
+  clustering, multicollinearity review, and Development-only PCA to the
+  professional research baseline before any successor factor reads outcomes.
+- Required the Lab to publish transformation rules, cluster evidence,
+  explained variance, loadings, effective dimension, and retained/rejected
+  reasons after computation while displaying `not computed` before evidence
+  exists. PCA remains a redundancy diagnostic rather than Alpha evidence.
+- Corrected the Lab product contract's stale pre-screen Campaign Three text to
+  the authoritative Ledger V5 closure: all 17 formal trials are closed, with
+  zero admitted Alpha and zero model input.
+- Added matching English, Chinese, and Spanish Product copy and regression
+  coverage without changing any model, Candidate, data, or research authority.
+
 ## 2026-09-17 — Publish the reviewed project mirror to GitHub
 
 - Published the complete reviewed `main` history to the public

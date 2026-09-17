@@ -23,6 +23,9 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('Model Construction').parentElement).toHaveTextContent('LOCKED');
     expect(screen.getByText('Strategy Expression').parentElement).toHaveTextContent('LOCKED');
     expect(screen.getByText(/A factor is not a model/)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Factor-space diagnostics for the next campaign' })).toBeInTheDocument();
+    expect(screen.getByText('PCA and effective dimension').parentElement).toHaveTextContent('not Alpha evidence');
+    expect(screen.getByText('REQUIRED · NOT YET COMPUTED')).toBeInTheDocument();
     expect(screen.getByText(/Submit a falsifiable factor or strategy hypothesis/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Contact · @whalphalab' })).toHaveAttribute('href', 'https://x.com/whalphalab');
     expect(screen.getByRole('heading', { name: 'Renewable factor-discovery loop' })).toBeInTheDocument();
@@ -118,6 +121,9 @@ describe('Quant Research Lab', () => {
     expect(screen.getByText('因子发现层').parentElement).toHaveTextContent('当前阶段 · 回到结果盲入口');
     expect(screen.getByText('模型构建层').parentElement).toHaveTextContent('保持锁定');
     expect(screen.getByText('策略表达层').parentElement).toHaveTextContent('保持锁定');
+    expect(screen.getByRole('heading', { name: '下一批研究的因子空间诊断' })).toBeInTheDocument();
+    expect(screen.getByText('PCA 与有效维度').parentElement).toHaveTextContent('不证明 Alpha');
+    expect(screen.getByText('必需步骤 · 尚未计算')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: '可持续因子发现循环' })).toBeInTheDocument();
     expect(screen.getByText(/欢迎提交可证伪的因子或策略假设/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: '联系 · @whalphalab' })).toHaveAttribute('href', 'https://x.com/whalphalab');
@@ -170,6 +176,9 @@ describe('Quant Research Lab', () => {
     expect(screen.getAllByText('Descubrimiento de factores')[0].parentElement).toHaveTextContent('FASE ACTUAL · NUEVA ENTRADA SIN RESULTADOS');
     expect(screen.getAllByText('Construcción del modelo')[0].parentElement).toHaveTextContent('BLOQUEADA');
     expect(screen.getAllByText('Expresión de estrategia')[0].parentElement).toHaveTextContent('BLOQUEADA');
+    expect(screen.getByRole('heading', { name: 'Diagnóstico del espacio de factores para la próxima campaña' })).toBeInTheDocument();
+    expect(screen.getByText('PCA y dimensión efectiva').parentElement).toHaveTextContent('no demuestra Alpha');
+    expect(screen.getByText('OBLIGATORIO · AÚN NO CALCULADO')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Ciclo renovable de descubrimiento de factores' })).toBeInTheDocument();
     expect(screen.getByText(/Se aceptan hipótesis refutables de factores o estrategias/)).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Contacto · @whalphalab' })).toHaveAttribute('href', 'https://x.com/whalphalab');

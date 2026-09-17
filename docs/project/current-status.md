@@ -159,6 +159,13 @@ rendered publicly; their immutable contracts and audits remain internal anti-
 retesting evidence. This result changes no market analytics, Baseline Candidate
 calculation, model authority, or Candidate activation.
 
+The successor outcome-blind intake now requires an explicit factor-space
+diagnostic before outcomes: point-in-time standardization, economic factor
+families, data-driven clustering, multicollinearity checks, and Development-
+only PCA. The public Lab must distinguish that registered method from computed
+evidence and later show explained variance, loadings, effective dimension, and
+retained/rejected input reasons. PCA is a redundancy diagnostic, not Alpha.
+
 Production additionally contains the reviewed renewable-cycle panel in its
 completed Campaign Three state: three completed campaigns, 17 closed formal
 trials, no active campaign, seven-dimensional duplicate

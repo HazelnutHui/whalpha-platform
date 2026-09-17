@@ -144,6 +144,13 @@ const COPY = {
     statusNote: 'Campaign Three completed one frozen Development screen and a byte-identical replay. Both Alpha interactions and the risk guard failed; no model or strategy was opened.',
     coverage: 'Evidence state', coverageNote: 'Method completeness and model effectiveness are separate questions.',
     coverageBoundary: 'A published method is not a validated strategy, current-market recommendation, or option-return forecast.',
+    factorSpace: 'Factor-space diagnostics for the next campaign', factorSpaceNote: 'The next intake must prove how many independent information directions exist before any factor is allowed to read outcomes.', factorSpaceBadge: 'REQUIRED · NOT YET COMPUTED',
+    factorSpaceItems: [
+      ['Point-in-time standardization', 'Robust ranks or z-scores will be fit only on the eligible cross-section or frozen Development segment; no full-sample normalization.'],
+      ['Economic families and clusters', 'Economic taxonomy, Pearson/Spearman structure, missingness co-occurrence, hierarchical clusters, and multicollinearity diagnostics will be shown together.'],
+      ['PCA and effective dimension', 'Explained variance, loadings, effective dimension, and a two-dimensional loading map will be published after a registered Development-only fit. PCA is a redundancy diagnostic, not Alpha evidence.'],
+      ['Selection accountability', 'Every retained or rejected input will show its formula, transformation, cluster, incremental information, uncertainty, and decision reason.'],
+    ],
     submission: 'Submit a falsifiable factor or strategy hypothesis for independent registration and testing under the same governed workflow. If an idea ultimately enters a usable model and future commercial use, WH Alpha will contact the contributor and report the outcome.',
     submissionContact: 'Contact',
     readiness: 'Evidence ladder', readinessItems: [
@@ -249,6 +256,13 @@ const COPY = {
     statusNote: '第三批已完成一次冻结的开发期筛选和逐字节一致的精确重放。2项 Alpha 交互与1项风险护栏全部失败，没有开放模型或策略。',
     coverage: '证据状态', coverageNote: '方法是否完整与模型是否有效，是两个不同问题。',
     coverageBoundary: '公开方法不代表策略已验证，不代表适合当前市场，也不预测期权收益。',
+    factorSpace: '下一批研究的因子空间诊断', factorSpaceNote: '任何因子读取收益结果之前，必须先回答表面上的多个因子实际包含多少个独立信息方向。', factorSpaceBadge: '必需步骤 · 尚未计算',
+    factorSpaceItems: [
+      ['点时标准化', '稳健排名或 z-score 只在当时合格横截面或冻结的 Development 区间拟合，禁止全样本标准化后再切分。'],
+      ['经济因子族与数据聚类', '同时公开经济分类、Pearson／Spearman 结构、缺失共现、层次聚类和多重共线性诊断。'],
+      ['PCA 与有效维度', '完成登记并仅在 Development 拟合后，公开解释方差、载荷、有效维度和二维载荷图；PCA 只诊断冗余，不证明 Alpha。'],
+      ['选择责任链', '每个保留或淘汰的输入都展示公式、变换、所属簇、增量信息、不确定性和决策原因。'],
+    ],
     submission: '欢迎提交可证伪的因子或策略假设。WH Alpha 将按统一研究流程独立登记、测试并保留失败记录；若建议最终进入可用模型并产生未来商业用途，将联系贡献者并反馈结果。',
     submissionContact: '联系',
     readiness: '证据阶梯', readinessItems: [
@@ -354,6 +368,13 @@ const COPY = {
     statusNote: 'La tercera campaña completó una selección de Desarrollo congelada y una reproducción idéntica byte a byte. Las dos interacciones Alpha y la salvaguarda de riesgo fallaron; no se abrió ningún modelo ni estrategia.',
     coverage: 'Estado de la evidencia', coverageNote: 'La integridad del método y la eficacia del modelo son cuestiones distintas.',
     coverageBoundary: 'Publicar un método no convierte la estrategia en validada, adecuada para el mercado actual ni predictiva de rentabilidades de opciones.',
+    factorSpace: 'Diagnóstico del espacio de factores para la próxima campaña', factorSpaceNote: 'Antes de consultar resultados, la siguiente entrada debe demostrar cuántas direcciones de información independientes contienen sus factores.', factorSpaceBadge: 'OBLIGATORIO · AÚN NO CALCULADO',
+    factorSpaceItems: [
+      ['Estandarización point-in-time', 'Los rangos robustos o z-scores se ajustarán solo sobre el corte transversal apto o el tramo de Desarrollo congelado, nunca sobre toda la muestra.'],
+      ['Familias económicas y clústeres', 'Se mostrarán conjuntamente la taxonomía económica, la estructura Pearson/Spearman, la coincidencia de ausencias, los clústeres jerárquicos y la multicolinealidad.'],
+      ['PCA y dimensión efectiva', 'Tras un ajuste registrado solo en Desarrollo se publicarán varianza explicada, cargas, dimensión efectiva y mapa bidimensional. PCA diagnostica redundancia; no demuestra Alpha.'],
+      ['Responsabilidad de selección', 'Cada entrada conservada o rechazada mostrará fórmula, transformación, clúster, información incremental, incertidumbre y motivo de decisión.'],
+    ],
     submission: 'Se aceptan hipótesis refutables de factores o estrategias para su registro y evaluación independiente bajo el mismo proceso gobernado. Si una propuesta llega a un modelo utilizable y a un futuro uso comercial, WH Alpha contactará a la persona colaboradora y comunicará el resultado.',
     submissionContact: 'Contacto',
     readiness: 'Escalera de evidencia', readinessItems: [
@@ -535,6 +556,13 @@ export function QuantResearchLabPage(): JSX.Element {
         {architecture.layers.map(([index, title, state, body], layerIndex) => <article className={layerIndex === 0 ? 'active' : 'locked'} key={title}><div><span>{index}</span><b>{state}</b></div><h3>{title}</h3><p>{body}</p></article>)}
       </div>
       <strong className="research-architecture-boundary">{architecture.boundary}</strong>
+    </section>
+
+    <section className="research-card research-engineering-evidence" aria-labelledby="research-factor-space-title">
+      <header><span>FS</span><div><h2 id="research-factor-space-title">{c.factorSpace}</h2><p>{c.factorSpaceNote}</p></div><b>{c.factorSpaceBadge}</b></header>
+      <div className="research-screen-protocol">
+        {c.factorSpaceItems.map(([title, body]) => <article key={title}><strong>{title}</strong><p>{body}</p></article>)}
+      </div>
     </section>
 
     <section className="research-card research-engineering-evidence" aria-labelledby="research-cycle-title">

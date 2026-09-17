@@ -173,9 +173,10 @@ qualification passed, but the frozen Development screen rejected all four
 candidate-Alpha trials. Two risk guards passed their own gates but were not
 selected because no Alpha survived. Ledger V3 now closes all 14 consumed
 trials and no model input exists. Campaign Three subsequently completed
-outcome-blind intake and qualification. Ledger V4 now registers two Alpha
-interactions and one risk guard as unread trials, bringing the cumulative
-formal-trial count to 17. It has not yet admitted an Alpha.
+outcome-blind intake, qualification, one frozen Development screen, and one
+byte-identical replay. Both Alpha interactions and the risk guard failed their
+registered gates. Ledger V5 closes all 17 cumulative formal trials with zero
+admitted Alpha, zero model input, and no downstream authority.
 
 No candidate-Alpha factor has been admitted. No selected threshold, model
 weight, three-layer model,
@@ -191,6 +192,17 @@ authoritative project state, dated audit, trilingual Product projection, and
 tests together. Deployment remains separately verified. Current decisions stay
 expanded; formulas, parameters, lineage, hashes, limitations, and current
 three-layer campaigns may use disclosure panels without becoming unavailable.
+
+Every completed factor-space milestone must also project its interpretable
+diagnostics into the public Lab. The compact view states the point-in-time
+standardization and neutralization method, factor-family or cluster identity,
+effective dimensionality, and the decision those diagnostics support. The
+expanded view shows the exact transformation, missingness treatment,
+correlation or cluster evidence, PCA fitting boundary, explained variance, and
+factor loadings when PCA is registered. Correlation heatmaps and two-dimensional
+PCA loading maps are diagnostics, not Alpha evidence. They must never be fit on
+Validation or Holdout, and an unfinished diagnostic must display `not computed`
+rather than a decorative or synthetic chart.
 
 The Market / Universe selector separates the U.S. Lab from the China A-share
 research foundation. The A-share view uses the same Factor Discovery -> Model
