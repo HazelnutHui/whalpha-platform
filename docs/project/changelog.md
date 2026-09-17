@@ -19,6 +19,8 @@ and dated [audits](../audits/). Current capability and next work belong in
   time fields, and keeps Historical Coverage and backtesting closed.
 - Replaced an unbounded next-search surface with two explicit gates: U.S.
   source/input qualification and A-share full-population offline reconciliation.
+- Deployed the trilingual current-stage projection and passed independent OCI
+  postflight; credential login and browser visual review remain manual.
 
 ## 2026-09-17 — Complete U.S. factor-space replay and A-share source expansion
 

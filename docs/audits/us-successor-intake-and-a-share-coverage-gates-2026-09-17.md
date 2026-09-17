@@ -56,6 +56,17 @@ Eight focused contract tests, all 3,167 backend tests, all 135 frontend tests,
 and the Production frontend build passed. The two backend warnings are the
 existing Python `crypt` and Starlette/httpx deprecation notices, not failures.
 
+## Website deployment
+
+The reviewed UI projection was deployed as release
+`2026-09-17T205251Z-bc6efb4d3515`, sourced from revision
+`bc6efb4d3515ab1b482e6226da6dd49547016507`. Preflight and apply passed.
+Independent postflight at 2026-09-17T20:54:04Z reconciled the active release,
+source, manifest, checksums, Nginx and Auth Service state, protected routes,
+bounded guest flow, equal guest/credential route policy, zero failed or staging
+releases, and no unexpected private listener. Credential login and browser
+visual inspection remain manual.
+
 ## Authority boundary
 
 This stage authorizes only U.S. point-in-time source qualification and A-share
