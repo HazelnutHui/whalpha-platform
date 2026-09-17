@@ -83,9 +83,25 @@ observed.
 `ChinaAshareAdjustmentFactorObservationV1` separately preserves BaoStock's
 `adjustFactor`, `foreAdjustFactor`, and `backAdjustFactor` fields plus a human-
 readable semantics declaration. `normalized_return_authorized` is fixed to
-`false`. A later reconciliation contract must prove multiplier direction,
-action coverage, revision behavior, and return meaning before research labels
-use any of them.
+`false`; the source observation never self-authorizes a return.
+
+`ChinaAshareCorporateActionObservationV1` retains implemented distribution or
+rights terms, announcement/record/ex/payment dates, stable pilot binding,
+source time, raw-response hash, quality, and a logical fingerprint. The
+reconciliation contract compares the action formula with the previous actual
+close, the ex-date exchange-reference pre-close, and the transition in both
+BaoStock cumulative factor directions. Exchange price rounding is retained as
+evidence rather than overwritten by the unrounded theoretical price.
+
+The immutable `china-ashare-corporate-action-evidence-package/1.0` retains the
+exact CNINFO distribution and rights-query bytes (including valid empty rights
+responses), typed actions, full predecessor-factor history, independent
+Tonghuashun term observations, every reconciliation decision, physical hashes,
+a closed file set, and exact reread. Duplicate/no-op corrections,
+left-boundary actions, action-only rows, factor-only rows, and conflicts have
+separate states. Passing it can complete the corporate-action family only for
+the exact bound scope; source rows remain non-authoritative individually and
+overall research admission remains separate.
 
 ## Effective-dated trading rule
 
@@ -202,6 +218,14 @@ rules, and 7,266 price-limit decisions. It reports zero observed-bar
 violations and zero unresolved rules. This is sufficient for the bounded
 SSE/SZSE pilot mechanics gate only; adjustment semantics, corporate actions,
 lifecycle, historical Universe, and full admission remain independent.
+
+The real corporate-action pilot package retains 12 exact CNINFO responses, 27
+implemented distributions, 123 full-history adjustment observations, and 27
+independent Tonghuashun term checks. It matches all 27 economic actions in both
+cumulative factor directions and classifies one unchanged-factor provider
+correction separately. No left-boundary, action-only, factor-only, or conflict
+row remains. This is pilot-family completion, not full-market or overall
+backtest admission.
 
 ## Foundation census and admission
 

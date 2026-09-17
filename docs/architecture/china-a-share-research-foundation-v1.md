@@ -219,6 +219,16 @@ changed, added, or removed economic rows. This qualifies repeat stability for
 the bounded pilot observation, not future source behavior, historical
 completeness, adjustment economics, or research admission.
 
+A third immutable pilot package now closes the bounded action/adjustment
+semantics gate. It retains exact CNINFO bytes for distribution and rights
+queries, 27 implemented distributions, full BaoStock predecessor-factor
+history, and 27 independent Tonghuashun term checks. All 27 action-date steps
+match both cumulative factor directions; one additional unchanged-factor row
+is retained as an explicit provider correction/no-op. There are zero boundary,
+unmatched, or conflict decisions. This completion applies only to the six
+pilot identities and cannot substitute for canonical identity, full-market
+coverage, daily Universe construction, or final admission.
+
 The calendar diagnostic uses `XSHG` with an explicit `Asia/Shanghai` timezone;
 passing another exchange ID or the shared U.S. default timezone fails closed.
 For the bounded pilot, its 1,211 sessions match every bound security's source-

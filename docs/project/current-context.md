@@ -373,12 +373,21 @@ Ping An/Tonghuashun account-cost scenario, and 7,266 pilot price-limit
 decisions. It has zero observed-bar violations and zero unresolved rules;
 package logical fingerprint is
 `799a5511871e826bb031651d01077e789392358b0b77198ca41d77f1d724da25`.
+Another owner-only package retains 12 exact CNINFO distribution/rights-query
+responses, 27 typed implemented distributions, 123 BaoStock adjustment rows
+from complete predecessor-factor history, and 27 independent Tonghuashun term
+checks. All 27 actions match the exchange-reference price step in both
+cumulative factor directions; the extra 2023-07-03 `sh.600519` row is an
+explicit unchanged-factor provider correction. There are zero left-boundary,
+action-only, factor-only, or conflicting rows. Package logical fingerprint is
+`6ec16837c7ec8e96f69ae7979143e0bbe6040ab33f89ec9eaa95c0fc66c38693`.
 The account rate is user-reported and its all-in/minimum/history assumptions
 remain unconfirmed by a broker statement. SSE lifecycle rows remain issuer
 evidence and cannot claim listed-security identity. No raw upstream archive
-exists for the reference/daily source families; no canonical stable identity,
-canonical Apply, admitted historical Universe, backtest admission, or Product
-authority exists. The deployed Market / Universe selector reports this
+exists for the reference/daily source families; the corporate-action result
+completes only its bounded pilot family. No canonical stable identity,
+canonical Apply, admitted historical Universe, overall backtest admission, or
+Product authority exists. The deployed Market / Universe selector reports this
 boundary and the verified pilot counts in dedicated A-share research and
 selection-readiness views. The six pilot securities remain evidence anchors,
 not a stock pool; no underlying A-share records are published and no research
@@ -391,7 +400,9 @@ SSE/SZSE notice custody and machine reconciliation now also pass for the pilot
 scope. Effective-dated pilot trading rules, statutory fees, and theoretical
 price-limit reconciliation also pass independently. See the
 [calendar audit](../audits/china-a-share-calendar-coverage-2026-09-17.md) and
-[market-mechanics audit](../audits/china-a-share-market-mechanics-2026-09-17.md).
+[market-mechanics audit](../audits/china-a-share-market-mechanics-2026-09-17.md),
+and the exact action/factor result is in the
+[corporate-action audit](../audits/china-a-share-corporate-action-reconciliation-2026-09-17.md).
 
 ## Automation and standing boundaries
 

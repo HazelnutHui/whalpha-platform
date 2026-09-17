@@ -7,6 +7,23 @@ and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md), [current work](current-work.md), and the
 [roadmap](roadmap.md), not here.
 
+## 2026-09-17 — Reconcile pilot corporate actions and adjustment semantics
+
+- Added exact CNINFO distribution/rights capture, typed corporate-action and
+  reconciliation contracts, independent Tonghuashun term checks, complete
+  predecessor-factor retrieval, immutable owner-only custody, exact reread,
+  CLI, and focused tests.
+- Retained 12 raw responses, 27 implemented distributions, 123 full-history
+  adjustment observations, and 27 independent term checks. All 27 action
+  transitions match both cumulative factor directions; one additional
+  `sh.600519` observation is an explicit unchanged-factor provider correction.
+- The report has zero boundary, unmatched, or conflicting rows and completes
+  only the bounded pilot corporate-action family. Canonical stable identity,
+  daily Universe, full-market expansion, overall backtest admission, Product,
+  and deployment authority remain closed.
+- Independently reread the 17-file package, passed 59 focused A-share tests,
+  and passed all 3,139 backend tests.
+
 ## 2026-09-17 — Add compact active-work recovery control
 
 - Added one replace-in-place `current-work.md` authority between verified

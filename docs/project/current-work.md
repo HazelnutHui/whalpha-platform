@@ -39,52 +39,51 @@ publish rankings, or change Product authority.
 ## Current checkpoint
 
 The bounded six-security SSE/SZSE pilot has passed source-repeat, official
-calendar, trading-rule, price-limit, statutory-fee, and provisional account-
-cost registration checks. It has not passed adjustment-factor/corporate-action
-economics, canonical stable identity, listed-security lifecycle, point-in-time
-daily Universe, full-market expansion, or the final 13-family admission.
+calendar, trading-rule, price-limit, statutory-fee, provisional account-cost,
+and corporate-action/adjustment-economic checks. It has not passed canonical
+stable identity, listed-security lifecycle, point-in-time daily Universe,
+full-market expansion, or the final 13-family admission.
 
-The current step is **corporate-action and adjustment-factor reconciliation**:
+The current step is **stable identity and listed-security lifecycle**:
 
-- retain implementation-date distribution evidence separately from provider
-  adjustment observations;
-- prove factor direction and transition arithmetic against prior raw close,
-  exchange reference pre-close, and effective action terms;
-- represent duplicate, correction, left-boundary, unmatched, and conflicting
-  rows explicitly;
-- keep raw price return, split-comparable price, and gross total return as
-  different semantics; and
-- grant no return authority while a critical row or source-coverage boundary
-  remains unresolved.
+- replace pilot-only join IDs with append-only market-scoped instrument
+  identities supported by listed-security evidence;
+- keep issuer identity, listed-security identity, ticker, board, and lifecycle
+  events separate;
+- preserve code reuse, listing, delisting, suspension, transfer, and unknown
+  states as effective-dated evidence;
+- quarantine issuer-only, name-only, prefix-only, and ambiguous evidence; and
+- grant no daily-Universe or research authority before exact identity and
+  lifecycle coverage is independently reread.
 
 Verified entry evidence:
 
 - six pilot-only SSE/SZSE bindings; BSE remains quarantined;
 - 1,211 pilot sessions from 2021-09-16 through 2026-09-16;
 - 7,255 raw bars, 7,266 daily states, and 28 adjustment observations;
-- 27 implemented distribution dates currently identified over the pilot
-  interval; and
-- one extra BaoStock 2023-07-03 observation for `sh.600519` whose cumulative
-  fore/back factors do not move and which must be treated as an explicit
-  provider correction/no-op candidate, not a second corporate action.
+- 27 implemented distributions matched to exact CNINFO source bytes,
+  independent Tonghuashun terms, raw close/ex-date reference prices, and both
+  cumulative factor directions;
+- one BaoStock 2023-07-03 `sh.600519` provider correction with unchanged
+  cumulative fore/back factors, represented explicitly as a no-op rather than
+  a second action; and
+- zero left-boundary, action-only, factor-only, or conflicting pilot rows after
+  retaining complete predecessor-factor history.
 
-These last two facts are current investigation evidence, not yet an admitted
-family or canonical dataset.
+The corporate-action family is complete only for this bounded pilot. Its
+package grants no canonical Apply or research-backtest authority.
 
 ## Ordered remaining gates
 
-1. Complete and independently reread the pilot corporate-action/adjustment
-   evidence package, including left-boundary factor history and source
-   coverage.
-2. Establish append-only stable identities and listed-security lifecycle
+1. Establish append-only stable identities and listed-security lifecycle
    decisions; quarantine code reuse and issuer-only evidence.
-3. Build exactly one included, excluded, or quarantined daily Universe
+2. Build exactly one included, excluded, or quarantined daily Universe
    decision for every evaluated instrument/session.
-4. Expand source observations in bounded, resumable five-year partitions;
+3. Expand source observations in bounded, resumable five-year partitions;
    retain source-repeat and cross-source conflict reports.
-5. Build the 13-family Historical Coverage report and independently reproduce
+4. Build the 13-family Historical Coverage report and independently reproduce
    its admission decision.
-6. If and only if the exact scope reaches `research_backtest_ready`, register
+5. If and only if the exact scope reaches `research_backtest_ready`, register
    the first finite, outcome-blind A-share factor-input campaign. Future
    returns and Development outcomes remain a later separately governed step.
 
@@ -140,4 +139,3 @@ Before advancing any numbered gate:
 If code and documentation disagree, the stage is incomplete. If a new task
 cannot identify the exact active gate from this page and verify it from live
 evidence, it must stop before material mutation.
-

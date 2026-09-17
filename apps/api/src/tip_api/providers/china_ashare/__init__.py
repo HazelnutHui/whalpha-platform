@@ -13,6 +13,19 @@ from tip_api.providers.china_ashare.baostock_adapter import (
     BaoStockSession,
 )
 from tip_api.providers.china_ashare.baostock_session import BaoStockClientSession
+from tip_api.providers.china_ashare.cninfo_corporate_action_adapter import (
+    CNINFO_CORPORATE_ACTION_PROVIDER_ID,
+    CNINFO_CORPORATE_ACTION_URL,
+    CNINFO_RIGHTS_ISSUE_PROVIDER_ID,
+    CNINFO_RIGHTS_ISSUE_URL,
+    AkshareTransportCninfoCorporateActionFetcher,
+    CapturedCninfoCorporateActionsV1,
+    CninfoCorporateActionHttpFetcher,
+    CninfoCorporateActionHttpResponseV1,
+    CninfoCorporateActionSourceKind,
+    capture_cninfo_corporate_actions,
+    capture_cninfo_rights_issues,
+)
 from tip_api.providers.china_ashare.official_calendar_adapter import (
     CapturedOfficialCalendarNoticeV1,
     OfficialCalendarHttpFetcher,
@@ -42,10 +55,19 @@ __all__ = [
     "AkshareAshareReferenceAdapter",
     "AkshareReferenceModule",
     "BAOSTOCK_ASHARE_PROVIDER_ID",
+    "CNINFO_CORPORATE_ACTION_PROVIDER_ID",
+    "CNINFO_CORPORATE_ACTION_URL",
+    "CNINFO_RIGHTS_ISSUE_PROVIDER_ID",
+    "CNINFO_RIGHTS_ISSUE_URL",
     "BaoStockAshareSourceAdapter",
     "BaoStockClientSession",
     "BaoStockCursor",
     "BaoStockSession",
+    "AkshareTransportCninfoCorporateActionFetcher",
+    "CapturedCninfoCorporateActionsV1",
+    "CninfoCorporateActionHttpFetcher",
+    "CninfoCorporateActionHttpResponseV1",
+    "CninfoCorporateActionSourceKind",
     "ChinaAshareDailySourceBatchV1",
     "ChinaAshareIdentityBindingV1",
     "ChinaAshareInstrumentSourceBatchV1",
@@ -64,4 +86,6 @@ __all__ = [
     "UrllibOfficialMarketMechanicsHttpFetcher",
     "capture_official_calendar_notice",
     "capture_official_market_mechanics_source",
+    "capture_cninfo_corporate_actions",
+    "capture_cninfo_rights_issues",
 ]
