@@ -84,10 +84,10 @@ contract, verifier, and custody suites also passed independently.
 
 ## Website deployment
 
-The reviewed UI projection was deployed as release
-`2026-09-17T205251Z-bc6efb4d3515`, sourced from revision
-`bc6efb4d3515ab1b482e6226da6dd49547016507`. Preflight and apply passed.
-Independent postflight at 2026-09-17T20:54:04Z reconciled the active release,
+The final reviewed UI projection, including the closed 0 / 4 U.S. source gate,
+was deployed as release `2026-09-17T211123Z-e30f621c25fd`, sourced from
+revision `e30f621c25fded65ff85bc31bb890590ac198305`. Preflight and apply passed.
+Independent postflight at 2026-09-17T21:12:14Z reconciled the active release,
 source, manifest, checksums, Nginx and Auth Service state, protected routes,
 bounded guest flow, equal guest/credential route policy, zero failed or staging
 releases, and no unexpected private listener. Credential login and browser

@@ -32,6 +32,9 @@ and dated [audits](../audits/). Current capability and next work belong in
   TTM feature, identity projection, applicability rule, or joint coverage.
 - Corrected the short-interest card's lineage: dollar-volume surprise is a
   related setup input, not a consumed formal outcome trial.
+- Deployed that closed source-gate state in the trilingual Lab and passed
+  independent OCI postflight; credential login and browser visual review
+  remain manual.
 
 ## 2026-09-17 — Complete U.S. factor-space replay and A-share source expansion
 
