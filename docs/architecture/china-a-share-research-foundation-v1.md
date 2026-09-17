@@ -229,6 +229,13 @@ unmatched, or conflict decisions. This completion applies only to the six
 pilot identities and cannot substitute for canonical identity, full-market
 coverage, daily Universe construction, or final admission.
 
+A fourth immutable pilot package closes the bounded stable-identity and
+listed-lifecycle gates. It retains five exact official current/delist source
+artifacts, keys each listed occurrence independently from ticker, reproduces
+all six pilot IDs, and reconciles one state for every instrument/session.
+Issuer-only evidence remains incapable of asserting security termination.
+This result still grants no daily-Universe or research authority.
+
 The calendar diagnostic uses `XSHG` with an explicit `Asia/Shanghai` timezone;
 passing another exchange ID or the shared U.S. default timezone fails closed.
 For the bounded pilot, its 1,211 sessions match every bound security's source-

@@ -227,6 +227,18 @@ correction separately. No left-boundary, action-only, factor-only, or conflict
 row remains. This is pilot-family completion, not full-market or overall
 backtest admission.
 
+## Stable identity and lifecycle evidence package
+
+`china-ashare-identity-lifecycle-package/1.0` retains exact official SSE/SZSE
+current-list and delisting bytes, append-only listed-occurrence identities,
+complete interval decisions, and a fail-closed report. The occurrence key is
+`source_security_id + exchange + board + listing_date`; ticker is explicitly
+an alias and a later relisting creates a different ID. Issuer-only evidence
+cannot terminate a listed security. The real pilot resolves all six SSE/SZSE
+anchors and reconciles all 7,266 instrument/session states with zero
+quarantine. This closes only the bounded pilot identity/lifecycle families;
+daily Universe and research authority remain closed.
+
 ## Foundation census and admission
 
 `ChinaAshareFoundationFamilyCensusV1` records coverage and evidence tier for

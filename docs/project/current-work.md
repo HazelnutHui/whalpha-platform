@@ -40,21 +40,22 @@ publish rankings, or change Product authority.
 
 The bounded six-security SSE/SZSE pilot has passed source-repeat, official
 calendar, trading-rule, price-limit, statutory-fee, provisional account-cost,
-and corporate-action/adjustment-economic checks. It has not passed canonical
-stable identity, listed-security lifecycle, point-in-time daily Universe,
-full-market expansion, or the final 13-family admission.
+corporate-action/adjustment-economic, stable research identity, and listed-
+security lifecycle checks. It has not passed point-in-time daily Universe,
+full-market expansion, or the final 13-family admission. Canonical Product
+Apply remains outside this research-foundation objective.
 
-The current step is **stable identity and listed-security lifecycle**:
+The current step is **point-in-time daily Universe disposition**:
 
-- replace pilot-only join IDs with append-only market-scoped instrument
-  identities supported by listed-security evidence;
-- keep issuer identity, listed-security identity, ticker, board, and lifecycle
-  events separate;
-- preserve code reuse, listing, delisting, suspension, transfer, and unknown
-  states as effective-dated evidence;
-- quarantine issuer-only, name-only, prefix-only, and ambiguous evidence; and
-- grant no daily-Universe or research authority before exact identity and
-  lifecycle coverage is independently reread.
+- emit exactly one included, excluded, or quarantined decision for every
+  evaluated stable instrument/session;
+- derive decisions only from effective-dated identity, listing, state,
+  security-form, board, risk-warning, and tradability evidence;
+- never project the current list, name, liquidity, or later-known status
+  backward;
+- preserve absence and insufficient evidence as explicit quarantine; and
+- grant no full-market or research authority before the daily partition is
+  independently reproduced.
 
 Verified entry evidence:
 
@@ -68,22 +69,26 @@ Verified entry evidence:
   cumulative fore/back factors, represented explicitly as a no-op rather than
   a second action; and
 - zero left-boundary, action-only, factor-only, or conflicting pilot rows after
-  retaining complete predecessor-factor history.
+  retaining complete predecessor-factor history;
+- six append-only stable listed-occurrence identities that exactly reproduce
+  the pilot bindings without using ticker as a permanent key; and
+- six complete lifecycle intervals with one trading or suspended state for
+  each of 1,211 sessions, zero target delist hits, and exact current/delist
+  exchange-source bytes retained.
 
-The corporate-action family is complete only for this bounded pilot. Its
-package grants no canonical Apply or research-backtest authority.
+The corporate-action, stable-identity, and lifecycle families are complete
+only for this bounded pilot. Their packages grant no canonical Apply or
+research-backtest authority.
 
 ## Ordered remaining gates
 
-1. Establish append-only stable identities and listed-security lifecycle
-   decisions; quarantine code reuse and issuer-only evidence.
-2. Build exactly one included, excluded, or quarantined daily Universe
+1. Build exactly one included, excluded, or quarantined daily Universe
    decision for every evaluated instrument/session.
-3. Expand source observations in bounded, resumable five-year partitions;
+2. Expand source observations in bounded, resumable five-year partitions;
    retain source-repeat and cross-source conflict reports.
-4. Build the 13-family Historical Coverage report and independently reproduce
+3. Build the 13-family Historical Coverage report and independently reproduce
    its admission decision.
-5. If and only if the exact scope reaches `research_backtest_ready`, register
+4. If and only if the exact scope reaches `research_backtest_ready`, register
    the first finite, outcome-blind A-share factor-input campaign. Future
    returns and Development outcomes remain a later separately governed step.
 

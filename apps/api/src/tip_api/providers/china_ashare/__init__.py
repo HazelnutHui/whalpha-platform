@@ -33,6 +33,15 @@ from tip_api.providers.china_ashare.official_calendar_adapter import (
     UrllibOfficialCalendarHttpFetcher,
     capture_official_calendar_notice,
 )
+from tip_api.providers.china_ashare.official_identity_evidence_adapter import (
+    OFFICIAL_IDENTITY_PROVIDER_ID,
+    CapturedOfficialIdentityArtifactV1,
+    OfficialIdentityArtifactKind,
+    OfficialIdentityHttpFetcher,
+    OfficialIdentityHttpResponseV1,
+    RequestsOfficialIdentityHttpFetcher,
+    capture_official_identity_sources,
+)
 from tip_api.providers.china_ashare.official_market_mechanics_adapter import (
     CapturedOfficialMarketMechanicsSourceV1,
     OfficialMarketMechanicsHttpFetcher,
@@ -81,11 +90,18 @@ __all__ = [
     "OfficialCalendarHttpResponseV1",
     "OfficialMarketMechanicsHttpFetcher",
     "OfficialMarketMechanicsHttpResponseV1",
+    "OFFICIAL_IDENTITY_PROVIDER_ID",
+    "CapturedOfficialIdentityArtifactV1",
+    "OfficialIdentityArtifactKind",
+    "OfficialIdentityHttpFetcher",
+    "OfficialIdentityHttpResponseV1",
+    "RequestsOfficialIdentityHttpFetcher",
     "TabularResult",
     "UrllibOfficialCalendarHttpFetcher",
     "UrllibOfficialMarketMechanicsHttpFetcher",
     "capture_official_calendar_notice",
     "capture_official_market_mechanics_source",
+    "capture_official_identity_sources",
     "capture_cninfo_corporate_actions",
     "capture_cninfo_rights_issues",
 ]

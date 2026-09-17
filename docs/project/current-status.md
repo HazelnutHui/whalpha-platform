@@ -105,9 +105,14 @@ ADRs, and audits.
   term checks. All 27 action steps match both cumulative factor directions;
   one additional provider correction is an explicit no-op, with zero
   left-boundary, unmatched, or conflicting rows. This completes only the
-  bounded pilot corporate-action family and grants no backtest authority. No
-  canonical identity, Apply, research, Product, or deployment authority is
-  granted. The offline XSHG calendar and all six source-state histories align
+  bounded pilot corporate-action family and grants no backtest authority. A
+  separate 9-file package retains five exact exchange identity/lifecycle
+  artifacts, promotes six append-only listed-occurrence identities without
+  ticker-only joins, and completes six 1,211-session lifecycle intervals with
+  zero quarantine. Stable identity and lifecycle are therefore complete for
+  the bounded pilot only. No canonical Apply, research, Product, or deployment
+  authority is granted. The offline XSHG calendar and all six source-state
+  histories align
   over exactly 1,211 sessions with zero missing or unexpected dates. Ninety-four
   official weekday closures reconcile across both exchanges, `XSHG`, and every
   source-state history with zero differences. The SSE/SZSE pilot calendar,
@@ -207,15 +212,16 @@ The China A-share foundation is a separate market namespace and is earlier in
 its lifecycle. Its normalized reference/lifecycle package and linked five-year
 SSE/SZSE daily pilot exist only under temporary owner-only custody and reread
 exactly; a second capture produced a zero-delta economic source-repeat report.
-The separate exact-byte calendar, market-mechanics, and corporate-action
-packages pass their bounded reconciliations for the SSE/SZSE pilot interval.
+The separate exact-byte calendar, market-mechanics, corporate-action, and
+identity/lifecycle packages pass their bounded reconciliations for the
+SSE/SZSE pilot interval.
 The reference/daily packages
-are not raw source archives or a canonical database. The six
-pilot IDs are deterministic test bindings, not canonical stable identities.
-There is no canonical stable identity, admitted historical Universe, BSE
-daily-price route, full-market return-authorized adjustment family, or
-backtest-ready session. It
-must not be combined with the U.S. readiness table above.
+are not raw source archives or a canonical database. The six pilot IDs now
+reproduce append-only research-foundation listed-occurrence identities, but
+they are not canonical Product identities. There is no admitted historical
+Universe, BSE daily-price route, full-market return-authorized adjustment
+family, or backtest-ready session. It must not be combined with the U.S.
+readiness table above.
 
 ## Pre-architecture research record (internal audit only)
 

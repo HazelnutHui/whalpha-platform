@@ -7,6 +7,21 @@ and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md), [current work](current-work.md), and the
 [roadmap](roadmap.md), not here.
 
+## 2026-09-17 — Reconcile pilot stable identity and lifecycle
+
+- Added append-only A-share research identity and listed-lifecycle contracts,
+  exact official SSE/SZSE current/delist capture, immutable owner-only
+  custody, exact reread, CLI, and focused regression tests.
+- Resolved all six SSE/SZSE pilot listed occurrences with keys that include
+  exchange, board, and listing date; all six reproduce the prior pilot IDs and
+  none relies on ticker as a permanent key.
+- Completed six 1,211-session lifecycle intervals with 7,266 trading or
+  suspended states, zero quarantine, and zero target delist hits. Daily
+  Universe, full-market expansion, research, Product, and deployment authority
+  remain closed.
+- Independently reread the 9-file package, passed 67 focused A-share tests,
+  and passed all 3,141 backend tests.
+
 ## 2026-09-17 — Reconcile pilot corporate actions and adjustment semantics
 
 - Added exact CNINFO distribution/rights capture, typed corporate-action and

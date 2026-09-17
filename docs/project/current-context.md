@@ -381,11 +381,19 @@ cumulative factor directions; the extra 2023-07-03 `sh.600519` row is an
 explicit unchanged-factor provider correction. There are zero left-boundary,
 action-only, factor-only, or conflicting rows. Package logical fingerprint is
 `6ec16837c7ec8e96f69ae7979143e0bbe6040ab33f89ec9eaa95c0fc66c38693`.
+The next owner-only package retains five exact official SSE/SZSE current-list
+and delisting artifacts. It promotes all six pilot bindings into append-only
+listed-occurrence identities keyed by security ID, exchange, board, and
+listing date, while reproducing the existing UUIDs. All six lifecycle
+intervals contain one trading or suspended state for every one of 1,211
+sessions and no target delist hit. Package logical fingerprint is
+`406da4a55c0866c9087a48f6228bff235e788db0ae212cf37d3882b633f50249`.
 The account rate is user-reported and its all-in/minimum/history assumptions
-remain unconfirmed by a broker statement. SSE lifecycle rows remain issuer
-evidence and cannot claim listed-security identity. No raw upstream archive
-exists for the reference/daily source families; the corporate-action result
-completes only its bounded pilot family. No canonical stable identity,
+remain unconfirmed by a broker statement. Issuer-level lifecycle rows remain
+separate and cannot claim listed-security termination. No raw upstream archive
+exists for the reference/daily source families; the action, stable-identity,
+and lifecycle results complete only their bounded pilot families. The stable
+identity is a research-foundation identity, not canonical Product Apply. No
 canonical Apply, admitted historical Universe, overall backtest admission, or
 Product authority exists. The deployed Market / Universe selector reports this
 boundary and the verified pilot counts in dedicated A-share research and
@@ -403,6 +411,8 @@ price-limit reconciliation also pass independently. See the
 [market-mechanics audit](../audits/china-a-share-market-mechanics-2026-09-17.md),
 and the exact action/factor result is in the
 [corporate-action audit](../audits/china-a-share-corporate-action-reconciliation-2026-09-17.md).
+The stable listed-occurrence result is in the
+[identity/lifecycle audit](../audits/china-a-share-identity-lifecycle-2026-09-17.md).
 
 ## Automation and standing boundaries
 
