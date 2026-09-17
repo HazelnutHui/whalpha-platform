@@ -14,11 +14,18 @@ from tip_api.persistence.china_ashare_source_expansion_package import (
     publish_china_ashare_source_expansion_plan,
     read_china_ashare_source_expansion_partition,
 )
+from tip_api.persistence.china_ashare_source_expansion_completion import (
+    publish_china_ashare_source_expansion_completion,
+    read_china_ashare_source_expansion_completion,
+)
 from tip_api.providers.china_ashare.baostock_source_expansion_adapter import (
     capture_baostock_source_expansion_partition,
 )
 from tip_api.services.china_ashare_source_expansion import (
     plan_china_ashare_source_expansion,
+)
+from tip_api.services.china_ashare_source_expansion_completion import (
+    build_china_ashare_source_expansion_completion,
 )
 
 
@@ -191,3 +198,49 @@ def test_source_expansion_partition_capture_and_exact_reread(tmp_path: Path) -> 
     assert completed_source_expansion_partition_indices(
         plan_result=plan_result
     ) == (0,)
+
+
+def test_complete_source_expansion_builds_bound_completion_report(
+    tmp_path: Path,
+) -> None:
+    plan = plan_china_ashare_source_expansion(
+        population_package=_population(), partition_size=3, registered_at=NOW
+    )
+    plan_result = publish_china_ashare_source_expansion_plan(
+        custody_root=tmp_path / "custody", plan=plan
+    )
+    partition = plan_result.plan.partitions[0]
+    captured = capture_baostock_source_expansion_partition(
+        session=FakeSession(),
+        partition=partition,
+        interval_start=plan.interval_start,
+        interval_end=plan.interval_end,
+        captured_at=NOW,
+    )
+    publish_china_ashare_source_expansion_partition(
+        plan_result=plan_result,
+        partition=partition,
+        captured=captured,
+        captured_at=NOW,
+    )
+
+    report = build_china_ashare_source_expansion_completion(
+        plan_result=plan_result, evaluated_at=NOW
+    )
+    result = publish_china_ashare_source_expansion_completion(
+        plan_result=plan_result, report=report
+    )
+    reread = read_china_ashare_source_expansion_completion(
+        package_path=result.package_path
+    )
+
+    assert report.partition_count == 1
+    assert report.target_count == 3
+    assert report.resolved_target_count == 2
+    assert report.quarantined_target_count == 1
+    assert report.daily_target_with_rows_count == 1
+    assert report.daily_zero_row_target_count == 2
+    assert report.adjustment_target_with_rows_count == 1
+    assert report.adjustment_zero_row_target_count == 2
+    assert reread.report == report
+    assert reread.file_count == 1

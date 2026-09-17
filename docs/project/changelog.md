@@ -22,7 +22,10 @@ and dated [audits](../audits/). Current capability and next work belong in
 - Rejected concurrent BaoStock acquisition after a bounded two-process test
   failed one adjustment request and logout state; the independent successful
   partition remained valid and the failed partition was not published.
-- Passed 74 focused A-share/BaoStock tests and all 3,148 backend tests. Full
+- Added fail-closed, bounded-memory completion finalization that exactly
+  rereads every partition and binds the full source census without granting
+  normalization, research, Product, or deployment authority.
+- Passed 75 focused A-share/BaoStock tests and all 3,149 backend tests. Full
   source expansion and all research authority remain incomplete.
 
 ## 2026-09-17 — Freeze the five-year A-share expansion population

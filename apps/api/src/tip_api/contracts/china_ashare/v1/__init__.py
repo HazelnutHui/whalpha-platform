@@ -186,6 +186,12 @@ from tip_api.contracts.china_ashare.v1.source_expansion import (
     source_expansion_partition_spec_fingerprint,
     source_expansion_plan_fingerprint,
 )
+from tip_api.contracts.china_ashare.v1.source_expansion_completion import (
+    SOURCE_EXPANSION_COMPLETION_VERSION,
+    ChinaAshareSourceExpansionCompletionReportV1,
+    build_source_expansion_completion_report,
+    source_expansion_completion_report_fingerprint,
+)
 
 __all__ = [
     "CALENDAR_EVIDENCE_PACKAGE_VERSION",
@@ -208,6 +214,7 @@ __all__ = [
     "RESEARCH_IDENTITY_NAMESPACE",
     "SOURCE_EXPANSION_PARTITION_VERSION",
     "SOURCE_EXPANSION_PLAN_VERSION",
+    "SOURCE_EXPANSION_COMPLETION_VERSION",
     "MARKET_MECHANICS_METHOD_VERSION",
     "MARKET_MECHANICS_PACKAGE_VERSION",
     "ChinaAshareAccountCostScenarioV1",
@@ -288,6 +295,7 @@ __all__ = [
     "ChinaAshareSourceExpansionPartitionSpecV1",
     "ChinaAshareSourceExpansionPlanV1",
     "ChinaAshareSourceExpansionTargetV1",
+    "ChinaAshareSourceExpansionCompletionReportV1",
     "ChinaAshareTradingRuleV1",
     "ChinaAshareTradingStatus",
     "ChinaAshareTradeSide",
@@ -307,6 +315,7 @@ __all__ = [
     "build_source_expansion_partition_spec",
     "build_source_expansion_plan",
     "build_source_expansion_target",
+    "build_source_expansion_completion_report",
     "account_cost_scenario_fingerprint",
     "build_account_cost_scenario",
     "build_market_mechanics_report",
@@ -355,4 +364,5 @@ __all__ = [
     "source_expansion_partition_manifest_fingerprint",
     "source_expansion_partition_spec_fingerprint",
     "source_expansion_plan_fingerprint",
+    "source_expansion_completion_report_fingerprint",
 ]

@@ -31,3 +31,17 @@ may use CPU parallelism.
 Rows for unresolved occurrences remain keyed only by provider security ID.
 They may be retained for later recovery but cannot receive a stable identity
 or enter a research panel until separate evidence resolves them.
+
+After every planned partition is present, finalize the source-only census:
+
+```bash
+scripts/admin/finalize-china-ashare-five-year-source-expansion.sh \
+  --plan-root /absolute/private/source-expansion-custody/plan=FINGERPRINT
+```
+
+Finalization fails while any partition is absent. It exactly rereads every
+partition and binds total rows, zero-row targets, suspensions, risk-warning
+observations, target dispositions, date bounds, request counts, and the ordered
+partition-manifest set into one immutable completion report. This closes only
+raw-source acquisition; normalization, cross-family coverage, and research
+admission remain separate gates.
