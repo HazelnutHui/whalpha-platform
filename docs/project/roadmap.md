@@ -205,7 +205,8 @@ Current checkpoint: seven varied current-reference anchors and two lifecycle
 subjects are retained under temporary normalized custody. Six pilot-only
 SSE/SZSE identity bindings now link to an exactly reread five-year package of
 unadjusted daily bars, daily states, and all three provider factor fields. The
-BSE anchor remains quarantined. Source-repeat comparison, canonical stable
+BSE anchor remains quarantined. The first same-scope source-repeat comparison
+is zero-delta across all retained economic observations. Canonical stable
 identity, qualified calendars and price-limit rules, adjustment semantics,
 corporate-action economics, historical Universe decisions, fees, and a
 qualified BSE daily route remain before the historical pilot can be admitted.

@@ -352,9 +352,11 @@ custody are implemented. A seven-anchor/two-lifecycle normalized reference
 package was captured below `/tmp` and exactly reread. It creates six
 pilot-only SSE/SZSE identity bindings and quarantines the BSE anchor. A linked
 five-year package exactly rereads 7,255 unadjusted bars, 7,266 daily states,
-and 28 adjustment observations for those six securities. All 43 focused tests
-and all 3,117 backend tests pass. SSE lifecycle rows remain issuer evidence and
-cannot claim listed-security identity. No raw
+and 28 adjustment observations for those six securities. A subsequent exact
+same-scope capture matched every one of those 14,549 economic observations
+with zero added, removed, or changed rows after excluding only ingestion time.
+All 46 focused A-share tests and all 3,120 backend tests pass. SSE lifecycle
+rows remain issuer evidence and cannot claim listed-security identity. No raw
 upstream archive, canonical stable identity, canonical Apply, admitted
 historical Universe, backtest admission, website change, or Production
 authority exists. See the

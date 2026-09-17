@@ -70,7 +70,7 @@ ADRs, and audits.
   permanently records all 17 trials with zero admitted Alpha and zero model
   inputs. The cycle is back at outcome-blind hypothesis intake; Validation,
   Holdout, Model Construction, and all Product authority remain closed. All
-  3,117 backend tests, 129 frontend tests, and the Production frontend build
+  3,120 backend tests, 129 frontend tests, and the Production frontend build
   pass in repository source.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
@@ -85,8 +85,11 @@ ADRs, and audits.
   and quarantines the BSE anchor because BaoStock has no matching instrument
   observation. A linked five-year temporary package contains 7,255 unadjusted
   bars, 7,266 daily states including 11 suspensions, and 28 adjustment
-  observations. Both packages exactly reread, all 43 focused A-share tests and
-  all 3,117 backend tests pass, no raw upstream bytes are retained, and no
+  observations. A subsequent same-scope source repeat matched all 14,549
+  economic observations with zero changed, added, or removed rows after
+  ignoring only ingestion time. All packages and the repeat report exactly
+  reread; all 46 focused A-share tests and all 3,120 backend tests pass. No raw
+  upstream bytes are retained, and no
   canonical identity, Apply, research, Product, or deployment authority is
   granted.
 
@@ -171,7 +174,8 @@ historically `as_operated`.
 The China A-share foundation is a separate market namespace and is earlier in
 its lifecycle. Its normalized reference/lifecycle package and linked five-year
 SSE/SZSE daily pilot exist only under temporary owner-only custody and reread
-exactly. They are not a raw source archive or canonical database. The six
+exactly; a second capture produced a zero-delta economic source-repeat report.
+They are not a raw source archive or canonical database. The six
 pilot IDs are deterministic test bindings, not canonical stable identities.
 There is no admitted historical Universe, qualified exchange calendar or
 price-limit family, BSE daily-price route, reconciled corporate-action

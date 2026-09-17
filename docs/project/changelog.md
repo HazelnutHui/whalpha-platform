@@ -42,6 +42,13 @@ and dated [audits](../audits/). Current capability and next work belong in
   adjustment-return semantics and every downstream authority remain false.
 - Passed all 43 focused A-share tests and all 3,117 backend tests after the
   linked daily-package implementation.
+- Added an offline, exact-reread source-repeat comparison that ignores only the
+  local ingestion clock and fails closed on any missing, added, or changed
+  economic row. A real second capture matched all 7,255 bars, 7,266 states,
+  and 28 adjustment observations with zero deltas; this grants no canonical or
+  research authority.
+- Passed all 46 focused A-share tests and all 3,120 backend tests after the
+  source-repeat implementation and live bounded comparison.
 
 ## 2026-09-16 — Deploy the completed Campaign Three result
 

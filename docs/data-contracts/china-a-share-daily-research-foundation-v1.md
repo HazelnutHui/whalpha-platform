@@ -4,8 +4,9 @@
 
 Implemented contracts, provider adapters, an exactly reread temporary
 normalized-reference package, and a linked five-year daily pilot package for
-six SSE/SZSE securities. Canonical pilot data and admitted historical coverage
-remain absent.
+six SSE/SZSE securities. An exact same-scope source-repeat comparison also
+passes with zero economic deltas. Canonical pilot data and admitted historical
+coverage remain absent.
 
 ## Scope
 
@@ -137,6 +138,20 @@ those decisions, typed daily source batches, and
 `ChinaAsharePilotDailyQualityReportV1`. Raw upstream retention, canonical
 stable identity, adjustment semantics, canonical Apply, backtesting, Product
 publication, and deployment all remain explicitly false.
+
+## Source-repeat comparison
+
+`china-ashare-pilot-source-repeat/1.0` compares two distinct, ordered daily
+packages bound to the same plan, reference evidence, provider, query, and
+interval. It compares bars, daily state, and adjustment observations by stable
+pilot instrument/date business key. Only the local `ingested_at` field is
+ignored; source availability and every economic or quality field remain in the
+comparison.
+
+The owner-only report and change artifact are atomically published below the
+same temporary plan boundary and exactly reread. A zero-delta report grants
+only bounded source-repeat qualification. Canonical identity, Apply, backtest,
+Product, publication, and deployment authority remain false.
 
 ## Foundation census and admission
 

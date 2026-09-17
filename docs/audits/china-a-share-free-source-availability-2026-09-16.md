@@ -110,6 +110,23 @@ byte/hash/schema/mode/file-set reread. The quality report keeps raw retention,
 canonical identity, calendar reconciliation, adjustment semantics, canonical
 Apply, backtest, Product, publication, and deployment authority false.
 
+## Same-scope source-repeat result
+
+A second acquisition used the identical plan, reference package, provider,
+six SSE/SZSE securities, and 2021-09-16 through 2026-09-16 interval. The repeat
+package and comparison report both passed exact reread. Ignoring only the local
+`ingested_at` clock, the result was:
+
+- 7,255 / 7,255 daily bars unchanged;
+- 7,266 / 7,266 daily states unchanged;
+- 28 / 28 adjustment observations unchanged; and
+- zero changed, added, or removed economic rows.
+
+This result qualifies bounded repeat stability only. It does not prove future
+provider immutability, missing-session completeness, official calendar or
+price-limit correctness, action economics, return semantics, or point-in-time
+Universe eligibility.
+
 ## Decision
 
 - BaoStock remains the first free raw daily-observation route for SSE/SZSE.
@@ -122,9 +139,10 @@ Apply, backtest, Product, publication, and deployment authority false.
   remain separate work.
 - Suspensions, risk-warning history, corporate actions, effective-dated rules,
   fees, exact availability clocks, and BSE daily history remain incomplete.
-- The next safe milestone is a source-repeat comparison plus qualification of
-  calendars, price-limit rules, corporate actions, factor semantics, fees, and
-  historical Universe decisions. Full-market backfill remains closed.
+- The bounded source-repeat comparison is zero-delta. The next safe milestone
+  is qualification of calendars, price-limit rules, corporate actions, factor
+  semantics, fees, and historical Universe decisions. Full-market backfill
+  remains closed.
 
 ## Verdict
 

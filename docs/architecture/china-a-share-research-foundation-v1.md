@@ -184,6 +184,13 @@ unspecified risk-warning states, and 28 adjustment observations. Exact reread
 passes. This is scenario and adapter evidence, not a representative market
 sample or research-ready historical panel.
 
+A second capture of the identical plan, provider, securities, and date interval
+matched all 7,255 bars, 7,266 states, and 28 adjustment observations after
+excluding only the local `ingested_at` clock. The exact report contains zero
+changed, added, or removed economic rows. This qualifies repeat stability for
+the bounded pilot observation, not future source behavior, historical
+completeness, adjustment economics, or research admission.
+
 Expansion stops on systemic schema drift, unexplained coverage loss,
 unbounded rate failure, fingerprint mismatch, or a critical family with no
 defensible source. Isolated record conflicts are quarantined and do not force
