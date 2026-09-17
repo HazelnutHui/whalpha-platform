@@ -27,6 +27,16 @@ datasets/
 artifacts/
 cache/
 tmp/
+*.parquet
+*.feather
+*.arrow
+*.duckdb
+*.sqlite
+*.sqlite3
+*.npy
+*.npz
+*.pkl
+*.pickle
 
 .DS_Store
 Thumbs.db
