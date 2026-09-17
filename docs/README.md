@@ -95,6 +95,7 @@ or dated [audits](audits/) when reproducing that program.
 - [China A-Share Daily Research Contract V1](data-contracts/china-a-share-daily-research-foundation-v1.md)
 - [China A-Share Pilot Market-Mechanics Audit](audits/china-a-share-market-mechanics-2026-09-17.md)
 - [China A-Share Foundation UI Deployment Audit](audits/china-a-share-foundation-ui-deployment-2026-09-17.md)
+- [China A-Share Market Selector Deployment Audit](audits/china-a-share-market-selector-deployment-2026-09-17.md)
 - [Canonical Market Data Query Boundary](architecture/canonical-market-data-query-boundary.md)
 - [Instrument Identity Resolution](architecture/instrument-identity-resolution.md)
 - [Classification Boundary](architecture/classification-boundary.md)

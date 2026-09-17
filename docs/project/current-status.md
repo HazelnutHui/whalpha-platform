@@ -14,8 +14,10 @@ ADRs, and audits.
   result to equal guest/credential flows. All three campaigns closed without
   candidate Alpha; Ledger V5 contains 17 formal trials, and active Alpha,
   model, and strategy counts remain zero. The same release presents the
-  isolated A-share pilot facts and incomplete admission boundary without
-  publishing its underlying records or implying an A-share backtest.
+  isolated A-share pilot facts through a dedicated third Market / Universe
+  option and an intentionally empty A-share selection-readiness page. It does
+  not publish underlying records or imply an A-share backtest, Universe,
+  model, or ranking.
   Underlying data is stale by two
   completed sessions at the 2026-09-16 operational review.
 - **Five-year source depth:** EOD price and stable Identity complete.
@@ -73,7 +75,7 @@ ADRs, and audits.
   permanently records all 17 trials with zero admitted Alpha and zero model
   inputs. The cycle is back at outcome-blind hypothesis intake; Validation,
   Holdout, Model Construction, and all Product authority remain closed. All
-  3,134 backend tests, 129 frontend tests, and the Production frontend build
+  3,134 backend tests, 135 frontend tests, and the Production frontend build
   pass in repository source.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
@@ -141,12 +143,15 @@ qualification and replay, and locked downstream gates while withholding
 internal fingerprints, raw IDs, and custody identifiers from the website.
 Public infrastructure wording uses "workstation" rather than a hardware brand.
 
-Production now also contains a trilingual China A-share foundation surface.
-It reports the exact pilot interval, six bound SSE/SZSE securities, 1,211
-calendar sessions, 7,266 market-mechanics decisions, the qualified and blocked
-admission families, strict U.S./China isolation, and zero A-share factor
-campaigns. This is an evidence-status view only: no A-share row-level data,
-backtest, Alpha, model, ranking, strategy, or Product authority is served.
+Production now also contains a trilingual, dedicated China A-share market
+selection. The Lab view reports the exact pilot interval, six bound SSE/SZSE
+evidence anchors, 1,211 calendar sessions, 7,266 market-mechanics decisions,
+the qualified and blocked admission families, strict U.S./China isolation, and
+zero A-share factor campaigns. The downstream selection view intentionally
+shows zero admitted Universe, rankings, and models. U.S.-only market tools and
+Candidate rows are unavailable while A-share is selected. These are readiness
+views only: no A-share row-level data, backtest, Alpha, model, ranking,
+strategy, or Product authority is served.
 
 The reusable research-input policy remains preserved in V1, while registry V2
 records one qualified, exactly replayed Market-State panel and zero outcome-

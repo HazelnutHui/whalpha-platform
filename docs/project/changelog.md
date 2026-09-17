@@ -6,6 +6,28 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
+## 2026-09-17 — Deploy the isolated A-share market selector and readiness pages
+
+- Upgraded the protected workspace control from a U.S.-only Universe selector
+  to a trilingual Market / Universe selector with an explicitly unadmitted
+  China A-share research-foundation option.
+- Added dedicated A-share Lab and Model-Driven Selection readiness views. They
+  expose completed evidence, T+1, price-limit and locked-limit execution,
+  suspension, listing-age, lot/account, long-only, return-layer,
+  point-in-time-Universe, normalization, horizon, and publication-time
+  boundaries without publishing row-level source data.
+- Kept the A-share downstream page intentionally empty at zero admitted
+  Universe, rankings, and models; the six pilot securities remain evidence
+  anchors. U.S.-only tools and Candidate rows cannot render under A-share.
+- Removed the duplicate A-share dossier from the U.S. Lab, passed all 135
+  frontend tests and the Production build, and deployed OCI release
+  `2026-09-17T054505Z-a3bd55bff60d` from source
+  `a3bd55bff60d673573fa766fe7146ec28958d3d0` using the unchanged immutable
+  Snapshot and Market Intelligence publications.
+- Dry-run, atomic apply, and independent postflight passed release, source,
+  manifest, checksum, service, protected-route, guest Session,
+  equal-capability, localhost-listener, and zero-residue verification.
+
 ## 2026-09-17 — Deploy the A-share foundation status surface
 
 - Built OCI release `2026-09-17T052618Z-34488cb022bd` from clean source
