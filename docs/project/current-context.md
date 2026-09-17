@@ -419,7 +419,7 @@ changed presentation only; it did not change data or research authority.
 ## Recovery procedure
 
 1. Read `AGENTS.md`, root `README.md`, `docs/README.md`, this file, and
-   `current-status.md`.
+   `current-status.md`, then `current-work.md`.
 2. Run `scripts/admin/report-current-context.sh`; use full-history validation
    only for periodic or investigative review.
 3. Classify every difference before mutation. Never silently fetch, Apply,

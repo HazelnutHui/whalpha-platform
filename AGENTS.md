@@ -24,7 +24,8 @@ Every new AI/Codex session must read these files before making material changes:
 2. [docs/README.md](docs/README.md)
 3. [docs/project/current-context.md](docs/project/current-context.md)
 4. [docs/project/current-status.md](docs/project/current-status.md)
-5. The product, architecture, operations, or ADR files directly related to the current task.
+5. [docs/project/current-work.md](docs/project/current-work.md)
+6. The product, architecture, operations, or ADR files directly related to the current task.
 
 ## 2. Project Mission
 
@@ -105,6 +106,9 @@ Do not independently expand this project into:
 - [docs/project/current-context.md](docs/project/current-context.md) must stay
   compact enough for task/device recovery; move dated execution narrative to
   audits or the changelog.
+- [docs/project/current-work.md](docs/project/current-work.md) names the one
+  active objective, its current gate, routed authority, and stop conditions.
+  Replace superseded work state; do not append execution history.
 - Update current context and current status by replacing superseded facts;
   never append a completed run narrative to either file.
 - [docs/project/roadmap.md](docs/project/roadmap.md) is not a commitment.
@@ -140,5 +144,6 @@ Do not create an ADR for every small code edit, formatting change, or local impl
 Do not duplicate volatile sessions, releases, fingerprints, or next-step claims
 in this instruction file. Read [docs/project/current-status.md](docs/project/current-status.md)
 and [docs/project/current-context.md](docs/project/current-context.md) for the
-authoritative current phase and verified operational state. The roadmap remains
-proposed sequencing, not authorization.
+authoritative current phase and verified operational state, then
+[docs/project/current-work.md](docs/project/current-work.md) for the one active
+objective and gate. The roadmap remains proposed sequencing, not authorization.

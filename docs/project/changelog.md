@@ -4,7 +4,22 @@ This is the concise project-level milestone ledger. Granular execution history
 through 2026-09-14 remains preserved in the
 [historical execution archive](../audits/project-execution-archive-through-2026-09-14.md)
 and dated [audits](../audits/). Current capability and next work belong in
-[current status](current-status.md) and the [roadmap](roadmap.md), not here.
+[current status](current-status.md), [current work](current-work.md), and the
+[roadmap](roadmap.md), not here.
+
+## 2026-09-17 — Add compact active-work recovery control
+
+- Added one replace-in-place `current-work.md` authority between verified
+  project state and task-specific contracts. It names the sole active
+  objective, current gate, ordered remaining gates, routed reading, invariants,
+  stop conditions, and stage-completion checkpoint.
+- Updated the required recovery order in `AGENTS.md`, the root overview,
+  documentation index, and current-context recovery procedure. A new task now
+  has a deterministic path from durable mission to verified state to the exact
+  active A-share gate without relying on chat history.
+- Kept execution history out of the control page: completed evidence remains
+  in audits, ADRs, contracts, and this milestone ledger, while superseded work
+  state is replaced rather than accumulated.
 
 ## 2026-09-17 — Deploy the isolated A-share market selector and readiness pages
 

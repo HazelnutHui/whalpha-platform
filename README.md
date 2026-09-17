@@ -68,6 +68,7 @@ steps from this README. Read:
 
 - [Authoritative current context](docs/project/current-context.md)
 - [Current status](docs/project/current-status.md)
+- [Current work control](docs/project/current-work.md)
 - [Roadmap](docs/project/roadmap.md)
 - [Changelog](docs/project/changelog.md)
 
@@ -156,10 +157,10 @@ Use the repository-aware backend runner from any linked checkout:
 scripts/dev/run-project-python.sh -m pytest apps/api/tests
 ```
 
-Before material work, follow [AGENTS.md](AGENTS.md) and recover state through
-the authoritative current-context reader. Network, credentials, canonical
-Apply, publication, deployment, scheduler mutation, and destructive cleanup
-remain explicit operational boundaries.
+Before material work, follow [AGENTS.md](AGENTS.md) and its bounded recovery
+chain through current context, current status, and current work control.
+Network, credentials, canonical Apply, publication, deployment, scheduler
+mutation, and destructive cleanup remain explicit operational boundaries.
 
 ## Explicitly outside the current scope
 

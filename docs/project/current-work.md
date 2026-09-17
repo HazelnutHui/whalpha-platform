@@ -1,0 +1,143 @@
+# Current Work Control
+
+Updated: 2026-09-17 UTC
+
+This is the replace-in-place control page for the **one active project
+objective**. It exists so a new task, device, or compacted chat can resume the
+same work without reconstructing intent from conversation history.
+
+It is not a changelog, audit, roadmap, or permission grant. Completed detail
+must move to the relevant ADR, contract, audit, or changelog entry. When the
+active objective changes, replace superseded content here rather than
+appending another dated narrative.
+
+## Recovery chain
+
+Every material task reads and verifies in this order:
+
+1. repository rules: `AGENTS.md`;
+2. durable mission and boundaries: root `README.md` and `docs/README.md`;
+3. verified infrastructure and exact volatile state:
+   `docs/project/current-context.md`;
+4. actual capability and limitations: `docs/project/current-status.md`;
+5. this active-objective control page;
+6. only the routed architecture, ADR, contract, operation, and audit files
+   listed below; and
+7. live Git, package, process, and data evidence before mutation.
+
+Conversation memory, a prior assistant summary, the roadmap, and website copy
+are never sufficient evidence by themselves.
+
+## Active objective
+
+Prepare the isolated five-year China A-share daily foundation for the first
+governed **outcome-blind Factor Discovery** batch. Stop at the point where the
+exact admitted interval and population may compute factor inputs; do not read
+future-return outcomes, register a Development screen, construct a model,
+publish rankings, or change Product authority.
+
+## Current checkpoint
+
+The bounded six-security SSE/SZSE pilot has passed source-repeat, official
+calendar, trading-rule, price-limit, statutory-fee, and provisional account-
+cost registration checks. It has not passed adjustment-factor/corporate-action
+economics, canonical stable identity, listed-security lifecycle, point-in-time
+daily Universe, full-market expansion, or the final 13-family admission.
+
+The current step is **corporate-action and adjustment-factor reconciliation**:
+
+- retain implementation-date distribution evidence separately from provider
+  adjustment observations;
+- prove factor direction and transition arithmetic against prior raw close,
+  exchange reference pre-close, and effective action terms;
+- represent duplicate, correction, left-boundary, unmatched, and conflicting
+  rows explicitly;
+- keep raw price return, split-comparable price, and gross total return as
+  different semantics; and
+- grant no return authority while a critical row or source-coverage boundary
+  remains unresolved.
+
+Verified entry evidence:
+
+- six pilot-only SSE/SZSE bindings; BSE remains quarantined;
+- 1,211 pilot sessions from 2021-09-16 through 2026-09-16;
+- 7,255 raw bars, 7,266 daily states, and 28 adjustment observations;
+- 27 implemented distribution dates currently identified over the pilot
+  interval; and
+- one extra BaoStock 2023-07-03 observation for `sh.600519` whose cumulative
+  fore/back factors do not move and which must be treated as an explicit
+  provider correction/no-op candidate, not a second corporate action.
+
+These last two facts are current investigation evidence, not yet an admitted
+family or canonical dataset.
+
+## Ordered remaining gates
+
+1. Complete and independently reread the pilot corporate-action/adjustment
+   evidence package, including left-boundary factor history and source
+   coverage.
+2. Establish append-only stable identities and listed-security lifecycle
+   decisions; quarantine code reuse and issuer-only evidence.
+3. Build exactly one included, excluded, or quarantined daily Universe
+   decision for every evaluated instrument/session.
+4. Expand source observations in bounded, resumable five-year partitions;
+   retain source-repeat and cross-source conflict reports.
+5. Build the 13-family Historical Coverage report and independently reproduce
+   its admission decision.
+6. If and only if the exact scope reaches `research_backtest_ready`, register
+   the first finite, outcome-blind A-share factor-input campaign. Future
+   returns and Development outcomes remain a later separately governed step.
+
+Isolated record conflicts may be quarantined without blocking unrelated
+partitions. Systemic schema drift, unexplained coverage loss, fingerprint
+mismatch, or a critical family without a defensible source stops admission.
+
+## Routed authority for this objective
+
+Read this bounded set before changing the A-share foundation:
+
+- `docs/decisions/0294-isolate-china-a-share-daily-research-foundation.md`
+- `docs/architecture/china-a-share-research-foundation-v1.md`
+- `docs/data-contracts/china-a-share-daily-research-foundation-v1.md`
+- `docs/research/professional-quantitative-research-action-framework-v1.md`
+- `docs/product/quant-research-three-layer-architecture-v1.md`
+- the latest A-share source, calendar, mechanics, and deployment audits linked
+  from `current-context.md`; and
+- the exact source, contract, persistence, service, CLI, and tests touched by
+  the current gate.
+
+Read another document only when a concrete field, operation, or decision
+routes to it. Do not load every historical ADR or audit by default.
+
+## Invariants and non-goals
+
+- Workstation data, computation, and governance remain authoritative; OCI is
+  only the bounded serving tier.
+- U.S. and A-share identities, calendars, rules, Universes, data, results, and
+  Product authority remain separate.
+- Stable `instrument_id`, not ticker, is the historical join key.
+- Unknown or insufficient evidence is quarantined, never silently inferred.
+- The website may report readiness facts only; it must not present pilot
+  anchors as a stock pool or imply an admitted A-share factor/model/ranking.
+- No automated trading, order execution, HFT, opaque ML, broker connection,
+  Validation/Holdout access, or Product activation is part of this objective.
+
+## Stage-completion checkpoint
+
+Before advancing any numbered gate:
+
+1. reread the exact input package and verify its physical/logical identity;
+2. reconcile counts, keys, date interval, stable identities, and quarantine;
+3. run focused tests plus the proportionate regression suite;
+4. independently reread or replay the produced artifact;
+5. compare the result with this objective and its non-goals;
+6. update the authoritative contract/ADR/audit when semantics changed;
+7. replace current facts in `current-context.md`, `current-status.md`, and this
+   page only when their respective state changed;
+8. record the completed milestone once in `changelog.md`; and
+9. leave exactly one next gate named here.
+
+If code and documentation disagree, the stage is incomplete. If a new task
+cannot identify the exact active gate from this page and verify it from live
+evidence, it must stop before material mutation.
+

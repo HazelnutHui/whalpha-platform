@@ -11,12 +11,15 @@ Read in this order:
 2. [Project overview](../README.md)
 3. [Authoritative current context](project/current-context.md)
 4. [Current status](project/current-status.md)
-5. [Roadmap](project/roadmap.md)
+5. [Current work control](project/current-work.md)
+6. [Roadmap](project/roadmap.md)
 
 Then read only the documents tied to the selected objective:
 
 - current context: volatile verified identities and infrastructure;
 - current status: concise actual capability and limitations;
+- current work: the one active objective, current gate, routed reading, and
+  completion checkpoint;
 - roadmap: future sequencing, not authorization;
 - ADRs: accepted material decisions and supersession;
 - data contracts: exact interfaces and invariants;
