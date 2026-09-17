@@ -121,3 +121,10 @@ The trilingual checkpoint was then deployed as release
 2026-09-17T21:32:52Z passed release/source/checksum, Nginx/Auth, protected-route,
 guest-session, equal-policy, residue, and listener checks. Credential login and
 browser visual inspection remain manual.
+
+The following bounded stage registered three exact declarative SEC queries in
+a new registry rather than mutating the historical first SEC registry. It also
+implemented owner-only closed-set custody and exact reread for the A-share
+diagnostic plan and bounded aggregate documents. Neither source queries nor the
+real 109-partition diagnostic were executed in that stage; all research and
+Product authority stayed closed.

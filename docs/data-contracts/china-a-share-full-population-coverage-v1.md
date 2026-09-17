@@ -46,3 +46,9 @@ scans state Parquet in 65,536-row batches and does not materialize the full
 These contracts authorize no return read, adjusted return, backtest, canonical
 Apply, or Product publication. The aggregate package, dynamic 13-family gaps,
 and independent exact replay remain separate gates.
+
+Owner-only plan and aggregate custody is implemented as a closed file set with
+0700 directories, 0400 files, canonical JSON, physical hashes and sizes,
+atomic publication, exact reread, and symlink/path/permission rejection. This
+makes a real 109-partition diagnostic package safe to materialize; it does not
+itself claim that such a package has run.

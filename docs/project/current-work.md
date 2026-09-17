@@ -50,8 +50,9 @@ non-combinable diagnostic panels are now materialized and independently
 replayed with byte-identical reports. The 20-input stock panel contains about
 9.14 effective dimensions and the separate ten-input Market-State panel about
 4.53. No outcome, Validation, or Holdout data was read and no Alpha or model
-input was admitted. All 3,181 backend tests, 135 frontend tests, and the
-Production build pass. The current OCI release serves the closed U.S. source
+input was admitted. The preceding full 3,181-test backend regression passed;
+the current contract/custody suite, all 135 frontend tests, and the Production
+build also pass. The current OCI release serves the closed U.S. source
 gate; the newly reviewed plan/streaming-diagnostic presentation is ready for
 the next verified deployment. Credential login and visual review remain
 manual.
@@ -68,14 +69,18 @@ The persistent A-share coverage census verifies all 109 manifests and 327
 declared payload hashes and rereads idempotently. A deterministic diagnostic
 plan plus bounded single-partition and ordered streaming aggregates are now
 implemented; a real first-partition smoke and the bounded 109-partition legacy
-scan pass. Persistent aggregate custody, dynamic family-gap artifacts, and an
-independent replay are still pending.
+scan pass. Dynamic family-gap artifacts and an independent replay are still
+pending. The owner-only plan/aggregate package custody and exact-reread
+boundary is implemented; materializing the real 109-partition package remains
+the next execution gate.
 
 ADR 0296 freezes the U.S. successor intake at three candidate-Alpha cards and
 one risk guard. ADR 0298 closes its source gate at 0 / 4 qualified, zero formal
 trials, and zero outcome reads. ADR 0299 freezes a plan-only SEC cash-quality
 source-engineering target without authorizing source execution or reopening
-the intake.
+the intake. ADR 0300 separately registers the exact CFO, net-income, and Assets
+queries while preserving the immutable first SEC registry and all execution
+flags as false.
 
 ## Ordered remaining gates
 
@@ -104,6 +109,7 @@ Read this bounded set before changing either active gate:
 - `docs/decisions/0297-freeze-a-share-full-population-offline-coverage-diagnostic.md`;
 - `docs/decisions/0298-close-us-successor-intake-at-source-qualification.md`;
 - `docs/decisions/0299-freeze-sec-cash-earnings-quality-source-engineering-plan.md`;
+- `docs/decisions/0300-register-separate-sec-cash-quality-source-queries.md`;
 - `docs/data-contracts/quant-research-factor-space-diagnostic-v1.md`;
 - `docs/research/professional-quantitative-research-action-framework-v1.md`
 - `docs/product/quant-research-three-layer-architecture-v1.md`

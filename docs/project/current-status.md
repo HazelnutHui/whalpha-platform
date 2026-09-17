@@ -187,6 +187,12 @@ security projection, point-in-time applicability, coverage, and exact-replay
 rules. It authorizes no source execution, feature, trial, result, or Product
 write; raw filings alone still do not satisfy those gates.
 
+The plan's exact Assets, net-income, and operating-cash-flow source queries are
+now registered in a separate immutable registry. The historical first SEC
+registry remains unchanged. Query execution, occurrence selection, TTM
+derivation, coverage, feature materialization, and all outcome authority remain
+false.
+
 Production additionally contains the reviewed renewable-cycle panel in its
 completed Campaign Three state: three completed campaigns, 17 closed formal
 trials, no active campaign, seven-dimensional duplicate
@@ -216,8 +222,10 @@ partition smoke reconciled 50 targets, 60,550 states, 60,479 bars, and 1,256
 adjustment observations. The legacy all-partition verifier now scans in
 bounded Parquet batches and still reproduces the frozen 109-partition counts.
 This is an implementation milestone, not Historical Coverage admission; full
-package custody, dynamic rule/lifecycle/Universe gaps, and exact replay remain
-open.
+package materialization, dynamic rule/lifecycle/Universe gaps, and exact replay
+remain open. Owner-only closed-set plan and aggregate custody is implemented
+with canonical bytes, hashes, permissions, atomic publication, and exact
+reread.
 
 The reusable research-input policy remains preserved in V1, while registry V2
 records one qualified, exactly replayed Market-State panel and zero outcome-

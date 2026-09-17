@@ -77,6 +77,10 @@ ADR 0298 remains the authoritative successor-intake state. Even a future
 successful source qualification would require a new intake version before any
 outcome protocol or formal trial could be proposed.
 
+ADR 0300 now completes the first declarative step through a separate exact
+query registry. It deliberately leaves the immutable first SEC registry
+unchanged and still authorizes no query execution or occurrence selection.
+
 ## Rejected alternatives
 
 - calculate a factor immediately from raw Company Facts presence;

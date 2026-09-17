@@ -30,6 +30,9 @@ FULL_POPULATION_PARTITION_AGGREGATE_VERSION = (
 FULL_POPULATION_STREAMING_AGGREGATE_VERSION = (
     "china-ashare-full-population-streaming-aggregate/1.0"
 )
+FULL_POPULATION_DIAGNOSTIC_PACKAGE_VERSION = (
+    "china-ashare-full-population-diagnostic-package/1.0"
+)
 POPULATION_PACKAGE_FINGERPRINT = (
     "13595c0645aa36acc5fea8d818509b484582ad13d7def53d377b984d549c02c0"
 )
@@ -285,6 +288,56 @@ class ChinaAshareFullPopulationStreamingAggregateV1(FrozenContract):
         return self
 
 
+class ChinaAshareFullPopulationDiagnosticPackageManifestV1(FrozenContract):
+    """Closed-set physical custody binding for one plan's small aggregates."""
+
+    schema_version: Literal["1.0"] = "1.0"
+    package_version: Literal[
+        "china-ashare-full-population-diagnostic-package/1.0"
+    ] = FULL_POPULATION_DIAGNOSTIC_PACKAGE_VERSION
+    market_id: Literal["china_a_share"] = MARKET_ID
+    plan_fingerprint: str
+    created_at: datetime
+    partition_count: int = Field(ge=1)
+    partition_document_bytes: int = Field(ge=1)
+    partition_document_sha256: str
+    streaming_aggregate_fingerprint: str
+    streaming_document_bytes: int = Field(ge=1)
+    streaming_document_sha256: str
+    full_universe_rows_materialized: Literal[False] = False
+    future_return_read_count: Literal[0] = 0
+    research_backtest_authorized: Literal[False] = False
+    canonical_apply_authorized: Literal[False] = False
+    product_publication_authorized: Literal[False] = False
+    logical_fingerprint: str
+
+    @field_validator("created_at")
+    @classmethod
+    def created_time_is_utc(cls, value: datetime) -> datetime:
+        return normalize_utc_datetime(value)
+
+    @field_validator(
+        "plan_fingerprint",
+        "partition_document_sha256",
+        "streaming_aggregate_fingerprint",
+        "streaming_document_sha256",
+        "logical_fingerprint",
+    )
+    @classmethod
+    def manifest_fingerprints_are_sha256(cls, value: str, info: Any) -> str:
+        return _sha256(value, info.field_name)
+
+    @model_validator(mode="after")
+    def package_manifest_reconciles(
+        self,
+    ) -> "ChinaAshareFullPopulationDiagnosticPackageManifestV1":
+        if full_population_diagnostic_package_manifest_fingerprint(self) != (
+            self.logical_fingerprint
+        ):
+            raise ValueError("full-population diagnostic package fingerprint differs")
+        return self
+
+
 class ChinaAshareCoverageFamilyV1(FrozenContract):
     ordinal: int = Field(ge=1, le=13)
     family_id: str = Field(pattern=r"^[a-z][a-z0-9_]*$")
@@ -344,6 +397,22 @@ def build_full_population_streaming_aggregate(
     )
 
 
+def build_full_population_diagnostic_package_manifest(
+    **values: Any,
+) -> ChinaAshareFullPopulationDiagnosticPackageManifestV1:
+    provisional = ChinaAshareFullPopulationDiagnosticPackageManifestV1.model_construct(
+        **values, logical_fingerprint="0" * 64
+    )
+    return ChinaAshareFullPopulationDiagnosticPackageManifestV1.model_validate(
+        {
+            **provisional.model_dump(mode="python"),
+            "logical_fingerprint": (
+                full_population_diagnostic_package_manifest_fingerprint(provisional)
+            ),
+        }
+    )
+
+
 def full_population_diagnostic_plan_fingerprint(
     value: ChinaAshareFullPopulationDiagnosticPlanV1 | Mapping[str, object],
 ) -> str:
@@ -358,6 +427,15 @@ def full_population_partition_aggregate_fingerprint(
 
 def full_population_streaming_aggregate_fingerprint(
     value: ChinaAshareFullPopulationStreamingAggregateV1 | Mapping[str, object],
+) -> str:
+    return _fingerprint(value, exclude={"logical_fingerprint"})
+
+
+def full_population_diagnostic_package_manifest_fingerprint(
+    value: (
+        ChinaAshareFullPopulationDiagnosticPackageManifestV1
+        | Mapping[str, object]
+    ),
 ) -> str:
     return _fingerprint(value, exclude={"logical_fingerprint"})
 

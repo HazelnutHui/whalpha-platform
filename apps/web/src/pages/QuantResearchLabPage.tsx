@@ -48,7 +48,7 @@ const MARKET_LIFECYCLE_COPY = {
     note: 'One governance language, two strictly isolated evidence chains. Open a market to see what is complete, active, blocked, or still unauthorized.',
     nextGate: 'Next gate', denied: 'Not yet authorized',
     markets: [
-      { code: 'US', name: 'U.S. equities', badge: 'SOURCE GATE · CLOSED 0 / 4', summary: 'The successor intake closed before outcomes: none of three Alpha inputs or the event guard currently has complete point-in-time source authority.', next: 'The SEC cash-quality source plan now freezes exact TTM, filing-time, identity, applicability, coverage, and replay rules. It remains plan-only; source execution needs a separate review.', denied: 'No new outcome trial, model, strategy, Candidate ranking, Validation, Holdout, activation, or trading authority.', stages: [
+      { code: 'US', name: 'U.S. equities', badge: 'SOURCE GATE · CLOSED 0 / 4', summary: 'The successor intake closed before outcomes: none of three Alpha inputs or the event guard currently has complete point-in-time source authority.', next: 'The SEC cash-quality plan and exact CFO, net-income, and Assets query registry are frozen. They remain declarative; source execution and coverage require a separate review.', denied: 'No new outcome trial, model, strategy, Candidate ranking, Validation, Holdout, activation, or trading authority.', stages: [
         ['Data foundation', 'completed', 'Point-in-time prices, identity, membership, actions, and split evidence are bound for research.'],
         ['Historical Coverage admission', 'completed', 'The admitted research interval and population passed the required coverage gate.'],
         ['Factor Discovery', 'active', 'Three finite campaigns and 17 trials closed without candidate Alpha; failures remain counted.'],
@@ -63,8 +63,8 @@ const MARKET_LIFECYCLE_COPY = {
         ['Monitoring', 'not-started', 'Live drift, cost, capacity, and failure monitoring begin only after activation.'],
         ['Retirement', 'not-started', 'Invalidated or decayed research is retired without deleting its evidence.'],
       ]},
-      { code: 'CN', name: 'China A-shares', badge: 'STREAMING DIAGNOSTIC · ACTIVE', summary: 'All 109 source and normalized partitions are complete. A deterministic plan and bounded per-partition aggregation now replace full-table loading while preserving the 13-family gate.', next: 'Materialize and exactly replay the 109-partition diagnostic package, then reduce rule, lifecycle, action, warning-state, and Universe gaps to explicit queues.', denied: 'No adjusted return, backtest, factor batch, model, A-share ranking, Product result, broker, or trading authority.', stages: [
-        ['Data foundation', 'active', 'The streaming diagnostic contract and single-partition implementation are verified; full package custody and replay remain open.'],
+      { code: 'CN', name: 'China A-shares', badge: 'STREAMING DIAGNOSTIC · ACTIVE', summary: 'All 109 source and normalized partitions are complete. Deterministic per-partition aggregation and owner-only exact-reread custody are implemented without full-table loading.', next: 'Materialize and exactly replay the 109-partition diagnostic package, then reduce rule, lifecycle, action, warning-state, and Universe gaps to explicit queues.', denied: 'No adjusted return, backtest, factor batch, model, A-share ranking, Product result, broker, or trading authority.', stages: [
+        ['Data foundation', 'active', 'The streaming diagnostic and closed-set custody are verified; the real full package and independent replay remain open.'],
         ['Historical Coverage admission', 'blocked', 'Admission waits for all required evidence families and exact replay; unknown records remain quarantined.'],
         ['Factor Discovery', 'not-started', 'The first outcome-blind batch opens only after Historical Coverage admission.'],
         ['Factor-space diagnostics', 'not-started', 'A-share factors receive a separate diagnostic; U.S. geometry cannot be reused as evidence.'],
@@ -85,7 +85,7 @@ const MARKET_LIFECYCLE_COPY = {
     note: '统一研究治理语言，两条证据链严格隔离。展开市场即可查看哪些阶段已完成、正在进行、被阻塞或尚未授权。',
     nextGate: '下一道准入门', denied: '尚未获得的权限',
     markets: [
-      { code: 'US', name: '美国股票', badge: '来源门禁 · 0 / 4关闭', summary: '后继入口已在读取结果前关闭：3项 Alpha 输入与1项事件护栏目前都没有完整的点时来源资格。', next: 'SEC现金盈利质量来源计划现已冻结精确TTM、披露时钟、身份、适用性、覆盖率和重放规则；它仍只是计划，执行来源工程需要另行审查。', denied: '尚无新结果试验、模型、策略、候选排名、Validation、Holdout、正式激活或交易权限。', stages: [
+      { code: 'US', name: '美国股票', badge: '来源门禁 · 0 / 4关闭', summary: '后继入口已在读取结果前关闭：3项 Alpha 输入与1项事件护栏目前都没有完整的点时来源资格。', next: 'SEC现金盈利质量计划及CFO、净利润、资产三项精确查询登记已冻结；它们仍只是声明，执行来源查询与覆盖核验需要另行审查。', denied: '尚无新结果试验、模型、策略、候选排名、Validation、Holdout、正式激活或交易权限。', stages: [
         ['数据基础', 'completed', '点时价格、证券身份、历史成员、公司行动与拆股证据已绑定研究用途。'],
         ['历史覆盖准入', 'completed', '研究区间与研究总体已通过所需覆盖门槛。'],
         ['因子发现', 'active', '三批有限研究共17项试验均已关闭，没有候选 Alpha；失败永久计数。'],
@@ -100,8 +100,8 @@ const MARKET_LIFECYCLE_COPY = {
         ['持续监控', 'not-started', '只有激活后才监控漂移、成本、容量与失效。'],
         ['退役', 'not-started', '失效或衰减的研究会退役，但证据不会被删除。'],
       ]},
-      { code: 'CN', name: '中国 A 股', badge: '流式诊断 · 进行中', summary: '109个原始与标准化分区均已完成。确定性计划和有边界的逐分区聚合已取代全表装载，同时保留13类准入门。', next: '生成并精确重放109分区诊断包，再把规则、生命周期、公司行动、风险警示和股票池缺口收敛为明确队列。', denied: '尚无复权收益、回测、因子批次、模型、A股排名、产品结果、券商或交易权限。', stages: [
-        ['数据基础', 'active', '流式诊断合同与单分区实现已验证；完整诊断包的保管和重放仍待完成。'],
+      { code: 'CN', name: '中国 A 股', badge: '流式诊断 · 进行中', summary: '109个原始与标准化分区均已完成。确定性逐分区聚合和仅限所有者的精确重读保管已实现，不再全表装载。', next: '生成并精确重放109分区诊断包，再把规则、生命周期、公司行动、风险警示和股票池缺口收敛为明确队列。', denied: '尚无复权收益、回测、因子批次、模型、A股排名、产品结果、券商或交易权限。', stages: [
+        ['数据基础', 'active', '流式诊断与封闭文件集保管已验证；真实完整包和独立重放仍待完成。'],
         ['历史覆盖准入', 'blocked', '需等全部证据家族和精确重放完成；未知记录继续隔离。'],
         ['因子发现', 'not-started', '只有通过历史覆盖准入后，才开放第一批结果盲因子研究。'],
         ['因子空间诊断', 'not-started', 'A股因子必须独立诊断，不能把美股结构当作A股证据。'],
@@ -122,7 +122,7 @@ const MARKET_LIFECYCLE_COPY = {
     note: 'Un mismo gobierno y dos cadenas de evidencia aisladas. Abra cada mercado para ver lo completado, activo, bloqueado o no autorizado.',
     nextGate: 'Próxima puerta', denied: 'Aún no autorizado',
     markets: [
-      { code: 'US', name: 'Acciones de EE. UU.', badge: 'PUERTA DE FUENTES · CERRADA 0 / 4', summary: 'La entrada sucesora cerró antes de consultar resultados: ninguna de las tres entradas Alpha ni la salvaguarda de eventos dispone hoy de autoridad puntual completa.', next: 'El plan SEC de calidad de caja ya fija TTM, reloj de publicación, identidad, aplicabilidad, cobertura y reproducción. Sigue siendo solo un plan; ejecutarlo exige otra revisión.', denied: 'Sin nueva prueba de resultados, modelo, estrategia, ranking, Validación, Holdout, activación ni negociación.', stages: [
+      { code: 'US', name: 'Acciones de EE. UU.', badge: 'PUERTA DE FUENTES · CERRADA 0 / 4', summary: 'La entrada sucesora cerró antes de consultar resultados: ninguna de las tres entradas Alpha ni la salvaguarda de eventos dispone hoy de autoridad puntual completa.', next: 'El plan SEC y el registro exacto de consultas de CFO, beneficio neto y Activos están congelados. Siguen siendo declarativos; ejecución y cobertura exigen otra revisión.', denied: 'Sin nueva prueba de resultados, modelo, estrategia, ranking, Validación, Holdout, activación ni negociación.', stages: [
         ['Base de datos', 'completed', 'Precios puntuales, identidad, membresía, acciones y splits están vinculados a investigación.'],
         ['Admisión histórica', 'completed', 'El intervalo y la población superaron la cobertura requerida.'],
         ['Descubrimiento de factores', 'active', 'Tres campañas y 17 pruebas cerraron sin Alpha candidato; los fallos siguen contabilizados.'],
@@ -137,8 +137,8 @@ const MARKET_LIFECYCLE_COPY = {
         ['Monitorización', 'not-started', 'Deriva, costes, capacidad y fallos se vigilan solo tras activar.'],
         ['Retirada', 'not-started', 'La evidencia se conserva aunque la investigación sea retirada.'],
       ]},
-      { code: 'CN', name: 'Acciones A de China', badge: 'DIAGNÓSTICO EN FLUJO · ACTIVO', summary: 'Las 109 particiones fuente y normalizadas están completas. Un plan determinista y la agregación acotada por partición sustituyen la carga de la tabla completa sin relajar las 13 familias.', next: 'Materializar y reproducir exactamente el paquete de 109 particiones y convertir las brechas de reglas, ciclo de vida, acciones, alertas y Universo en colas explícitas.', denied: 'Sin rentabilidad ajustada, backtest, campaña factorial, modelo, ranking chino, Producto, bróker ni negociación.', stages: [
-        ['Base de datos', 'active', 'El contrato de diagnóstico en flujo y la implementación de una partición están verificados; faltan custodia y reproducción del paquete completo.'],
+      { code: 'CN', name: 'Acciones A de China', badge: 'DIAGNÓSTICO EN FLUJO · ACTIVO', summary: 'Las 109 particiones fuente y normalizadas están completas. La agregación determinista por partición y la custodia privada con relectura exacta están implementadas sin cargar la tabla completa.', next: 'Materializar y reproducir exactamente el paquete de 109 particiones y convertir las brechas de reglas, ciclo de vida, acciones, alertas y Universo en colas explícitas.', denied: 'Sin rentabilidad ajustada, backtest, campaña factorial, modelo, ranking chino, Producto, bróker ni negociación.', stages: [
+        ['Base de datos', 'active', 'El diagnóstico en flujo y la custodia de conjunto cerrado están verificados; faltan el paquete real completo y su reproducción independiente.'],
         ['Admisión histórica', 'blocked', 'Espera todas las familias de evidencia y reproducción; lo desconocido queda en cuarentena.'],
         ['Descubrimiento de factores', 'not-started', 'La primera campaña ciega a resultados solo abre tras la admisión.'],
         ['Diagnóstico factorial', 'not-started', 'Los factores chinos tendrán diagnóstico propio; la geometría estadounidense no es evidencia.'],

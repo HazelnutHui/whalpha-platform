@@ -49,6 +49,10 @@ and dated [audits](../audits/). Current capability and next work belong in
   from factor, backtest, model, Candidate, and Product authority.
 - Deployed that checkpoint and passed independent OCI postflight; credential
   login and browser visual review remain manual.
+- Registered a separate exact SEC cash-quality query set without mutating the
+  historical SEC registry or authorizing execution, and implemented owner-only
+  closed-set A-share diagnostic package custody and exact reread before the
+  real 109-partition run.
 
 ## 2026-09-17 — Complete U.S. factor-space replay and A-share source expansion
 

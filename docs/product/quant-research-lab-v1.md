@@ -230,8 +230,8 @@ render U.S. research as A-share evidence or publish an A-share model or rank.
 The current readiness surface distinguishes completed 109-partition source
 depth, an implemented bounded streaming diagnostic, and the still-pending
 aggregate package/replay. The U.S. view likewise distinguishes its closed 0/4
-source gate from the plan-only SEC cash-quality engineering path; a source
-plan is not an active factor campaign.
+source gate from the plan-only SEC cash-quality engineering path and exact
+declarative query registry; neither is an active factor campaign.
 
 The Lab also exposes the renewable Factor Discovery cycle. This is a permanent
 process contract, not a third model or a promise that research is unattended:

@@ -476,7 +476,9 @@ manifests. Its implementation aggregates one partition at a time and the
 legacy verifier scans Parquet in bounded batches rather than materializing the
 full state table. A real partition smoke and the full 109-partition census
 passed; persistent aggregate custody, dynamic family gaps, and exact replay
-remain pending.
+remain pending. Owner-only closed-set custody and exact reread for the plan and
+bounded aggregate documents are now implemented, but the real 109-partition
+aggregate package has not yet been materialized.
 The account rate is user-reported and its all-in/minimum/history assumptions
 remain unconfirmed by a broker statement. Issuer-level lifecycle rows remain
 separate and cannot claim listed-security termination. No raw upstream archive
