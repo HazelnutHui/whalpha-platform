@@ -73,10 +73,11 @@ ADRs, and audits.
   all two Alpha interactions and the risk guard failed their frozen gates.
   ADR 0293 closes Campaign Three as `closed_no_candidate_alpha`, and Ledger V5
   permanently records all 17 trials with zero admitted Alpha and zero model
-  inputs. The cycle is back at outcome-blind hypothesis intake; Validation,
-  Holdout, Model Construction, and all Product authority remain closed. All
-  3,159 backend tests, 135 frontend tests, and the Production frontend build
-  pass in repository source.
+  inputs. ADR 0296 advances the project-level gate from general intake to
+  source qualification for four frozen outcome-blind cards while the cycle
+  artifact correctly retains no active campaign. Validation, Holdout, Model
+  Construction, and all Product authority remain closed. The current backend
+  and frontend regression counts are recorded at the latest stage audit.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
   are retained and hash-verified; all 11 preregistered source facts matched.
@@ -169,6 +170,13 @@ inform deduplication of the next finite intake. This is redundancy evidence,
 not Alpha, and no input, model, Candidate, Validation, or Holdout authority was
 opened.
 
+The next U.S. intake is now finite and outcome-blind: three candidate-Alpha
+cards cover analyst expectation revisions, as-filed cash earnings quality, and
+published short-interest change; one risk card covers a known earnings event
+inside the three-session holding window. They are research questions, not
+signals. Zero new formal trials are registered, and each card must pass
+point-in-time source and implementation qualification before outcomes.
+
 Production additionally contains the reviewed renewable-cycle panel in its
 completed Campaign Three state: three completed campaigns, 17 closed formal
 trials, no active campaign, seven-dimensional duplicate
@@ -247,10 +255,13 @@ The reference/daily packages
 are not raw source archives or a canonical database. The six pilot IDs now
 reproduce append-only research-foundation listed-occurrence identities, but
 they are not canonical Product identities. The daily Universe is admitted only
-for the six pilot anchors. The full-market population is frozen for source
-acquisition but has not yet completed daily observations or admission. There
-is no BSE daily-price route, full-market return-authorized adjustment family,
-or backtest-ready session. It must not be combined with the U.S.
+for the six pilot anchors. The frozen SSE/SZSE population has completed 109/109
+raw and normalized source partitions, but has not completed admission. Its
+13-family diagnostic retains 5,296 resolved identities and 113 quarantined
+targets; every full-population price-limit regime is still unknown and every
+historical source-availability timestamp is absent. There is no BSE daily-price
+route, full-market return-authorized adjustment family, or backtest-ready
+session. It must not be combined with the U.S.
 readiness table above.
 
 ## Pre-architecture research record (internal audit only)

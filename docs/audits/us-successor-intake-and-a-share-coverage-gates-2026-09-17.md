@@ -1,0 +1,64 @@
+# U.S. Successor Intake and A-share Coverage Gates — 2026-09-17
+
+## Scope
+
+This review advanced two isolated, outcome-blind gates without reading future
+returns, Validation, Holdout, credentials, or network sources.
+
+## U.S. successor intake
+
+The registry freezes four cards after comparing their economic mechanisms with
+all 17 consumed trials and the completed factor-space clusters:
+
+1. point-in-time FY1 EPS consensus revision yield;
+2. point-in-time as-filed cash earnings quality;
+3. change in published short interest relative to shares outstanding; and
+4. a known scheduled earnings event inside the three-session holding window as
+   a risk guard.
+
+All four remain at source qualification. No formal trial, outcome access,
+model input, Candidate authority, or Product authority exists. Daily short
+volume, restated-current fundamentals, and current event calendars are
+explicitly rejected as substitutes for the registered semantics.
+
+## A-share full-population coverage
+
+A fresh local aggregate over all 109 normalized partition manifests reproduced:
+
+- 5,409 targets: 5,296 resolved and 113 quarantined;
+- 5,997,301 normalized daily states;
+- 5,987,288 unadjusted bars and 10,013 suspended states;
+- 62,272 provider adjustment observations;
+- 160,626 risk-warning-present states without admitted subtype;
+- 63,781 quarantined daily rows and 1,059 quarantined adjustment rows.
+
+A separate column scan over every normalized state reproduced 5,997,301
+`price_limit_regime=unknown` values and 5,997,301 null
+`source_available_at` values. These facts prevent Historical Coverage,
+adjusted-return, and backtest admission.
+
+The typed report orders all 13 evidence families and retains their source-
+complete, provisional-reconstruction, or missing-evidence disposition. It does
+not treat the frozen SSE/SZSE acquisition population as a complete China A
+share market claim; BSE remains outside the qualified daily-price route.
+
+## Reproducibility and verification
+
+Two fresh in-process constructions produced identical canonical JSON for each
+contract:
+
+- U.S. registry serialization SHA-256:
+  `c6d98e56383074bb8e211bb4a33198585431485a234eb379a86b56bdbc264e4b`;
+- A-share coverage serialization SHA-256:
+  `404f7b79d7d044eb8f1e6ac16a5b50f189057fac0341fb2e52d0838fed8e5618`.
+
+Eight focused contract tests, all 3,167 backend tests, all 135 frontend tests,
+and the Production frontend build passed. The two backend warnings are the
+existing Python `crypt` and Starlette/httpx deprecation notices, not failures.
+
+## Authority boundary
+
+This stage authorizes only U.S. point-in-time source qualification and A-share
+offline reconciliation. It does not authorize any new outcome trial, A-share
+return label, model, strategy, ranking, canonical Apply, deployment of data,
+broker action, or trading.

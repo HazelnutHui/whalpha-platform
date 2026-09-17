@@ -12,7 +12,7 @@ const ARCHITECTURE_COPY = {
     title: 'From measurement to a decision—without collapsing the evidence.',
     note: 'The research universe can expand over time. Every batch that reads outcomes remains finite, registered, and fully counted.',
     layers: [
-      ['01', 'Factor Discovery', 'CURRENT · OUTCOME-BLIND INTAKE', 'Three finite campaigns are closed without candidate Alpha. All 17 trials remain counted; the next campaign must begin with a new deduplicated hypothesis set.'],
+      ['01', 'Factor Discovery', 'CURRENT · SOURCE QUALIFICATION', 'Three finite campaigns are closed without candidate Alpha. Four new outcome-blind cards are frozen; none is a formal trial until its point-in-time input qualifies.'],
       ['02', 'Model Construction', 'LOCKED', 'Combine a small admitted factor set into an explainable rank, probability, distribution, or risk state. No model is preselected.'],
       ['03', 'Strategy Expression', 'LOCKED', 'Translate a locked model into entry, exit, holding, sizing, cost, capacity, and risk rules. Stock and option expressions remain separate.'],
     ],
@@ -23,7 +23,7 @@ const ARCHITECTURE_COPY = {
     title: '从测量到决策，每一层证据都保持独立。',
     note: '长期研究方向可以持续扩展；但每一批读取结果的实验都必须有限、预先登记并计入真实试验次数。',
     layers: [
-      ['01', '因子发现层', '当前阶段 · 回到结果盲入口', '三批有限研究均在没有候选 Alpha 的状态下关闭。17项试验全部保留计数；下一批必须从新的去重假设开始。'],
+      ['01', '因子发现层', '当前阶段 · 来源资格审查', '三批有限研究均在没有候选 Alpha 的状态下关闭。4项新的结果盲研究卡已经冻结；点时输入合格前不计入正式试验。'],
       ['02', '模型构建层', '保持锁定', '用少量合格且非冗余的因子构建可解释排名、概率、分布或风险状态。目前没有预先指定模型。'],
       ['03', '策略表达层', '保持锁定', '把锁定模型转为入场、退出、持有、仓位、成本、容量与风险规则；股票和期权表达分开验证。'],
     ],
@@ -34,7 +34,7 @@ const ARCHITECTURE_COPY = {
     title: 'De la medición a la decisión, sin mezclar las capas de evidencia.',
     note: 'El universo de investigación puede ampliarse con el tiempo. Cada campaña que consulta resultados sigue siendo finita, registrada y contabilizada.',
     layers: [
-      ['01', 'Descubrimiento de factores', 'FASE ACTUAL · NUEVA ENTRADA SIN RESULTADOS', 'Tres campañas finitas se cerraron sin Alpha candidato. Las 17 pruebas siguen contabilizadas; la siguiente campaña debe comenzar con hipótesis nuevas y deduplicadas.'],
+      ['01', 'Descubrimiento de factores', 'FASE ACTUAL · CALIFICACIÓN DE FUENTES', 'Tres campañas finitas se cerraron sin Alpha candidato. Hay cuatro fichas nuevas, ciegas a resultados y congeladas; ninguna cuenta como prueba formal hasta calificar su entrada puntual.'],
       ['02', 'Construcción del modelo', 'BLOQUEADA', 'Combina un pequeño conjunto de factores admitidos en un rango, probabilidad, distribución o estado de riesgo explicable. No hay un modelo preseleccionado.'],
       ['03', 'Expresión de estrategia', 'BLOQUEADA', 'Convierte un modelo bloqueado en reglas de entrada, salida, tenencia, tamaño, costes, capacidad y riesgo. Acciones y opciones se validan por separado.'],
     ],
@@ -48,7 +48,7 @@ const MARKET_LIFECYCLE_COPY = {
     note: 'One governance language, two strictly isolated evidence chains. Open a market to see what is complete, active, blocked, or still unauthorized.',
     nextGate: 'Next gate', denied: 'Not yet authorized',
     markets: [
-      { code: 'US', name: 'U.S. equities', badge: 'FACTOR DISCOVERY · ACTIVE', summary: 'Five-year research evidence is admitted. Three finite campaigns are closed with no candidate Alpha; the outcome-blind factor-space audit and its exact replay are complete.', next: 'Use the measured redundancy structure to register a new finite and deduplicated hypothesis intake without reopening prior trials.', denied: 'No model, strategy, Candidate ranking, Validation, Holdout, shadow, activation, or trading authority.', stages: [
+      { code: 'US', name: 'U.S. equities', badge: 'SOURCE QUALIFICATION · ACTIVE', summary: 'Three finite campaigns remain closed with no candidate Alpha. A new four-card intake is frozen without reading outcomes or registering a formal trial.', next: 'Qualify point-in-time consensus, as-filed fundamentals, published short interest, and historical earnings-event inputs; stop cards whose semantics cannot be sourced.', denied: 'No new outcome trial, model, strategy, Candidate ranking, Validation, Holdout, activation, or trading authority.', stages: [
         ['Data foundation', 'completed', 'Point-in-time prices, identity, membership, actions, and split evidence are bound for research.'],
         ['Historical Coverage admission', 'completed', 'The admitted research interval and population passed the required coverage gate.'],
         ['Factor Discovery', 'active', 'Three finite campaigns and 17 trials closed without candidate Alpha; failures remain counted.'],
@@ -63,7 +63,7 @@ const MARKET_LIFECYCLE_COPY = {
         ['Monitoring', 'not-started', 'Live drift, cost, capacity, and failure monitoring begin only after activation.'],
         ['Retirement', 'not-started', 'Invalidated or decayed research is retired without deleting its evidence.'],
       ]},
-      { code: 'CN', name: 'China A-shares', badge: 'DATA FOUNDATION · ACTIVE', summary: 'The isolated five-year source expansion and normalization now cover all 109 partitions; the 13-family admission census remains the active foundation gate.', next: 'Reconcile the complete source census with identity, lifecycle, actions, rules, fees, daily Universe, and Historical Coverage, then exactly replay admission.', denied: 'No factor batch, model, strategy, A-share ranking, Product result, broker, or trading authority.', stages: [
+      { code: 'CN', name: 'China A-shares', badge: 'COVERAGE RECONCILIATION · ACTIVE', summary: 'All 109 source and normalized partitions are complete. The 13-family map now separates one source-complete family from provisional and evidence-blocked families.', next: 'Run the bounded offline cross-family reconciliation and exact replay; keep 113 identities and every unresolved rule or event in quarantine.', denied: 'No adjusted return, backtest, factor batch, model, A-share ranking, Product result, broker, or trading authority.', stages: [
         ['Data foundation', 'active', 'All 109 source and normalized partitions are complete; cross-family reconciliation and admission remain open.'],
         ['Historical Coverage admission', 'blocked', 'Admission waits for all required evidence families and exact replay; unknown records remain quarantined.'],
         ['Factor Discovery', 'not-started', 'The first outcome-blind batch opens only after Historical Coverage admission.'],
@@ -85,7 +85,7 @@ const MARKET_LIFECYCLE_COPY = {
     note: '统一研究治理语言，两条证据链严格隔离。展开市场即可查看哪些阶段已完成、正在进行、被阻塞或尚未授权。',
     nextGate: '下一道准入门', denied: '尚未获得的权限',
     markets: [
-      { code: 'US', name: '美国股票', badge: '因子发现 · 进行中', summary: '五年研究证据已经准入。三批有限研究均未产生候选 Alpha；结果盲因子空间审计及独立精确重放已经完成。', next: '依据实测冗余结构登记一批新的、有限且完成去重的研究假设，不重开既有试验。', denied: '尚无模型、策略、候选排名、Validation、Holdout、影子运行、正式激活或交易权限。', stages: [
+      { code: 'US', name: '美国股票', badge: '来源资格审查 · 进行中', summary: '三批有限研究仍以无候选 Alpha 关闭。新的4项结果盲研究卡已经冻结，尚未读取结果，也没有登记正式试验。', next: '逐项审查点时一致预期、原始申报财务、已公布空头仓位与历史财报事件数据；语义不成立就停止，不用近似代理替代。', denied: '尚无新结果试验、模型、策略、候选排名、Validation、Holdout、正式激活或交易权限。', stages: [
         ['数据基础', 'completed', '点时价格、证券身份、历史成员、公司行动与拆股证据已绑定研究用途。'],
         ['历史覆盖准入', 'completed', '研究区间与研究总体已通过所需覆盖门槛。'],
         ['因子发现', 'active', '三批有限研究共17项试验均已关闭，没有候选 Alpha；失败永久计数。'],
@@ -100,7 +100,7 @@ const MARKET_LIFECYCLE_COPY = {
         ['持续监控', 'not-started', '只有激活后才监控漂移、成本、容量与失效。'],
         ['退役', 'not-started', '失效或衰减的研究会退役，但证据不会被删除。'],
       ]},
-      { code: 'CN', name: '中国 A 股', badge: '数据基础 · 进行中', summary: '独立的五年来源扩展与标准化已覆盖全部109个分区；13类准入清单仍是当前数据基础门禁。', next: '把完整来源清单与身份、生命周期、公司行动、规则、费用、每日 Universe 和历史覆盖逐项核对，再进行精确准入重放。', denied: '尚无因子批次、模型、策略、A股排名、产品结果、券商或交易权限。', stages: [
+      { code: 'CN', name: '中国 A 股', badge: '覆盖核对 · 进行中', summary: '109个原始与标准化分区均已完成。13类覆盖图已把来源完成、暂定重建和证据阻塞三种状态明确分开。', next: '执行有边界的离线跨证据族核对与精确重放；113个身份以及所有未解决规则和事件继续隔离。', denied: '尚无复权收益、回测、因子批次、模型、A股排名、产品结果、券商或交易权限。', stages: [
         ['数据基础', 'active', '109个原始与标准化分区均已完成；跨证据族核对和正式准入仍未完成。'],
         ['历史覆盖准入', 'blocked', '需等全部证据家族和精确重放完成；未知记录继续隔离。'],
         ['因子发现', 'not-started', '只有通过历史覆盖准入后，才开放第一批结果盲因子研究。'],
@@ -122,7 +122,7 @@ const MARKET_LIFECYCLE_COPY = {
     note: 'Un mismo gobierno y dos cadenas de evidencia aisladas. Abra cada mercado para ver lo completado, activo, bloqueado o no autorizado.',
     nextGate: 'Próxima puerta', denied: 'Aún no autorizado',
     markets: [
-      { code: 'US', name: 'Acciones de EE. UU.', badge: 'FACTORES · ACTIVO', summary: 'La evidencia de cinco años está admitida. Tres campañas cerraron sin Alpha candidato; el diagnóstico factorial sin resultados y su reproducción exacta están completos.', next: 'Usar la redundancia medida para registrar una nueva entrada finita y deduplicada sin reabrir pruebas anteriores.', denied: 'Sin modelo, estrategia, ranking, Validación, Holdout, sombra, activación ni negociación.', stages: [
+      { code: 'US', name: 'Acciones de EE. UU.', badge: 'CALIFICACIÓN DE FUENTES · ACTIVA', summary: 'Tres campañas siguen cerradas sin Alpha candidato. Se han congelado cuatro fichas nuevas sin consultar resultados ni registrar pruebas formales.', next: 'Calificar consenso puntual, estados financieros tal como se presentaron, interés corto publicado y calendario histórico de resultados; detener toda ficha sin semántica verificable.', denied: 'Sin nueva prueba de resultados, modelo, estrategia, ranking, Validación, Holdout, activación ni negociación.', stages: [
         ['Base de datos', 'completed', 'Precios puntuales, identidad, membresía, acciones y splits están vinculados a investigación.'],
         ['Admisión histórica', 'completed', 'El intervalo y la población superaron la cobertura requerida.'],
         ['Descubrimiento de factores', 'active', 'Tres campañas y 17 pruebas cerraron sin Alpha candidato; los fallos siguen contabilizados.'],
@@ -137,7 +137,7 @@ const MARKET_LIFECYCLE_COPY = {
         ['Monitorización', 'not-started', 'Deriva, costes, capacidad y fallos se vigilan solo tras activar.'],
         ['Retirada', 'not-started', 'La evidencia se conserva aunque la investigación sea retirada.'],
       ]},
-      { code: 'CN', name: 'Acciones A de China', badge: 'BASE DE DATOS · ACTIVA', summary: 'La expansión y normalización aisladas de cinco años cubren ya las 109 particiones; el censo de admisión de 13 familias sigue activo.', next: 'Conciliar el censo completo con identidad, ciclo de vida, acciones, reglas, costes, Universo diario y cobertura histórica; después reproducir la admisión.', denied: 'Sin campaña factorial, modelo, estrategia, ranking chino, Producto, bróker ni negociación.', stages: [
+      { code: 'CN', name: 'Acciones A de China', badge: 'CONCILIACIÓN DE COBERTURA · ACTIVA', summary: 'Las 109 particiones fuente y normalizadas están completas. El mapa de 13 familias ya separa evidencia completa, reconstrucción provisional y bloqueos.', next: 'Ejecutar la conciliación cruzada y su reproducción exacta; mantener en cuarentena las 113 identidades y toda regla o acción no resuelta.', denied: 'Sin rentabilidad ajustada, backtest, campaña factorial, modelo, ranking chino, Producto, bróker ni negociación.', stages: [
         ['Base de datos', 'active', 'Las 109 particiones fuente y normalizadas están completas; faltan conciliación entre familias y admisión.'],
         ['Admisión histórica', 'blocked', 'Espera todas las familias de evidencia y reproducción; lo desconocido queda en cuarentena.'],
         ['Descubrimiento de factores', 'not-started', 'La primera campaña ciega a resultados solo abre tras la admisión.'],
@@ -254,8 +254,8 @@ const COPY = {
     eyebrow: 'Factor, model, and strategy research · governed registry',
     title: 'Quant Research Lab',
     subtitle: 'The authoritative record of what is measured, what is modeled, how it becomes a strategy, and where the evidence fails.',
-    status: 'FACTOR DISCOVERY · THREE CAMPAIGNS CLOSED', statusValue: 'NO CANDIDATE ALPHA · INTAKE REOPENED',
-    statusNote: 'Campaign Three completed one frozen Development screen and a byte-identical replay. Both Alpha interactions and the risk guard failed; no model or strategy was opened.',
+    status: 'FACTOR DISCOVERY · SOURCE QUALIFICATION', statusValue: '4 CARDS FROZEN · 0 NEW TRIALS',
+    statusNote: 'Three economically new candidate-Alpha questions and one earnings-event risk guard are frozen. They are not signals and cannot read outcomes until their point-in-time inputs qualify.',
     coverage: 'Evidence state', coverageNote: 'Method completeness and model effectiveness are separate questions.',
     coverageBoundary: 'A published method is not a validated strategy, current-market recommendation, or option-return forecast.',
     factorSpace: 'Completed factor-space diagnostic', factorSpaceNote: 'Twenty stock inputs and ten Market-State metrics were measured without reading outcomes, then reproduced byte for byte.', factorSpaceBadge: 'COMPLETED · EXACT REPLAY',
@@ -264,7 +264,7 @@ const COPY = {
       ['Point-in-time standardization', 'The stock panel used same-session ranks and Development-only scaling; the Market-State panel used Development-only robust scaling. No full-sample fit or missing-value fill was used.'],
       ['Measured redundancy', 'The 20 stock inputs contain about 9.14 effective dimensions. Residual volatility and downside semideviation, plus two short-reversal measures, form the strongest overlapping pairs.'],
       ['PCA and effective dimension', 'Ten components explain 80% and thirteen explain 90% of stock-panel variance. The separate ten-metric Market-State panel contains about 4.53 effective dimensions. PCA diagnoses redundancy; it is not Alpha evidence.'],
-      ['Next decision', 'The next finite intake must avoid mechanically duplicating the measured clusters. No input has been promoted, no prior failed trial is reopened, and Model Construction remains locked.'],
+      ['Next decision', 'Four deduplicated cards now move only to point-in-time source and implementation qualification. No formal trial is registered, no failed trial is reopened, and Model Construction remains locked.'],
     ],
     submission: 'Submit a falsifiable factor or strategy hypothesis for independent registration and testing under the same governed workflow. If an idea ultimately enters a usable model and future commercial use, WH Alpha will contact the contributor and report the outcome.',
     submissionContact: 'Contact',
@@ -280,15 +280,15 @@ const COPY = {
       ['Model, strategy & Product', 'LOCKED', 'No predictive model, strategy expression, Candidate authority, or option-performance claim exists.', 'locked'],
     ],
     cycle: 'Renewable factor-discovery loop', cycleNote: 'The research program may continue indefinitely. Every campaign inside it is finite, deduplicated, preregistered, replayed, and permanently counted.', cycleBadge: 'CONTINUOUS SYSTEM · BOUNDED CAMPAIGNS',
-    cycleStats: ['Operating mode', 'Current stage', 'Completed campaigns', 'Formal trials recorded', 'Active campaign'], cycleStatValues: ['RENEWABLE', 'OUTCOME-BLIND INTAKE', '3', '17', 'NONE'],
+    cycleStats: ['Operating mode', 'Current stage', 'Completed campaigns', 'Formal trials recorded', 'Active campaign'], cycleStatValues: ['RENEWABLE', 'SOURCE QUALIFICATION', '3', '17', 'NONE'],
     cycleStages: [
       ['01', 'Propose & deduplicate', 'COMPLETED', 'Five ideas were retained; four advanced and one near-duplicate stopped before any outcome access.'],
       ['02', 'Build without outcomes', 'COMPLETED', 'The exact 106-session report and independent replay matched. Three designs qualified; one Alpha design stopped before outcomes.'],
       ['03', 'Register the finite test', 'COMPLETED', 'Two Alpha trials and one risk trial, including outcomes, costs, multiplicity, gates, caps, and stopping rules, are frozen in the cumulative ledger.'],
       ['04', 'Authorize, evaluate & replay', 'COMPLETED', 'The one formal run and exact replay matched. All three trials failed; Validation and Holdout remained sealed.'],
-      ['05', 'Close, count & return', 'CURRENT', 'Ledger edition 5 retains all 17 consumed trials and returns the program to a new outcome-blind hypothesis intake.'],
+      ['05', 'Close, count & qualify sources', 'CURRENT', 'Ledger edition 5 retains all 17 consumed trials. Four new cards are frozen, but remain outside the formal trial ledger while point-in-time sources are qualified.'],
     ],
-    cycleCurrent: 'Current position', cycleCurrentValue: 'INTAKE · NO ACTIVE CAMPAIGN', cycleCurrentBody: 'Campaign Three is closed. The next campaign must begin with a new falsifiable hypothesis set deduplicated against all 17 consumed trials.',
+    cycleCurrent: 'Current position', cycleCurrentValue: '4 CARDS · 0 NEW TRIALS', cycleCurrentBody: 'The successor intake is frozen: FY1 earnings revisions, cash earnings quality, published short-interest change, and an earnings-event guard. Source qualification can reject cards before any outcome trial exists.',
     cycleInfrastructure: 'Stopped before outcomes', cycleInfrastructureValue: '1 ALPHA DESIGN REJECTED', cycleInfrastructureBody: 'Defensive resilience lacked balanced natural-zero state support and was overly concentrated, including in the first half. Its threshold was not moved after inspection.',
     cycleContinuity: 'Next boundary', cycleContinuityValue: 'NEW FINITE CAMPAIGN', cycleContinuityBody: 'No further Campaign Three outcome access exists. A successor requires new intake, data admission, qualification, preregistration, and separate authorization.',
     cycleInspect: 'Inspect deduplication, budget, isolation, and pause rules',
@@ -367,8 +367,8 @@ const COPY = {
     eyebrow: '因子、模型与策略研究 · 受控档案库',
     title: '量化研究实验室',
     subtitle: '权威记录测量什么、如何建模、怎样形成策略，以及证据在哪一层失败，而不是只陈列漂亮回测。',
-    status: '因子发现 · 三批研究均已关闭', statusValue: '无候选 Alpha · 回到结果盲入口',
-    statusNote: '第三批已完成一次冻结的开发期筛选和逐字节一致的精确重放。2项 Alpha 交互与1项风险护栏全部失败，没有开放模型或策略。',
+    status: '因子发现 · 来源资格审查', statusValue: '4项研究卡已冻结 · 新试验为0',
+    statusNote: '3项新的候选 Alpha 问题与1项财报事件风险护栏已经冻结。它们不是信号；点时输入合格以前不能读取收益结果。',
     coverage: '证据状态', coverageNote: '方法是否完整与模型是否有效，是两个不同问题。',
     coverageBoundary: '公开方法不代表策略已验证，不代表适合当前市场，也不预测期权收益。',
     factorSpace: '已完成的因子空间诊断', factorSpaceNote: '20项个股输入与10项市场状态指标在不读取收益结果的条件下完成测量，并通过逐字节一致的独立重放。', factorSpaceBadge: '已完成 · 精确重放一致',
@@ -377,7 +377,7 @@ const COPY = {
       ['点时标准化', '个股面板使用同日横截面排名与仅在 Development 拟合的尺度；市场状态面板使用 Development 稳健尺度。没有全样本拟合，也没有填补缺失值。'],
       ['实测冗余', '20项个股输入约含9.14个有效维度。残差波动与下行半偏差，以及两项短期反转度量，是重叠最强的两组。'],
       ['PCA 与有效维度', '个股面板需要10个成分解释80%方差、13个解释90%；独立的10项市场状态面板约含4.53个有效维度。PCA只诊断冗余，不证明 Alpha。'],
-      ['下一步决策', '下一批有限研究必须避开已测得的机械重复簇。目前没有任何输入被晋升，既有失败试验不会重开，模型构建仍保持锁定。'],
+      ['下一步决策', '4项已去重研究卡现在只进入点时来源与实现资格审查。尚未登记正式试验，不重开既有失败，模型构建继续锁定。'],
     ],
     submission: '欢迎提交可证伪的因子或策略假设。WH Alpha 将按统一研究流程独立登记、测试并保留失败记录；若建议最终进入可用模型并产生未来商业用途，将联系贡献者并反馈结果。',
     submissionContact: '联系',
@@ -393,15 +393,15 @@ const COPY = {
       ['模型、策略与产品', '锁定', '目前仍没有预测模型、策略表达、个股候选权限或期权绩效主张。', 'locked'],
     ],
     cycle: '可持续因子发现循环', cycleNote: '整个研究计划可以持续迭代，但其中每一批研究都必须有限、去重、预登记、精确复现并永久计入试验账本。', cycleBadge: '持续研究系统 · 单批次有边界',
-    cycleStats: ['运行模式', '当前阶段', '已完成批次', '累计登记试验', '当前批次'], cycleStatValues: ['持续循环', '结果盲假设入口', '3', '17', '无'],
+    cycleStats: ['运行模式', '当前阶段', '已完成批次', '累计登记试验', '当前批次'], cycleStatValues: ['持续循环', '来源资格审查', '3', '17', '无'],
     cycleStages: [
       ['01', '提出假设并去重', '已完成', '共保留5个想法；4个进入下一步，1个近重复想法在任何结果访问前停止。'],
       ['02', '不读取结果地构建', '已完成', '106个交易日的正式报告与独立重放完全一致；3项设计通过，1项 Alpha 在读取结果前停止。'],
       ['03', '登记有限检验', '已完成', '2项 Alpha 和1项风险试验连同结果、成本、重复检验、门槛、入选上限与停止规则，均已写入累计试验账本。'],
       ['04', '授权、评估与重放', '已完成', '一次正式运行与一次精确重放完全一致；3项试验全部失败，验证集与留出集始终密封。'],
-      ['05', '关闭、记账并返回', '当前阶段', '累计账本第5版保留17项已消费试验，研究系统回到新的结果盲假设入口。'],
+      ['05', '关闭、记账并审查来源', '当前阶段', '累计账本第5版保留17项已消费试验。4项新研究卡已经冻结，但点时来源合格前不会进入正式试验账本。'],
     ],
-    cycleCurrent: '当前位置', cycleCurrentValue: '假设入口 · 无活动批次', cycleCurrentBody: '第三批已经关闭。下一批必须提出新的可证伪假设，并与全部17项已消费试验完成去重。',
+    cycleCurrent: '当前位置', cycleCurrentValue: '4项研究卡 · 新试验为0', cycleCurrentBody: '后继入口已冻结：FY1盈利预期修正、现金盈利质量、已公布空头仓位变化，以及财报事件护栏。任何一项都可在读取结果前因来源不合格而停止。',
     cycleInfrastructure: '读取结果前停止', cycleInfrastructureValue: '1项 Alpha 设计被拒绝', cycleInfrastructureBody: '防御韧性的自然零点状态支持不平衡且过度集中，前半段尤其不足；审查后没有移动阈值进行补救。',
     cycleContinuity: '下一道边界', cycleContinuityValue: '新的有限研究批次', cycleContinuityBody: '第三批不再允许读取更多结果。后续批次需要重新经过假设、数据准入、资格审查、预登记与单独授权。',
     cycleInspect: '查看去重、预算、隔离与暂停规则',
@@ -480,8 +480,8 @@ const COPY = {
     eyebrow: 'Investigación de factores, modelos y estrategias · registro gobernado',
     title: 'Laboratorio de investigación cuantitativa',
     subtitle: 'El registro autoritativo de qué se mide, qué se modela, cómo se expresa una estrategia y en qué capa falla la evidencia.',
-    status: 'DESCUBRIMIENTO DE FACTORES · TRES CAMPAÑAS CERRADAS', statusValue: 'SIN ALPHA CANDIDATO · NUEVA ENTRADA',
-    statusNote: 'La tercera campaña completó una selección de Desarrollo congelada y una reproducción idéntica byte a byte. Las dos interacciones Alpha y la salvaguarda de riesgo fallaron; no se abrió ningún modelo ni estrategia.',
+    status: 'DESCUBRIMIENTO · CALIFICACIÓN DE FUENTES', statusValue: '4 FICHAS CONGELADAS · 0 PRUEBAS NUEVAS',
+    statusNote: 'Se han congelado tres preguntas Alpha económicamente nuevas y una salvaguarda de riesgo por resultados empresariales. No son señales y no pueden consultar resultados hasta calificar sus entradas puntuales.',
     coverage: 'Estado de la evidencia', coverageNote: 'La integridad del método y la eficacia del modelo son cuestiones distintas.',
     coverageBoundary: 'Publicar un método no convierte la estrategia en validada, adecuada para el mercado actual ni predictiva de rentabilidades de opciones.',
     factorSpace: 'Diagnóstico del espacio de factores completado', factorSpaceNote: 'Se midieron veinte entradas de acciones y diez métricas de estado de mercado sin consultar resultados, con reproducción exacta byte a byte.', factorSpaceBadge: 'COMPLETADO · REPRODUCCIÓN EXACTA',
@@ -490,7 +490,7 @@ const COPY = {
       ['Estandarización point-in-time', 'El panel de acciones usó rangos por sesión y escalado ajustado solo en Desarrollo; el panel de mercado usó escalado robusto de Desarrollo. No hubo ajuste global ni imputación.'],
       ['Redundancia medida', 'Las 20 entradas bursátiles contienen unas 9,14 dimensiones efectivas. La volatilidad residual con la semidesviación bajista y dos medidas de reversión corta son los solapamientos más fuertes.'],
       ['PCA y dimensión efectiva', 'Diez componentes explican el 80 % y trece el 90 % de la varianza bursátil. El panel separado de diez métricas de mercado contiene unas 4,53 dimensiones efectivas. PCA diagnostica redundancia; no demuestra Alpha.'],
-      ['Próxima decisión', 'La siguiente entrada finita debe evitar duplicar mecánicamente los clústeres medidos. Ninguna entrada ha sido promovida y Construcción del modelo sigue bloqueada.'],
+      ['Próxima decisión', 'Las cuatro fichas deduplicadas pasan únicamente a calificación de fuente puntual e implementación. No hay prueba formal nueva; los fallos anteriores no se reabren y el modelo sigue bloqueado.'],
     ],
     submission: 'Se aceptan hipótesis refutables de factores o estrategias para su registro y evaluación independiente bajo el mismo proceso gobernado. Si una propuesta llega a un modelo utilizable y a un futuro uso comercial, WH Alpha contactará a la persona colaboradora y comunicará el resultado.',
     submissionContact: 'Contacto',
@@ -506,15 +506,15 @@ const COPY = {
       ['Modelo, estrategia y Producto', 'BLOQUEADOS', 'No existe modelo predictivo, expresión de estrategia, autoridad sobre Candidatos ni afirmación sobre opciones.', 'locked'],
     ],
     cycle: 'Ciclo renovable de descubrimiento de factores', cycleNote: 'El programa puede continuar de forma indefinida. Cada campaña es finita, deduplicada, prerregistrada, reproducida y contabilizada de forma permanente.', cycleBadge: 'SISTEMA CONTINUO · CAMPAÑAS ACOTADAS',
-    cycleStats: ['Modo operativo', 'Fase actual', 'Campañas concluidas', 'Pruebas registradas', 'Campaña actual'], cycleStatValues: ['RENOVABLE', 'ENTRADA SIN RESULTADOS', '3', '17', 'NINGUNA'],
+    cycleStats: ['Modo operativo', 'Fase actual', 'Campañas concluidas', 'Pruebas registradas', 'Campaña actual'], cycleStatValues: ['RENOVABLE', 'CALIFICACIÓN DE FUENTES', '3', '17', 'NINGUNA'],
     cycleStages: [
       ['01', 'Proponer y deduplicar', 'COMPLETADA', 'Se conservaron cinco ideas: cuatro avanzaron y una casi duplicada se detuvo antes de consultar resultados.'],
       ['02', 'Construir sin resultados', 'COMPLETADA', 'El informe de 106 sesiones y la reproducción independiente coincidieron: tres diseños superaron los filtros y un Alpha se detuvo antes de consultar resultados.'],
       ['03', 'Registrar la prueba finita', 'COMPLETADA', 'Dos pruebas Alpha y una de riesgo, con resultados, costes, multiplicidad, criterios, límites y parada, están congeladas en el registro acumulativo.'],
       ['04', 'Autorizar, evaluar y reproducir', 'COMPLETADA', 'La ejecución formal autorizada y su reproducción exacta coincidieron. Las tres pruebas fallaron; Validación y Holdout permanecieron sellados.'],
-      ['05', 'Cerrar, contabilizar y volver', 'FASE ACTUAL', 'La quinta edición del registro conserva las 17 pruebas consumidas y devuelve el programa a una nueva entrada de hipótesis sin resultados.'],
+      ['05', 'Cerrar, contabilizar y calificar fuentes', 'FASE ACTUAL', 'La quinta edición conserva las 17 pruebas consumidas. Cuatro fichas están congeladas, pero quedan fuera del registro formal mientras se califican las fuentes puntuales.'],
     ],
-    cycleCurrent: 'Posición actual', cycleCurrentValue: 'ENTRADA · SIN CAMPAÑA ACTIVA', cycleCurrentBody: 'La tercera campaña está cerrada. La siguiente debe comenzar con un nuevo conjunto de hipótesis refutables y deduplicadas frente a las 17 pruebas consumidas.',
+    cycleCurrent: 'Posición actual', cycleCurrentValue: '4 FICHAS · 0 PRUEBAS NUEVAS', cycleCurrentBody: 'La entrada sucesora está congelada: revisiones FY1, calidad de beneficios en efectivo, cambio del interés corto publicado y salvaguarda de resultados. La fuente puede descartar una ficha antes de cualquier resultado.',
     cycleInfrastructure: 'Detenido antes de resultados', cycleInfrastructureValue: '1 DISEÑO ALPHA RECHAZADO', cycleInfrastructureBody: 'La resiliencia defensiva carecía de soporte equilibrado alrededor de cero y estaba demasiado concentrada, también en la primera mitad. No se movió el umbral tras inspeccionarla.',
     cycleContinuity: 'Siguiente frontera', cycleContinuityValue: 'NUEVA CAMPAÑA FINITA', cycleContinuityBody: 'No existe más acceso a resultados de la tercera campaña. Una sucesora exige nueva admisión, calificación, preinscripción y autorización independiente.',
     cycleInspect: 'Examinar deduplicación, presupuesto, aislamiento y pausas',

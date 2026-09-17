@@ -248,7 +248,8 @@ ADR 0284 and `quant-research-discovery-cycle/1.0` make Factor Discovery a
 renewable sequence of finite campaigns. Three campaigns and all 17 formal
 trials are now closed. Ledger V5 retains every result and zero model inputs;
 Cycle State V2 returns the program to outcome-blind hypothesis intake with no
-active campaign.
+active campaign. ADR 0296 subsequently freezes four cards for source
+qualification without creating an active campaign or formal trial.
 Exact duplicates stop, near-duplicates share a
 related family and multiplicity accounting, and every campaign must freeze its
 budget before Development outcomes. Cycle logical fingerprint is
@@ -269,6 +270,15 @@ effective dimensions. Both runs read zero outcomes, Validation, or Holdout
 records and wrote no canonical or Production data. The result authorizes only
 deduplication for a new finite hypothesis intake; it does not admit Alpha or
 open Model Construction.
+
+ADR 0296 now freezes that successor intake before source qualification. It
+contains exactly three candidate-Alpha cards—point-in-time FY1 EPS revision
+yield, as-filed cash earnings quality, and published short-interest change—and
+one scheduled-earnings event guard. The registry registers zero formal trials,
+reads no outcomes, and grants no Development, Validation, Holdout, model,
+Candidate, or Product authority. Its next gate is point-in-time source and
+implementation qualification; unavailable inputs stop rather than accept a
+proxy with different semantics.
 
 ADR 0287 fixes the first multi-agent pilot as a manually supervised,
 outcome-blind research team. Five current roles may inspect governance,
@@ -434,6 +444,15 @@ targets only in raw source-keyed custody and does not grant return, research,
 canonical, Product, or deployment authority. Live BaoStock sessions now bound
 socket reads and convert peer-close EOF into the existing finite partition
 retry path; the installed provider package remains unchanged.
+
+ADR 0297 and the full-population offline coverage contract now bind those
+completed packages into an ordered 13-family map. The resolved normalized
+scope contains 5,296 identities, 5,997,301 daily states, 5,987,288 unadjusted
+bars, 62,272 adjustment observations, and 10,013 suspensions; 113 targets stay
+quarantined. All 5,997,301 price-limit regimes remain unknown and all source-
+availability times remain null. Therefore source acquisition and normalization
+are complete, but Historical Coverage, adjusted returns, backtesting, Factor
+Discovery, and Product authority remain closed.
 The account rate is user-reported and its all-in/minimum/history assumptions
 remain unconfirmed by a broker statement. Issuer-level lifecycle rows remain
 separate and cannot claim listed-security termination. No raw upstream archive

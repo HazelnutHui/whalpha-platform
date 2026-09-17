@@ -30,16 +30,17 @@ are never sufficient evidence by themselves.
 
 ## Active objective
 
-Register a separately finite and deduplicated, outcome-blind U.S. successor
-hypothesis intake using ADR 0295's exactly replayed factor-space result. Do not
-read future-return outcomes, reopen a closed campaign, register a Development
-screen, construct a model, publish rankings, or change Product authority.
+Advance two strictly isolated outcome-blind gates: qualify the frozen U.S.
+successor cards' point-in-time sources and implementation feasibility, and
+materialize the A-share full-population offline 13-family reconciliation. Do
+not read future-return outcomes, register a Development screen, authorize
+A-share returns, construct a model, publish rankings, or change Product
+authority.
 
-The previously authorized China A-share five-year source acquisition remains a
-bounded background operation. It may continue its serial provider-limited raw
-capture and restartable normalization, but it is not the active implementation
-objective and cannot share data, contracts, results, or authority with this
-U.S. diagnostic.
+The completed China A-share five-year source acquisition remains a separate
+evidence chain. Its local packages may feed only the bounded offline coverage
+reconciliation and cannot share data, contracts, results, or authority with
+the U.S. source-qualification gate.
 
 ## Current checkpoint
 
@@ -57,31 +58,39 @@ postflight passed while credential login and visual review remain manual.
 The bounded A-share acquisition and normalization completed independently in
 workstation custody at 109/109 partitions each. Its immutable source census
 binds 5,409 targets, 6,061,082 daily rows, and 63,331 adjustment observations.
-Those facts complete only source acquisition and normalization; 13-family
-admission and all A-share research authority remain pending.
+ADR 0297 now binds those facts into a typed 13-family diagnostic: 5,296 targets
+are resolved, 113 remain quarantined, every price-limit regime is unknown, and
+historical source-availability time is absent. Historical Coverage and all
+A-share research authority remain pending.
+
+ADR 0296 freezes the U.S. successor intake at three candidate-Alpha cards and
+one risk guard. It counts zero formal trials and authorizes only source and
+implementation qualification.
 
 ## Ordered remaining gates
 
-1. Propose a bounded set of new economic hypotheses and compare each with the
-   measured risk, reversal, path, leadership, liquidity, and breadth clusters
-   plus all 17 consumed trials.
-2. Reject exact and near duplicates before any outcome access, freeze a finite
-   intake budget, and materialize the outcome-blind hypothesis registry.
-3. Qualify source availability and implementation only. Development outcome
-   access, protocol registration, and every downstream stage remain later
-   gates.
+1. Qualify the exact point-in-time source, timing, identity, coverage, and
+   implementation requirements of each frozen U.S. card; reject unavailable
+   inputs without substitution or outcomes.
+2. Reconcile A-share identity, calendar, bar/state, suspension, lifecycle,
+   trading-rule applicability, adjustment transitions, and provisional daily
+   membership from the existing immutable packages only.
+3. Exactly replay the A-share ordered coverage report and reduce later external
+   evidence work to explicit identity, warning-state, corporate-action,
+   price-limit, and terminal-lifecycle queues. Keep admission closed.
 
-Observed workstation capacity supports parallel U.S. numerical computation
-while the A-share provider request is idle or waiting: 16 logical CPUs, about
-60 GiB available memory, negligible load, and 2% `/data` utilization at the
-2026-09-17 check. Parallelism is bounded by determinism and observed resource
-pressure, not by the mere existence of the serial A-share request.
+Observed workstation capacity supports the two bounded offline lines: 16
+logical CPUs, about 60 GiB available memory, negligible load, and 2% `/data`
+utilization at the 2026-09-17 check. Parallelism remains bounded by
+determinism and observed resource pressure.
 
 ## Routed authority for this objective
 
-Read this bounded set before changing the U.S. factor-space diagnostic:
+Read this bounded set before changing either active gate:
 
 - `docs/decisions/0295-freeze-us-factor-space-diagnostic-before-successor-intake.md`;
+- `docs/decisions/0296-freeze-us-successor-hypothesis-intake-before-source-qualification.md`;
+- `docs/decisions/0297-freeze-a-share-full-population-offline-coverage-diagnostic.md`;
 - `docs/data-contracts/quant-research-factor-space-diagnostic-v1.md`;
 - `docs/research/professional-quantitative-research-action-framework-v1.md`
 - `docs/product/quant-research-three-layer-architecture-v1.md`

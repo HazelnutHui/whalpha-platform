@@ -7,6 +7,19 @@ and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md), [current work](current-work.md), and the
 [roadmap](roadmap.md), not here.
 
+## 2026-09-17 — Freeze both next outcome-blind research gates
+
+- Registered a finite U.S. successor intake containing three economically new
+  candidate-Alpha cards and one scheduled-earnings risk guard. All require
+  point-in-time source qualification; the registry opens zero formal trials
+  and reads no outcomes.
+- Materialized the A-share 13-family offline coverage contract over the
+  completed 109-partition source run. It preserves 5,296 resolved and 113
+  quarantined targets, discloses the all-unknown price-limit and absent source-
+  time fields, and keeps Historical Coverage and backtesting closed.
+- Replaced an unbounded next-search surface with two explicit gates: U.S.
+  source/input qualification and A-share full-population offline reconciliation.
+
 ## 2026-09-17 — Complete U.S. factor-space replay and A-share source expansion
 
 - Materialized and exactly replayed the outcome-blind U.S. factor-space
