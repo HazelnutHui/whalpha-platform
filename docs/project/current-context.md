@@ -453,6 +453,15 @@ quarantined. All 5,997,301 price-limit regimes remain unknown and all source-
 availability times remain null. Therefore source acquisition and normalization
 are complete, but Historical Coverage, adjusted returns, backtesting, Factor
 Discovery, and Product authority remain closed.
+
+The first persistent full-population coverage report now exactly rereads all
+109 normalized manifests, validates all 327 declared Parquet hashes and byte
+sizes, rescans the all-unknown price-limit and all-null source-time columns,
+and returns the same owner-only report on rerun. Report logical fingerprint is
+`1fd2d8fdfd65edb16ebdd91a09d7d6d08594496e59e7d71d233ef6a8e32a0c4d`.
+This closes the manifest-level census only; instrument coverage, adjustment-
+transition, rule-gap, and provisional-membership artifacts plus an independent
+full replay remain pending.
 The account rate is user-reported and its all-in/minimum/history assumptions
 remain unconfirmed by a broker statement. Issuer-level lifecycle rows remain
 separate and cannot claim listed-security termination. No raw upstream archive

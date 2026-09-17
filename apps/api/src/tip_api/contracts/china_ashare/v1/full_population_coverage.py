@@ -9,7 +9,7 @@ from enum import StrEnum
 from functools import lru_cache
 from typing import Literal, Mapping
 
-from pydantic import Field, model_validator
+from pydantic import Field, field_validator, model_validator
 
 from tip_api.contracts.china_ashare.v1.foundation import MARKET_ID, FrozenContract
 
@@ -49,7 +49,7 @@ class ChinaAshareFullPopulationCoverageReportV1(FrozenContract):
         "china-ashare-full-population-coverage/1.0"
     ] = FULL_POPULATION_COVERAGE_VERSION
     market_id: Literal["china_a_share"] = MARKET_ID
-    evaluated_date: Literal[date(2026, 9, 17)] = date(2026, 9, 17)
+    evaluated_date: date = date(2026, 9, 17)
     scope: Literal["sse_szse_frozen_five_year_acquisition_population"] = (
         "sse_szse_frozen_five_year_acquisition_population"
     )
@@ -90,6 +90,13 @@ class ChinaAshareFullPopulationCoverageReportV1(FrozenContract):
     product_publication_authorized: Literal[False] = False
     canonical_apply_authorized: Literal[False] = False
     logical_fingerprint: str
+
+    @field_validator("evaluated_date")
+    @classmethod
+    def evaluated_date_is_frozen(cls, value: date) -> date:
+        if value != date(2026, 9, 17):
+            raise ValueError("A-share coverage evaluation date differs")
+        return value
 
     @model_validator(mode="after")
     def report_reconciles(self) -> "ChinaAshareFullPopulationCoverageReportV1":

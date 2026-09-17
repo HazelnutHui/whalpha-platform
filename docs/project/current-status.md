@@ -264,6 +264,12 @@ route, full-market return-authorized adjustment family, or backtest-ready
 session. It must not be combined with the U.S.
 readiness table above.
 
+The manifest-level A-share coverage report is now owner-only and idempotently
+reread after validating all normalized payload hashes. It is not the final
+Historical Coverage package: instrument/session coverage, adjustment-event
+candidates, rule gaps, and provisional daily-membership aggregates still need
+their bounded artifacts and independent full replay.
+
 ## Pre-architecture research record (internal audit only)
 
 Strong-Leader Pullback V1 asked whether an orderly pullback and close-based

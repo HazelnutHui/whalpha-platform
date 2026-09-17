@@ -37,6 +37,17 @@ A separate column scan over every normalized state reproduced 5,997,301
 `source_available_at` values. These facts prevent Historical Coverage,
 adjusted-return, and backtest admission.
 
+The repository verifier then reread every one of the 109 normalized manifests,
+checked the declared SHA-256 and byte size of all 327 Parquet payloads, rescanned
+the two point-in-time boundary columns, and published the owner-only canonical
+coverage report. A second execution returned `already_present` with the same
+logical fingerprint
+`1fd2d8fdfd65edb16ebdd91a09d7d6d08594496e59e7d71d233ef6a8e32a0c4d`
+and physical SHA-256
+`e9725ade57cc55fa3da3d6aabf77af438a13e53bc3aed73285fd32b5312dd382`.
+This is exact reread and idempotent custody evidence, not yet the independent
+full artifact replay required for Historical Coverage admission.
+
 The typed report orders all 13 evidence families and retains their source-
 complete, provisional-reconstruction, or missing-evidence disposition. It does
 not treat the frozen SSE/SZSE acquisition population as a complete China A
@@ -52,9 +63,10 @@ contract:
 - A-share coverage serialization SHA-256:
   `404f7b79d7d044eb8f1e6ac16a5b50f189057fac0341fb2e52d0838fed8e5618`.
 
-Eight focused contract tests, all 3,167 backend tests, all 135 frontend tests,
+Eight initial focused contract tests, all 3,167 backend tests, all 135 frontend tests,
 and the Production frontend build passed. The two backend warnings are the
 existing Python `crypt` and Starlette/httpx deprecation notices, not failures.
+Six additional A-share verifier/custody tests passed after that regression.
 
 ## Website deployment
 

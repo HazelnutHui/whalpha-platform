@@ -63,6 +63,11 @@ are resolved, 113 remain quarantined, every price-limit regime is unknown, and
 historical source-availability time is absent. Historical Coverage and all
 A-share research authority remain pending.
 
+The first persistent A-share coverage census now verifies all 109 manifests
+and 327 declared payload hashes and rereads idempotently. It intentionally does
+not replace the remaining instrument, transition, rule-gap, provisional-
+membership, and independent replay artifacts.
+
 ADR 0296 freezes the U.S. successor intake at three candidate-Alpha cards and
 one risk guard. It counts zero formal trials and authorizes only source and
 implementation qualification.
@@ -72,12 +77,13 @@ implementation qualification.
 1. Qualify the exact point-in-time source, timing, identity, coverage, and
    implementation requirements of each frozen U.S. card; reject unavailable
    inputs without substitution or outcomes.
-2. Reconcile A-share identity, calendar, bar/state, suspension, lifecycle,
-   trading-rule applicability, adjustment transitions, and provisional daily
-   membership from the existing immutable packages only.
-3. Exactly replay the A-share ordered coverage report and reduce later external
-   evidence work to explicit identity, warning-state, corporate-action,
-   price-limit, and terminal-lifecycle queues. Keep admission closed.
+2. Freeze a deterministic A-share diagnostic plan, then stream the existing
+   packages partition by partition into bounded instrument coverage,
+   adjustment-transition, rule-gap, and provisional-membership aggregates.
+3. Independently replay the complete A-share diagnostic package and reduce
+   later external evidence work to explicit identity, warning-state,
+   corporate-action, price-limit, and terminal-lifecycle queues. Keep admission
+   closed.
 
 Observed workstation capacity supports the two bounded offline lines: 16
 logical CPUs, about 60 GiB available memory, negligible load, and 2% `/data`
