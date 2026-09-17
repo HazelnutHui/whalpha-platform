@@ -7,6 +7,24 @@ and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md), [current work](current-work.md), and the
 [roadmap](roadmap.md), not here.
 
+## 2026-09-17 — Implement restartable A-share source expansion
+
+- Added a deterministic 5,409-target, 109-partition, 10,818-request plan plus
+  raw source contracts, serial BaoStock acquisition, compressed Parquet
+  custody, exact reread, bounded retry, resume, CLI, tests, and an operations
+  runbook.
+- Kept all raw rows source-keyed so 113 quarantined occurrences cannot receive
+  invented stable identities. Every partition remains absent until its full
+  request set, schemas, keys, dates, hashes, permissions, and closed file set
+  pass.
+- Initial partitions 0–2 retain 172,870 daily rows and 3,234 complete-history
+  adjustment rows for 150 targets with zero empty-source targets.
+- Rejected concurrent BaoStock acquisition after a bounded two-process test
+  failed one adjustment request and logout state; the independent successful
+  partition remained valid and the failed partition was not published.
+- Passed 74 focused A-share/BaoStock tests and all 3,148 backend tests. Full
+  source expansion and all research authority remain incomplete.
+
 ## 2026-09-17 — Freeze the five-year A-share expansion population
 
 - Added deterministic full-population contracts, BaoStock security-basic

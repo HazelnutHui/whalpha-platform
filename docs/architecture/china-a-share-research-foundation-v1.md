@@ -288,8 +288,10 @@ unrelated partitions into an infinite repair loop.
 
 ## Performance and storage design
 
-- Network acquisition is I/O-bound and uses bounded concurrency plus source-
-  compliant pacing; CPU parallelism does not defeat provider limits.
+- Network acquisition is I/O-bound. BaoStock full-population acquisition uses
+  one session at a time: a bounded two-process check produced a source request
+  failure and invalid logout state in one process. CPU parallelism does not
+  defeat provider limits.
 - Normalization, reconciliation, feature materialization, and reporting may
   use workstation cores on immutable partitions.
 - Parquet and small manifests remain the default research store. A service

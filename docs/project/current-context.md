@@ -403,6 +403,15 @@ quarantined because official board evidence is absent; code patterns cannot
 promote them. Three listing-date conflicts retain the official date and an
 explicit reason. The package exactly rereads with logical fingerprint
 `13595c0645aa36acc5fea8d818509b484582ad13d7def53d377b984d549c02c0`.
+The population binds a deterministic 109-partition raw-source plan with
+logical fingerprint
+`bc78c1273a4de46b11abd4e85f1232b116dd01d727b0cd44031acc0f61f2db61`.
+Each partition holds at most 50 securities and exactly two bounded source
+requests per target. Initial partitions 0, 1, and 2 exactly reread with 172,870
+raw daily rows, 3,234 listing-to-end adjustment rows, and zero empty targets.
+A two-process check was rejected after one BaoStock adjustment request and
+logout state failed; only the successful independent partition published.
+Expansion therefore resumes serially and skips every completed partition.
 The account rate is user-reported and its all-in/minimum/history assumptions
 remain unconfirmed by a broker statement. Issuer-level lifecycle rows remain
 separate and cannot claim listed-security termination. No raw upstream archive
@@ -433,6 +442,8 @@ The exact membership partition is in the
 [daily-Universe audit](../audits/china-a-share-daily-universe-2026-09-17.md).
 The exact expansion population is in the
 [five-year population audit](../audits/china-a-share-five-year-population-2026-09-17.md).
+The restartable acquisition procedure is in the
+[source-expansion operation](../operations/china-a-share-five-year-source-expansion.md).
 
 ## Automation and standing boundaries
 

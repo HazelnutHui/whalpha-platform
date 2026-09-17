@@ -16,6 +16,10 @@ from tip_api.providers.china_ashare.baostock_session import BaoStockClientSessio
 from tip_api.providers.china_ashare.baostock_population_adapter import (
     capture_baostock_security_basic,
 )
+from tip_api.providers.china_ashare.baostock_source_expansion_adapter import (
+    CapturedChinaAshareSourceExpansionPartitionV1,
+    capture_baostock_source_expansion_partition,
+)
 from tip_api.providers.china_ashare.cninfo_corporate_action_adapter import (
     CNINFO_CORPORATE_ACTION_PROVIDER_ID,
     CNINFO_CORPORATE_ACTION_URL,
@@ -76,6 +80,8 @@ __all__ = [
     "BaoStockCursor",
     "BaoStockSession",
     "capture_baostock_security_basic",
+    "CapturedChinaAshareSourceExpansionPartitionV1",
+    "capture_baostock_source_expansion_partition",
     "AkshareTransportCninfoCorporateActionFetcher",
     "CapturedCninfoCorporateActionsV1",
     "CninfoCorporateActionHttpFetcher",

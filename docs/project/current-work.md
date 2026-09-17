@@ -49,6 +49,12 @@ targets. It has not completed full-market observations or the final 13-family
 admission. Canonical Product Apply remains outside this research-foundation
 objective.
 
+The exact population is bound to a 109-partition / 10,818-request acquisition
+plan. Its first three partitions exactly reread. The remaining partitions run
+serially because a bounded two-process trial caused one provider request and
+logout-state failure; no failed partition was published. Recovery always
+revalidates and skips completed partitions before continuing the first gap.
+
 The current step is **bounded full-population five-year expansion**:
 
 - capture source observations in restartable partitions with request ceilings,
