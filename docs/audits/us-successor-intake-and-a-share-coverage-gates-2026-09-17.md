@@ -114,3 +114,10 @@ bounded verifier still reproduced the complete 109-partition frozen census.
 No return, full Universe, Historical Coverage admission, or Product authority
 was created. Persistent aggregate custody, dynamic family gaps, and exact
 replay remain pending.
+
+The trilingual checkpoint was then deployed as release
+`2026-09-17T213157Z-98889030d300`, sourced from revision
+`98889030d300e02eff99d89a46ac15a334ffabc5`. Independent postflight at
+2026-09-17T21:32:52Z passed release/source/checksum, Nginx/Auth, protected-route,
+guest-session, equal-policy, residue, and listener checks. Credential login and
+browser visual inspection remain manual.

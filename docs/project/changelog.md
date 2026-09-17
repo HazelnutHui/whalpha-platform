@@ -47,6 +47,8 @@ and dated [audits](../audits/). Current capability and next work belong in
   materializing the full state table.
 - Updated the trilingual Lab source to distinguish these implementation steps
   from factor, backtest, model, Candidate, and Product authority.
+- Deployed that checkpoint and passed independent OCI postflight; credential
+  login and browser visual review remain manual.
 
 ## 2026-09-17 — Complete U.S. factor-space replay and A-share source expansion
 
