@@ -20,6 +20,13 @@ from tip_api.providers.china_ashare.official_calendar_adapter import (
     UrllibOfficialCalendarHttpFetcher,
     capture_official_calendar_notice,
 )
+from tip_api.providers.china_ashare.official_market_mechanics_adapter import (
+    CapturedOfficialMarketMechanicsSourceV1,
+    OfficialMarketMechanicsHttpFetcher,
+    OfficialMarketMechanicsHttpResponseV1,
+    UrllibOfficialMarketMechanicsHttpFetcher,
+    capture_official_market_mechanics_source,
+)
 from tip_api.providers.china_ashare.protocol import (
     ChinaAshareDailySourceBatchV1,
     ChinaAshareIdentityBindingV1,
@@ -47,9 +54,14 @@ __all__ = [
     "ChinaAshareSourceInstrumentQuery",
     "ChinaAshareSourceProvider",
     "CapturedOfficialCalendarNoticeV1",
+    "CapturedOfficialMarketMechanicsSourceV1",
     "OfficialCalendarHttpFetcher",
     "OfficialCalendarHttpResponseV1",
+    "OfficialMarketMechanicsHttpFetcher",
+    "OfficialMarketMechanicsHttpResponseV1",
     "TabularResult",
     "UrllibOfficialCalendarHttpFetcher",
+    "UrllibOfficialMarketMechanicsHttpFetcher",
     "capture_official_calendar_notice",
+    "capture_official_market_mechanics_source",
 ]

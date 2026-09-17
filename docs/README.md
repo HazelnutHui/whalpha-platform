@@ -93,6 +93,7 @@ or dated [audits](audits/) when reproducing that program.
 - [Historical Research Data Foundation](architecture/historical-research-data-foundation-v1.md)
 - [China A-Share Research Foundation V1](architecture/china-a-share-research-foundation-v1.md)
 - [China A-Share Daily Research Contract V1](data-contracts/china-a-share-daily-research-foundation-v1.md)
+- [China A-Share Pilot Market-Mechanics Audit](audits/china-a-share-market-mechanics-2026-09-17.md)
 - [Canonical Market Data Query Boundary](architecture/canonical-market-data-query-boundary.md)
 - [Instrument Identity Resolution](architecture/instrument-identity-resolution.md)
 - [Classification Boundary](architecture/classification-boundary.md)

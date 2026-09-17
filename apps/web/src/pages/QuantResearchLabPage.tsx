@@ -453,6 +453,117 @@ const COPY = {
   },
 } as const;
 
+const ASHARE_COPY = {
+  en: {
+    title: 'China A-share research track',
+    note: 'A separately governed market foundation using the same research standard—not U.S. data relabeled for another market.',
+    badge: 'FOUNDATION PILOT · NOT BACKTEST READY',
+    stats: [
+      ['Pilot interval', '5 YEARS', '16 Sep 2021 → 16 Sep 2026'],
+      ['Market scope', '6 SECURITIES', 'SSE / SZSE pilot · BSE quarantined'],
+      ['Official calendar', '1,211 SESSIONS', '12 annual notices · zero date differences'],
+      ['Market mechanics', '7,266 DECISIONS', 'Zero observed-bar violations · zero unresolved rules'],
+      ['Factor research', '0 CAMPAIGNS', 'No A-share Alpha, model, ranking, or strategy exists'],
+    ],
+    dataTitle: 'What has been built and reread',
+    dataItems: [
+      ['Unadjusted daily evidence', '7,255 bars and 7,266 daily trading-state rows across the six bound SSE/SZSE pilot securities.'],
+      ['Tradability state', 'The source-state history includes 11 suspended sessions and 259 present-but-unspecified risk-warning states; absent bars are not invented.'],
+      ['Adjustment observations', 'Twenty-eight provider factor changes are retained with all three source fields, but normalized-return use remains unauthorized.'],
+      ['Calendar evidence', 'Twelve exact SSE/SZSE annual notices reconcile 94 weekday closures, all 1,211 expected sessions, and every pilot state history.'],
+      ['Custody', 'Calendar and mechanics official bytes are hash-bound, owner-only, immutable, and exactly reread. Internal IDs, paths, and hashes stay off the public page.'],
+    ],
+    mechanicsTitle: 'Rules, fees, and account-cost assumptions',
+    mechanicsItems: [
+      ['Official rule evidence', 'Thirteen exact official pages support 10 effective-dated trading rules and 14 statutory fee rules.'],
+      ['Board mechanics', 'Main-board normal limits are 10%; STAR and ChiNext are 20%. Main-board risk-warning limits change from 5% to 10% on 6 Jul 2026. T+1 and lot rules remain effective-dated.'],
+      ['Statutory costs', 'Seller-only stamp duty, securities regulatory fee, exchange handling fee, and transfer fee are modeled by exchange and effective date, including the 2022 and 2023 changes.'],
+      ['Account scenario', 'Ping An Securities via Tonghuashun: user-reported commission 0.01% per side, conservatively CNY 5 minimum, plus 5 bps slippage per side.'],
+      ['Uncertainty retained', 'The all-in commission interpretation, account-specific minimum, and historical backcast await broker-statement confirmation and must be stress-tested before performance use.'],
+    ],
+    gateTitle: 'Admission state and next gates',
+    passed: 'QUALIFIED FOR THIS PILOT',
+    passedItems: ['SSE/SZSE calendar', 'Effective-dated trading rules', 'Theoretical price-limit reconciliation', 'Statutory fee schedule', 'Cost-scenario registration'],
+    blocked: 'STILL BLOCKED',
+    blockedItems: ['Return-authorized adjustment semantics', 'Corporate-action economics', 'Listed-security lifecycle', 'Daily point-in-time Universe', 'Full-market and BSE route', 'Complete 13-family admission'],
+    next: 'Next sequence',
+    nextBody: 'Reconcile adjustment factors against corporate actions, close lifecycle evidence, build one daily Universe decision per instrument/session, expand the market in bounded partitions, then publish the 13-family admission report. Only a passing report can open the first outcome-blind A-share factor batch.',
+    boundary: 'No A-share backtest, Alpha, model, candidate ranking, Product publication, or trading authority is active. The U.S. and A-share datasets, calendars, rules, Universes, results, and admissions remain physically and logically separate.',
+  },
+  zh: {
+    title: '中国 A 股研究轨道',
+    note: '采用同一套专业研究标准，但数据与治理完全独立；不会把美股数据换一个市场标签后重复使用。',
+    badge: '基础试点 · 尚未达到回测准入',
+    stats: [
+      ['试点区间', '5 年', '2021-09-16 → 2026-09-16'],
+      ['市场范围', '6 只证券', '上交所 / 深交所试点 · 北交所隔离'],
+      ['官方交易日历', '1,211 个交易日', '12 份年度公告 · 日期差异为零'],
+      ['市场制度判定', '7,266 条', '观察价格违规为零 · 未解析规则为零'],
+      ['因子研究', '0 个批次', '尚无 A 股 Alpha、模型、排名或策略'],
+    ],
+    dataTitle: '已经建立并完成精确重读的证据',
+    dataItems: [
+      ['未复权日频证据', '六只已绑定沪深试点证券共 7,255 条日线与 7,266 条逐日交易状态。'],
+      ['可交易状态', '历史中明确包含 11 个停牌交易日和 259 个“存在但细分类型未明”的风险警示状态；不会为停牌日虚构价格。'],
+      ['复权观察', '保留 28 次因子变化及数据源的三个原始字段，但尚未授权用于标准化收益。'],
+      ['日历证据', '12 份上交所/深交所年度原文公告覆盖 94 个工作日休市日，并与 1,211 个预期交易日及全部试点状态历史零差异对齐。'],
+      ['证据保管', '日历与市场制度原始官方页面均绑定哈希、只允许所有者读取、不可变并完成精确重读；内部 ID、路径和哈希不在公开页面展示。'],
+    ],
+    mechanicsTitle: '交易规则、税费与账户成本假设',
+    mechanicsItems: [
+      ['官方规则证据', '13 个官方页面支持 10 条按生效日期管理的交易规则和 14 条法定费用规则。'],
+      ['板块制度', '主板正常股票 10%，科创板与创业板 20%；主板风险警示股自 2026-07-06 由 5% 调整为 10%。T+1 与申报数量规则同样按生效日期管理。'],
+      ['法定成本', '卖方印花税、证管费、交易所经手费和过户费按交易所与生效日期建模，包含 2022 和 2023 年的制度变更。'],
+      ['账户场景', '平安证券经同花顺：用户提供佣金为买卖双边各万分之一，保守采用每笔最低 5 元，并加入单边 5 bps 滑点。'],
+      ['保留不确定性', '佣金是否全包、实际账户是否收取最低 5 元、现行费率能否回推历史，仍待交割单确认；进入绩效研究前必须做压力测试。'],
+    ],
+    gateTitle: '准入状态与下一道关口',
+    passed: '本试点已通过',
+    passedItems: ['沪深交易日历', '按生效日期管理的交易规则', '理论涨跌停价格核对', '法定费用表', '账户成本场景登记'],
+    blocked: '仍未通过',
+    blockedItems: ['可用于收益的复权语义', '公司行动经济处理', '上市证券生命周期', '逐日点时 Universe', '全市场扩展与北交所路径', '完整 13 类数据准入'],
+    next: '下一步顺序',
+    nextBody: '先用公司行动核对复权因子，再补齐上市证券生命周期，为每只证券的每个交易日生成唯一 Universe 决策，分区扩展全市场，最后发布 13 类数据准入报告。只有正式通过后，才会开放第一批结果盲的 A 股因子研究。',
+    boundary: '当前没有任何 A 股回测、Alpha、模型、候选排名、产品发布或交易权限。美股与 A 股的数据、日历、规则、Universe、研究结果和准入始终在物理与逻辑上隔离。',
+  },
+  es: {
+    title: 'Línea de investigación de acciones A de China',
+    note: 'Aplica el mismo estándar profesional, pero con datos y gobierno independientes; no reutiliza datos de EE. UU. bajo otra etiqueta.',
+    badge: 'PILOTO DE BASE · AÚN NO APTO PARA BACKTEST',
+    stats: [
+      ['Intervalo piloto', '5 AÑOS', '16 sep 2021 → 16 sep 2026'],
+      ['Ámbito', '6 VALORES', 'Piloto SSE / SZSE · BSE en cuarentena'],
+      ['Calendario oficial', '1.211 SESIONES', '12 avisos anuales · cero diferencias'],
+      ['Reglas de mercado', '7.266 DECISIONES', 'Cero infracciones observadas · cero reglas pendientes'],
+      ['Investigación factorial', '0 CAMPAÑAS', 'No existe Alpha, modelo, ranking ni estrategia para acciones A'],
+    ],
+    dataTitle: 'Evidencia construida y releída exactamente',
+    dataItems: [
+      ['Evidencia diaria sin ajustar', '7.255 barras y 7.266 estados diarios para los seis valores piloto vinculados de SSE/SZSE.'],
+      ['Estado de negociación', 'Incluye 11 sesiones suspendidas y 259 estados de advertencia de riesgo sin subtipo; no se inventan barras durante suspensiones.'],
+      ['Observaciones de ajuste', 'Se conservan 28 cambios y los tres campos originales del proveedor, pero aún no autorizan retornos normalizados.'],
+      ['Evidencia del calendario', 'Doce avisos exactos de SSE/SZSE concilian 94 cierres laborables, 1.211 sesiones esperadas y todos los historiales piloto sin diferencias.'],
+      ['Custodia', 'Los bytes oficiales de calendario y reglas están ligados a hashes, son inmutables, de acceso restringido y tienen relectura exacta. Los identificadores internos no se publican.'],
+    ],
+    mechanicsTitle: 'Reglas, tasas y supuestos de costes',
+    mechanicsItems: [
+      ['Evidencia oficial', 'Trece páginas oficiales respaldan 10 reglas de negociación y 14 reglas de tasas con vigencia temporal.'],
+      ['Mecánica por segmento', 'El límite normal del mercado principal es 10%; STAR y ChiNext usan 20%. La advertencia de riesgo del mercado principal pasa de 5% a 10% el 6 jul 2026. T+1 y los lotes también son temporales.'],
+      ['Costes legales', 'Impuesto de timbre del vendedor, tasa regulatoria, tarifa bursátil y transferencia se modelan por bolsa y fecha, incluidos los cambios de 2022 y 2023.'],
+      ['Escenario de cuenta', 'Ping An Securities vía Tonghuashun: comisión comunicada por el usuario de 0,01% por lado, mínimo conservador de CNY 5 y deslizamiento de 5 pb por lado.'],
+      ['Incertidumbre explícita', 'La interpretación de comisión integral, el mínimo real y la extrapolación histórica esperan confirmación documental y pruebas de estrés.'],
+    ],
+    gateTitle: 'Estado de admisión y siguientes puertas',
+    passed: 'CALIFICADO PARA ESTE PILOTO',
+    passedItems: ['Calendario SSE/SZSE', 'Reglas con vigencia temporal', 'Conciliación teórica de límites', 'Tabla de tasas legales', 'Registro del escenario de costes'],
+    blocked: 'AÚN BLOQUEADO',
+    blockedItems: ['Semántica de ajustes apta para retornos', 'Economía de acciones corporativas', 'Ciclo de vida del valor cotizado', 'Universo diario point-in-time', 'Expansión total y ruta BSE', 'Admisión completa de 13 familias'],
+    next: 'Secuencia siguiente',
+    nextBody: 'Conciliar ajustes con acciones corporativas, cerrar el ciclo de vida, generar una decisión diaria de Universo por valor y sesión, ampliar el mercado por particiones y publicar la admisión de 13 familias. Solo un informe aprobado abrirá la primera campaña factorial sin resultados.',
+    boundary: 'No hay backtest, Alpha, modelo, ranking, publicación de Producto ni autoridad de negociación para acciones A. Los datos, calendarios, reglas, Universos, resultados y admisiones de EE. UU. y China permanecen separados.',
+  },
+} as const;
+
 function humanize(value: string): string {
   return value.split('_').join(' ');
 }
@@ -461,6 +572,7 @@ export function QuantResearchLabPage(): JSX.Element {
   const { locale } = useI18n();
   const c = COPY[locale];
   const architecture = ARCHITECTURE_COPY[locale];
+  const ashare = ASHARE_COPY[locale];
   const numberFormat = new Intl.NumberFormat(locale === 'zh' ? 'zh-CN' : locale === 'es' ? 'es-ES' : 'en-US');
   const decimalFormat = new Intl.NumberFormat(locale === 'zh' ? 'zh-CN' : locale === 'es' ? 'es-ES' : 'en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const correlationFormat = new Intl.NumberFormat(locale === 'zh' ? 'zh-CN' : locale === 'es' ? 'es-ES' : 'en-US', { minimumFractionDigits: 4, maximumFractionDigits: 4 });
@@ -608,6 +720,32 @@ export function QuantResearchLabPage(): JSX.Element {
       </div>
       <div className="research-foundation-controls"><strong>{c.foundationControls}</strong><div>{evaluationControls.map(([value, label]) => <span key={label}><b>{value}</b><small>{label}</small></span>)}</div></div>
       <p className="research-foundation-boundary">{c.foundationBoundary}</p>
+    </section>
+
+    <section className="research-card research-foundation research-ashare" aria-labelledby="research-ashare-title">
+      <header><span>CN</span><div><h2 id="research-ashare-title">{ashare.title}</h2><p>{ashare.note}</p></div><b>{ashare.badge}</b></header>
+      <div className="research-factor-stats research-ashare-stats">
+        {ashare.stats.map(([label, value, body]) => <article key={label}><span>{label}</span><strong>{value}</strong><small>{body}</small></article>)}
+      </div>
+      <div className="research-ashare-ledger">
+        <details className="research-factor-details" open>
+          <summary>{ashare.dataTitle}</summary>
+          <dl className="research-record-ledger">{ashare.dataItems.map(([label, body]) => <div key={label}><dt>{label}</dt><dd>{body}</dd></div>)}</dl>
+        </details>
+        <details className="research-factor-details">
+          <summary>{ashare.mechanicsTitle}</summary>
+          <dl className="research-record-ledger">{ashare.mechanicsItems.map(([label, body]) => <div key={label}><dt>{label}</dt><dd>{body}</dd></div>)}</dl>
+        </details>
+        <details className="research-factor-details" open>
+          <summary>{ashare.gateTitle}</summary>
+          <div className="research-screen-verdict research-ashare-gates">
+            <article className="retained"><strong>{ashare.passed}</strong><ul>{ashare.passedItems.map((item) => <li key={item}>{item}</li>)}</ul></article>
+            <article className="blocked"><strong>{ashare.blocked}</strong><ul>{ashare.blockedItems.map((item) => <li key={item}>{item}</li>)}</ul></article>
+          </div>
+          <div className="research-factor-limit research-ashare-next"><strong>{ashare.next}</strong><p>{ashare.nextBody}</p></div>
+        </details>
+      </div>
+      <p className="research-foundation-boundary">{ashare.boundary}</p>
     </section>
 
     <section className="research-card research-factor-qualification" aria-labelledby="research-factor-qualification-title">

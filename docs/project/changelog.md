@@ -6,7 +6,7 @@ through 2026-09-14 remains preserved in the
 and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md) and the [roadmap](roadmap.md), not here.
 
-## 2026-09-17 — Establish the A-share pilot calendar boundary
+## 2026-09-17 — Establish the A-share pilot calendar and mechanics boundaries
 
 - Added a fail-closed calendar coverage contract and diagnostic fixed to
   `XSHG` in `Asia/Shanghai`; it keeps official-notice, calendar, canonical,
@@ -23,6 +23,22 @@ and dated [audits](../audits/). Current capability and next work belong in
   differences; no broader research authority was granted.
 - Passed all 51 focused A-share tests and all 3,125 backend tests after the
   official-evidence package.
+- Added exact-byte official-source capture, effective-dated trading and fee
+  contracts, theoretical price-limit reconciliation, and a provisional
+  Ping An/Tonghuashun account-cost scenario with no activation authority.
+- Retained and exactly reread 13 official mechanics payloads, 10 trading
+  rules, 14 fee rules, and 7,266 price-limit decisions in a 20-file immutable
+  package. All pilot bars remain within their theoretical limits; zero rules
+  are unresolved. The account commission basis, minimum, and historical
+  backcast remain explicit user-reported assumptions pending statement proof.
+- Synchronized the public entry source and protected Quant Research Lab source
+  with an identifier-free, trilingual A-share research track. It shows the
+  five-year pilot facts, completed calendar/mechanics gates, incomplete
+  admission families, strict U.S./China isolation, and zero active A-share
+  factor campaigns without implying backtest or Product authority.
+- Passed all 60 focused A-share tests, all 3,134 backend tests, all 129 frontend
+  tests, and the Production frontend build after the mechanics and website
+  synchronization changes.
 
 ## 2026-09-16 — Start the isolated China A-share research foundation
 

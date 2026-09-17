@@ -10,10 +10,13 @@ Candidate activation, website publication, or deployment.
 The implementation contains provider-neutral contracts, BaoStock and
 AKShare-mediated adapters, an owner-only temporary normalized-reference
 package, a linked five-year daily pilot package, and a separate official
-calendar-evidence package. All packages reread exactly. The calendar package
-retains exact upstream SSE/SZSE notice bytes; the reference and daily packages
-still do not retain their raw upstream payloads. None is a canonical dataset
-or completed historical admission.
+calendar-evidence package. A second exact-byte evidence package binds official
+trading-rule and fee sources to effective-dated rules, pilot price-limit
+decisions, and a provisional account-cost scenario. All packages reread
+exactly. The calendar and market-mechanics packages retain their exact official
+source bytes; the reference and daily packages still do not retain their raw
+upstream payloads. None is a canonical dataset or completed historical
+admission.
 
 ## Logical layers
 
@@ -202,6 +205,25 @@ closures over the pilot interval. SSE versus SZSE, official notices versus
 `XSHG`, and `XSHG` versus all six source-state histories each have zero date
 differences. This admits the SSE/SZSE pilot calendar evidence only; BSE and all
 other foundation families retain their separate gates.
+
+The market-mechanics gate separately retains 13 exact official SSE, SZSE,
+CSRC, tax, and government source payloads. Ten effective-dated trading rules
+cover the pilot's SSE/SZSE main-board, STAR, ChiNext, normal, and risk-warning
+states; 14 fee rules cover stamp duty, regulatory fee, exchange handling fee,
+and transfer fee across both exchanges. Reconciliation produces 7,266 typed
+pilot price-limit decisions with zero observed-bar violations and zero
+unresolved rules. Risk-warning main-board limits change from 5% to 10% on
+2026-07-06, and statutory fee changes remain effective-dated rather than
+backfilled.
+
+The account-cost scenario registers the user's reported Ping An Securities
+rate through Tonghuashun as 0.01% per side, applies a conservative CNY 5
+minimum and 5 bps per-side slippage, and treats the commission as all-in to
+avoid duplicating regulatory and handling fees. The all-in interpretation,
+minimum, and historical backcast remain explicit research assumptions pending
+broker-statement confirmation. This gate qualifies only the bounded pilot
+mechanics evidence; it does not authorize returns, research, canonical Apply,
+Product publication, or deployment.
 
 Expansion stops on systemic schema drift, unexplained coverage loss,
 unbounded rate failure, fingerprint mismatch, or a critical family with no

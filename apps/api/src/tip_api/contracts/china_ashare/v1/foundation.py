@@ -104,6 +104,7 @@ class ChinaAshareRiskWarningStatus(StrEnum):
 
 class ChinaAsharePriceLimitRegime(StrEnum):
     NO_DAILY_LIMIT = "no_daily_limit"
+    PERCENT_5 = "percent_5"
     PERCENT_10 = "percent_10"
     PERCENT_20 = "percent_20"
     PERCENT_30 = "percent_30"

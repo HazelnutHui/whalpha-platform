@@ -144,6 +144,7 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .feature-card--lab { min-height: 440px; border-radius: 28px 72px 28px 28px; background: radial-gradient(circle at 85% 15%, rgba(24, 199, 217, .11), transparent 34%), linear-gradient(145deg, rgba(10, 36, 58, .9), rgba(4, 18, 31, .93)); }
 .research-system__satellite { min-height: 0; padding: clamp(26px, 2.8vw, 34px); }
 .feature-card--selection { border-radius: 28px 28px 28px 56px; }
+.feature-card--ashare { border-radius: 28px 56px 28px 28px; border-color: rgba(224, 113, 94, .22); background: radial-gradient(circle at 95% 0%, rgba(214, 87, 70, .1), transparent 35%), linear-gradient(145deg, rgba(9, 31, 51, .8), rgba(4, 18, 31, .9)); }
 .feature-card--automation { border-radius: 28px 56px 28px 28px; background: radial-gradient(circle at 95% 0%, rgba(76, 159, 255, .11), transparent 35%), linear-gradient(145deg, rgba(9, 31, 51, .8), rgba(4, 18, 31, .9)); }
 .feature-index { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .feature-index span { color: rgba(145, 189, 218, .35); font-size: .74rem; }
@@ -161,6 +162,8 @@ button:focus-visible, input:focus-visible, a:focus-visible { outline: 2px solid 
 .automation-list { display: grid; gap: 10px; margin: 28px 0 0; padding: 0; list-style: none; }
 .automation-list li { position: relative; padding-left: 17px; color: var(--muted-strong); font-size: .76rem; }
 .automation-list li::before { content: ''; position: absolute; left: 0; top: .55em; width: 5px; height: 5px; border-radius: 50%; background: var(--cyan); }
+.ashare-mini-ledger { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
+.ashare-mini-ledger span { padding: 7px 9px; border: 1px solid rgba(224, 113, 94, .2); background: rgba(214, 87, 70, .045); color: #e9b4aa; font-size: .68rem; }
 
 .standards-section { overflow: hidden; border-top: 1px solid var(--line); background: radial-gradient(circle at 86% 18%, rgba(76, 159, 255, .07), transparent 25%), #020d17; }
 .section-heading--split { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(300px, .8fr); align-items: end; gap: clamp(40px, 8vw, 120px); }

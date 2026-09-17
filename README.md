@@ -53,8 +53,10 @@ same data. Its stable identities, price limits, suspensions,
 risk-warning states, corporate actions, fees, Universe decisions, research
 panels, and admissions remain in a separate `china_a_share` namespace. Current
 implementation proves contracts, free-source routes, and an officially
-reconciled SSE/SZSE pilot calendar only; it has no backtest-ready session or
-Product surface.
+reconciled SSE/SZSE pilot calendar, plus a separate exact-byte pilot package
+for effective-dated trading rules, price-limit decisions, statutory fees, and
+one provisional account-cost scenario. It still has no backtest-ready session
+or Product surface.
 
 Dell is the authority for code, data, and computation. OCI serves only bounded
 static product artifacts and the localhost authentication boundary. The

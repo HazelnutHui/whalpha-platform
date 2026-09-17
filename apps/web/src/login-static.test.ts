@@ -49,8 +49,8 @@ describe('static login client', () => {
       expect(html).toContain('rel="apple-touch-icon" href="/favicon.png"');
       expect(html).toContain('name="theme-color" content="#061b33"');
     }
-    expect(dashboardHtml).toContain('WH Alpha is a transparent U.S. equity quantitative research');
-    expect(loginHtml).toContain('WH Alpha is a transparent U.S. equity quantitative research');
+    expect(dashboardHtml).toContain('WH Alpha is a transparent multi-market quantitative research');
+    expect(loginHtml).toContain('WH Alpha is a transparent multi-market quantitative research');
   });
 
   it('presents research authority before free market tools without inventing performance', () => {
@@ -69,6 +69,10 @@ describe('static login client', () => {
     expect(loginHtml).toContain('data-i18n="stateQualified">Complete');
     expect(loginHtml).toContain('All three campaigns closed without candidate Alpha');
     expect(loginHtml).toContain('data-i18n="priorProgram"');
+    expect(loginHtml).toContain('data-i18n="ashareKicker">China A-share research track');
+    expect(loginHtml).toContain('data-i18n="ashareMechanics">7,266 mechanics decisions');
+    expect(loginHtml).toContain('data-i18n="ashareResearch">0 factor campaigns');
+    expect(loginHtml).toContain('data-i18n="ashareBoundary"');
     expect(loginHtml).not.toContain('Pullback program');
     expect(loginHtml).toContain('data-i18n="flowData">Model construction');
     expect(loginHtml).toContain('data-i18n="flowValidation">Strategy expression');

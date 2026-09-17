@@ -70,7 +70,7 @@ ADRs, and audits.
   permanently records all 17 trials with zero admitted Alpha and zero model
   inputs. The cycle is back at outcome-blind hypothesis intake; Validation,
   Holdout, Model Construction, and all Product authority remain closed. All
-  3,125 backend tests, 129 frontend tests, and the Production frontend build
+  3,134 backend tests, 129 frontend tests, and the Production frontend build
   pass in repository source.
 - **External source:** no commercial lifecycle source is selected or required
   for the admitted reconstructed lane. Seven exact free official SEC documents
@@ -90,14 +90,19 @@ ADRs, and audits.
   ignoring only ingestion time. All packages and the repeat report exactly
   reread. The reference/daily packages retain no raw upstream bytes. A separate
   owner-only package retains and exactly rereads all 12 official 2021–2026
-  SSE/SZSE annual notices. All 51 focused A-share tests and all 3,125 backend
-  tests pass. No
+  SSE/SZSE annual notices. A separate exact-byte package retains 13 official
+  mechanics sources, 10 effective-dated trading rules, 14 fee rules, one
+  provisional user-reported account-cost scenario, and 7,266 price-limit
+  decisions. All observed pilot bars remain inside their theoretical limits
+  and no rule is unresolved. No
   canonical identity, Apply, research, Product, or deployment authority is
   granted. The offline XSHG calendar and all six source-state histories align
   over exactly 1,211 sessions with zero missing or unexpected dates. Ninety-four
   official weekday closures reconcile across both exchanges, `XSHG`, and every
-  source-state history with zero differences. The SSE/SZSE pilot calendar is
-  qualified; all other incomplete families and overall admission remain closed.
+  source-state history with zero differences. The SSE/SZSE pilot calendar,
+  trading-rule, price-limit, statutory-fee, and account-cost registration gates
+  are qualified; the broker all-in/minimum assumptions, all other incomplete
+  families, and overall admission remain closed.
 
 ## Product capability
 
@@ -181,12 +186,11 @@ The China A-share foundation is a separate market namespace and is earlier in
 its lifecycle. Its normalized reference/lifecycle package and linked five-year
 SSE/SZSE daily pilot exist only under temporary owner-only custody and reread
 exactly; a second capture produced a zero-delta economic source-repeat report.
-The separate exact-byte calendar package passes official reconciliation for
-the SSE/SZSE pilot interval. The other packages are not raw source archives or
-a canonical database. The six
+The separate exact-byte calendar and market-mechanics packages pass official
+reconciliation for the SSE/SZSE pilot interval. The reference/daily packages
+are not raw source archives or a canonical database. The six
 pilot IDs are deterministic test bindings, not canonical stable identities.
-There is no admitted historical Universe, qualified price-limit family, BSE
-daily-price route, reconciled corporate-action
+There is no admitted historical Universe, BSE daily-price route, reconciled corporate-action
 economics, return-authorized adjustment family, or backtest-ready session. It
 must not be combined with the U.S. readiness table above.
 

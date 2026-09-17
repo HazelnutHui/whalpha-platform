@@ -360,10 +360,17 @@ annual closure notices. Its report reconciles 94 weekday closures, the 1,211
 `XSHG` sessions, and all six source-state histories with zero differences;
 report logical fingerprint is
 `8cb38cbe307908ffbe6fdb62e1ce9670053d65cd7982daa28a2dcd30fe270ff7`.
-All 51 focused A-share tests and all 3,125 backend tests pass. SSE lifecycle
-rows remain issuer evidence and cannot claim listed-security identity. No raw
-upstream archive exists for the reference/daily source families; no canonical
-stable identity, canonical Apply, admitted
+An additional owner-only package exactly retains 13 official mechanics
+sources, 10 effective-dated trading rules, 14 fee rules, one provisional
+Ping An/Tonghuashun account-cost scenario, and 7,266 pilot price-limit
+decisions. It has zero observed-bar violations and zero unresolved rules;
+package logical fingerprint is
+`799a5511871e826bb031651d01077e789392358b0b77198ca41d77f1d724da25`.
+The account rate is user-reported and its all-in/minimum/history assumptions
+remain unconfirmed by a broker statement. SSE lifecycle rows remain issuer
+evidence and cannot claim listed-security identity. No raw upstream archive
+exists for the reference/daily source families; no canonical stable identity,
+canonical Apply, admitted
 historical Universe, backtest admission, website change, or Production
 authority exists. See the
 [source audit](../audits/china-a-share-free-source-availability-2026-09-16.md).
@@ -371,8 +378,10 @@ authority exists. See the
 The offline XSHG 4.13.2 calendar and each of the six pilot state histories
 contain the same 1,211 sessions with zero missing or unexpected dates. Exact
 SSE/SZSE notice custody and machine reconciliation now also pass for the pilot
-scope. See the
-[calendar audit](../audits/china-a-share-calendar-coverage-2026-09-17.md).
+scope. Effective-dated pilot trading rules, statutory fees, and theoretical
+price-limit reconciliation also pass independently. See the
+[calendar audit](../audits/china-a-share-calendar-coverage-2026-09-17.md) and
+[market-mechanics audit](../audits/china-a-share-market-mechanics-2026-09-17.md).
 
 ## Automation and standing boundaries
 

@@ -209,9 +209,13 @@ BSE anchor remains quarantined. The first same-scope source-repeat comparison
 is zero-delta across all retained economic observations. Twelve exact 2021–
 2026 SSE/SZSE annual notices now reconcile 94 weekday closures, the 1,211
 `XSHG` sessions, and all six source-state histories with zero date differences.
-Canonical stable identity, price-limit rules, adjustment semantics, corporate-
-action economics, historical Universe decisions, fees, and a qualified BSE
-daily route remain before the historical pilot can be admitted.
+A separate exact-byte package now reconciles 13 official mechanics sources,
+10 effective-dated trading rules, 14 statutory fee rules, one provisional
+account-cost scenario, and all 7,266 pilot price-limit decisions with zero
+violations or unresolved rules. Canonical stable identity, adjustment
+semantics, corporate-action economics, listed-security lifecycle, historical
+Universe decisions, full-market expansion, and a qualified BSE daily route
+remain before the historical pilot can be admitted.
 
 Exit: a reproducible daily-research admission for an exact interval and
 population, or an explicit blocker report. Intraday, live model, Product,

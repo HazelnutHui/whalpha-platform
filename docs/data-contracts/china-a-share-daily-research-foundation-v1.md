@@ -94,6 +94,19 @@ validity interval, T+1 settlement, daily price-limit ratio or no-limit state,
 IPO no-limit count, lot/increment rules, official source, and evidence clocks.
 Current rules cannot be projected backward without a matching validity range.
 
+`ChinaAshareOfficialSourceReferenceV1` records each approved official URL,
+publisher, publication/retrieval date, final URL, content type, exact byte
+count, and physical SHA-256. `ChinaAshareFeeRuleV1` keeps buy/sell rates by
+exchange, fee family, and effective interval. `ChinaAshareAccountCostScenarioV1`
+keeps broker/channel, commission basis, rate, minimum, slippage, effective
+date, reason codes, and a logical fingerprint; user-reported account terms are
+assumptions rather than official broker evidence.
+
+`ChinaAsharePilotPriceLimitDecisionV1` binds each pilot instrument/session to
+one effective rule and stores previous close, half-up CNY 0.01 theoretical
+limits, observed bar bounds, and explicit quality. Theoretical limits cannot
+be represented as source-observed exchange limit prices.
+
 ## Daily Universe decision
 
 `ChinaAshareUniverseDecisionV1` records exactly one included, excluded, or
@@ -170,6 +183,25 @@ all weekday closures between both exchanges and `XSHG`, then binds that result
 to the daily package's source-state alignment. The real pilot result reconciles
 94 weekday closures and 1,211 sessions with zero differences. BSE remains
 excluded while its daily anchor is quarantined.
+
+## Market-mechanics evidence package
+
+`china-ashare-market-mechanics-package/1.0` binds one exact daily package and
+one reconciled official-calendar package to exact official bytes, normalized
+source references, trading and fee rules, an account-cost scenario, every
+pilot price-limit decision, and one fail-closed report.
+
+The package uses canonical JSON, owner-only file modes, atomic rename,
+per-artifact physical hashes, logical fingerprints, a closed file set, and a
+complete formal reread. Its manifest requires all seven artifact families,
+retains raw official source payloads, and fixes research, canonical Apply,
+Product publication, and deployment authority to false.
+
+The real pilot package contains 13 official sources, 10 trading rules, 14 fee
+rules, and 7,266 price-limit decisions. It reports zero observed-bar
+violations and zero unresolved rules. This is sufficient for the bounded
+SSE/SZSE pilot mechanics gate only; adjustment semantics, corporate actions,
+lifecycle, historical Universe, and full admission remain independent.
 
 ## Foundation census and admission
 
