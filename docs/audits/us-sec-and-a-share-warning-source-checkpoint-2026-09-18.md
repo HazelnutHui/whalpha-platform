@@ -72,13 +72,22 @@ provider data is exposed by the website.
 - Production frontend TypeScript and Vite build: passed.
 - Focused trilingual Lab and A-share readiness tests: 7 passed.
 
-Deployment identity and independent Production postflight are recorded only
-after the separately reviewed deployment gate completes.
+## Deployment
+
+The reviewed readiness projection was deployed as release
+`2026-09-18T034517Z-3346728a1dae`, sourced from revision
+`3346728a1dae68a6b1961a420a1e7a86f607f4c4`. Independent postflight at
+2026-09-18T03:46:33Z reconciled the active release, source revision, manifest,
+checksums, Nginx and Auth Service state, protected routes, bounded guest flow,
+equal guest/credential route policy, zero failed or staging releases, and no
+unexpected private listener. Credential login and browser visual inspection
+remain manual.
 
 ## Continuity checkpoint
 
 ADR 0314 and the Codex task-rotation operation make this the nearest task
 rotation boundary. The current task must first reconcile Git, safe public-mirror
-content, deployment state, and Production postflight. A fresh task then begins
-read-only and verifies the repository, immutable packages, active processes,
-and served release before any new evidence family or research work begins.
+content, deployment state, and Production postflight; those gates are now
+complete. A fresh task begins read-only and verifies the repository, immutable
+packages, active processes, and served release before any new evidence family
+or research work begins.

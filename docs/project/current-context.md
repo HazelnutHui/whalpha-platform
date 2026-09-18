@@ -2,7 +2,7 @@
 
 Operational state verified at: 2026-09-18T03:40:47Z
 
-Deployment state verified at: 2026-09-17T21:46:11Z
+Deployment state verified at: 2026-09-18T03:46:33Z
 
 Repository context updated at: 2026-09-18 UTC
 
@@ -21,8 +21,8 @@ ADRs, and dated audits.
 | Public GitHub mirror | `https://github.com/HazelnutHui/whalpha-platform`; `main` only at initial publication |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
-| Active OCI release | `2026-09-17T214516Z-aed8120acf8a` |
-| Deployed source | `aed8120acf8a7fa1f033074cea10e870b833cf46` |
+| Active OCI release | `2026-09-18T034517Z-3346728a1dae` |
+| Deployed source | `3346728a1dae68a6b1961a420a1e7a86f607f4c4` |
 
 Dell owns code, canonical data, governance, and heavy computation. OCI is the
 bounded public-serving tier. A newer clean repository commit does not imply a

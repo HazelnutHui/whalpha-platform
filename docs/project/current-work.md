@@ -74,19 +74,19 @@ structure remain blocked; multi-common issuers remain quarantined. No listed-
 security projection, factor, outcome, Validation, Holdout, canonical, or
 Product write occurred.
 
-The worktree contains the reviewed implementation and documentation changes.
-The complete backend regression passed 3,282 tests, the complete frontend
+The reviewed implementation and documentation checkpoint is committed on
+canonical `main` at `3346728a1dae68a6b1961a420a1e7a86f607f4c4`. The complete backend regression passed 3,282 tests, the complete frontend
 regression passed 135 tests, and the Production build, compile, shell syntax,
 Markdown-link, diff, credential-pattern, and large-file checks passed. Commit
-and deployment remain incomplete, so the current OCI release still predates
-these readiness facts.
+`2026-09-18T034517Z-3346728a1dae` is active and its independent Production
+postflight passed. Credential login and browser visual inspection remain
+manual.
 
 ## Ordered remaining gates
 
-1. Commit the reconciled checkpoint and synchronize canonical `main`.
-2. Build and independently verify the exact source-bound serving bundle, deploy the
-   readiness-only website update, and run Production postflight.
-3. Rotate to a fresh Codex task under ADR 0314 and perform the read-only recovery
+1. Synchronize the reviewed commit and this deployment record to the public
+   GitHub mirror after the final secret and size check.
+2. Rotate to a fresh Codex task under ADR 0314 and perform the read-only recovery
    operation before choosing either next evidence gate: A-share official
    document/adjudication or U.S. prospective/commercial identity evidence.
 
