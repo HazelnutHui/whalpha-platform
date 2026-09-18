@@ -18,7 +18,7 @@ ADRs, and dated audits.
 | Workstation / user | `dell5820` / `hui` |
 | Canonical repository | `/home/hui/projects/trading-intelligence-platform` |
 | Branch | `main`; verify live HEAD before mutation |
-| Public GitHub mirror | `https://github.com/HazelnutHui/whalpha-platform`; `main` only at initial publication |
+| Public GitHub mirror | `https://github.com/HazelnutHui/whalpha-platform`; reviewed `main` mirror |
 | Public site | `https://whalpha.com/` |
 | OCI alias | `whalpha-oci` |
 | Active OCI release | `2026-09-18T034517Z-3346728a1dae` |
