@@ -33,6 +33,8 @@ and dated [audits](../audits/). Current capability and next work belong in
 - Accepted a verified Codex task-rotation procedure so future tasks recover
   from repository, Git, immutable data, and runtime evidence rather than an
   indefinitely growing chat.
+- Recorded the user's manual visual review of the active public release as
+  passed; password-based credential login remains a separate manual check.
 
 ## 2026-09-17 — Complete the bounded A-share diagnostic replay
 

@@ -80,8 +80,9 @@ The reviewed readiness projection was deployed as release
 2026-09-18T03:46:33Z reconciled the active release, source revision, manifest,
 checksums, Nginx and Auth Service state, protected routes, bounded guest flow,
 equal guest/credential route policy, zero failed or staging releases, and no
-unexpected private listener. Credential login and browser visual inspection
-remain manual.
+unexpected private listener. The user subsequently completed a manual visual
+review of the active public release and reported the rendered site normal.
+Password-based credential login remains a separate manual check.
 
 ## Continuity checkpoint
 

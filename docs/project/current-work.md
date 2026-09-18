@@ -79,8 +79,10 @@ canonical `main` at `3346728a1dae68a6b1961a420a1e7a86f607f4c4`. The complete bac
 regression passed 135 tests, and the Production build, compile, shell syntax,
 Markdown-link, diff, credential-pattern, and large-file checks passed. Commit
 `2026-09-18T034517Z-3346728a1dae` is active and its independent Production
-postflight passed. Credential login and browser visual inspection remain
-manual. The reviewed public GitHub `main` mirror has also been synchronized.
+postflight passed. The user completed a manual visual review of the active
+public release on 2026-09-18 and reported the rendered site normal;
+password-based credential login remains a separate manual check. The reviewed
+public GitHub `main` mirror has also been synchronized.
 
 ## Ordered remaining gates
 

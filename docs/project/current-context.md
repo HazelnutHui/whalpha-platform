@@ -71,8 +71,10 @@ models, and zero factor campaigns. U.S.-only market tools and U.S. Candidate
 rows are unavailable under that selection, and no underlying A-share data is
 placed in the serving bundle. All model, strategy,
 Validation, Holdout, Candidate, and option-performance authority stays locked.
-An unauthenticated Dashboard request redirects to Session entry. Password
-login and final visual appearance remain manual checks. Production Market
+An unauthenticated Dashboard request redirects to Session entry. The user
+completed a manual visual review of the active public release on 2026-09-18
+and reported the rendered site normal. Password-based credential login remains
+a separate manual check. Production Market
 Intelligence still consumes only 26 sessions and reports
 `degraded_short_history`; canonical history is deeper.
 
