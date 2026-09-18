@@ -1,6 +1,6 @@
 # Current Status
 
-Status date: 2026-09-17
+Status date: 2026-09-18
 
 This is the concise actual-capability summary. Exact volatile identities belong
 in [current context](current-context.md), future sequencing in the
@@ -18,8 +18,8 @@ ADRs, and audits.
   option and an intentionally empty A-share selection-readiness page. It does
   not publish underlying records or imply an A-share backtest, Universe,
   model, or ranking.
-  Underlying data is stale by two
-  completed sessions at the 2026-09-16 operational review.
+  Underlying data is stale by four
+  completed sessions at the 2026-09-18 operational review.
 - **Five-year source depth:** EOD price and stable Identity complete.
 - **Professional performance foundation:** the strict exact/as-operated gate
   remains `data_blocked`; reconstructed-research V2 is separately
@@ -181,17 +181,31 @@ That source gate is now closed at 0 / 4. The intake registered zero trials and
 read zero outcomes. Current local evidence cannot reproduce historical FY1
 consensus vintages, published short-interest history with a point-in-time
 security denominator, or historical earnings-calendar revisions. SEC cash-
-quality engineering now has a separate plan-only contract that freezes the
-exact CFO, net-income, Assets, four-quarter TTM, amendment clock, stable-
-security projection, point-in-time applicability, coverage, and exact-replay
-rules. It authorizes no source execution, feature, trial, result, or Product
-write; raw filings alone still do not satisfy those gates.
+quality engineering is separately governed and does not reopen that intake.
+It now has exact CFO, net-income, Assets, amendment, economic-period, TTM, and
+replay contracts. Those source results authorize no feature, trial, or Product
+write; raw filings alone still do not satisfy listed-security applicability.
 
 The plan's exact Assets, net-income, and operating-cash-flow source queries are
-now registered in a separate immutable registry. The historical first SEC
-registry remains unchanged. Query execution, occurrence selection, TTM
-derivation, coverage, feature materialization, and all outcome authority remain
-false.
+registered in a separate immutable registry. The historical first SEC registry
+remains unchanged. The corrected direct-origin selector retains 120,473
+canonical economic endpoints under knowledge-time, filing-clock, fiscal-
+origin, amendment, and accession-coherence rules. TTM V2 then produces 75,391
+issuer-level observations across 6,724 issuers and exactly replays. This is
+issuer source coverage, not listed-security projection or a factor.
+
+The bounded local source-readiness census now exactly replays across traversal
+order. It scanned 41,619,407 normalized occurrences, including 1,027,486 target
+concept rows, and observed 449,274 issuer/fiscal endpoints across 10,082
+issuers. Exactly 82,440 endpoints are ready for occurrence use only and 366,834
+are blocked. The largest blockers are ambiguous or missing joint fiscal-year
+origins and missing Assets, CFO, or net-income endpoints. This is positive-
+evidence-denominator coverage, not security-level factor coverage. The later
+applicability census admits 0 / 75,391 observations because historical stable-
+security identity, form, listing interval, issuer structure, and source-time
+evidence are incomplete. A ten-request Massive Starter sample completed
+without entitlement failure but admitted zero historical lanes. Security
+projection, factors, outcomes, and downstream authority remain closed.
 
 Production additionally contains the reviewed renewable-cycle panel in its
 completed Campaign Three state: three completed campaigns, 17 closed formal
@@ -217,15 +231,25 @@ views only: no A-share row-level data, backtest, Alpha, model, ranking,
 strategy, or Product authority is served.
 
 The A-share full-population diagnostic now has deterministic plan, bounded
-partition-aggregate, and ordered streaming-aggregate contracts. A real first
-partition smoke reconciled 50 targets, 60,550 states, 60,479 bars, and 1,256
-adjustment observations. The legacy all-partition verifier now scans in
-bounded Parquet batches and still reproduces the frozen 109-partition counts.
-This is an implementation milestone, not Historical Coverage admission; full
-package materialization, dynamic rule/lifecycle/Universe gaps, and exact replay
-remain open. Owner-only closed-set plan and aggregate custody is implemented
-with canonical bytes, hashes, permissions, atomic publication, and exact
-reread.
+partition-aggregate, and ordered streaming-aggregate contracts. Its real
+109-partition package covers 5,409 targets, 1,211 sessions, 5,997,301 states,
+5,987,288 bars, and 62,272 adjustment observations. Independent reconstruction
+from all exact readers is byte- and physical-hash identical; owner-only custody
+exactly rereads. The linked five-family gap checklist also replays exactly, but
+admits zero families: price-limit, warning-state, corporate-action, terminal-
+lifecycle, and historical-Universe evidence remain blocked or provisional.
+This is deterministic gap evidence, not Historical Coverage admission.
+
+The conservative reconstructed-Universe package also exactly replays all 109
+partitions. It classifies 5,059,363 states as provisional include candidates,
+157,377 as warning exclusions, and 780,561 as quarantine. The stable-subject
+official-evidence plan contains 2,294 units and strict local reuse admits zero.
+The first warning-search family is now complete at 492 / 492 units: 507 logical
+pages, 510 lifetime attempts, 4,399 deduplicated official-document locators,
+and 2,454 observed publication clocks. Search custody is not event
+adjudication; document bytes, event/subtype, stable-security binding, and
+effective intervals remain pending. No A-share return, factor, backtest,
+ranking, or Product authority is open.
 
 The reusable research-input policy remains preserved in V1, while registry V2
 records one qualified, exactly replayed Market-State panel and zero outcome-
@@ -291,11 +315,24 @@ route, full-market return-authorized adjustment family, or backtest-ready
 session. It must not be combined with the U.S.
 readiness table above.
 
-The manifest-level A-share coverage report is now owner-only and idempotently
-reread after validating all normalized payload hashes. It is not the final
-Historical Coverage package: instrument/session coverage, adjustment-event
-candidates, rule gaps, and provisional daily-membership aggregates still need
-their bounded artifacts and independent full replay.
+The manifest-level report, complete diagnostic package, and five-family gap
+checklist are now owner-only, idempotently reread, and independently replayed.
+They are not a passing Historical Coverage package: all five dynamic evidence
+families remain blocked and require external official evidence or conservative
+quarantine before admission can change.
+
+The first 50-security official-evidence slice proves that free official routes
+can improve that boundary without relaxing it. Effective-dated legacy SSE
+rules plus bounded event searches resolve 59,339 of 60,550 states. The 1,211
+remaining states all belong to one issuer whose three official announcement
+documents returned a typed JavaScript-cookie challenge rather than PDF bytes;
+they remain quarantined. A separate Shenzhen/CNINFO sample maps successfully
+and exactly replays five zero-event responses. These are narrow evidence-route
+proofs, not full-market admission.
+
+The full 109-partition conservative-reconstruction package remains
+`as_operated=false`, has zero fully official-confirmed evidence families, and
+grants no historical Universe, return, backtest, factor, or Product authority.
 
 ## Pre-architecture research record (internal audit only)
 

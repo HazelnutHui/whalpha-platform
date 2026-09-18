@@ -135,3 +135,52 @@ That declarative query/custody checkpoint was deployed as release
 2026-09-17T21:46:11Z passed all automated release, source, checksum, service,
 route, guest, equal-policy, residue, and listener checks. Credential login and
 browser visual inspection remain manual.
+
+## Full diagnostic and dynamic-gap checkpoint
+
+The real A-share diagnostic subsequently traversed all 109 exact source and
+normalized readers without full-market materialization. It retained bounded
+aggregates for 5,409 targets, 1,211 sessions, 5,997,301 states, 5,987,288 bars,
+and 62,272 adjustment observations. A second construction under a separate
+temporary root reread all inputs; the four package files matched byte for byte
+and by physical SHA-256.
+
+The linked five-family checklist then made the remaining admission boundary
+explicit. Price-limit, warning subtype, corporate-action economics, listed-
+security terminal lifecycle, and historical-Universe/source-clock evidence all
+remain blocked. The checklist also replayed byte identically and admits zero
+families. No future return, adjusted return, backtest, factor, canonical, or
+Product authority was opened.
+
+On the isolated U.S. line, a pure local selector now applies the registered
+Assets, net-income, and operating-cash-flow queries at one issuer endpoint. It
+enforces knowledge time, filing-clock admission, explicit fiscal-year origin,
+amendment ordering, and duration-pair accession coherence. It deliberately
+does not calculate TTM, project issuer facts to securities, read outcomes, or
+reopen the closed 0 / 4 intake.
+
+The subsequent bounded census scanned all 41,619,407 normalized local
+occurrences and 1,027,486 registered target rows. It observed 449,274 fiscal
+endpoints across 10,082 issuers: 82,440 are ready for occurrence use only and
+366,834 are blocked. Forward and independently optimized reverse traversal
+produced the same logical fingerprint
+`2c4898df1efd4b60854a633f5c08791bd8163210bfdcdb8f054282f62a2ad159`.
+Malformed chronology, fiscal-origin ambiguity, missing concepts, and accession
+incoherence remain explicit blocker counts. No TTM, security projection,
+factor, outcome, or write was performed.
+
+A bounded A-share official-evidence proof then closed 251 official queries for
+the first 50-security SSE slice and validated one Shenzhen/CNINFO sample. SSE
+rules and zero-event evidence resolve 59,339 of 60,550 states. The remaining
+1,211 states stay quarantined because three official document routes returned
+a typed JavaScript-cookie challenge rather than PDF content. The Shenzhen map
+and five zero-event queries exactly replay. No title or provider flag was used
+to infer missing announcement semantics.
+
+The next no-network A-share census streamed all 109 normalized partitions and
+merged identically in both orders. It partitions 5,997,301 states into
+5,059,363 provisional include candidates, 157,377 warning exclusions, and
+780,561 quarantines. Candidate-driven routing caps later official evidence at
+7,490 requests, 72.3% below the blind 27,045-query baseline. It remains a plan
+for a reconstructed personal-research lane, not an admitted historical
+Universe or return source.

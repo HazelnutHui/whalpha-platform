@@ -11,6 +11,23 @@ accepted ADR was deployed unless current operational evidence says so.
 
 ## Current direction
 
+- [ADR 0313](0313-freeze-pagination-aware-a-share-warning-acquisition-v2.md):
+  freezes fixed page order, authority-specific page ceilings, append-only
+  restart, and a 1,199-attempt lifetime cap for the warning continuation.
+- [ADR 0312](0312-stop-a-share-warning-acquisition-at-unbudgeted-cninfo-pagination.md):
+  retains the partial immutable warning run and stops before an unbudgeted
+  second CNINFO page, while keeping search locators non-adjudicative.
+- [ADR 0309](0309-reuse-local-a-share-official-evidence-before-warning-acquisition.md):
+  requires strict stable-subject, clock, interval, hash, and structured-field
+  reuse before freezing the non-executable 492-unit warning acquisition batch.
+- [ADR 0306](0306-freeze-a-share-official-evidence-priority-plan-before-acquisition.md):
+  freezes the deduplicated 2,294-unit warning, lifecycle, and listing-stage
+  official-evidence plan before any network access, while corporate-action
+  candidates remain quarantined with zero requests.
+- [ADR 0297](0297-freeze-a-share-full-population-offline-coverage-diagnostic.md):
+  binds the completed 109-partition A-share source work into an outcome-blind
+  13-family diagnostic while keeping Historical Coverage and research
+  authority closed.
 - [ADR 0295](0295-freeze-us-factor-space-diagnostic-before-successor-intake.md):
   freezes separate stock-cross-section and Market-State factor-space panels,
   Development-only transforms, multivariate redundancy diagnostics,
@@ -447,6 +464,9 @@ accepted ADR was deployed unless current operational evidence says so.
 - [ADR 0285](0285-persist-a-seeded-cumulative-guest-entry-counter.md) keeps a
   small identifier-free guest-entry counter outside immutable releases while
   preserving equal guest/credential product capability.
+- [ADR 0314](0314-rotate-codex-tasks-at-verified-project-checkpoints.md)
+  rotates long-running Codex tasks only at verified repository/data/runtime
+  checkpoints and makes fresh-task recovery read-only before mutation.
 
 ## Full archive
 

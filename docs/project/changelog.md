@@ -7,6 +7,46 @@ and dated [audits](../audits/). Current capability and next work belong in
 [current status](current-status.md), [current work](current-work.md), and the
 [roadmap](roadmap.md), not here.
 
+## 2026-09-18 — Complete both bounded source-engineering checkpoints
+
+- Exactly replayed the local SEC cash-quality census over 41,619,407
+  occurrences. Of 449,274 observed issuer endpoints, 82,440 are ready only for
+  occurrence use and 366,834 remain explicitly blocked.
+- Corrected economic endpoint identity and produced 75,391 issuer-level TTM
+  observations across 6,724 issuers. The listed-security applicability census
+  admitted 0 / 75,391; a ten-request Massive Starter sample proved endpoint
+  access but admitted zero historical identity/applicability lanes.
+- Proved a bounded free-official A-share route on 50 SSE securities and one
+  Shenzhen sample. Effective-dated rules resolve 59,339 of 60,550 first-slice
+  states; one issuer remains quarantined behind a typed official-document
+  anti-bot blocker.
+- Persisted and independently replayed the 109-partition conservative Universe
+  candidate package that classifies
+  5,059,363 provisional include candidates, 157,377 warning exclusions, and
+  780,561 quarantines.
+- Reduced the A-share official-evidence plan to 2,294 stable-subject units,
+  rejected weak reuse, and completed the first 492 warning-search units through
+  restartable pagination. The result retains 4,399 official-document locators
+  and 2,454 publication clocks but zero adjudication-ready events; returns,
+  factors, backtests, listed-security projection, and Product authority remain
+  closed.
+- Accepted a verified Codex task-rotation procedure so future tasks recover
+  from repository, Git, immutable data, and runtime evidence rather than an
+  indefinitely growing chat.
+
+## 2026-09-17 — Complete the bounded A-share diagnostic replay
+
+- Built the real 109-partition A-share diagnostic package over 5,409 targets
+  and 5,997,301 daily states without full-market materialization; an independent
+  reconstruction matched all canonical bytes and physical hashes.
+- Published and independently replayed a five-family fail-closed gap checklist.
+  All five families remain blocked by explicit rule, warning, action,
+  lifecycle, or historical-Universe evidence gaps; no research authority was
+  opened.
+- Added strict local SEC issuer-occurrence selection for registered Assets,
+  net-income, and operating-cash-flow queries while keeping TTM, security
+  projection, outcomes, models, and Product authority closed.
+
 ## 2026-09-17 — Freeze both next outcome-blind research gates
 
 - Registered a finite U.S. successor intake containing three economically new

@@ -15,9 +15,10 @@ from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from decimal import Decimal
 from pathlib import Path
-from typing import Literal, Protocol
+from typing import Callable, Literal, Protocol
 
 import pyarrow as pa
+import pyarrow.compute as pc
 import pyarrow.parquet as pq
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from pydantic_core import to_jsonable_python
@@ -447,9 +448,23 @@ def build_sec_companyfacts_normalized_source(
 
 
 def read_sec_companyfacts_normalized_source(
-    *, package_path: Path
+    *,
+    package_path: Path,
+    occurrence_concept_filter: frozenset[str] | None = None,
+    occurrence_batch_consumer: Callable[
+        [NormalizedArtifactV1, pa.RecordBatch], None
+    ] | None = None,
 ) -> SecCompanyfactsNormalizedSourceResult:
     """Formally reread every normalized artifact and aggregate invariant."""
+
+    if (occurrence_concept_filter is None) != (occurrence_batch_consumer is None):
+        raise SecCompanyfactsNormalizedSourceError(
+            "normalized Company Facts occurrence filter is incomplete"
+        )
+    if occurrence_concept_filter is not None and not occurrence_concept_filter:
+        raise SecCompanyfactsNormalizedSourceError(
+            "normalized Company Facts occurrence filter is empty"
+        )
 
     package = _validate_completed_package(package_path)
     manifest_path = package / MANIFEST_FILE
@@ -524,6 +539,22 @@ def read_sec_companyfacts_normalized_source(
         row_count = 0
         last_key: tuple[object, ...] | None = None
         for batch in parquet.iter_batches(batch_size=65_536):
+            if (
+                artifact.artifact_kind == "occurrence"
+                and occurrence_concept_filter is not None
+                and occurrence_batch_consumer is not None
+            ):
+                concept_column = batch.column(
+                    batch.schema.get_field_index("concept_name")
+                )
+                filtered = batch.filter(
+                    pc.is_in(
+                        concept_column,
+                        value_set=pa.array(sorted(occurrence_concept_filter)),
+                    )
+                )
+                if filtered.num_rows:
+                    occurrence_batch_consumer(artifact, filtered)
             for row in pa.Table.from_batches([batch]).to_pylist():
                 digest.update(_json_bytes(row))
                 digest.update(b"\n")

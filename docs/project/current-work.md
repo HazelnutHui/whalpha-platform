@@ -1,6 +1,6 @@
 # Current Work Control
 
-Updated: 2026-09-17 UTC
+Updated: 2026-09-18 UTC
 
 This is the replace-in-place control page for the **one active project
 objective**. It exists so a new task, device, or compacted chat can resume the
@@ -30,12 +30,13 @@ are never sufficient evidence by themselves.
 
 ## Active objective
 
-Advance the A-share full-population offline 13-family reconciliation while the
-U.S. successor intake remains immutably closed at source qualification. A
-separately scoped SEC cash-quality source project may be planned but must not
-read outcomes or silently reopen that U.S. intake. Do not register a
-Development screen, authorize A-share returns, construct a model, publish
-rankings, or change Product authority.
+Close and publish the verified 2026-09-18 source-engineering checkpoint. It
+combines the completed A-share warning-locator acquisition with the completed
+U.S. SEC cash-quality source/applicability review, updates the public readiness
+surface without implying research authority, and leaves a clean task-rotation
+checkpoint. Do not start the next evidence family, register a Development
+screen, authorize returns, construct a model, publish rankings, or change
+Product authority during this integration gate.
 
 The completed China A-share five-year source acquisition remains a separate
 evidence chain. Its local packages may feed only the bounded offline coverage
@@ -44,56 +45,50 @@ the U.S. source-qualification gate.
 
 ## Current checkpoint
 
-Campaign Three is closed at `closed_no_candidate_alpha`; Ledger V5 permanently
-counts 17 formal trials and admits zero Alpha or model input. ADR 0295's two
-non-combinable diagnostic panels are now materialized and independently
-replayed with byte-identical reports. The 20-input stock panel contains about
-9.14 effective dimensions and the separate ten-input Market-State panel about
-4.53. No outcome, Validation, or Holdout data was read and no Alpha or model
-input was admitted. The preceding full 3,181-test backend regression passed;
-the current contract/custody suite, all 135 frontend tests, and the Production
-build also pass. The current OCI release serves the closed U.S. source
-gate; the newly reviewed plan/streaming-diagnostic presentation is ready for
-the next verified deployment. Credential login and visual review remain
-manual.
+Campaign Three remains `closed_no_candidate_alpha`: 17 formal trials, zero
+admitted Alpha, model, or strategy. That immutable research result did not
+change in this checkpoint.
 
-The bounded A-share acquisition and normalization completed independently in
-workstation custody at 109/109 partitions each. Its immutable source census
-binds 5,409 targets, 6,061,082 daily rows, and 63,331 adjustment observations.
-ADR 0297 now binds those facts into a typed 13-family diagnostic: 5,296 targets
-are resolved, 113 remain quarantined, every price-limit regime is unknown, and
-historical source-availability time is absent. Historical Coverage and all
-A-share research authority remain pending.
+The A-share five-year source, 109-partition normalization, diagnostic, and
+conservative reconstruction now all exactly reread and independently replay.
+Across 5,997,301 daily states, 5,059,363 are provisional include candidates,
+157,377 warning states are excluded, and 780,561 remain quarantined. ADRs
+0306/0309 reduced the blind official-query space to 2,294 stable-subject units
+and found zero strict local reuse. ADRs 0312/0313 then completed the first
+warning-search family with restartable pagination: 492 / 492 units, 507
+logical pages, 510 lifetime HTTP attempts, 4,399 deduplicated official-document
+locators, and 2,454 observed publication clocks. Search results are not event
+facts; zero locators are adjudication-ready until document bytes, event type,
+warning subtype, stable-security binding, and effective intervals pass a later
+gate. Historical Coverage, adjusted returns, factors, and backtests remain
+closed.
 
-The persistent A-share coverage census verifies all 109 manifests and 327
-declared payload hashes and rereads idempotently. A deterministic diagnostic
-plan plus bounded single-partition and ordered streaming aggregates are now
-implemented; a real first-partition smoke and the bounded 109-partition legacy
-scan pass. Dynamic family-gap artifacts and an independent replay are still
-pending. The owner-only plan/aggregate package custody and exact-reread
-boundary is implemented; materializing the real 109-partition package remains
-the next execution gate.
+The separate U.S. SEC cash-quality source line corrected economic endpoint
+identity and now retains 75,391 issuer-level TTM observations across 6,724
+issuers. The listed-security applicability census admits 0 / 75,391 because
+historical stable-security identity, form, listing interval, issuer structure,
+and knowledge-time evidence remain incomplete. A bounded ten-request Massive
+Starter sample proved endpoint access but admitted zero historical lanes:
+security form and aliases are corroboration-only; instrument/CIK and issuer
+structure remain blocked; multi-common issuers remain quarantined. No listed-
+security projection, factor, outcome, Validation, Holdout, canonical, or
+Product write occurred.
 
-ADR 0296 freezes the U.S. successor intake at three candidate-Alpha cards and
-one risk guard. ADR 0298 closes its source gate at 0 / 4 qualified, zero formal
-trials, and zero outcome reads. ADR 0299 freezes a plan-only SEC cash-quality
-source-engineering target without authorizing source execution or reopening
-the intake. ADR 0300 separately registers the exact CFO, net-income, and Assets
-queries while preserving the immutable first SEC registry and all execution
-flags as false.
+The worktree contains the reviewed implementation and documentation changes.
+The complete backend regression passed 3,282 tests, the complete frontend
+regression passed 135 tests, and the Production build, compile, shell syntax,
+Markdown-link, diff, credential-pattern, and large-file checks passed. Commit
+and deployment remain incomplete, so the current OCI release still predates
+these readiness facts.
 
 ## Ordered remaining gates
 
-1. Materialize the frozen A-share diagnostic over all 109 existing packages
-   into bounded instrument coverage, adjustment-transition, rule-gap, and
-   provisional-membership artifacts; persist and exact-reread the closed set.
-2. Independently replay that complete diagnostic package and reduce
-   later external evidence work to explicit identity, warning-state,
-   corporate-action, price-limit, and terminal-lifecycle queues. Keep admission
-   closed.
-3. Separately review execution of ADR 0299's SEC cash-quality source plan or
-   acquisition of consensus, short-interest, and event-calendar sources. Any
-   later U.S. trial still requires a new immutable intake version.
+1. Commit the reconciled checkpoint and synchronize canonical `main`.
+2. Build and independently verify the exact source-bound serving bundle, deploy the
+   readiness-only website update, and run Production postflight.
+3. Rotate to a fresh Codex task under ADR 0314 and perform the read-only recovery
+   operation before choosing either next evidence gate: A-share official
+   document/adjudication or U.S. prospective/commercial identity evidence.
 
 Observed workstation capacity supports the two bounded offline lines: 16
 logical CPUs, about 60 GiB available memory, negligible load, and 2% `/data`
@@ -110,6 +105,22 @@ Read this bounded set before changing either active gate:
 - `docs/decisions/0298-close-us-successor-intake-at-source-qualification.md`;
 - `docs/decisions/0299-freeze-sec-cash-earnings-quality-source-engineering-plan.md`;
 - `docs/decisions/0300-register-separate-sec-cash-quality-source-queries.md`;
+- `docs/decisions/0301-select-local-sec-cash-quality-occurrences-before-ttm.md`;
+- `docs/decisions/0302-census-local-sec-cash-quality-source-readiness-before-ttm.md`;
+- `docs/decisions/0303-persist-sec-cash-quality-readiness-and-build-reusable-endpoint-evidence.md`;
+- `docs/decisions/0305-correct-sec-cash-quality-economic-endpoint-identity.md`;
+- `docs/decisions/0307-run-corrected-economic-endpoint-sec-cash-quality-ttm-coverage.md`;
+- `docs/decisions/0308-census-listed-security-applicability-before-cash-quality-projection.md`;
+- `docs/decisions/0310-freeze-listed-security-source-gap-disposition-before-projection.md`;
+- `docs/decisions/0311-run-a-bounded-massive-starter-listed-security-capability-sample.md`;
+- `docs/decisions/0306-freeze-a-share-official-evidence-priority-plan-before-acquisition.md`;
+- `docs/decisions/0309-reuse-local-a-share-official-evidence-before-warning-acquisition.md`;
+- `docs/decisions/0312-stop-a-share-warning-acquisition-at-unbudgeted-cninfo-pagination.md`;
+- `docs/decisions/0313-freeze-pagination-aware-a-share-warning-acquisition-v2.md`;
+- `docs/decisions/0314-rotate-codex-tasks-at-verified-project-checkpoints.md`;
+- `docs/operations/codex-task-rotation-and-recovery.md`;
+- `docs/data-contracts/sec-cash-quality-local-occurrence-selection-v1.md`;
+- `docs/data-contracts/sec-cash-quality-source-readiness-census-v1.md`;
 - `docs/data-contracts/quant-research-factor-space-diagnostic-v1.md`;
 - `docs/research/professional-quantitative-research-action-framework-v1.md`
 - `docs/product/quant-research-three-layer-architecture-v1.md`

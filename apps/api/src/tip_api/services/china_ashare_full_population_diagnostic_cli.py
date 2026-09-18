@@ -20,6 +20,9 @@ from tip_api.persistence.china_ashare_full_population_diagnostic_package import 
     read_china_ashare_full_population_diagnostic_aggregate,
     read_china_ashare_full_population_diagnostic_plan,
 )
+from tip_api.services.china_ashare_full_population_diagnostic_build import (
+    build_and_replay_china_ashare_full_population_diagnostic,
+)
 
 
 def main() -> int:
@@ -40,7 +43,55 @@ def main() -> int:
     reread.add_argument("--plan-package", type=Path, required=True)
     reread.add_argument("--aggregate-package", type=Path, required=True)
 
+    build_replay = commands.add_parser("build-replay")
+    build_replay.add_argument("--population-package", type=Path, required=True)
+    build_replay.add_argument("--source-plan-root", type=Path, required=True)
+    build_replay.add_argument("--source-completion", type=Path, required=True)
+    build_replay.add_argument("--normalized-custody-root", type=Path, required=True)
+    build_replay.add_argument("--custody-root", type=Path, required=True)
+    build_replay.add_argument("--replay-custody-root", type=Path, required=True)
+
     args = parser.parse_args()
+    if args.command == "build-replay":
+        result = build_and_replay_china_ashare_full_population_diagnostic(
+            population_package_path=args.population_package,
+            source_plan_root=args.source_plan_root,
+            source_completion_package=args.source_completion,
+            normalized_custody_root=args.normalized_custody_root,
+            output_custody_root=args.custody_root,
+            replay_custody_root=args.replay_custody_root,
+        )
+        _emit(
+            status="exact_replay_complete",
+            package_path=result.primary.aggregate_result.package_path,
+            plan_package_path=result.primary.plan_result.package_path,
+            plan_fingerprint=result.primary.plan_result.plan.logical_fingerprint,
+            aggregate_package_fingerprint=(
+                result.primary.aggregate_result.manifest.logical_fingerprint
+            ),
+            streaming_aggregate_fingerprint=(
+                result.primary.aggregate_result.streaming.logical_fingerprint
+            ),
+            partition_count=result.primary.partition_count,
+            target_session_count=result.primary.target_session_count,
+            target_count=result.primary.aggregate_result.streaming.target_count,
+            resolved_target_count=(
+                result.primary.aggregate_result.streaming.resolved_target_count
+            ),
+            quarantined_target_count=(
+                result.primary.aggregate_result.streaming.quarantined_target_count
+            ),
+            state_count=result.primary.aggregate_result.streaming.state_count,
+            bar_count=result.primary.aggregate_result.streaming.bar_count,
+            adjustment_count=(
+                result.primary.aggregate_result.streaming.adjustment_count
+            ),
+            total_bytes=result.primary.total_bytes,
+            byte_identical=result.byte_identical,
+            physical_hashes_identical=result.physical_hashes_identical,
+            physical_sha256s=dict(result.primary_file_sha256s),
+        )
+        return 0
     if args.command == "publish-plan":
         typed_plan = ChinaAshareFullPopulationDiagnosticPlanV1.model_validate_json(
             _read(args.plan_json)

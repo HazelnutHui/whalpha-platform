@@ -79,6 +79,8 @@ Read this bounded set before new Lab research:
 - [ADR 0298: close the U.S. successor intake at source qualification](decisions/0298-close-us-successor-intake-at-source-qualification.md)
 - [ADR 0299: freeze the SEC cash-quality source-engineering plan](decisions/0299-freeze-sec-cash-earnings-quality-source-engineering-plan.md)
 - [ADR 0300: register separate SEC cash-quality source queries](decisions/0300-register-separate-sec-cash-quality-source-queries.md)
+- [ADR 0301: select local SEC cash-quality occurrences before TTM](decisions/0301-select-local-sec-cash-quality-occurrences-before-ttm.md)
+- [ADR 0302: census local SEC cash-quality readiness before TTM](decisions/0302-census-local-sec-cash-quality-source-readiness-before-ttm.md)
 - [Closed V2 screening result](audits/quant-research-factor-screening-v2-2026-09-15.md)
 - [Qualified Campaign Three market-state input](audits/quant-research-market-state-qualification-2026-09-16.md)
 - [Campaign Three outcome-blind input qualification](audits/quant-research-campaign-three-input-qualification-2026-09-16.md)
@@ -86,6 +88,7 @@ Read this bounded set before new Lab research:
 - [Completed U.S. factor-space diagnostic](audits/quant-research-factor-space-diagnostic-2026-09-17.md)
 - [Factor-space and A-share source UI deployment](audits/factor-space-and-a-share-source-ui-deployment-2026-09-17.md)
 - [U.S. successor intake and A-share coverage gates](audits/us-successor-intake-and-a-share-coverage-gates-2026-09-17.md)
+- [U.S. SEC and A-share warning source checkpoint](audits/us-sec-and-a-share-warning-source-checkpoint-2026-09-18.md)
 
 The Pullback contracts, operations, and intermediate audits remain immutable
 historical evidence, but are no longer part of default recovery. Use the
@@ -117,6 +120,14 @@ or dated [audits](audits/) when reproducing that program.
 - [China A-Share Full-Population Coverage Diagnostic V1](data-contracts/china-a-share-full-population-coverage-v1.md)
 - [SEC Cash-Earnings-Quality Source-Engineering Plan V1](data-contracts/quant-research-sec-cash-earnings-quality-source-plan-v1.md)
 - [SEC Cash-Earnings-Quality Query Registry V1](data-contracts/sec-cash-earnings-quality-query-registry-v1.md)
+- [SEC Cash-Quality Local Occurrence Selection V1](data-contracts/sec-cash-quality-local-occurrence-selection-v1.md)
+- [SEC Cash-Quality Source Readiness Census V1](data-contracts/sec-cash-quality-source-readiness-census-v1.md)
+- [SEC Cash-Quality Direct-Origin Selection V2](data-contracts/sec-cash-quality-direct-origin-selection-v2.md)
+- [SEC Cash-Quality TTM Coverage V2](data-contracts/sec-cash-quality-ttm-coverage-v2.md)
+- [SEC Cash-Quality Security Applicability Census V1](data-contracts/sec-cash-quality-security-applicability-census-v1.md)
+- [SEC Cash-Quality Listed-Security Source Gap V1](data-contracts/sec-cash-quality-listed-security-source-gap-v1.md)
+- [China A-Share Official-Evidence Priority Plan V1](data-contracts/china-a-share-official-evidence-priority-plan-v1.md)
+- [China A-Share Warning Evidence Acquisition V2](data-contracts/china-a-share-warning-evidence-acquisition-v2.md)
 - [China A-Share Five-Year Population Operation](operations/china-a-share-five-year-population.md)
 - [China A-Share Five-Year Source Expansion Operation](operations/china-a-share-five-year-source-expansion.md)
 - [China A-Share Foundation UI Deployment Audit](audits/china-a-share-foundation-ui-deployment-2026-09-17.md)
@@ -142,6 +153,7 @@ or dated [audits](audits/) when reproducing that program.
 - [Market Intelligence Publication](operations/market-intelligence-publication.md)
 - [Dashboard Snapshot Publication](operations/dashboard-snapshot-publication.md)
 - [OCI Dashboard Deployment](operations/oci-private-dashboard-deployment.md)
+- [Codex Task Rotation and Recovery](operations/codex-task-rotation-and-recovery.md)
 
 Strategy-specific runbooks are historical or objective-specific and remain
 discoverable in [`docs/operations`](operations/). A runbook never authorizes

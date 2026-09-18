@@ -4,6 +4,7 @@ import json
 import sys
 from datetime import UTC, date, datetime
 from pathlib import Path
+from types import SimpleNamespace
 
 from tip_api.contracts.china_ashare.v1.full_population_coverage import (
     build_full_population_diagnostic_plan,
@@ -11,6 +12,7 @@ from tip_api.contracts.china_ashare.v1.full_population_coverage import (
     build_full_population_streaming_aggregate,
 )
 from tip_api.services.china_ashare_full_population_diagnostic_cli import main
+from tip_api.services import china_ashare_full_population_diagnostic_cli as subject
 
 
 def test_cli_publishes_plan_and_small_aggregate(
@@ -98,6 +100,63 @@ def test_admin_wrapper_is_executable() -> None:
     wrapper = Path("scripts/admin/persist-china-ashare-full-population-diagnostic.sh")
     assert wrapper.is_file()
     assert wrapper.stat().st_mode & 0o111
+
+
+def test_cli_dispatches_one_step_build_and_replay(
+    tmp_path: Path, monkeypatch, capsys
+) -> None:
+    plan, partition, streaming = _artifacts()
+    primary = SimpleNamespace(
+        plan_result=SimpleNamespace(
+            package_path=tmp_path / "plan", plan=plan
+        ),
+        aggregate_result=SimpleNamespace(
+            package_path=tmp_path / "aggregate",
+            manifest=SimpleNamespace(logical_fingerprint="a" * 64),
+            streaming=streaming,
+        ),
+        partition_count=1,
+        target_session_count=1,
+        total_bytes=123,
+    )
+    monkeypatch.setattr(
+        subject,
+        "build_and_replay_china_ashare_full_population_diagnostic",
+        lambda **_: SimpleNamespace(
+            primary=primary,
+            byte_identical=True,
+            physical_hashes_identical=True,
+            primary_file_sha256s=(("plan/diagnostic-plan.json", "b" * 64),),
+        ),
+    )
+    monkeypatch.setattr(
+        sys,
+        "argv",
+        [
+            "diagnostic",
+            "build-replay",
+            "--population-package",
+            str(tmp_path / "population"),
+            "--source-plan-root",
+            str(tmp_path / "source-plan"),
+            "--source-completion",
+            str(tmp_path / "completion"),
+            "--normalized-custody-root",
+            str(tmp_path / "normalized"),
+            "--custody-root",
+            str(tmp_path / "primary"),
+            "--replay-custody-root",
+            str(tmp_path / "replay"),
+        ],
+    )
+
+    assert main() == 0
+    output = json.loads(capsys.readouterr().out)
+    assert output["status"] == "exact_replay_complete"
+    assert output["byte_identical"] is True
+    assert output["physical_hashes_identical"] is True
+    assert output["partition_count"] == 1
+    assert output["future_return_read_count"] == 0
 
 
 def _artifacts():

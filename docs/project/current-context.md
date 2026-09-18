@@ -1,10 +1,10 @@
 # Authoritative Current Context
 
-Operational state verified at: 2026-09-16T14:11:04Z
+Operational state verified at: 2026-09-18T03:40:47Z
 
 Deployment state verified at: 2026-09-17T21:46:11Z
 
-Repository context updated at: 2026-09-17 UTC
+Repository context updated at: 2026-09-18 UTC
 
 This is the compact recovery source for a new task or device. Interpretation
 belongs in [current status](current-status.md), sequencing in the
@@ -38,7 +38,7 @@ network-disabled reread. Run project Python through
 
 | Boundary | Verified value |
 | --- | --- |
-| Latest EOD / Snapshot | 2026-09-11; stale by two completed sessions at the 2026-09-16 operational review |
+| Latest EOD / Snapshot | 2026-09-11; stale by four completed sessions at the 2026-09-18 operational review |
 | Market Intelligence | `2026-09-11T205429Z-26cab64fabda`; contract 1.3 |
 | Dashboard Snapshot | `2026-09-11T211340Z-26cab64fabda`; Snapshot 1.11 / Dashboard 2.8 |
 | Market state | Primary 50.1578 Balanced; Secondary 50.1501 Balanced |
@@ -289,6 +289,29 @@ formula, amendment lineage, stable listed-security projection, point-in-time
 nonfinancial applicability, joint coverage, and replay are not qualified. A
 later attempt requires new sources and a new immutable intake version.
 
+The separately governed cash-quality source census now reads only local
+normalized custody and exactly replays across forward and reverse traversal.
+It scanned 41,619,407 occurrences and 1,027,486 registered target rows across
+10,082 issuers and 449,274 observed fiscal endpoints. Exactly 82,440 endpoints
+are ready for issuer-occurrence use only; 366,834 remain blocked. Result
+fingerprint is
+`2c4898df1efd4b60854a633f5c08791bd8163210bfdcdb8f054282f62a2ad159`.
+The corrected direct-origin selector subsequently retained 120,473 canonical
+economic endpoints, and TTM V2 produced 75,391 issuer-level observations across
+6,724 issuers. TTM V2 covers 62.58% of its canonical endpoint denominator and
+exactly replays; it is source feasibility, not a listed-security factor.
+
+The listed-security applicability census recovered every TTM signal session
+but admitted 0 / 75,391 observations. Retrospective CIK links, current provider
+form, SEC filer identity, ticker, and name are not historical listed-security
+proof. A bounded Massive Starter sample completed 10 / 10 registered requests
+without entitlement or transport failure and corroborated current form plus one
+ticker-change relation, but admitted zero historical evidence lanes. The
+missing requirements are historical source-availability time, complete
+effective intervals, issuer/security structure, and multi-common policy. This
+does not reopen the closed intake or authorize security projection, factor
+construction, outcomes, or Product use.
+
 ADR 0287 fixes the first multi-agent pilot as a manually supervised,
 outcome-blind research team. Five current roles may inspect governance,
 evidence, hypotheses, implementation, and method risk; Development evaluation,
@@ -468,17 +491,63 @@ The first persistent full-population coverage report now exactly rereads all
 sizes, rescans the all-unknown price-limit and all-null source-time columns,
 and returns the same owner-only report on rerun. Report logical fingerprint is
 `1fd2d8fdfd65edb16ebdd91a09d7d6d08594496e59e7d71d233ef6a8e32a0c4d`.
-This closes the manifest-level census only; instrument coverage, adjustment-
-transition, rule-gap, and provisional-membership artifacts plus an independent
-full replay remain pending. The next diagnostic contract now binds the exact
-population, source plan/completion, and ordered raw/normalized partition
-manifests. Its implementation aggregates one partition at a time and the
-legacy verifier scans Parquet in bounded batches rather than materializing the
-full state table. A real partition smoke and the full 109-partition census
-passed; persistent aggregate custody, dynamic family gaps, and exact replay
-remain pending. Owner-only closed-set custody and exact reread for the plan and
-bounded aggregate documents are now implemented, but the real 109-partition
-aggregate package has not yet been materialized.
+This closes the manifest-level census only. The next diagnostic contract binds
+the exact population, source plan/completion, and ordered raw/normalized
+partition manifests. Its implementation aggregates one partition at a time
+and scans Parquet in bounded batches rather than materializing the full state
+table. The real 109-partition package now contains 5,409 targets, 1,211
+sessions, 5,997,301 states, 5,987,288 bars, and 62,272 adjustment observations.
+Its independent reconstruction from the exact readers is byte- and physical-
+hash identical. Plan fingerprint is
+`e346bcd90fd701b98764b44f414da3e1d3e5731e9fdc149795cceea7957d2165`
+and package fingerprint is
+`09b4246e5281701d45199ceea2b52af22d5b825edcc04630e9b0f8dd8e371872`.
+
+A separate five-family gap checklist also exactly replays. All five families
+remain `blocked_missing_evidence`: 5,997,301 unknown price-limit states;
+160,626 warning-present states without subtype; 62,272 adjustment observations
+that are candidates rather than corporate-action facts; missing listed-
+security terminal evidence for 113 quarantined targets; and 5,997,301
+historical Universe decisions that have not been materialized and have null
+source clocks. Checklist fingerprint is
+`51af01c06e08fcd3effbd28e86c8756386bdeea6b9b916021f52397aef5a0cf5`.
+The result admits zero families and keeps Historical Coverage, adjusted
+returns, backtesting, Factor Discovery, canonical writes, and Product authority
+closed.
+
+A bounded free-official evidence proof then queried one 50-security SSE slice
+and one Shenzhen sample. The SSE slice resolves 59,339 of 60,550 states under
+effective-dated rules. The remaining 1,211 states belong to one issuer whose
+three official document requests returned a typed JavaScript-cookie challenge;
+raw responses are retained owner-only and the states remain quarantined. The
+CNINFO sample maps one Shenzhen security and exactly replays five official
+zero-event responses. Full-population evidence routing and a conservative
+reconstructed daily Universe remain pending.
+
+The subsequent 109-partition conservative-reconstruction package and its
+independent replay are byte- and physical-hash identical. Of 5,997,301 daily
+states, 5,059,363 are provisional include candidates, 157,377 warning states
+are excluded, and 780,561 remain quarantined. The final package fingerprint is
+`66ba3b6b552ebb3449860f841f622acb0195c026543f14068de9d42c0c7e3694`.
+It is explicitly reconstructed, not as-operated, and grants no research,
+return, Historical Coverage, factor, or Product authority.
+
+The exact priority plan then reduced a 27,045-request blind baseline to 2,294
+stable-subject evidence units: 492 warning, 756 lifecycle, and 1,046 listing-
+stage units. Corporate-action candidates remain quarantined with zero request
+authority. Strict local reuse over 260 retained official captures admitted 0 /
+2,294 because stable-subject binding, observed publication clocks, complete
+effective intervals, or structured event fields were absent.
+
+The first network family is complete. Pagination-aware warning acquisition V2
+captured all 492 / 492 search units over 507 logical pages and 510 lifetime
+HTTP attempts. Owner-only exact reread and independent census reconstruction
+pass over 943 files totaling 5,396,064 bytes; 4,399 official-document locators
+are deduplicated and 2,454 carry an observed publication clock. Twelve SSE
+zero-result searches remain search evidence only. No locator is adjudication-
+ready because document bytes, event kind/subtype, stable-security binding, and
+effective interval remain a separate gate. Census fingerprint is
+`828ba7a4170d18eec1280fca3a97817148878cc8d931f0c1463a9eeac8e11fb7`.
 The account rate is user-reported and its all-in/minimum/history assumptions
 remain unconfirmed by a broker statement. Issuer-level lifecycle rows remain
 separate and cannot claim listed-security termination. No raw upstream archive
@@ -547,3 +616,6 @@ changed presentation only; it did not change data or research authority.
    publish, deploy, rewrite a pointer, or clean a release.
 4. Read only the contracts, ADRs, operations, and audits tied to the selected
    objective.
+5. When rotating to a fresh Codex task, follow
+   [Codex Task Rotation and Recovery](../operations/codex-task-rotation-and-recovery.md)
+   and require a read-only reconciliation verdict before material work.
